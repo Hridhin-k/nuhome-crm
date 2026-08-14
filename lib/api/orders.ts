@@ -33,6 +33,18 @@ export async function listOrdersForCustomer(customerId: string) {
   );
 }
 
+export async function listPaymentsForOrder(orderId: string) {
+  const db = await getDb();
+  return throwQuery(
+    db
+      .from("payments")
+      .select("id, kind, amount, status, created_at")
+      .eq("order_id", orderId)
+      .order("created_at", { ascending: false }),
+    "Failed to load payments",
+  );
+}
+
 export async function getOrder(id: string) {
   const db = await getDb();
   const { data: order, error } = await db

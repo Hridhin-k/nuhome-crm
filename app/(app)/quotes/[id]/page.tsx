@@ -15,6 +15,7 @@ import { WorkflowStepper } from "@/components/app/workflow-stepper";
 import { RejectQuoteSheet } from "@/components/quotes/reject-sheet";
 import { WhatsAppShareSheet } from "@/components/quotes/whatsapp-share-sheet";
 import { listQuoteActivity } from "@/lib/api/audit";
+import { listPaymentsForOrder } from "@/lib/api/orders";
 import { getQuote } from "@/lib/api/quotes";
 import { publicQuotePath, publicQuoteUrl } from "@/lib/quotes/public-url";
 import { getCustomerSiteUrl } from "@/lib/site-url";
@@ -48,6 +49,9 @@ export default async function QuoteDetailPage({
   }
 
   const { quote, customer, versions, items, order } = detail;
+  const payments = order?.id
+    ? await listPaymentsForOrder(order.id).catch(() => [])
+    : [];
   const current =
     versions.find((v) => v.id === quote.current_version_id) ?? versions[0];
   const currentItems = items.filter((i) => i.version_id === current?.id);
@@ -63,6 +67,7 @@ export default async function QuoteDetailPage({
     quoteId: quote.id,
     orderId: order?.id,
     orderStatus,
+    payments,
   });
   const canWhatsApp =
     canShareWhatsApp &&

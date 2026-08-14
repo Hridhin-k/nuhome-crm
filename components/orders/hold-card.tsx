@@ -29,7 +29,7 @@ export function HoldCard({
             href={`/orders/${orderId}#payment`}
             className={cn(buttonVariants({ size: "lg" }), "inline-flex flex-1")}
           >
-            Verify Payment
+            Record payment
           </AppLink>
           <AppLink
             href={`/orders/${orderId}`}

@@ -1,5 +1,9 @@
-import type { AppRole, WorkflowStatus } from "@/lib/workflow/types";
 import { formatInr } from "@/lib/format/money";
+import {
+  canRecordPayment,
+  hasPendingPayment,
+} from "@/lib/workflow/payment-recording";
+import type { AppRole, WorkflowStatus } from "@/lib/workflow/types";
 
 export type NextAction = {
   title: string;
@@ -16,6 +20,7 @@ export function nextRequiredAction(input: {
   quoteId?: string;
   activated?: boolean;
   orderStatus?: WorkflowStatus;
+  payments?: { status: string }[];
 }): NextAction {
   const {
     status,
@@ -25,7 +30,12 @@ export function nextRequiredAction(input: {
     quoteId,
     activated,
     orderStatus,
+    payments = [],
   } = input;
+
+  const salesCanRecord =
+    (role === "sales" || role === "admin") &&
+    canRecordPayment({ status, payments, outstanding });
 
   if (
     status === "quote_sent_to_customer" &&
@@ -40,6 +50,7 @@ export function nextRequiredAction(input: {
       quoteId,
       activated,
       orderStatus,
+      payments,
     });
   }
 
@@ -75,9 +86,11 @@ export function nextRequiredAction(input: {
     case "quote_sent_to_customer":
       return {
         title: "Record payment terms",
-        detail: "Log advance, full, or nil payment so Accounts can verify.",
+        detail: hasPendingPayment(payments)
+          ? "Accounts is verifying the payment you recorded."
+          : "Log advance, full, or nil payment so Accounts can verify.",
         href: orderId ? `/orders/${orderId}` : "/orders",
-        cta: role === "sales" || role === "admin" ? "Record payment" : undefined,
+        cta: salesCanRecord ? "Record payment" : undefined,
       };
     case "payment_pending_verification":
       return {
@@ -128,7 +141,7 @@ export function nextRequiredAction(input: {
             : "Payment is complete. Delivery can proceed.",
         href: orderId ? `/orders/${orderId}` : "/orders",
         cta:
-          outstanding > 0 && (role === "sales" || role === "admin")
+          salesCanRecord
             ? "Record payment"
             : role === "store" || role === "admin"
               ? "Open delivery"

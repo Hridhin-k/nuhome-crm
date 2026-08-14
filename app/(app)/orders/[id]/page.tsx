@@ -16,6 +16,10 @@ import { requireUser } from "@/lib/auth/guards";
 import { roleHasPermission } from "@/lib/auth/permissions";
 import { formatInrExact } from "@/lib/format/money";
 import { nextRequiredAction } from "@/lib/workflow/next-action";
+import {
+  canRecordPayment,
+  pendingPaymentMessage,
+} from "@/lib/workflow/payment-recording";
 import { orderStatusExplanation } from "@/lib/workflow/status-explanation";
 import type { WorkflowStatus } from "@/lib/workflow/types";
 
@@ -50,7 +54,12 @@ export default async function OrderDetailPage({
     orderId: order.id,
     quoteId: order.quote_id,
     activated: Boolean(order.activated_at),
+    payments,
   });
+  const showRecordPayment =
+    roleHasPermission(user.role, "payments.record") &&
+    canRecordPayment({ status, payments, outstanding });
+  const paymentWaitingMessage = pendingPaymentMessage(payments);
   const version = rel(quote?.quote_versions);
   const statusExplanation = orderStatusExplanation({
     status,
@@ -97,7 +106,7 @@ export default async function OrderDetailPage({
         <HoldCard
           outstanding={outstanding}
           orderId={order.id}
-          canRecord={roleHasPermission(user.role, "payments.record")}
+          canRecord={showRecordPayment}
         />
       ) : null}
 
@@ -167,14 +176,17 @@ export default async function OrderDetailPage({
         </ul>
       </section>
 
-      {roleHasPermission(user.role, "payments.record") &&
-      !["delivered", "closed"].includes(status) ? (
+      {showRecordPayment ? (
         <section id="payment" className="scroll-mt-24">
           <PaymentForm
             quoteId={order.quote_id}
             orderId={order.id}
             remaining={outstanding}
           />
+        </section>
+      ) : paymentWaitingMessage ? (
+        <section className="rounded-xl border border-surface-variant bg-surface-container-low px-5 py-4 text-sm text-on-surface-variant">
+          {paymentWaitingMessage}
         </section>
       ) : null}
 

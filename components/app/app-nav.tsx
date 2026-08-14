@@ -1,8 +1,10 @@
 "use client";
 
 import { AppLink } from "@/components/app/app-link";
+import { NotificationBell } from "@/components/app/notification-bell";
 import { usePathname } from "next/navigation";
 import { NavIcon } from "@/components/app/nav-icon";
+import type { AppNotification } from "@/lib/notifications/types";
 import { cn } from "@/lib/utils";
 import type { NavItem } from "@/lib/auth/nav";
 
@@ -37,14 +39,18 @@ export function MobileBottomNav({ items }: { items: NavItem[] }) {
   );
 }
 
-export function DesktopSidebar({
+export function AppNavbar({
   items,
   name,
   role,
+  userId,
+  notifications,
 }: {
   items: NavItem[];
   name: string;
   role: string;
+  userId: string;
+  notifications: AppNotification[];
 }) {
   const pathname = usePathname();
   const initials = name
@@ -53,74 +59,76 @@ export function DesktopSidebar({
     .slice(0, 2)
     .map((part) => part[0]?.toUpperCase())
     .join("");
+  const desktopItems = items.filter((item) => item.href !== "/more");
 
   return (
-    <aside className="relative z-40 hidden h-dvh w-[280px] shrink-0 flex-col border-r border-outline-variant bg-surface py-6 shadow-sm md:flex">
-      <div className="mb-6 px-4">
-        <AppLink href="/more" className="flex items-center gap-4">
-          <span className="inline-flex size-12 shrink-0 items-center justify-center rounded-full bg-primary-container text-[14px] font-bold text-on-primary">
-            {initials || "N"}
-          </span>
-          <span className="min-w-0">
-            <span className="text-label-md block truncate text-on-surface">
-              {name}
-            </span>
-            <span className="text-body-md block text-on-surface-variant">
-              {role}
-            </span>
-          </span>
+    <header className="sticky top-0 z-50 border-b border-outline-variant bg-surface">
+      <div className="mx-auto flex h-14 max-w-7xl items-center gap-3 px-4 md:h-16 md:gap-6 md:px-6">
+        <AppLink
+          href="/home"
+          className="shrink-0 text-[15px] font-bold text-primary md:text-base"
+        >
+          Nuhome
         </AppLink>
-        <p className="text-label-md mt-2 text-outline">Role: {role}</p>
-      </div>
 
-      <nav aria-label="Primary" className="flex flex-1 flex-col gap-2 px-2">
-        {items.map((item) => {
-          const active =
-            pathname === item.href || pathname.startsWith(`${item.href}/`);
-          return (
-            <AppLink
-              key={item.href}
-              href={item.href}
-              className={cn(
-                "mr-2 flex items-center gap-4 rounded-r-full px-4 py-3 transition-all duration-200",
-                active
-                  ? "bg-primary-container font-semibold text-on-primary-container"
-                  : "text-on-surface-variant hover:bg-surface-container-highest",
-              )}
-            >
-              <NavIcon icon={item.icon} className="size-5" />
-              <span className="text-label-md">{item.label}</span>
-            </AppLink>
-          );
-        })}
-      </nav>
+        <nav
+          aria-label="Primary"
+          className="hidden min-w-0 flex-1 items-center gap-1 overflow-x-auto md:flex"
+        >
+          {desktopItems.map((item) => {
+            const active =
+              pathname === item.href || pathname.startsWith(`${item.href}/`);
+            return (
+              <AppLink
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  "inline-flex items-center gap-2 rounded-full px-3 py-2 text-sm font-medium transition-colors",
+                  active
+                    ? "bg-primary-container text-on-primary-container"
+                    : "text-on-surface-variant hover:bg-surface-container hover:text-on-surface",
+                )}
+              >
+                <NavIcon icon={item.icon} className="size-4" />
+                <span>{item.label}</span>
+              </AppLink>
+            );
+          })}
+        </nav>
 
-      <div className="mt-auto px-4 pt-4">
-        <p className="text-[13px] font-bold text-on-surface">Nuhome</p>
-        <p className="text-body-md text-on-surface-variant">
-          Enterprise Manager
-        </p>
-      </div>
-    </aside>
-  );
-}
-
-export function DesktopTopBar({ title }: { title?: string }) {
-  return (
-    <header className="hidden h-16 shrink-0 items-center justify-between border-b border-outline-variant bg-surface px-12 md:flex">
-      <h1 className="text-headline-md text-on-surface">{title ?? "Overview"}</h1>
-      <div className="flex items-center gap-4 text-on-surface-variant">
-        <span className="text-body-md">Nuhome</span>
+        <div className="ml-auto flex items-center gap-1 md:gap-2">
+          <NotificationBell userId={userId} initial={notifications} />
+          <AppLink
+            href="/more"
+            className="hidden items-center gap-2 rounded-full py-1.5 pr-1 pl-2 transition-colors hover:bg-surface-container md:inline-flex"
+          >
+            <span className="inline-flex size-9 items-center justify-center rounded-full bg-primary-container text-xs font-bold text-on-primary">
+              {initials || "N"}
+            </span>
+            <span className="max-w-[140px] truncate text-left">
+              <span className="block text-sm font-medium text-on-surface">
+                {name}
+              </span>
+              <span className="block text-xs text-on-surface-variant">
+                {role}
+              </span>
+            </span>
+          </AppLink>
+          <span className="text-label-md text-on-surface-variant md:hidden">
+            {role}
+          </span>
+        </div>
       </div>
     </header>
   );
 }
 
-/** @deprecated */
-export function DesktopNavbar(props: {
-  items: NavItem[];
-  name: string;
-  role: string;
-}) {
-  return <DesktopSidebar {...props} />;
+/** @deprecated Use AppNavbar */
+export function DesktopSidebar(props: Parameters<typeof AppNavbar>[0]) {
+  return <AppNavbar {...props} />;
+}
+
+/** @deprecated Use AppNavbar */
+export function DesktopNavbar(props: Parameters<typeof AppNavbar>[0]) {
+  return <AppNavbar {...props} />;
 }
