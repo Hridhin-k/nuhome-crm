@@ -1,26 +1,183 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* Executive Precision — exact Stitch tokens */
+@theme inline {
+  --font-sans: var(--font-inter);
+  --font-heading: var(--font-inter);
+
+  --color-background: #f7f9fb;
+  --color-foreground: #191c1e;
+  --color-surface: #f7f9fb;
+  --color-surface-dim: #d8dadc;
+  --color-surface-bright: #f7f9fb;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f2f4f6;
+  --color-surface-container: #eceef0;
+  --color-surface-container-high: #e6e8ea;
+  --color-surface-container-highest: #e0e3e5;
+  --color-surface-variant: #e0e3e5;
+  --color-on-surface: #191c1e;
+  --color-on-surface-variant: #45464d;
+  --color-on-background: #191c1e;
+  --color-inverse-surface: #2d3133;
+  --color-inverse-on-surface: #eff1f3;
+  --color-outline: #76777d;
+  --color-outline-variant: #c6c6cd;
+  --color-surface-tint: #565e74;
+  --color-primary: #000000;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #131b2e;
+  --color-on-primary-container: #ffffff;
+  --color-secondary: #505f76;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #d0e1fb;
+  --color-on-secondary-container: #54647a;
+  --color-error: #ba1a1a;
+  --color-on-error: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #93000a;
+  --color-warning: #f59e0b;
+  --color-on-warning: #ffffff;
+  --color-warning-container: #fef3c7;
+  --color-success: #059669;
+  --color-success-container: #d1fae5;
+
+  --color-card: #ffffff;
+  --color-card-foreground: #191c1e;
+  --color-popover: #ffffff;
+  --color-popover-foreground: #191c1e;
+  --color-muted: #f2f4f6;
+  --color-muted-foreground: #45464d;
+  --color-accent: #eceef0;
+  --color-accent-foreground: #191c1e;
+  --color-destructive: #ba1a1a;
+  --color-border: #c6c6cd;
+  --color-input: #c6c6cd;
+  --color-ring: #505f76;
+  --color-primary-foreground: #ffffff;
+  --color-secondary-foreground: #ffffff;
+
+  --color-sidebar: #ffffff;
+  --color-sidebar-foreground: #191c1e;
+  --color-sidebar-primary: #131b2e;
+  --color-sidebar-primary-foreground: #ffffff;
+  --color-sidebar-accent: #f2f4f6;
+  --color-sidebar-accent-foreground: #191c1e;
+  --color-sidebar-border: #c6c6cd;
+  --color-sidebar-ring: #505f76;
+
+  --color-chart-1: #000000;
+  --color-chart-2: #505f76;
+  --color-chart-3: #059669;
+  --color-chart-4: #f59e0b;
+  --color-chart-5: #ba1a1a;
+
+  /* Stitch radii: full = 12px (not pill) */
+  --radius-sm: 0.125rem;
+  --radius-md: 0.25rem;
+  --radius-lg: 0.25rem;
+  --radius-xl: 0.5rem;
+  --radius-2xl: 0.75rem;
+  --radius-3xl: 0.75rem;
+  --radius-4xl: 0.75rem;
+  --radius: 0.25rem;
+
+  --spacing-touch-target: 44px;
+  --spacing-margin-mobile: 16px;
+  --spacing-margin-desktop: 48px;
+  --spacing-gutter: 16px;
+}
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f7f9fb;
+  --foreground: #191c1e;
+  --card: #ffffff;
+  --card-foreground: #191c1e;
+  --popover: #ffffff;
+  --popover-foreground: #191c1e;
+  --primary: #000000;
+  --primary-foreground: #ffffff;
+  --secondary: #505f76;
+  --secondary-foreground: #ffffff;
+  --muted: #f2f4f6;
+  --muted-foreground: #45464d;
+  --accent: #eceef0;
+  --accent-foreground: #191c1e;
+  --destructive: #ba1a1a;
+  --border: #c6c6cd;
+  --input: #c6c6cd;
+  --ring: #505f76;
+  --radius: 0.25rem;
+  --shadow-card: 0px 4px 12px rgba(0, 0, 0, 0.03);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  html {
+    @apply font-sans antialiased;
+    color-scheme: light;
+  }
+
+  body {
+    @apply bg-background text-on-background;
+    font-size: 14px;
+    line-height: 20px;
+  }
+
+  ::selection {
+    background: color-mix(in srgb, #d0e1fb 70%, transparent);
+    color: #191c1e;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer utilities {
+  .shadow-card {
+    box-shadow: var(--shadow-card);
+  }
+
+  .text-label-md {
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 16px;
+    letter-spacing: 0.05em;
+  }
+
+  .text-display-lg {
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 40px;
+    letter-spacing: -0.02em;
+  }
+
+  .text-headline-md {
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 32px;
+    letter-spacing: -0.01em;
+  }
+
+  .text-headline-sm {
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 28px;
+  }
+
+  .text-body-lg {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+  }
+
+  .text-body-md {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+  }
 }

@@ -1,0 +1,16 @@
+import { createServerSupabaseClient } from "@/lib/supabase/server";
+
+export async function getDb() {
+  return createServerSupabaseClient();
+}
+
+export async function throwQuery<T>(
+  result: PromiseLike<{ data: T; error: { message: string } | null }>,
+  message: string,
+): Promise<NonNullable<T>> {
+  const { data, error } = await result;
+  if (error) {
+    throw new Error(message);
+  }
+  return data as NonNullable<T>;
+}

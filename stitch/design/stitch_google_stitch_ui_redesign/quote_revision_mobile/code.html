@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Quote Detail Screen - Enterprise Manager</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-background": "#191c1e",
+                        "primary": "#000000",
+                        "inverse-surface": "#2d3133",
+                        "secondary": "#505f76",
+                        "on-tertiary-fixed": "#271901",
+                        "on-surface-variant": "#45464d",
+                        "on-tertiary": "#ffffff",
+                        "surface-variant": "#e0e3e5",
+                        "on-secondary-fixed": "#0b1c30",
+                        "on-secondary-fixed-variant": "#38485d",
+                        "on-error-container": "#93000a",
+                        "surface-container-lowest": "#ffffff",
+                        "background": "#f7f9fb",
+                        "tertiary-fixed-dim": "#dec29a",
+                        "tertiary": "#000000",
+                        "secondary-fixed-dim": "#b7c8e1",
+                        "error": "#ba1a1a",
+                        "surface": "#f7f9fb",
+                        "outline": "#76777d",
+                        "surface-tint": "#565e74",
+                        "surface-container": "#eceef0",
+                        "on-surface": "#191c1e",
+                        "on-primary": "#ffffff",
+                        "on-primary-fixed-variant": "#3f465c",
+                        "on-error": "#ffffff",
+                        "surface-dim": "#d8dadc",
+                        "secondary-container": "#d0e1fb",
+                        "error-container": "#ffdad6",
+                        "primary-fixed": "#dae2fd",
+                        "primary-container": "#131b2e",
+                        "surface-container-low": "#f2f4f6",
+                        "on-secondary-container": "#54647a",
+                        "tertiary-container": "#271901",
+                        "inverse-on-surface": "#eff1f3",
+                        "inverse-primary": "#bec6e0",
+                        "primary-fixed-dim": "#bec6e0",
+                        "surface-container-highest": "#e0e3e5",
+                        "tertiary-fixed": "#fcdeb5",
+                        "on-primary-container": "#7c839b",
+                        "outline-variant": "#c6c6cd",
+                        "surface-container-high": "#e6e8ea",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed": "#131b2e",
+                        "on-tertiary-fixed-variant": "#574425",
+                        "surface-bright": "#f7f9fb",
+                        "on-tertiary-container": "#98805d",
+                        "secondary-fixed": "#d3e4fe"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "base": "4px",
+                        "md": "16px",
+                        "lg": "24px",
+                        "margin-desktop": "48px",
+                        "xs": "4px",
+                        "gutter": "16px",
+                        "xl": "32px",
+                        "sm": "8px",
+                        "margin-mobile": "16px",
+                        "touch-target": "44px"
+                    },
+                    "fontFamily": {
+                        "display-lg-mobile": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "headline-md-mobile": ["Inter"]
+                    },
+                    "fontSize": {
+                        "display-lg-mobile": ["28px", { "lineHeight": "34px", "fontWeight": "700" }],
+                        "display-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "headline-md-mobile": ["22px", { "lineHeight": "28px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-surface text-on-background min-h-screen pt-[var(--header-height,60px)] pb-[var(--footer-height,80px)] md:pb-0 font-body-md selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopAppBar -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-mobile h-[60px] bg-surface dark:bg-on-background shadow-[0_1px_0_0_theme(colors.outline-variant)]">
+<div class="flex items-center gap-4">
+<button class="h-touch-target w-touch-target flex items-center justify-center rounded-full hover:bg-surface-container-high transition-colors duration-200 ease-in-out text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+</button>
+<h1 class="text-headline-sm-mobile font-headline-sm-mobile font-bold text-primary truncate">Quote #QT-2023-842</h1>
+</div>
+<div class="flex items-center gap-2">
+<button class="h-touch-target px-4 rounded hover:bg-surface-container-high transition-colors duration-200 ease-in-out text-on-surface-variant font-label-md text-label-md hidden md:flex items-center">
+                Cancel Revision
+            </button>
+</div>
+</header>
+<main class="max-w-3xl mx-auto px-margin-mobile py-lg pb-32">
+<!-- Rejection Banner -->
+<div class="bg-error-container text-on-error-container p-md rounded-xl mb-lg border border-error/20 flex items-start gap-3 shadow-[0_4px_12px_rgba(0,0,0,0.03)]">
+<span class="material-symbols-outlined mt-0.5 text-error" data-icon="error" style="font-variation-settings: 'FILL' 1;">error</span>
+<div>
+<h2 class="font-label-md text-label-md uppercase tracking-wider text-error mb-1">Accounts Team Rejected</h2>
+<p class="font-body-md text-body-md text-on-error-container">Reason: Pricing for Materials A exceeds margin limits. Please adjust unit cost or apply standard discount tier.</p>
+</div>
+</div>
+<!-- Header / Status -->
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-xl gap-4">
+<div>
+<div class="flex items-center gap-2 mb-2">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-error/10 text-error font-label-md text-label-md">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+                        Rejected
+                    </span>
+<span class="text-on-surface-variant font-body-sm text-sm">Created Oct 24, 2023</span>
+</div>
+<h2 class="text-headline-md font-headline-md text-primary">Acme Corp Enterprise License</h2>
+</div>
+<div class="text-right">
+<p class="text-on-surface-variant font-label-md text-label-md uppercase mb-1">Total Value</p>
+<p class="text-display-lg-mobile font-display-lg-mobile text-primary">$124,500.00</p>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Left Column: Form & Details (Span 2) -->
+<div class="md:col-span-2 space-y-6">
+<!-- Summary Card -->
+<section class="bg-surface-container-lowest rounded-xl border border-outline-variant p-md shadow-[0_4px_12px_rgba(0,0,0,0.03)]">
+<h3 class="font-headline-sm text-headline-sm text-primary mb-4 border-b border-outline-variant pb-2 flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary" data-icon="business">business</span>
+                        Customer Details
+                    </h3>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<p class="font-label-md text-label-md text-on-surface-variant uppercase mb-1">Client</p>
+<p class="font-body-md text-body-md text-on-background">Acme Corporation</p>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface-variant uppercase mb-1">Contact</p>
+<p class="font-body-md text-body-md text-on-background">Jane Doe (VP Procurement)</p>
+</div>
+<div class="col-span-2">
+<p class="font-label-md text-label-md text-on-surface-variant uppercase mb-1">Address</p>
+<p class="font-body-md text-body-md text-on-background">123 Tech Boulevard, Suite 400, San Francisco, CA 94105</p>
+</div>
+</div>
+</section>
+<!-- Editable Materials Section -->
+<section class="bg-surface-container-lowest rounded-xl border border-outline-variant p-md shadow-[0_4px_12px_rgba(0,0,0,0.03)]">
+<div class="flex justify-between items-center mb-4 border-b border-outline-variant pb-2">
+<h3 class="font-headline-sm text-headline-sm text-primary flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary" data-icon="inventory_2">inventory_2</span>
+                            Line Items
+                        </h3>
+</div>
+<div class="space-y-4">
+<!-- Material A (Problematic) -->
+<div class="p-4 rounded-lg border-2 border-error/50 bg-error/5 relative transition-colors focus-within:border-error">
+<div class="absolute -top-2.5 right-4 bg-surface-container-lowest px-2 text-xs font-label-md text-error flex items-center gap-1 border border-error/50 rounded-full">
+<span class="material-symbols-outlined text-[14px]" data-icon="warning">warning</span>
+                                Needs Revision
+                            </div>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+<div class="md:col-span-5">
+<label class="block font-label-md text-label-md text-on-surface-variant mb-1">Item</label>
+<input class="w-full bg-surface-container-low border-none rounded text-on-surface-variant font-body-md h-12 px-3 focus:ring-0 cursor-not-allowed" disabled="" type="text" value="Premium Support Tier A"/>
+</div>
+<div class="md:col-span-2">
+<label class="block font-label-md text-label-md text-on-surface-variant mb-1">Qty</label>
+<input class="w-full bg-surface-container-lowest border border-outline-variant rounded text-on-background font-body-md h-12 px-3 focus:ring-1 focus:ring-primary focus:border-primary transition-shadow" type="number" value="50"/>
+</div>
+<div class="md:col-span-3">
+<label class="block font-label-md text-label-md text-error mb-1">Unit Price ($)</label>
+<input class="w-full bg-surface-container-lowest border-2 border-error/50 rounded text-error font-body-md h-12 px-3 focus:ring-1 focus:ring-error focus:border-error transition-shadow" type="text" value="1,200.00"/>
+</div>
+<div class="md:col-span-2 text-right hidden md:block">
+<label class="block font-label-md text-label-md text-on-surface-variant mb-1">Subtotal</label>
+<p class="font-body-md text-body-md py-3 text-on-background">$60,000</p>
+</div>
+</div>
+</div>
+<!-- Material B (OK) -->
+<div class="p-4 rounded-lg border border-outline-variant bg-surface-container-lowest transition-colors focus-within:border-primary">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+<div class="md:col-span-5">
+<label class="block font-label-md text-label-md text-on-surface-variant mb-1">Item</label>
+<input class="w-full bg-surface-container-low border-none rounded text-on-surface-variant font-body-md h-12 px-3 focus:ring-0 cursor-not-allowed" disabled="" type="text" value="Implementation Services"/>
+</div>
+<div class="md:col-span-2">
+<label class="block font-label-md text-label-md text-on-surface-variant mb-1">Qty</label>
+<input class="w-full bg-surface-container-lowest border border-outline-variant rounded text-on-background font-body-md h-12 px-3 focus:ring-1 focus:ring-primary focus:border-primary transition-shadow" type="number" value="1"/>
+</div>
+<div class="md:col-span-3">
+<label class="block font-label-md text-label-md text-on-surface-variant mb-1">Unit Price ($)</label>
+<input class="w-full bg-surface-container-lowest border border-outline-variant rounded text-on-background font-body-md h-12 px-3 focus:ring-1 focus:ring-primary focus:border-primary transition-shadow" type="text" value="64,500.00"/>
+</div>
+<div class="md:col-span-2 text-right hidden md:block">
+<label class="block font-label-md text-label-md text-on-surface-variant mb-1">Subtotal</label>
+<p class="font-body-md text-body-md py-3 text-on-background">$64,500</p>
+</div>
+</div>
+</div>
+</div>
+<button class="mt-4 flex items-center gap-2 text-secondary hover:text-primary font-label-md text-label-md transition-colors">
+<span class="material-symbols-outlined text-[18px]" data-icon="add">add</span>
+                        Add Line Item
+                    </button>
+</section>
+<!-- Internal Notes -->
+<section class="bg-surface-container-lowest rounded-xl border border-outline-variant p-md shadow-[0_4px_12px_rgba(0,0,0,0.03)]">
+<h3 class="font-headline-sm text-headline-sm text-primary mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary" data-icon="edit_note">edit_note</span>
+                        Revision Notes (Internal)
+                    </h3>
+<textarea class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg p-3 font-body-md text-on-background focus:ring-1 focus:ring-primary focus:border-primary min-h-[100px] resize-y" placeholder="Explain pricing adjustments for Accounts team..."></textarea>
+</section>
+</div>
+<!-- Right Column: Version History (Span 1) -->
+<div class="md:col-span-1">
+<section class="bg-surface-container-lowest rounded-xl border border-outline-variant p-md shadow-[0_4px_12px_rgba(0,0,0,0.03)] sticky top-[84px]">
+<h3 class="font-headline-sm text-headline-sm text-primary mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary" data-icon="history">history</span>
+                        Version History
+                    </h3>
+<div class="relative border-l-2 border-surface-variant ml-3 space-y-8">
+<!-- V2 (Current) -->
+<div class="relative pl-6">
+<div class="absolute -left-[9px] top-1 w-4 h-4 rounded-full bg-primary ring-4 ring-surface-container-lowest"></div>
+<div class="mb-1 flex items-center justify-between">
+<h4 class="font-label-md text-label-md text-primary font-bold">Version 2 (Current)</h4>
+<span class="text-[10px] uppercase font-label-md text-error bg-error/10 px-2 py-0.5 rounded-sm">Rejected</span>
+</div>
+<p class="font-body-md text-sm text-on-surface-variant mb-1">Total: $124,500.00</p>
+<p class="font-body-md text-xs text-outline">Oct 24, 2023 - 14:30 by Accounts</p>
+<div class="mt-2 text-xs font-body-md text-error bg-error/5 p-2 rounded border border-error/10">
+                                Margin on Item A too low.
+                            </div>
+</div>
+<!-- V1 -->
+<div class="relative pl-6">
+<div class="absolute -left-[9px] top-1 w-4 h-4 rounded-full bg-surface-variant border-2 border-surface-container-lowest"></div>
+<div class="mb-1 flex items-center justify-between">
+<h4 class="font-label-md text-label-md text-on-surface-variant">Version 1</h4>
+<span class="text-[10px] uppercase font-label-md text-error bg-error/10 px-2 py-0.5 rounded-sm">Rejected</span>
+</div>
+<p class="font-body-md text-sm text-on-surface-variant mb-1">Total: $130,000.00</p>
+<p class="font-body-md text-xs text-outline">Oct 22, 2023 - 09:15 by Accounts</p>
+</div>
+<!-- Initial -->
+<div class="relative pl-6">
+<div class="absolute -left-[9px] top-1 w-4 h-4 rounded-full bg-surface-variant border-2 border-surface-container-lowest"></div>
+<div class="mb-1 flex items-center justify-between">
+<h4 class="font-label-md text-label-md text-on-surface-variant">Initial Draft</h4>
+</div>
+<p class="font-body-md text-xs text-outline">Oct 20, 2023 - 11:00 by You</p>
+</div>
+</div>
+</section>
+</div>
+</div>
+</main>
+<!-- Sticky Bottom Actions -->
+<div class="fixed bottom-[var(--footer-height,80px)] md:bottom-0 left-0 w-full bg-surface/90 backdrop-blur-md border-t border-outline-variant p-4 z-40 shadow-[0_-4px_12px_rgba(0,0,0,0.03)] flex flex-col md:flex-row-reverse justify-center md:justify-start gap-4 md:px-margin-desktop items-center">
+<button class="w-full md:w-auto h-[48px] bg-primary text-on-primary rounded-lg px-8 font-label-md text-label-md hover:bg-primary/90 transition-colors shadow-sm flex items-center justify-center gap-2">
+            Submit Revised Quote
+            <span class="material-symbols-outlined text-[18px]" data-icon="send">send</span>
+</button>
+<button class="w-full md:w-auto h-[48px] bg-transparent text-secondary rounded-lg px-8 font-label-md text-label-md hover:bg-surface-variant transition-colors md:hidden">
+            Cancel Revision
+        </button>
+</div>
+</body></html>
