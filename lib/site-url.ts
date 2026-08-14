@@ -1,5 +1,8 @@
 import { headers } from "next/headers";
-import { isLocalHostName } from "@/lib/site-url-shared";
+import {
+  isLocalHostName,
+  resolveCustomerSiteUrl,
+} from "@/lib/site-url-shared";
 
 function normalizeBaseUrl(url: string) {
   return url.replace(/\/$/, "");
@@ -28,6 +31,14 @@ export function resolveSiteUrl(input: {
 export async function getSiteUrl() {
   const h = await headers();
   return resolveSiteUrl({
+    host: h.get("x-forwarded-host") ?? h.get("host"),
+    forwardedProto: h.get("x-forwarded-proto"),
+  });
+}
+
+export async function getCustomerSiteUrl() {
+  const h = await headers();
+  return resolveCustomerSiteUrl({
     host: h.get("x-forwarded-host") ?? h.get("host"),
     forwardedProto: h.get("x-forwarded-proto"),
   });

@@ -124,11 +124,11 @@ export function WhatsAppShareSheet({
 
           {localDevLink ? (
             <p className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-sm text-on-surface">
-              This link uses <strong>localhost</strong>. It only works on your
-              dev machine, and WhatsApp may try <strong>https://</strong> which
-              fails locally. For phone testing, set{" "}
-              <code className="text-xs">NEXT_PUBLIC_APP_URL</code> to your
-              deployed site or an HTTPS tunnel (ngrok).
+              This link uses <strong>localhost</strong> and will not work for
+              customers on WhatsApp. Set{" "}
+              <code className="text-xs">NEXT_PUBLIC_CUSTOMER_APP_URL</code> to
+              your live site (e.g. https://nuhome-crm.vercel.app) and restart
+              the dev server.
             </p>
           ) : null}
 

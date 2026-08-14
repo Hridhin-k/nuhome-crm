@@ -8,6 +8,10 @@ function isLocalHost(host: string) {
   );
 }
 
+function normalizeBaseUrl(url: string) {
+  return url.replace(/\/$/, "");
+}
+
 export function isLocalSiteUrl(url: string) {
   try {
     const { hostname } = new URL(url);
@@ -19,4 +23,30 @@ export function isLocalSiteUrl(url: string) {
 
 export function isLocalHostName(host: string) {
   return isLocalHost(host);
+}
+
+/** URL embedded in customer WhatsApp links — never localhost when a public URL is configured. */
+export function resolveCustomerSiteUrl(input: {
+  host?: string | null;
+  forwardedProto?: string | null;
+}) {
+  const customerConfigured = process.env.NEXT_PUBLIC_CUSTOMER_APP_URL?.trim();
+  if (customerConfigured) {
+    return normalizeBaseUrl(customerConfigured);
+  }
+
+  const configured = process.env.NEXT_PUBLIC_APP_URL?.trim();
+  if (configured && !isLocalSiteUrl(configured)) {
+    return normalizeBaseUrl(configured);
+  }
+
+  const host = input.host;
+  if (!host) {
+    return "http://localhost:3000";
+  }
+
+  const proto = isLocalHost(host)
+    ? "http"
+    : (input.forwardedProto ?? "https");
+  return `${proto}://${host}`;
 }

@@ -17,7 +17,7 @@ import { WhatsAppShareSheet } from "@/components/quotes/whatsapp-share-sheet";
 import { listQuoteActivity } from "@/lib/api/audit";
 import { getQuote } from "@/lib/api/quotes";
 import { publicQuotePath, publicQuoteUrl } from "@/lib/quotes/public-url";
-import { getSiteUrl } from "@/lib/site-url";
+import { getCustomerSiteUrl } from "@/lib/site-url";
 import { requireUser } from "@/lib/auth/guards";
 import { roleHasPermission } from "@/lib/auth/permissions";
 import { formatInrExact } from "@/lib/format/money";
@@ -41,7 +41,7 @@ export default async function QuoteDetailPage({
   const [detail, activity, siteUrl] = await Promise.all([
     getQuote(id),
     listQuoteActivity(id).catch(() => []),
-    getSiteUrl(),
+    getCustomerSiteUrl(),
   ]);
   if (!detail) {
     notFound();
