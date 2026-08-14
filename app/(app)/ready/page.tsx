@@ -1,7 +1,7 @@
-import { AppLink } from "@/components/app/app-link";
 import { EmptyState } from "@/components/app/empty-state";
+import { JobRow } from "@/components/app/job-row";
+import { PageFrame, wellClass } from "@/components/app/page-frame";
 import { PageHeader } from "@/components/app/page-header";
-import { StatusBadge } from "@/components/app/status-badge";
 import { listOrders } from "@/lib/api/orders";
 import { rel } from "@/lib/api/rel";
 import { requirePermission } from "@/lib/auth/guards";
@@ -14,9 +14,10 @@ export default async function ReadyPage() {
   ]);
 
   return (
-    <div>
+    <PageFrame>
       <PageHeader
         title="Ready for delivery"
+        hideTitleOnMobile
         description="Full payment verified. Complete handover with the customer."
       />
       {orders.length === 0 ? (
@@ -25,25 +26,19 @@ export default async function ReadyPage() {
           description="Unlocked orders appear here after full payment is verified."
         />
       ) : (
-        <ul className="flex flex-col gap-3">
+        <ul className={wellClass}>
           {orders.map((order) => (
-            <li key={order.id}>
-              <AppLink
-                href={`/orders/${order.id}`}
-                className="block rounded-xl border border-surface-variant bg-surface-container-lowest p-4 shadow-card transition-colors hover:bg-surface-container-low"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="font-medium">{rel(order.quotes)?.quote_number}</p>
-                    <p className="text-sm text-on-surface-variant">{rel(order.customers)?.name}</p>
-                  </div>
-                  <StatusBadge status={order.status as WorkflowStatus} />
-                </div>
-              </AppLink>
-            </li>
+            <JobRow
+              key={order.id}
+              href={`/orders/${order.id}`}
+              title={rel(order.quotes)?.quote_number ?? "Order"}
+              subtitle={rel(order.customers)?.name ?? undefined}
+              hint="Complete handover with the customer."
+              status={order.status as WorkflowStatus}
+            />
           ))}
         </ul>
       )}
-    </div>
+    </PageFrame>
   );
 }

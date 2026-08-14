@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Approval Detail - NQ-1042</title>
+<!-- Fonts & Icons -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-highest": "#e2e2e2",
+                    "tertiary-fixed": "#e2e2e2",
+                    "inverse-primary": "#c6c6c6",
+                    "on-tertiary-container": "#848484",
+                    "on-tertiary-fixed": "#1b1b1b",
+                    "on-primary-fixed": "#1b1b1b",
+                    "on-primary": "#ffffff",
+                    "on-secondary": "#ffffff",
+                    "on-surface": "#1b1b1b",
+                    "on-primary-container": "#848484",
+                    "on-error-container": "#93000a",
+                    "secondary-container": "#d0e1fb",
+                    "error-container": "#ffdad6",
+                    "secondary": "#505f76",
+                    "primary": "#000000",
+                    "on-surface-variant": "#4c4546",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-high": "#e8e8e8",
+                    "tertiary-container": "#1b1b1b",
+                    "on-secondary-container": "#54647a",
+                    "on-tertiary-fixed-variant": "#474747",
+                    "on-error": "#ffffff",
+                    "primary-fixed": "#e2e2e2",
+                    "error": "#ba1a1a",
+                    "inverse-on-surface": "#f1f1f1",
+                    "outline": "#7e7576",
+                    "on-secondary-fixed-variant": "#38485d",
+                    "background": "#f8f9fa",
+                    "surface-dim": "#dadada",
+                    "surface-variant": "#e2e2e2",
+                    "on-secondary-fixed": "#0b1c30",
+                    "secondary-fixed-dim": "#b7c8e1",
+                    "surface": "#f9f9f9",
+                    "surface-bright": "#f9f9f9",
+                    "tertiary": "#000000",
+                    "secondary-fixed": "#d3e4fe",
+                    "on-tertiary": "#ffffff",
+                    "tertiary-fixed-dim": "#c6c6c6",
+                    "surface-container-low": "#f3f3f3",
+                    "primary-container": "#1b1b1b",
+                    "on-primary-fixed-variant": "#474747",
+                    "inverse-surface": "#303030",
+                    "surface-container": "#eeeeee",
+                    "primary-fixed-dim": "#c6c6c6",
+                    "outline-variant": "#e2e8f0",
+                    "surface-tint": "#5e5e5e",
+                    "on-background": "#1b1b1b"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "unit": "4px",
+                    "container-padding": "16px",
+                    "stack-gap": "12px",
+                    "section-margin": "24px",
+                    "inline-gap": "8px",
+                    "button-h": "44px"
+            },
+            "fontFamily": {
+                    "data-tabular": ["Inter"],
+                    "label-caps": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "body-md": ["Inter"],
+                    "subheading": ["Inter"],
+                    "headline-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "data-tabular": ["13px", {"lineHeight": "18px", "fontWeight": "500"}],
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-md": ["22px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "subheading": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                    "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        .pb-safe { padding-bottom: env(safe-area-inset-bottom, 16px); }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md h-screen flex flex-col overflow-hidden">
+<!-- TopAppBar (from JSON) -->
+<header class="bg-primary flex justify-between items-center w-full px-container-padding h-11 shrink-0 z-10 transition-opacity duration-200">
+<div class="flex items-center gap-inline-gap">
+<span class="material-symbols-outlined text-on-primary">menu</span>
+<span class="font-headline-md text-headline-md font-bold text-on-primary">Nuhome Sales</span>
+</div>
+<img class="w-8 h-8 rounded-full object-cover border border-outline-variant/30" data-alt="A professional headshot of a confident sales representative, neutral light-gray corporate background, bright even lighting, conveying trust and efficiency." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDGHDNF06_DYdyyuPpv31xd7pZcuvbbYTMHYLyWBCqyT5wwdA1PIH4XOgt4B77Vp-p010T0DIynSKrAFzinpPv0P5w3eKlzrIom63WsQYs722OktUnYE4NzVq9_M1sJAVicEwACggeN2PDlY80ADVLkNbDLZu-jH1b4eBxjFJT4xyntd8JeQdWW30QSO3dp4E3iHIiLJi5w4qUy0Nkv4wdGYiFjn-_7EGASbd76NI3NA-ZeqpodWjZWNA"/>
+</header>
+<!-- Main Scrollable Content -->
+<main class="flex-1 overflow-y-auto w-full max-w-md mx-auto bg-background pb-32">
+<div class="px-container-padding py-stack-gap flex flex-col gap-stack-gap">
+<!-- Header: Quote & Pill -->
+<div class="flex justify-between items-start pt-2">
+<div>
+<h1 class="font-headline-lg text-headline-lg text-primary">NQ-1042</h1>
+<p class="font-body-md text-body-md text-secondary mt-1">Ananya Nair v2</p>
+</div>
+<div class="bg-surface-variant text-on-surface-variant px-2 py-1 rounded-full flex items-center justify-center border border-outline-variant">
+<span class="font-label-caps text-label-caps uppercase">Pending</span>
+</div>
+</div>
+<!-- Action Required Card -->
+<div class="bg-surface-container-lowest border border-outline-variant border-l-4 border-l-primary rounded-r-lg p-3 flex items-center gap-3 mt-2 shadow-sm">
+<span class="material-symbols-outlined text-primary">schedule</span>
+<span class="font-subheading text-subheading text-primary">Waiting for Accounts to review</span>
+</div>
+<!-- Segmented Control -->
+<div class="bg-surface-container rounded-lg p-1 flex mt-2">
+<button class="flex-1 bg-surface-container-lowest text-primary font-subheading text-subheading py-2 rounded shadow-sm text-center">Items</button>
+<button class="flex-1 text-secondary font-subheading text-subheading py-2 rounded text-center hover:bg-surface-container-high transition-colors">Details</button>
+</div>
+<!-- Line Items Table Card -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg overflow-hidden mt-2">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse min-w-[500px]">
+<thead class="bg-surface-container-low border-b border-outline-variant">
+<tr>
+<th class="p-3 font-label-caps text-label-caps text-secondary uppercase">Item</th>
+<th class="p-3 font-label-caps text-label-caps text-secondary uppercase text-right">Qty</th>
+<th class="p-3 font-label-caps text-label-caps text-secondary uppercase text-right">Sell</th>
+<th class="p-3 font-label-caps text-label-caps text-secondary uppercase text-right">Cost</th>
+<th class="p-3 font-label-caps text-label-caps text-secondary uppercase text-right">Disc</th>
+<th class="p-3 font-label-caps text-label-caps text-secondary uppercase text-right">Line Total</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="p-3 font-data-tabular text-data-tabular text-primary truncate max-w-[150px]">Premium Vita Granite</td>
+<td class="p-3 font-data-tabular text-data-tabular text-primary text-right">120</td>
+<td class="p-3 font-data-tabular text-data-tabular text-primary text-right">$45.00</td>
+<td class="p-3 font-data-tabular text-data-tabular text-secondary text-right">$32.00</td>
+<td class="p-3 font-data-tabular text-data-tabular text-primary text-right">10%</td>
+<td class="p-3 font-data-tabular text-data-tabular text-primary font-bold text-right">$4,860.00</td>
+</tr>
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="p-3 font-data-tabular text-data-tabular text-primary truncate max-w-[150px]">White Grout 5kg</td>
+<td class="p-3 font-data-tabular text-data-tabular text-primary text-right">15</td>
+<td class="p-3 font-data-tabular text-data-tabular text-primary text-right">$18.00</td>
+<td class="p-3 font-data-tabular text-data-tabular text-secondary text-right">$12.00</td>
+<td class="p-3 font-data-tabular text-data-tabular text-primary text-right">-</td>
+<td class="p-3 font-data-tabular text-data-tabular text-primary font-bold text-right">$270.00</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Totals Summary Card -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-4 flex flex-col gap-2 mt-2">
+<div class="flex justify-between font-data-tabular text-data-tabular text-secondary">
+<span>Subtotal</span>
+<span>$5,670.00</span>
+</div>
+<div class="flex justify-between font-data-tabular text-data-tabular text-secondary">
+<span>Discount</span>
+<span>$540.00</span>
+</div>
+<div class="flex justify-between font-data-tabular text-data-tabular text-secondary">
+<span>Cost</span>
+<span>$4,020.00</span>
+</div>
+<div class="h-px bg-outline-variant my-2 w-full"></div>
+<div class="flex justify-between items-center">
+<span class="font-subheading text-subheading text-primary uppercase">Total</span>
+<span class="font-headline-md text-headline-md text-primary">$5,130.00</span>
+</div>
+<div class="flex justify-between items-center mt-1">
+<span class="font-data-tabular text-data-tabular text-secondary">Margin</span>
+<span class="font-data-tabular text-data-tabular font-bold text-primary">28%</span>
+</div>
+</div>
+<!-- Notes Section -->
+<div class="bg-surface-container-low border border-outline-variant rounded-lg p-4 mt-2">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-secondary text-[18px]">chat</span>
+<h3 class="font-label-caps text-label-caps text-secondary uppercase">Notes from Sales</h3>
+</div>
+<p class="font-body-md text-body-md text-primary">Customer wants delivery before Onam.</p>
+</div>
+</div>
+</main>
+<!-- Pinned Footer Actions -->
+<footer class="fixed bottom-0 left-0 w-full bg-surface-container-lowest border-t border-outline-variant px-container-padding py-3 pb-safe z-50 flex gap-inline-gap items-center justify-center shadow-[0_-4px_12px_rgba(0,0,0,0.05)]">
+<div class="w-full max-w-md flex gap-inline-gap">
+<button class="flex-1 h-button-h flex items-center justify-center border border-error text-error rounded font-subheading text-subheading bg-surface-lowest active:bg-error-container/20 transition-colors">
+                Return
+            </button>
+<button class="flex-[2] h-button-h flex items-center justify-center bg-primary text-on-primary rounded font-subheading text-subheading shadow-sm active:opacity-80 transition-opacity">
+                Approve
+            </button>
+</div>
+</footer>
+</body></html>

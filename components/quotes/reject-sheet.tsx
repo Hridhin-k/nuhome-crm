@@ -11,7 +11,15 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 
-export function RejectQuoteSheet({ quoteId }: { quoteId: string }) {
+export function RejectQuoteSheet({
+  quoteId,
+  triggerLabel = "Return",
+  triggerClassName,
+}: {
+  quoteId: string;
+  triggerLabel?: string;
+  triggerClassName?: string;
+}) {
   const [state, action, pending] = useActionState<ActionState, FormData>(
     rejectQuoteAction,
     {},
@@ -22,8 +30,13 @@ export function RejectQuoteSheet({ quoteId }: { quoteId: string }) {
       title="Send back to Sales"
       description="A reason is required. The customer will not see this quote."
       trigger={
-        <span className="inline-flex h-12 min-h-12 w-full items-center justify-center rounded-lg border border-outline-variant bg-transparent text-[15px] font-medium text-on-surface">
-          Reject & send back
+        <span
+          className={
+            triggerClassName ??
+            "inline-flex h-11 min-h-11 w-full items-center justify-center rounded-lg border border-error bg-surface-container-lowest px-4 text-subheading text-error"
+          }
+        >
+          {triggerLabel}
         </span>
       }
     >

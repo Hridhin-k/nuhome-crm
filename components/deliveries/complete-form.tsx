@@ -25,7 +25,7 @@ export function CompleteDeliveryForm({ orderId }: { orderId: string }) {
       title="Complete delivery"
       description="Confirm handover with the customer."
       trigger={
-        <span className="inline-flex h-12 min-h-12 w-full items-center justify-center rounded-lg bg-primary px-6 text-[15px] font-medium text-on-primary">
+        <span className="inline-flex h-11 min-h-11 w-full items-center justify-center rounded-lg bg-primary px-4 text-subheading text-on-primary">
           Complete delivery
         </span>
       }

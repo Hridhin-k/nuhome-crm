@@ -50,6 +50,7 @@ const ROLE_PERMISSIONS: Record<AppRole, Permission[]> = {
     "customers.read",
     "orders.read",
     "fulfillment.update",
+    "payments.record",
     "deliveries.complete",
   ],
   admin: [...PERMISSIONS],

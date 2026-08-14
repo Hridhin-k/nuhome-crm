@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Nuhome Sales - Accounts Dashboard</title>
+<!-- Fonts & Icons -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-container-highest": "#e2e2e2",
+                      "tertiary-fixed": "#e2e2e2",
+                      "inverse-primary": "#c6c6c6",
+                      "on-tertiary-container": "#848484",
+                      "on-tertiary-fixed": "#1b1b1b",
+                      "on-primary-fixed": "#1b1b1b",
+                      "on-primary": "#ffffff",
+                      "on-secondary": "#ffffff",
+                      "on-surface": "#1b1b1b",
+                      "on-primary-container": "#848484",
+                      "on-error-container": "#93000a",
+                      "secondary-container": "#d0e1fb",
+                      "error-container": "#ffdad6",
+                      "secondary": "#505f76",
+                      "primary": "#000000",
+                      "on-surface-variant": "#4c4546",
+                      "surface-container-lowest": "#ffffff",
+                      "surface-container-high": "#e8e8e8",
+                      "tertiary-container": "#1b1b1b",
+                      "on-secondary-container": "#54647a",
+                      "on-tertiary-fixed-variant": "#474747",
+                      "on-error": "#ffffff",
+                      "primary-fixed": "#e2e2e2",
+                      "error": "#ba1a1a",
+                      "inverse-on-surface": "#f1f1f1",
+                      "outline": "#7e7576",
+                      "on-secondary-fixed-variant": "#38485d",
+                      "background": "#f9f9f9",
+                      "surface-dim": "#dadada",
+                      "surface-variant": "#e2e2e2",
+                      "on-secondary-fixed": "#0b1c30",
+                      "secondary-fixed-dim": "#b7c8e1",
+                      "surface": "#f9f9f9",
+                      "surface-bright": "#f9f9f9",
+                      "tertiary": "#000000",
+                      "secondary-fixed": "#d3e4fe",
+                      "on-tertiary": "#ffffff",
+                      "tertiary-fixed-dim": "#c6c6c6",
+                      "surface-container-low": "#f3f3f3",
+                      "primary-container": "#1b1b1b",
+                      "on-primary-fixed-variant": "#474747",
+                      "inverse-surface": "#303030",
+                      "surface-container": "#eeeeee",
+                      "primary-fixed-dim": "#c6c6c6",
+                      "outline-variant": "#cfc4c5",
+                      "surface-tint": "#5e5e5e",
+                      "on-background": "#1b1b1b"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "unit": "4px",
+                      "container-padding": "16px",
+                      "stack-gap": "12px",
+                      "section-margin": "24px",
+                      "inline-gap": "8px"
+              },
+              "fontFamily": {
+                      "data-tabular": ["Inter"],
+                      "label-caps": ["Inter"],
+                      "body-sm": ["Inter"],
+                      "headline-md": ["Inter"],
+                      "body-md": ["Inter"],
+                      "subheading": ["Inter"],
+                      "headline-lg": ["Inter"]
+              },
+              "fontSize": {
+                      "data-tabular": ["13px", {"lineHeight": "18px", "fontWeight": "500"}],
+                      "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                      "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "headline-md": ["22px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "subheading": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                      "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        body { -webkit-tap-highlight-color: transparent; }
+        .pb-safe { padding-bottom: env(safe-area-inset-bottom, 16px); }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen font-body-md antialiased pb-[80px]">
+<!-- TopAppBar Shared Component -->
+<header class="bg-primary dark:bg-primary docked full-width top-0 flex justify-between items-center w-full px-container-padding h-11 fixed z-50 shadow-sm">
+<button aria-label="Menu" class="material-symbols-outlined text-on-primary/70 hover:bg-primary-container/20 transition-opacity duration-200 active:opacity-80 p-2 -ml-2 rounded-full focus:outline-none">
+            menu
+        </button>
+<h1 class="font-headline-md text-headline-md font-bold text-on-primary absolute left-1/2 -translate-x-1/2">
+            Nuhome Sales
+        </h1>
+<button aria-label="Profile" class="w-7 h-7 rounded-full bg-surface-container-high overflow-hidden border border-outline-variant hover:bg-primary-container/20 transition-opacity duration-200 active:opacity-80 focus:outline-none">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of an Indian woman named Lakshmi, accounts manager, wearing modern corporate attire in a bright office setting. High contrast, sharp focus, professional lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDfVPHlIMMQBaU_Iv5ushFCU9Qd9dgMuwZNSzgF-rc6pZiElSAWwLykEYxFQkwkv2rhfyhylgd03Jrio5qzuJ2FstDKse30ggP2oIO1XodlRgBiB82gKF48SjxdYI9DREk_Cat_lt0VbCQG1nnLLJHyBZk3PZnGkhchz0pM2Cylo4eVAIMZYzq-tJAVhzCnNcKMji8lpKOBIozWSz_Cl9J1205DG_HZS6ZjNQu3haepUQI463d6w-qo8g"/>
+</button>
+</header>
+<!-- Main Content Area -->
+<main class="pt-[60px] px-container-padding max-w-3xl mx-auto w-full">
+<!-- Header Section -->
+<section class="mb-section-margin mt-4">
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Good morning, Lakshmi</h2>
+<div class="flex items-center gap-2 mt-2">
+<div class="bg-surface-container-high p-1 rounded-md text-on-surface-variant flex items-center justify-center">
+<span class="material-symbols-outlined text-[16px]">account_balance</span>
+</div>
+<p class="font-subheading text-subheading text-on-surface-variant">Accounts · 4 waiting</p>
+</div>
+</section>
+<!-- Grouped Inbox (Bento Style) -->
+<section class="grid grid-cols-1 gap-stack-gap">
+<!-- Quotes Card -->
+<div class="bg-white rounded-[10px] border border-outline-variant p-container-padding flex flex-col gap-inline-gap shadow-sm">
+<div class="flex justify-between items-start gap-4">
+<div class="flex gap-3">
+<div class="w-10 h-10 shrink-0 rounded-lg bg-secondary-container flex items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined">request_quote</span>
+</div>
+<div class="flex flex-col">
+<h3 class="font-subheading text-subheading text-on-surface">Quotes awaiting approval</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Review selling price, discount, and margin.</p>
+</div>
+</div>
+<span class="bg-error-container text-on-error-container font-data-tabular text-data-tabular px-2.5 py-0.5 rounded-full min-w-[24px] text-center">2</span>
+</div>
+<div class="flex justify-end mt-2">
+<button class="bg-white border border-primary font-subheading text-subheading px-4 py-2 rounded-DEFAULT text-primary hover:bg-surface-container-low transition-colors w-full md:w-auto">Review Quotes</button>
+</div>
+</div>
+<!-- Payments Card -->
+<div class="bg-white rounded-[10px] border border-outline-variant p-container-padding flex flex-col gap-inline-gap shadow-sm">
+<div class="flex justify-between items-start gap-4">
+<div class="flex gap-3">
+<div class="w-10 h-10 shrink-0 rounded-lg bg-secondary-container flex items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined">payments</span>
+</div>
+<div class="flex flex-col">
+<h3 class="font-subheading text-subheading text-on-surface">Payments awaiting verification</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Confirm advance, full, or nil terms.</p>
+</div>
+</div>
+<span class="bg-error-container text-on-error-container font-data-tabular text-data-tabular px-2.5 py-0.5 rounded-full min-w-[24px] text-center">2</span>
+</div>
+<div class="flex justify-end mt-2">
+<button class="bg-white border border-primary font-subheading text-subheading px-4 py-2 rounded-DEFAULT text-primary hover:bg-surface-container-low transition-colors w-full md:w-auto">Verify Payments</button>
+</div>
+</div>
+<!-- Orders Card -->
+<div class="bg-white rounded-[10px] border border-outline-variant p-container-padding flex flex-col gap-inline-gap shadow-sm">
+<div class="flex justify-between items-start gap-4">
+<div class="flex gap-3">
+<div class="w-10 h-10 shrink-0 rounded-lg bg-secondary-container flex items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined">inventory_2</span>
+</div>
+<div class="flex flex-col">
+<h3 class="font-subheading text-subheading text-on-surface">Orders requiring attention</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Verification or on-hold balances.</p>
+</div>
+</div>
+<span class="bg-error-container text-on-error-container font-data-tabular text-data-tabular px-2.5 py-0.5 rounded-full min-w-[24px] text-center">1</span>
+</div>
+<div class="flex justify-end mt-2">
+<button class="bg-white border border-primary font-subheading text-subheading px-4 py-2 rounded-DEFAULT text-primary hover:bg-surface-container-low transition-colors w-full md:w-auto">View Orders</button>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar Shared Component -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center bg-surface dark:bg-surface px-unit pb-safe h-[64px] border-t border-outline-variant shadow-[0_-4px_12px_rgba(0,0,0,0.03)] md:hidden">
+<button class="flex flex-col items-center justify-center text-primary dark:text-primary font-bold hover:bg-surface-container-low scale-95 active:scale-90 transition-transform duration-150 w-full h-full rounded-lg gap-1">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-label-caps text-label-caps">Home</span>
+</button>
+<button class="flex flex-col items-center justify-center text-secondary dark:text-secondary hover:bg-surface-container-low scale-95 active:scale-90 transition-transform duration-150 w-full h-full rounded-lg gap-1">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-caps text-label-caps">Customers</span>
+</button>
+<button class="flex flex-col items-center justify-center text-secondary dark:text-secondary hover:bg-surface-container-low scale-95 active:scale-90 transition-transform duration-150 w-full h-full rounded-lg gap-1">
+<span class="material-symbols-outlined">description</span>
+<span class="font-label-caps text-label-caps">Quotes</span>
+</button>
+<button class="flex flex-col items-center justify-center text-secondary dark:text-secondary hover:bg-surface-container-low scale-95 active:scale-90 transition-transform duration-150 w-full h-full rounded-lg gap-1">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span class="font-label-caps text-label-caps">Orders</span>
+</button>
+<button class="flex flex-col items-center justify-center text-secondary dark:text-secondary hover:bg-surface-container-low scale-95 active:scale-90 transition-transform duration-150 w-full h-full rounded-lg gap-1">
+<span class="material-symbols-outlined">more_horiz</span>
+<span class="font-label-caps text-label-caps">More</span>
+</button>
+</nav>
+</body></html>

@@ -13,11 +13,13 @@ export function LoginForm({ next }: { next?: string }) {
   );
 
   return (
-    <form action={formAction} className="flex flex-col gap-5">
+    <form action={formAction} className="flex flex-col gap-3">
       {next ? <input type="hidden" name="next" value={next} /> : null}
 
       <div className="flex flex-col gap-2">
-        <Label htmlFor="email">Email</Label>
+        <Label htmlFor="email" className="text-label-caps text-on-surface-variant">
+          Email
+        </Label>
         <Input
           id="email"
           name="email"
@@ -29,7 +31,9 @@ export function LoginForm({ next }: { next?: string }) {
       </div>
 
       <div className="flex flex-col gap-2">
-        <Label htmlFor="password">Password</Label>
+        <Label htmlFor="password" className="text-label-caps text-on-surface-variant">
+          Password
+        </Label>
         <Input
           id="password"
           name="password"

@@ -17,29 +17,44 @@ export function AccountSheet({
   email?: string;
   role: string;
 }) {
+  const initials = name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join("");
+
   return (
     <FormSheet
       title={name}
       description={`${role}${email ? ` · ${email}` : ""}`}
       trigger={
-        <span className="block w-full rounded-xl border border-surface-variant bg-surface-container-lowest p-5 text-left">
-          <p className="text-label text-on-surface-variant">Account</p>
-          <p className="mt-2 text-[18px] font-semibold tracking-[-0.19px] text-on-surface">
-            {name}
-          </p>
-          <p className="mt-1 text-[14px] text-on-surface-variant">{email}</p>
-          <p className="mt-1 text-[14px] text-secondary">{role}</p>
+        <span className="flex w-full items-center gap-3 rounded-lg border border-outline-variant bg-card p-4 text-left shadow-card">
+          <span className="inline-flex size-12 shrink-0 items-center justify-center rounded-full bg-surface-container-highest text-headline-md text-primary">
+            {initials || "N"}
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block truncate text-subheading text-on-surface">
+              {name}
+            </span>
+            <span className="mt-0.5 block truncate text-body-sm text-on-surface-variant">
+              {email}
+            </span>
+            <span className="mt-1 inline-flex rounded-full bg-surface-container-low px-2 py-0.5 text-label-caps text-secondary">
+              {role}
+            </span>
+          </span>
         </span>
       }
     >
       <form action={logoutAction} className="flex min-h-0 flex-1 flex-col">
         <FormSheetBody>
-          <p className="text-[15px] leading-relaxed text-on-surface-variant">
+          <p className="text-body-sm leading-relaxed text-on-surface-variant">
             Signed in as {role}. Sign out to switch users.
           </p>
         </FormSheetBody>
         <FormSheetFooter>
-          <Button type="submit" variant="outline" className="w-full" size="lg">
+          <Button type="submit" variant="bordered" className="w-full" size="lg">
             Sign out
           </Button>
         </FormSheetFooter>

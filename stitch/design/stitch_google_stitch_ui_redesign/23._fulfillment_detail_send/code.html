@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<title>Fulfillment Detail - NQ-1042</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration (From Design System) -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary-container": "#1b1b1b",
+                    "outline": "#7e7576",
+                    "tertiary-fixed-dim": "#c6c6c6",
+                    "inverse-on-surface": "#f1f1f1",
+                    "tertiary": "#000000",
+                    "surface-container-highest": "#e2e2e2",
+                    "primary-fixed": "#e2e2e2",
+                    "secondary-fixed-dim": "#b7c8e1",
+                    "surface-tint": "#5e5e5e",
+                    "on-primary-fixed": "#1b1b1b",
+                    "surface-dim": "#dadada",
+                    "on-secondary-container": "#54647a",
+                    "on-tertiary-fixed-variant": "#474747",
+                    "outline-variant": "#cfc4c5",
+                    "primary": "#000000",
+                    "on-surface": "#1b1b1b",
+                    "on-tertiary-container": "#848484",
+                    "on-surface-variant": "#4c4546",
+                    "inverse-primary": "#c6c6c6",
+                    "surface": "#f9f9f9",
+                    "on-tertiary-fixed": "#1b1b1b",
+                    "on-secondary": "#ffffff",
+                    "on-secondary-fixed-variant": "#38485d",
+                    "error": "#ba1a1a",
+                    "on-primary-fixed-variant": "#474747",
+                    "on-error": "#ffffff",
+                    "background": "#f9f9f9",
+                    "surface-container-lowest": "#ffffff",
+                    "on-primary": "#ffffff",
+                    "secondary": "#505f76",
+                    "surface-bright": "#f9f9f9",
+                    "surface-container-high": "#e8e8e8",
+                    "on-secondary-fixed": "#0b1c30",
+                    "on-error-container": "#93000a",
+                    "tertiary-fixed": "#e2e2e2",
+                    "secondary-fixed": "#d3e4fe",
+                    "surface-variant": "#e2e2e2",
+                    "tertiary-container": "#1b1b1b",
+                    "on-background": "#1b1b1b",
+                    "on-primary-container": "#848484",
+                    "error-container": "#ffdad6",
+                    "on-tertiary": "#ffffff",
+                    "inverse-surface": "#303030",
+                    "primary-fixed-dim": "#c6c6c6",
+                    "secondary-container": "#d0e1fb",
+                    "surface-container": "#eeeeee",
+                    "surface-container-low": "#f3f3f3"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "unit": "4px",
+                    "container-padding": "16px",
+                    "section-margin": "24px",
+                    "stack-gap": "12px",
+                    "inline-gap": "8px"
+            },
+            "fontFamily": {
+                    "data-tabular": [
+                            "Inter"
+                    ],
+                    "body-md": [
+                            "Inter"
+                    ],
+                    "subheading": [
+                            "Inter"
+                    ],
+                    "label-caps": [
+                            "Inter"
+                    ],
+                    "body-sm": [
+                            "Inter"
+                    ],
+                    "headline-md": [
+                            "Inter"
+                    ],
+                    "headline-lg": [
+                            "Inter"
+                    ]
+            },
+            "fontSize": {
+                    "data-tabular": [
+                            "13px",
+                            {
+                                    "lineHeight": "18px",
+                                    "fontWeight": "500"
+                            }
+                    ],
+                    "body-md": [
+                            "16px",
+                            {
+                                    "lineHeight": "24px",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "subheading": [
+                            "14px",
+                            {
+                                    "lineHeight": "20px",
+                                    "letterSpacing": "0.01em",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "label-caps": [
+                            "12px",
+                            {
+                                    "lineHeight": "16px",
+                                    "letterSpacing": "0.05em",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "body-sm": [
+                            "14px",
+                            {
+                                    "lineHeight": "20px",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "headline-md": [
+                            "22px",
+                            {
+                                    "lineHeight": "28px",
+                                    "letterSpacing": "-0.01em",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "headline-lg": [
+                            "24px",
+                            {
+                                    "lineHeight": "32px",
+                                    "letterSpacing": "-0.02em",
+                                    "fontWeight": "700"
+                            }
+                    ]
+            }
+    },
+        },
+      }
+    </script>
+<style>
+        /* Custom utilities to enforce design system rules */
+        .safe-area-pt { padding-top: env(safe-area-inset-top, 20px); }
+        .safe-area-pb { padding-bottom: env(safe-area-inset-bottom, 20px); }
+        
+        /* Hide scrollbar for cleaner UI */
+        ::-webkit-scrollbar { display: none; }
+        * { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        body {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background h-screen flex flex-col overflow-hidden">
+<!-- Top App Bar (Modified for deeper page, keeping JSON base but adapting intent) -->
+<!-- Note: TopAppBar from JSON usually has a menu icon, but this is a detail/task page. Replacing leading icon with 'arrow_back' per UX rules -->
+<header class="bg-primary dark:bg-primary-container fixed top-0 w-full z-50 border-b border-outline-variant flat no shadows safe-area-pt">
+<div class="flex justify-between items-center h-14 px-container-padding w-full">
+<button class="text-on-primary dark:text-on-primary-container hover:opacity-80 transition-opacity active:scale-95 transition-transform">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="font-headline-lg text-headline-lg text-on-primary dark:text-on-primary-container tracking-tight">NQ-1042</h1>
+<button class="text-on-primary dark:text-on-primary-container hover:opacity-80 transition-opacity active:scale-95 transition-transform">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-1 overflow-y-auto mt-[calc(56px+env(safe-area-inset-top,20px))] pb-[calc(80px+env(safe-area-inset-bottom,20px))] px-container-padding py-section-margin flex flex-col gap-section-margin">
+<!-- Header Info -->
+<section class="flex flex-col gap-unit">
+<div class="flex items-center justify-between">
+<h2 class="font-headline-md text-headline-md text-on-surface">Fulfillment Detail</h2>
+<span class="bg-surface-container-high text-on-surface-variant font-label-caps text-label-caps px-2 py-1 rounded">Draft</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Procurement for Project Alpha</p>
+</section>
+<!-- Segmented Controls (Tabs) -->
+<div class="bg-surface-container w-full p-1 rounded-lg flex relative">
+<div class="absolute left-1 top-1 bottom-1 w-[calc(33.333%-4px)] bg-surface-container-lowest rounded shadow-sm z-0 transition-transform"></div>
+<button class="flex-1 py-2 font-subheading text-subheading text-on-surface relative z-10 text-center">Lines</button>
+<button class="flex-1 py-2 font-subheading text-subheading text-on-surface-variant relative z-10 text-center">Summary</button>
+<button class="flex-1 py-2 font-subheading text-subheading text-on-surface-variant relative z-10 text-center">Log</button>
+</div>
+<!-- 'Send to vendor' Card -->
+<section class="bg-surface-container-lowest rounded-lg border border-outline-variant p-container-padding flex flex-col gap-stack-gap shadow-[0px_4px_12px_rgba(0,0,0,0.02)]">
+<h3 class="font-subheading text-subheading text-on-surface mb-unit">Configure Order</h3>
+<!-- Vendor Picker -->
+<div class="flex flex-col gap-[4px]">
+<label class="font-label-caps text-label-caps text-on-surface-variant">Vendor</label>
+<div class="h-[44px] border border-outline-variant rounded flex items-center justify-between px-3 bg-surface">
+<span class="font-body-md text-body-md text-on-surface">Kerala Woods</span>
+<span class="material-symbols-outlined text-on-surface-variant">expand_more</span>
+</div>
+</div>
+<!-- Expected Date -->
+<div class="flex flex-col gap-[4px]">
+<label class="font-label-caps text-label-caps text-on-surface-variant">Expected Delivery</label>
+<div class="h-[44px] border border-outline-variant rounded flex items-center justify-between px-3 bg-surface">
+<span class="font-body-md text-body-md text-on-surface">20 Aug 2026</span>
+<span class="material-symbols-outlined text-on-surface-variant">calendar_today</span>
+</div>
+</div>
+</section>
+<!-- Lines Section -->
+<section class="flex flex-col gap-stack-gap">
+<h3 class="font-subheading text-subheading text-on-surface">Available Lines</h3>
+<!-- Line Item 1 -->
+<div class="bg-surface-container-lowest rounded-lg border border-outline-variant p-container-padding flex flex-col gap-inline-gap">
+<div class="flex justify-between items-start">
+<div class="flex flex-col">
+<span class="font-subheading text-subheading text-on-surface">Oslo 3-seater</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">1 available for order</span>
+</div>
+<img class="w-16 h-16 object-cover rounded border border-outline-variant" data-alt="A detailed product photography shot of a modern, minimalist Oslo 3-seater sofa. The sofa is upholstered in a pristine, light grey textured fabric. It sits against a stark white studio backdrop with high-key lighting that emphasizes clean lines and premium corporate aesthetics. The mood is professional and austere." src="https://lh3.googleusercontent.com/aida-public/AB6AXuADRuLHlvsP6PGO1gT_YrkDf4N5QCVYJKI0VwTVbNyTGi3z99nAwiSYa6uBjqFU2YXSBlx8VZrqDKIHEEaJ59zuERAAUjjh7IbOs4uRtp8Q-NJMijl9t8fdsR7Ri4T89rYlxRVrz53qV6JaaDSatYt1OtxnJpx3gadr4hmF-2c33A0zGFVCqEoLBQwXPGakEBhPXXelZjyx8jTba_XNR1uUqoE_HpzJadl1TIyL5Duni1aqO9lo3P8jNQ"/>
+</div>
+<div class="border-t border-outline-variant pt-inline-gap mt-unit flex items-center justify-between">
+<span class="font-label-caps text-label-caps text-on-surface-variant">Qty to Order</span>
+<div class="flex items-center gap-3 bg-surface-container rounded p-1">
+<button class="w-8 h-8 rounded bg-surface-container-lowest flex items-center justify-center text-on-surface active:scale-95 transition-transform"><span class="material-symbols-outlined text-sm">remove</span></button>
+<span class="font-data-tabular text-data-tabular text-on-surface w-4 text-center">1</span>
+<button class="w-8 h-8 rounded bg-surface-container-lowest flex items-center justify-center text-on-surface active:scale-95 transition-transform"><span class="material-symbols-outlined text-sm">add</span></button>
+</div>
+</div>
+</div>
+<!-- Line Item 2 -->
+<div class="bg-surface-container-lowest rounded-lg border border-outline-variant p-container-padding flex flex-col gap-inline-gap">
+<div class="flex justify-between items-start">
+<div class="flex flex-col">
+<span class="font-subheading text-subheading text-on-surface">Teak Wardrobe</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">1 available for order</span>
+</div>
+<img class="w-16 h-16 object-cover rounded border border-outline-variant" data-alt="A highly detailed product shot of a tall, modern wardrobe crafted from rich, warm teak wood. The piece is set against a clean, bright white background typical of a high-end corporate furniture catalog. Soft, diffuse lighting highlights the wood grain and minimal hardware, presenting a professional and crisp aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDXOL5Cf2sv6LKaqgW2hHTji8GaLJV2vSCo6u29z12j4gshq0z6XopuZtgk3hi5Pe_ScIu240VxPt9QU_-C-9Sm-BY7FEUqUDjf3Pf0w5NasRl_WaTtzVzkmjUXVVSNfjMF4Gwl2K1Ro2Epqnct5Hka1OeTvCSvICT2C-yv5HvUYXd6-lFFG9z_U2zXT_PuXQAfsbaXpWTNDEiwVt6awE1cSk4rV9CspeLvpiXN3ZtrhLb2vaKU-6nyKQ"/>
+</div>
+<div class="border-t border-outline-variant pt-inline-gap mt-unit flex items-center justify-between">
+<span class="font-label-caps text-label-caps text-on-surface-variant">Qty to Order</span>
+<div class="flex items-center gap-3 bg-surface-container rounded p-1">
+<button class="w-8 h-8 rounded bg-surface-container-lowest flex items-center justify-center text-on-surface active:scale-95 transition-transform"><span class="material-symbols-outlined text-sm">remove</span></button>
+<span class="font-data-tabular text-data-tabular text-on-surface w-4 text-center">1</span>
+<button class="w-8 h-8 rounded bg-surface-container-lowest flex items-center justify-center text-on-surface active:scale-95 transition-transform"><span class="material-symbols-outlined text-sm">add</span></button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Pinned Primary CTA -->
+<div class="fixed bottom-0 left-0 w-full bg-surface-container-lowest border-t border-outline-variant px-container-padding py-stack-gap safe-area-pb z-40 shadow-[0px_-4px_12px_rgba(0,0,0,0.05)]">
+<button class="w-full h-[44px] bg-primary text-on-primary font-subheading text-subheading rounded active:scale-95 transition-transform flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[18px]">send</span>
+            Send to vendor
+        </button>
+</div>
+<!-- 
+        Note: The BottomNavBar from the JSON is SUPPRESSED here. 
+        As per the "Shell Visibility & Relevance (THE FILTER)" rule:
+        "Task-Focused: Any sub-page featuring a 'Close' or 'Back' action that implies a temporary departure from the main navigation flow MUST exclude the navigation shell."
+        This is a 'Detail / Send to Vendor' task flow with a back button, so the BottomNavBar is removed to prioritize the canvas and CTA.
+    -->
+</body></html>

@@ -19,36 +19,53 @@ export function CustomerForm({
   defaultOpen = false,
   triggerClassName = "w-auto",
   returnTo,
+  customer,
 }: {
   trigger?: ReactNode;
   defaultOpen?: boolean;
   triggerClassName?: string;
   returnTo?: string;
+  customer?: {
+    id: string;
+    name: string;
+    phone: string | null;
+    email: string | null;
+    address: string | null;
+    notes: string | null;
+  };
 }) {
   const [state, action, pending] = useActionState<ActionState, FormData>(
     createCustomerAction,
     {},
   );
+  const editing = Boolean(customer);
 
   return (
     <FormSheet
-      title="New customer"
-      description="Name and phone are enough on the floor."
+      title={editing ? "Edit customer" : "New customer"}
+      description={
+        editing
+          ? "Update the profile. Phone numbers cannot match another customer."
+          : "Name and phone are enough on the floor. Phone must be unique."
+      }
       defaultOpen={defaultOpen}
       triggerClassName={triggerClassName}
       trigger={
         trigger ?? (
           <span
             className={cn(
-              "inline-flex h-11 min-h-11 items-center rounded-lg bg-primary px-6 text-[15px] font-medium text-on-primary",
+              "inline-flex h-9 min-h-9 items-center rounded-lg bg-primary px-3 text-subheading text-on-primary",
             )}
           >
-            Add
+            {editing ? "Edit" : "Add"}
           </span>
         )
       }
     >
       <form action={action} className="flex min-h-0 flex-1 flex-col">
+        {customer ? (
+          <input type="hidden" name="customer_id" value={customer.id} />
+        ) : null}
         {returnTo ? <input type="hidden" name="returnTo" value={returnTo} /> : null}
         <FormSheetBody className="flex flex-col gap-4">
           <div>
@@ -57,6 +74,7 @@ export function CustomerForm({
               id="name"
               name="name"
               required
+              defaultValue={customer?.name}
               className="mt-2 h-11 min-h-11"
             />
           </div>
@@ -66,6 +84,7 @@ export function CustomerForm({
               id="phone"
               name="phone"
               type="tel"
+              defaultValue={customer?.phone ?? ""}
               className="mt-2 h-11 min-h-11"
             />
           </div>
@@ -75,12 +94,29 @@ export function CustomerForm({
               id="email"
               name="email"
               type="email"
+              defaultValue={customer?.email ?? ""}
               className="mt-2 h-11 min-h-11"
             />
           </div>
           <div>
             <Label htmlFor="address">Address</Label>
-            <Textarea id="address" name="address" rows={2} className="mt-2" />
+            <Textarea
+              id="address"
+              name="address"
+              rows={2}
+              defaultValue={customer?.address ?? ""}
+              className="mt-2"
+            />
+          </div>
+          <div>
+            <Label htmlFor="notes">Notes</Label>
+            <Textarea
+              id="notes"
+              name="notes"
+              rows={2}
+              defaultValue={customer?.notes ?? ""}
+              className="mt-2"
+            />
           </div>
           {state.error ? (
             <p className="text-sm text-destructive" role="alert">

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Vendors</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-container": "#1b1b1b",
+                        "outline": "#7e7576",
+                        "tertiary-fixed-dim": "#c6c6c6",
+                        "inverse-on-surface": "#f1f1f1",
+                        "tertiary": "#000000",
+                        "surface-container-highest": "#e2e2e2",
+                        "primary-fixed": "#e2e2e2",
+                        "secondary-fixed-dim": "#b7c8e1",
+                        "surface-tint": "#5e5e5e",
+                        "on-primary-fixed": "#1b1b1b",
+                        "surface-dim": "#dadada",
+                        "on-secondary-container": "#54647a",
+                        "on-tertiary-fixed-variant": "#474747",
+                        "outline-variant": "#cfc4c5",
+                        "primary": "#000000",
+                        "on-surface": "#1b1b1b",
+                        "on-tertiary-container": "#848484",
+                        "on-surface-variant": "#4c4546",
+                        "inverse-primary": "#c6c6c6",
+                        "surface": "#f9f9f9",
+                        "on-tertiary-fixed": "#1b1b1b",
+                        "on-secondary": "#ffffff",
+                        "on-secondary-fixed-variant": "#38485d",
+                        "error": "#ba1a1a",
+                        "on-primary-fixed-variant": "#474747",
+                        "on-error": "#ffffff",
+                        "background": "#f9f9f9",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "secondary": "#505f76",
+                        "surface-bright": "#f9f9f9",
+                        "surface-container-high": "#e8e8e8",
+                        "on-secondary-fixed": "#0b1c30",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed": "#e2e2e2",
+                        "secondary-fixed": "#d3e4fe",
+                        "surface-variant": "#e2e2e2",
+                        "tertiary-container": "#1b1b1b",
+                        "on-background": "#1b1b1b",
+                        "on-primary-container": "#848484",
+                        "error-container": "#ffdad6",
+                        "on-tertiary": "#ffffff",
+                        "inverse-surface": "#303030",
+                        "primary-fixed-dim": "#c6c6c6",
+                        "secondary-container": "#d0e1fb",
+                        "surface-container": "#eeeeee",
+                        "surface-container-low": "#f3f3f3"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "4px",
+                        "container-padding": "16px",
+                        "section-margin": "24px",
+                        "stack-gap": "12px",
+                        "inline-gap": "8px"
+                    },
+                    "fontFamily": {
+                        "data-tabular": ["Inter"],
+                        "body-md": ["Inter"],
+                        "subheading": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "data-tabular": ["13px", {"lineHeight": "18px", "fontWeight": "500"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "subheading": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                        "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                        "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "headline-md": ["22px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background antialiased pb-safe pt-14 flex flex-col min-h-screen">
+<!-- TopAppBar Component -->
+<header class="bg-primary dark:bg-primary-container fixed top-0 w-full z-50 border-b border-outline-variant flex justify-between items-center h-14 px-container-padding">
+<button class="text-on-primary-fixed-variant hover:opacity-80 transition-opacity active:scale-95 flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="menu" style="font-variation-settings: 'FILL' 0;">menu</span>
+</button>
+<h1 class="font-headline-lg text-headline-lg text-on-primary dark:text-on-primary-container tracking-tight">Nuhome</h1>
+<button class="text-on-primary-fixed-variant hover:opacity-80 transition-opacity active:scale-95 flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="notifications" style="font-variation-settings: 'FILL' 0;">notifications</span>
+</button>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow flex flex-col px-container-padding py-section-margin gap-section-margin pb-24">
+<!-- Header & Action -->
+<div class="flex justify-between items-end">
+<h2 class="font-headline-md text-headline-md text-on-background">Vendors</h2>
+<button class="bg-primary text-on-primary h-[44px] px-4 rounded flex items-center justify-center gap-2 hover:opacity-90 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-[20px]" data-icon="add" style="font-variation-settings: 'FILL' 0;">add</span>
+<span class="font-subheading text-subheading">Add</span>
+</button>
+</div>
+<!-- Segmented Control (Tabs) -->
+<div class="flex bg-surface-container rounded p-1 w-full relative">
+<div class="w-1/2 absolute left-1 top-1 bottom-1 bg-surface-container-lowest rounded shadow-sm transition-all duration-300"></div>
+<button class="w-1/2 py-2 font-subheading text-subheading text-primary relative z-10">Active</button>
+<button class="w-1/2 py-2 font-subheading text-subheading text-on-surface-variant relative z-10">Archived</button>
+</div>
+<!-- Vendor List (Bento-style layout for modern feel) -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-stack-gap">
+<!-- Vendor Card 1 -->
+<div class="bg-surface-container-lowest rounded-[10px] border border-outline-variant p-container-padding flex flex-col gap-stack-gap hover:border-primary transition-colors cursor-pointer">
+<div class="flex justify-between items-start">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 bg-surface-container rounded-full flex items-center justify-center overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A modern, high-contrast monochrome corporate logo featuring geometric wood-grain patterns, styled in sharp black and white with a stark light-mode aesthetic, professional and minimalistic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-2bVV8Ji4o8OxjFf9wfAqa8hLgKSWuG7ArjzNRzpo54ikW21qjNEU13sEa3c06zPU7fY7QZM9mgIXJ5GrEwyJew36TXC8RymLikegaaMxZmWNzjv_WxR6LYCQa3JupnTfVcFcVO6EKSSmB9QFzB9VcaTrqxv2dOGW6phuy7iNS6uR65vDo_dAupKdijBTNY8cjfB8bz9XtbPd2ESJ4IMw4dNadKtKIXcvkRIbK_ITdNPAM2D2roYcqg"/>
+</div>
+<div>
+<h3 class="font-subheading text-subheading text-on-background">Kerala Woods</h3>
+<div class="flex items-center gap-1 text-on-surface-variant mt-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="location_on" style="font-variation-settings: 'FILL' 0;">location_on</span>
+<span class="font-body-sm text-body-sm">Kochi</span>
+</div>
+</div>
+</div>
+<div class="bg-surface-container px-2 py-1 rounded font-label-caps text-label-caps text-primary tracking-widest">
+                        2 OPEN JOBS
+                    </div>
+</div>
+<!-- Quick Stats Bento Row -->
+<div class="grid grid-cols-3 gap-2 mt-2">
+<div class="bg-surface p-2 rounded border border-outline-variant flex flex-col items-center justify-center">
+<span class="font-data-tabular text-data-tabular text-on-surface-variant">Rating</span>
+<span class="font-subheading text-subheading text-primary flex items-center gap-1">4.8 <span class="material-symbols-outlined text-[12px] text-primary" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span></span>
+</div>
+<div class="bg-surface p-2 rounded border border-outline-variant flex flex-col items-center justify-center">
+<span class="font-data-tabular text-data-tabular text-on-surface-variant">Spend (YTD)</span>
+<span class="font-subheading text-subheading text-primary">$42k</span>
+</div>
+<div class="bg-surface p-2 rounded border border-outline-variant flex flex-col items-center justify-center">
+<span class="font-data-tabular text-data-tabular text-on-surface-variant">Status</span>
+<span class="font-subheading text-subheading text-green-700 bg-green-100 px-1 rounded">Approved</span>
+</div>
+</div>
+</div>
+<!-- Vendor Card 2 -->
+<div class="bg-surface-container-lowest rounded-[10px] border border-outline-variant p-container-padding flex flex-col gap-stack-gap hover:border-primary transition-colors cursor-pointer">
+<div class="flex justify-between items-start">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 bg-surface-container rounded-full flex items-center justify-center overflow-hidden border border-outline-variant">
+<span class="material-symbols-outlined text-[24px] text-on-surface-variant" data-icon="store" style="font-variation-settings: 'FILL' 0;">store</span>
+</div>
+<div>
+<h3 class="font-subheading text-subheading text-on-background">Royal Fabrics</h3>
+<div class="flex items-center gap-1 text-on-surface-variant mt-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="location_on" style="font-variation-settings: 'FILL' 0;">location_on</span>
+<span class="font-body-sm text-body-sm">Thrissur</span>
+</div>
+</div>
+</div>
+<div class="bg-surface-container px-2 py-1 rounded font-label-caps text-label-caps text-on-surface-variant tracking-widest">
+                        0 OPEN JOBS
+                    </div>
+</div>
+<!-- Quick Stats Bento Row -->
+<div class="grid grid-cols-3 gap-2 mt-2 opacity-80">
+<div class="bg-surface p-2 rounded border border-outline-variant flex flex-col items-center justify-center">
+<span class="font-data-tabular text-data-tabular text-on-surface-variant">Rating</span>
+<span class="font-subheading text-subheading text-primary flex items-center gap-1">4.2 <span class="material-symbols-outlined text-[12px] text-primary" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span></span>
+</div>
+<div class="bg-surface p-2 rounded border border-outline-variant flex flex-col items-center justify-center">
+<span class="font-data-tabular text-data-tabular text-on-surface-variant">Spend (YTD)</span>
+<span class="font-subheading text-subheading text-primary">$18k</span>
+</div>
+<div class="bg-surface p-2 rounded border border-outline-variant flex flex-col items-center justify-center">
+<span class="font-data-tabular text-data-tabular text-on-surface-variant">Status</span>
+<span class="font-subheading text-subheading text-on-surface-variant bg-surface-variant px-1 rounded">Draft</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar Component -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-container-padding pb-safe border-t border-outline-variant bg-surface dark:bg-surface-container z-50 h-16 md:hidden">
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-container-high active:scale-90 transition-transform duration-200 p-2 rounded" href="#">
+<span class="material-symbols-outlined" data-icon="home" style="font-variation-settings: 'FILL' 0;">home</span>
+<span class="font-label-caps text-label-caps mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-container-high active:scale-90 transition-transform duration-200 p-2 rounded" href="#">
+<span class="material-symbols-outlined" data-icon="shopping_cart" style="font-variation-settings: 'FILL' 0;">shopping_cart</span>
+<span class="font-label-caps text-label-caps mt-1">Orders</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary dark:text-primary-fixed font-bold hover:bg-surface-container-low dark:hover:bg-surface-container-high active:scale-90 transition-transform duration-200 p-2 rounded" href="#">
+<span class="material-symbols-outlined" data-icon="inventory_2" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+<span class="font-label-caps text-label-caps mt-1">Vendors</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-container-high active:scale-90 transition-transform duration-200 p-2 rounded" href="#">
+<span class="material-symbols-outlined" data-icon="local_shipping" style="font-variation-settings: 'FILL' 0;">local_shipping</span>
+<span class="font-label-caps text-label-caps mt-1">Fulfillment</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-container-high active:scale-90 transition-transform duration-200 p-2 rounded" href="#">
+<span class="material-symbols-outlined" data-icon="more_horiz" style="font-variation-settings: 'FILL' 0;">more_horiz</span>
+<span class="font-label-caps text-label-caps mt-1">More</span>
+</a>
+</nav>
+</body></html>

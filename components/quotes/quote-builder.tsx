@@ -2,8 +2,7 @@
 
 import { useActionState, useMemo, useState } from "react";
 import {
-  createAndSubmitQuoteAction,
-  reviseQuoteAction,
+  saveQuoteAction,
   type ActionState,
 } from "@/app/actions/workflow";
 import { CustomerPicker } from "@/components/quotes/customer-picker";
@@ -56,6 +55,7 @@ export function QuoteBuilder({
   returnTo = "/walk-in",
   step = 2,
   showCustomerStep = true,
+  quoteStatus,
 }: {
   customers: Customer[];
   materials: PickerMaterial[];
@@ -68,6 +68,7 @@ export function QuoteBuilder({
   returnTo?: string;
   step?: 1 | 2 | 3;
   showCustomerStep?: boolean;
+  quoteStatus?: "quote_draft" | "quote_rejected" | "quote_approved";
 }) {
   const [activeStep, setActiveStep] = useState<1 | 2 | 3>(step);
   const [customerId, setCustomerId] = useState(
@@ -75,8 +76,9 @@ export function QuoteBuilder({
   );
   const [lines, setLines] = useState<QuoteLine[]>(initialLines);
   const [notes, setNotes] = useState(initialNotes);
+  const [openLine, setOpenLine] = useState<string | null>(null);
   const [state, action, pending] = useActionState<ActionState, FormData>(
-    reviseQuoteId ? reviseQuoteAction : createAndSubmitQuoteAction,
+    saveQuoteAction,
     {},
   );
 
@@ -153,18 +155,25 @@ export function QuoteBuilder({
   ];
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex min-w-0 flex-col gap-4">
       {rejectionReason ? (
-        <div className="rounded-xl border border-destructive/30 bg-destructive/10 px-4 py-3">
-          <p className="text-xs font-semibold uppercase tracking-wider text-destructive">
-            Returned by Accounts
+        <div className="rounded-lg border border-l-[3px] border-border border-l-error bg-card px-4 py-3">
+          <p className="text-[12px] font-medium text-error">Returned by Accounts</p>
+          <p className="mt-1 text-sm text-on-surface">{rejectionReason}</p>
+        </div>
+      ) : null}
+
+      {quoteStatus === "quote_approved" ? (
+        <div className="rounded-lg border border-l-[3px] border-border border-l-warning bg-card px-4 py-3">
+          <p className="text-[12px] font-medium text-warning">Approved quote</p>
+          <p className="mt-1 text-sm text-on-surface">
+            Editing creates a new version and sends it back to Accounts.
           </p>
-          <p className="mt-1 text-sm text-on-error-container">{rejectionReason}</p>
         </div>
       ) : null}
 
       {showCustomerStep ? (
-        <nav aria-label="Quote steps" className="flex gap-2">
+        <nav aria-label="Quote steps" className="relative flex gap-1 overflow-hidden rounded-lg bg-surface-container-high p-1">
           {steps.map((s) => (
             <button
               key={s.n}
@@ -175,15 +184,12 @@ export function QuoteBuilder({
                 setActiveStep(s.n);
               }}
               className={cn(
-                "flex flex-1 items-center justify-center gap-2 rounded-lg border px-3 py-2.5 text-sm font-medium transition-colors",
+                "relative z-10 flex min-w-0 flex-1 items-center justify-center rounded-md px-2 py-2 text-subheading transition-colors",
                 activeStep === s.n
-                  ? "border-primary bg-primary text-on-primary"
-                  : "border-surface-variant bg-surface-container-lowest text-on-surface-variant",
+                  ? "bg-card text-primary shadow-[0_2px_8px_rgba(0,0,0,0.08)]"
+                  : "text-outline",
               )}
             >
-              <span className="flex size-6 items-center justify-center rounded-full bg-current/10 text-xs">
-                {s.n}
-              </span>
               {s.label}
             </button>
           ))}
@@ -191,10 +197,10 @@ export function QuoteBuilder({
       ) : null}
 
       {activeStep === 1 && showCustomerStep ? (
-        <section className="rounded-xl border border-surface-variant bg-surface-container-lowest p-5 shadow-card">
-          <h2 className="text-headline-sm text-on-surface">Profile check</h2>
-          <p className="mt-1 text-sm text-on-surface-variant">
-            Select an existing customer or create a new lead.
+        <section className="rounded-lg border border-outline-variant bg-card p-4 shadow-card">
+          <h2 className="text-headline-md text-on-surface">Customer Details</h2>
+          <p className="mt-1 text-body-sm text-on-surface-variant">
+            Select an existing customer or create a new one.
           </p>
           <div className="mt-4">
             <CustomerPicker
@@ -204,30 +210,29 @@ export function QuoteBuilder({
               returnTo={returnTo}
             />
           </div>
-          <Button
-            type="button"
-            className="mt-6 h-11 w-full md:w-auto"
-            disabled={!customerId}
-            onClick={() => setActiveStep(2)}
-          >
-            Continue to materials
-          </Button>
+          <div className="sticky bottom-[calc(4rem+env(safe-area-inset-bottom))] z-20 -mx-4 mt-6 bg-gradient-to-t from-background via-background to-transparent px-4 pt-6 pb-1 md:static md:mx-0 md:bg-none md:px-0 md:pt-6">
+            <Button
+              type="button"
+              className="h-11 w-full"
+              disabled={!customerId}
+              onClick={() => setActiveStep(2)}
+            >
+              Continue to materials
+            </Button>
+          </div>
         </section>
       ) : null}
 
       {activeStep !== 1 || !showCustomerStep ? (
-      <form action={action} className="flex flex-col gap-6">
+      <form action={action} className="flex min-w-0 flex-col gap-4">
         <input type="hidden" name="payload" value={JSON.stringify(payload)} />
 
         {activeStep === 2 ? (
           <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
-            <section className="rounded-xl border border-surface-variant bg-surface-container-lowest p-5 shadow-card">
-              <h2 className="text-headline-sm text-on-surface">
-                Materials + pricing
+            <section className="rounded-lg border border-outline-variant bg-card p-4 shadow-card">
+              <h2 className="text-subheading uppercase tracking-wider text-primary">
+                Catalogue
               </h2>
-              <p className="mt-1 text-sm text-on-surface-variant">
-                Browse by category, select multiple items, or add custom lines.
-              </p>
               <div className="mt-4">
                 <MaterialPicker
                   materials={materials}
@@ -239,7 +244,7 @@ export function QuoteBuilder({
               </div>
               <Button
                 type="button"
-                variant="outline"
+                variant="bordered"
                 className="mt-4 h-11 w-full"
                 onClick={addCustom}
               >
@@ -247,89 +252,94 @@ export function QuoteBuilder({
               </Button>
             </section>
 
-            <section className="rounded-xl border border-surface-variant bg-surface-container-lowest p-5 shadow-card">
-              <div className="flex items-center justify-between">
-                <h2 className="text-headline-sm text-on-surface">
-                  Line items ({lines.length})
-                </h2>
-                {showCustomerStep ? (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setActiveStep(3)}
-                    disabled={lines.length === 0}
-                  >
-                    Review →
-                  </Button>
-                ) : null}
-              </div>
+            <section className="min-w-0 rounded-lg border border-outline-variant bg-card p-4 shadow-card">
+              <h2 className="text-subheading uppercase tracking-wider text-primary">
+                Line Items ({lines.length})
+              </h2>
 
               {lines.length === 0 ? (
                 <p className="mt-6 text-center text-sm text-on-surface-variant">
                   Add materials from the catalogue to build the quote.
                 </p>
               ) : (
-                <ul className="mt-4 flex max-h-[520px] flex-col gap-3 overflow-y-auto">
+                <ul className="mt-4 flex max-h-[520px] flex-col gap-4 overflow-y-auto">
                   {lines.map((line) => (
                     <li
                       key={line.key}
-                      className="rounded-lg border border-surface-variant bg-surface p-4"
+                      className="min-w-0 border-b border-surface-variant pb-4 last:border-0 last:pb-0"
                     >
-                      <div className="flex items-start gap-2">
+                      <div className="flex min-w-0 items-start justify-between gap-3">
                         <Input
                           value={line.description}
                           onChange={(e) =>
                             updateLine(line.key, { description: e.target.value })
                           }
-                          className="h-10 flex-1 font-medium"
+                          className="h-10 min-w-0 flex-1 border-0 bg-transparent px-0 text-body-md font-semibold shadow-none"
                           aria-label="Item description"
                         />
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          className="shrink-0 text-destructive"
-                          onClick={() => removeLine(line.key)}
-                          aria-label="Remove line"
-                        >
-                          ✕
-                        </Button>
-                      </div>
-                      <div className="mt-3 flex items-center justify-between">
-                        <span className="text-sm text-on-surface-variant">
-                          Qty
-                        </span>
-                        <div className="flex items-center gap-2">
+                        <div className="flex shrink-0 items-center gap-2">
+                          <p className="text-data-tabular font-semibold">
+                            {formatInrExact(
+                              line.quantity * line.unit_price -
+                                line.discount +
+                                line.tax,
+                            )}
+                          </p>
                           <Button
                             type="button"
-                            variant="outline"
-                            className="size-9"
+                            variant="ghost"
+                            size="icon-xs"
+                            className="text-destructive"
+                            onClick={() => removeLine(line.key)}
+                            aria-label="Remove line"
+                          >
+                            ×
+                          </Button>
+                        </div>
+                      </div>
+                      <div className="mt-2 flex items-center justify-between">
+                        <button
+                          type="button"
+                          className="text-body-sm text-secondary underline underline-offset-2"
+                          onClick={() =>
+                            setOpenLine((current) =>
+                              current === line.key ? null : line.key,
+                            )
+                          }
+                        >
+                          {openLine === line.key ? "Hide price" : "Edit price"}
+                        </button>
+                        <div className="flex items-center gap-3 rounded-full border border-surface-variant bg-surface-container px-2 py-1">
+                          <button
+                            type="button"
+                            className="inline-flex size-6 items-center justify-center rounded-full text-secondary hover:bg-surface-variant hover:text-primary"
                             onClick={() =>
                               updateLine(line.key, {
                                 quantity: Math.max(1, line.quantity - 1),
                               })
                             }
+                            aria-label="Decrease quantity"
                           >
                             −
-                          </Button>
-                          <span className="w-8 text-center font-medium">
+                          </button>
+                          <span className="min-w-[1ch] text-center text-data-tabular">
                             {line.quantity}
                           </span>
-                          <Button
+                          <button
                             type="button"
-                            variant="outline"
-                            className="size-9"
+                            className="inline-flex size-6 items-center justify-center rounded-full text-secondary hover:bg-surface-variant hover:text-primary"
                             onClick={() =>
                               updateLine(line.key, {
                                 quantity: line.quantity + 1,
                               })
                             }
+                            aria-label="Increase quantity"
                           >
                             +
-                          </Button>
+                          </button>
                         </div>
                       </div>
+                      {openLine === line.key ? (
                       <div className="mt-3 grid grid-cols-3 gap-2">
                         <div>
                           <Label className="text-xs">Price</Label>
@@ -374,13 +384,7 @@ export function QuoteBuilder({
                           />
                         </div>
                       </div>
-                      <p className="mt-2 text-right text-sm font-semibold">
-                        {formatInrExact(
-                          line.quantity * line.unit_price -
-                            line.discount +
-                            line.tax,
-                        )}
-                      </p>
+                      ) : null}
                     </li>
                   ))}
                 </ul>
@@ -390,87 +394,159 @@ export function QuoteBuilder({
         ) : null}
 
         {activeStep === 3 || !showCustomerStep ? (
-          <section className="rounded-xl border border-surface-variant bg-surface-container-lowest p-5 shadow-card">
-            <h2 className="text-headline-sm text-on-surface">Review & submit</h2>
-            <p className="mt-1 text-sm text-on-surface-variant">
-              Submit to Accounts for approval. The customer never sees a draft.
-            </p>
+          <div className="flex min-w-0 flex-col gap-3">
+            {showCustomerStep ? (
+              <div className="flex items-center gap-4 rounded-lg border border-surface-variant bg-card p-4">
+                <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-secondary-container text-headline-md text-on-secondary-container">
+                  {(customers.find((c) => c.id === customerId)?.name ?? "C")
+                    .charAt(0)
+                    .toUpperCase()}
+                </span>
+                <div className="min-w-0">
+                  <p className="truncate text-subheading text-on-surface">
+                    {customers.find((c) => c.id === customerId)?.name ??
+                      "Customer"}
+                  </p>
+                  <p className="truncate text-body-sm text-on-surface-variant">
+                    {customers.find((c) => c.id === customerId)?.phone ??
+                      "No phone"}
+                  </p>
+                </div>
+              </div>
+            ) : null}
 
-            <div className="mt-4">
-              <Label htmlFor="notes">Notes for Accounts (optional)</Label>
+            <section className="rounded-lg border border-surface-variant bg-card">
+              <div className="flex items-center justify-between border-b border-surface-variant p-4">
+                <h2 className="text-subheading text-on-surface">Order Items</h2>
+                <span className="rounded bg-surface-container-high px-2 py-1 text-label-caps">
+                  {lines.length} {lines.length === 1 ? "ITEM" : "ITEMS"}
+                </span>
+              </div>
+              <ul>
+                {lines.map((line) => (
+                  <li
+                    key={line.key}
+                    className="flex items-start justify-between gap-4 border-b border-surface-variant p-4 last:border-0"
+                  >
+                    <div className="min-w-0">
+                      <p className="text-subheading text-on-surface">
+                        {line.description}
+                      </p>
+                      <p className="mt-1 text-body-sm text-on-surface-variant">
+                        Qty: {line.quantity}
+                      </p>
+                    </div>
+                    <p className="shrink-0 text-data-tabular">
+                      {formatInrExact(
+                        line.quantity * line.unit_price -
+                          line.discount +
+                          line.tax,
+                      )}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            </section>
+
+            <div>
+              <Label htmlFor="notes">Notes</Label>
               <Textarea
                 id="notes"
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                rows={2}
+                rows={3}
                 className="mt-2"
-                placeholder="Special terms, delivery timeline, etc."
+                placeholder="Add any special instructions or customer requests..."
               />
             </div>
 
-            <dl className="mt-4 space-y-2 border-t border-surface-variant pt-4 text-sm">
-              <div className="flex justify-between">
-                <dt className="text-on-surface-variant">Subtotal</dt>
-                <dd>{formatInrExact(totals.subtotal)}</dd>
+            {quoteStatus === "quote_approved" ? (
+              <p className="text-body-sm text-on-surface-variant">
+                Saving a correction withdraws Accounts approval. They must
+                approve the new version before you can send it.
+              </p>
+            ) : null}
+
+            <section className="flex flex-col gap-3 rounded-lg border border-surface-variant bg-card p-4">
+              <div className="flex justify-between text-body-md">
+                <span className="text-on-surface-variant">Subtotal</span>
+                <span className="text-data-tabular">
+                  {formatInrExact(totals.subtotal)}
+                </span>
               </div>
-              <div className="flex justify-between">
-                <dt className="text-on-surface-variant">Discount</dt>
-                <dd>{formatInrExact(totals.discount)}</dd>
+              <div className="flex justify-between text-body-md text-error">
+                <span>Discount</span>
+                <span className="text-data-tabular">
+                  -{formatInrExact(totals.discount)}
+                </span>
               </div>
-              <div className="flex justify-between">
-                <dt className="text-on-surface-variant">Tax</dt>
-                <dd>{formatInrExact(totals.tax)}</dd>
+              <div className="flex justify-between text-body-md">
+                <span className="text-on-surface-variant">Tax</span>
+                <span className="text-data-tabular">
+                  {formatInrExact(totals.tax)}
+                </span>
               </div>
-              <div className="flex justify-between text-lg font-semibold">
-                <dt>Total</dt>
-                <dd>{formatInrExact(totals.total)}</dd>
+              <div className="mt-1 flex justify-between border-t border-surface-variant pt-3">
+                <span className="text-headline-md">Total</span>
+                <span className="text-headline-md">
+                  {formatInrExact(totals.total)}
+                </span>
               </div>
-            </dl>
+            </section>
 
             {state.error ? (
-              <p className="mt-4 text-sm text-destructive" role="alert">
+              <p className="text-sm text-destructive" role="alert">
                 {state.error}
               </p>
             ) : null}
 
-            <div className="mt-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-              {showCustomerStep ? (
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setActiveStep(2)}
-                >
-                  ← Back to materials
-                </Button>
-              ) : null}
+            <div className="mt-3 flex flex-col gap-3">
               <Button
                 type="submit"
+                name="intent"
+                value="draft"
+                variant="bordered"
                 size="lg"
+                className="w-full"
                 disabled={
                   pending ||
                   (!reviseQuoteId && !customerId) ||
                   lines.length === 0
                 }
-                className="md:ml-auto"
+              >
+                {pending ? "Saving…" : "Save draft"}
+              </Button>
+              <Button
+                type="submit"
+                name="intent"
+                value="submit"
+                size="lg"
+                className="w-full"
+                disabled={
+                  pending ||
+                  (!reviseQuoteId && !customerId) ||
+                  lines.length === 0
+                }
               >
                 {pending
                   ? "Submitting…"
-                  : reviseQuoteId
+                  : reviseQuoteId && quoteStatus !== "quote_draft"
                     ? "Submit revised quote"
                     : "Submit to Accounts"}
               </Button>
             </div>
-          </section>
+          </div>
         ) : null}
 
         {activeStep === 2 && showCustomerStep ? (
-          <div className="flex justify-end">
+          <div className="sticky bottom-[calc(4rem+env(safe-area-inset-bottom))] z-20 -mx-4 flex justify-end border-t border-outline-variant bg-card px-4 py-3 md:static md:mx-0 md:rounded-lg md:border">
             <Button
               type="button"
+              size="lg"
               disabled={lines.length === 0}
               onClick={() => setActiveStep(3)}
             >
-              Continue to review →
+              Review
             </Button>
           </div>
         ) : null}

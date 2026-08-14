@@ -28,7 +28,7 @@ function SheetOverlay({ className, ...props }: SheetPrimitive.Backdrop.Props) {
     <SheetPrimitive.Backdrop
       data-slot="sheet-overlay"
       className={cn(
-        "fixed inset-0 z-50 bg-[#0f172a]/40 transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0 supports-backdrop-filter:backdrop-blur-xs",
+        "fixed inset-0 z-50 bg-primary/40 transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0 supports-backdrop-filter:backdrop-blur-sm",
         className,
       )}
       {...props}
@@ -76,8 +76,8 @@ function SheetContent({
         {...props}
       >
         {formLayout || side === "bottom" ? (
-          <div className="flex shrink-0 justify-center pt-2 md:hidden">
-            <span className="h-1 w-8 rounded-full bg-outline-variant" />
+          <div className="flex shrink-0 justify-center pt-3 pb-1 md:hidden">
+            <span className="h-1.5 w-12 rounded-full bg-surface-variant" />
           </div>
         ) : null}
         {children}

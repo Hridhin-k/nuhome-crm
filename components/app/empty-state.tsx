@@ -17,9 +17,9 @@ export function EmptyState({
   action?: ReactNode;
 }) {
   return (
-    <div className="rounded-xl border border-dashed border-outline-variant bg-surface px-5 py-14 text-center">
-      <h2 className="text-headline-sm text-on-surface">{title}</h2>
-      <p className="text-body-md mx-auto mt-2 max-w-sm text-on-surface-variant">
+    <div className="rounded-lg border border-dashed border-outline-variant bg-card px-4 py-10 text-center">
+      <h2 className="text-subheading text-on-surface">{title}</h2>
+      <p className="mx-auto mt-1.5 max-w-sm text-body-sm text-on-surface-variant">
         {description}
       </p>
       {action ? <div className="mt-6 flex justify-center">{action}</div> : null}

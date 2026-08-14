@@ -6,6 +6,7 @@ import { AdminCatalogNav } from "@/components/admin/admin-catalog-nav";
 import { CsvImportSheet } from "@/components/admin/csv-import-sheet";
 import { MaterialForm } from "@/components/admin/material-form";
 import { Notice } from "@/components/app/notice";
+import { PageFrame } from "@/components/app/page-frame";
 import { PageHeader } from "@/components/app/page-header";
 import { listCategories, listMaterials } from "@/lib/api/catalog";
 import { rel } from "@/lib/api/rel";
@@ -25,9 +26,10 @@ export default async function MaterialsPage({
   ]);
 
   return (
-    <div>
+    <PageFrame>
       <PageHeader
         title="Materials"
+        hideTitleOnMobile
         description="Catalogue used when Sales builds a quote."
         action={
           <div className="flex flex-col items-end gap-2 sm:flex-row">
@@ -63,7 +65,7 @@ export default async function MaterialsPage({
           return (
             <li
               key={material.id}
-              className="flex items-start justify-between gap-3 rounded-xl border border-surface-variant bg-surface-container-lowest px-4 py-4"
+              className="flex items-start justify-between gap-3 rounded-lg border border-outline-variant bg-card p-4 shadow-card"
             >
               <div className="min-w-0">
                 <p className="font-medium">{material.name}</p>
@@ -83,7 +85,7 @@ export default async function MaterialsPage({
                 <input type="hidden" name="is_active" value={active ? "false" : "true"} />
                 <button
                   type="submit"
-                  className="h-9 rounded-lg border border-outline-variant px-3 text-xs font-semibold tracking-[0.05em] text-primary uppercase"
+                  className="h-9 rounded-lg border border-border px-3 text-[13px] font-medium text-on-surface"
                 >
                   {active ? "Hide" : "Restore"}
                 </button>
@@ -93,6 +95,6 @@ export default async function MaterialsPage({
         })}
       </ul>
       )}
-    </div>
+    </PageFrame>
   );
 }

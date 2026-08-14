@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Quote Detail - Approved</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary": "#ffffff",
+                        "on-secondary-container": "#54647a",
+                        "surface-tint": "#5e5e5e",
+                        "secondary-fixed": "#d3e4fe",
+                        "on-surface-variant": "#4c4546",
+                        "surface-dim": "#dadada",
+                        "on-secondary-fixed-variant": "#38485d",
+                        "tertiary": "#000000",
+                        "tertiary-container": "#1b1b1b",
+                        "background": "#f9f9f9",
+                        "on-primary-fixed": "#1b1b1b",
+                        "on-surface": "#1b1b1b",
+                        "secondary-fixed-dim": "#b7c8e1",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed-dim": "#c6c6c6",
+                        "on-error": "#ffffff",
+                        "on-primary-container": "#848484",
+                        "tertiary-fixed": "#e2e2e2",
+                        "surface": "#f9f9f9",
+                        "on-primary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "inverse-surface": "#303030",
+                        "surface-bright": "#f9f9f9",
+                        "error": "#ba1a1a",
+                        "outline": "#7e7576",
+                        "error-container": "#ffdad6",
+                        "surface-container-highest": "#e2e2e2",
+                        "secondary": "#505f76",
+                        "surface-container-low": "#f3f3f3",
+                        "on-primary-fixed-variant": "#474747",
+                        "on-tertiary-container": "#848484",
+                        "primary-container": "#1b1b1b",
+                        "on-secondary-fixed": "#0b1c30",
+                        "secondary-container": "#d0e1fb",
+                        "primary-fixed": "#e2e2e2",
+                        "surface-container-high": "#e8e8e8",
+                        "primary-fixed-dim": "#c6c6c6",
+                        "on-tertiary-fixed": "#1b1b1b",
+                        "on-background": "#1b1b1b",
+                        "surface-variant": "#e2e2e2",
+                        "surface-container": "#eeeeee",
+                        "primary": "#000000",
+                        "on-tertiary-fixed-variant": "#474747",
+                        "on-tertiary": "#ffffff",
+                        "inverse-primary": "#c6c6c6",
+                        "outline-variant": "#cfc4c5",
+                        "inverse-on-surface": "#f1f1f1"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "inline-gap": "8px",
+                        "stack-gap": "12px",
+                        "unit": "4px",
+                        "container-padding": "16px",
+                        "section-margin": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Inter"],
+                        "data-tabular": ["Inter"],
+                        "body-md": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "subheading": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "headline-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "data-tabular": ["13px", { "lineHeight": "18px", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "subheading": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+                        "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                        "headline-md": ["22px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md antialiased pb-24 selection:bg-primary selection:text-on-primary">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center w-full px-container-padding h-11 bg-primary dark:bg-primary text-on-primary dark:text-on-primary font-headline-md text-headline-md font-bold text-on-primary docked full-width top-0 flat no shadows sticky z-40">
+<button aria-label="Go back" class="flex items-center justify-center p-2 -ml-2 text-on-primary hover:bg-primary-container/20 rounded-full transition-opacity duration-200 active:opacity-80">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+</button>
+<h1 class="flex-1 text-center font-headline-md text-headline-md truncate px-2">NQ-1042 · Ananya Nair · v2</h1>
+<div class="w-10"></div> <!-- Placeholder for balance -->
+</header>
+<!-- Main Content Canvas -->
+<main class="px-container-padding pt-stack-gap pb-section-margin flex flex-col gap-stack-gap max-w-2xl mx-auto">
+<!-- Status & Context Header -->
+<div class="flex items-center justify-between mb-2">
+<div class="flex flex-col">
+<span class="font-body-sm text-on-surface-variant">Prepared for</span>
+<span class="font-subheading text-on-surface">Ananya Nair</span>
+</div>
+<div class="px-3 py-1 rounded-full bg-[#dcfce7] text-[#166534] font-label-caps text-label-caps flex items-center gap-1 border border-[#bbf7d0]">
+<span class="material-symbols-outlined text-[14px]" data-icon="check_circle">check_circle</span>
+                Approved
+            </div>
+</div>
+<!-- Call-to-action card -->
+<div class="bg-surface-container-lowest rounded-lg border border-outline-variant flex overflow-hidden shadow-sm relative">
+<div class="w-2 bg-primary flex-shrink-0 absolute left-0 top-0 bottom-0"></div>
+<div class="flex flex-col sm:flex-row items-start sm:items-center justify-between w-full p-4 pl-6 gap-4">
+<div class="flex flex-col gap-1">
+<h2 class="font-subheading text-on-surface">Send to customer</h2>
+<p class="font-body-sm text-on-surface-variant">Only an approved quote can go to the customer.</p>
+</div>
+<button class="w-full sm:w-auto px-6 h-[44px] bg-primary text-on-primary font-subheading rounded transition-colors active:opacity-80 flex items-center justify-center gap-2 flex-shrink-0">
+<span class="material-symbols-outlined text-[18px]" data-icon="send">send</span>
+                    Send
+                </button>
+</div>
+</div>
+<!-- Main Quote Details Card -->
+<div class="bg-surface-container-lowest rounded-lg border border-outline-variant p-container-padding flex flex-col gap-stack-gap shadow-sm mt-2">
+<div class="flex items-center justify-between pb-3 border-b border-surface-variant">
+<h3 class="font-subheading text-on-surface">Order Summary</h3>
+<span class="font-body-sm text-on-surface-variant">v2</span>
+</div>
+<div class="flex flex-col gap-inline-gap">
+<div class="flex justify-between items-start">
+<div class="flex flex-col">
+<span class="font-body-md text-on-surface">Premium Roofing Tiles (Red)</span>
+<span class="font-body-sm text-on-surface-variant">500 sqft @ ₹150/sqft</span>
+</div>
+<span class="font-data-tabular text-on-surface">₹75,000</span>
+</div>
+<div class="flex justify-between items-start">
+<div class="flex flex-col">
+<span class="font-body-md text-on-surface">Installation Services</span>
+<span class="font-body-sm text-on-surface-variant">Flat rate</span>
+</div>
+<span class="font-data-tabular text-on-surface">₹30,000</span>
+</div>
+</div>
+<div class="pt-3 border-t border-surface-variant flex justify-between items-center mt-2">
+<span class="font-subheading text-on-surface">Total Estimate</span>
+<span class="font-headline-md text-primary font-bold">₹1,05,000</span>
+</div>
+</div>
+<!-- Action Buttons Row -->
+<div class="flex flex-col sm:flex-row gap-2 mt-2">
+<button class="flex-1 h-[44px] bg-surface-container-lowest text-on-surface font-subheading rounded border border-outline-variant hover:bg-surface-container-low transition-colors active:opacity-80 flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[18px]" data-icon="chat">chat</span>
+                WhatsApp
+            </button>
+<button class="flex-1 h-[44px] bg-surface-container-lowest text-on-surface font-subheading rounded border border-outline-variant hover:bg-surface-container-low transition-colors active:opacity-80 flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[18px]" data-icon="link">link</span>
+                View public link
+            </button>
+<button class="flex-1 h-[44px] bg-surface-container-lowest text-on-surface font-subheading rounded border border-outline-variant hover:bg-surface-container-low transition-colors active:opacity-80 flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[18px]" data-icon="edit">edit</span>
+                Correct before send
+            </button>
+</div>
+<!-- Activity Feed -->
+<div class="mt-section-margin flex flex-col gap-stack-gap">
+<h3 class="font-subheading text-on-surface px-1">Activity</h3>
+<div class="relative pl-6 before:content-[''] before:absolute before:left-2 before:top-2 before:bottom-2 before:w-px before:bg-surface-variant">
+<!-- Timeline Item: Approved -->
+<div class="relative mb-6">
+<div class="absolute -left-6 top-1 w-4 h-4 rounded-full bg-primary border-2 border-background z-10 flex items-center justify-center">
+<div class="w-1.5 h-1.5 bg-on-primary rounded-full"></div>
+</div>
+<div class="flex flex-col">
+<span class="font-body-sm text-on-surface">Approved by Accounts (Lakshmi)</span>
+<span class="font-label-caps text-on-surface-variant text-[10px]">Today, 10:42 AM</span>
+</div>
+</div>
+<!-- Timeline Item: Submitted -->
+<div class="relative">
+<div class="absolute -left-6 top-1 w-4 h-4 rounded-full bg-surface-variant border-2 border-background z-10"></div>
+<div class="flex flex-col">
+<span class="font-body-sm text-on-surface-variant">Submitted for approval</span>
+<span class="font-label-caps text-on-surface-variant text-[10px]">Yesterday, 04:15 PM</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 h-[64px] bg-surface dark:bg-surface text-primary dark:text-primary font-label-caps text-label-caps fixed bottom-0 left-0 w-full z-50 flex justify-around items-center bg-surface px-unit pb-safe md:hidden shadow-[0_-4px_12px_rgba(0,0,0,0.05)] border-t-0">
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary hover:bg-surface-container-low scale-95 active:scale-90 transition-transform duration-150 p-2 rounded-lg w-16" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="home">home</span>
+<span>Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary hover:bg-surface-container-low scale-95 active:scale-90 transition-transform duration-150 p-2 rounded-lg w-16" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="group">group</span>
+<span>Customers</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary dark:text-primary font-bold hover:bg-surface-container-low scale-95 active:scale-90 transition-transform duration-150 p-2 rounded-lg w-16" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="description" data-weight="fill" style="font-variation-settings: 'FILL' 1;">description</span>
+<span>Quotes</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary hover:bg-surface-container-low scale-95 active:scale-90 transition-transform duration-150 p-2 rounded-lg w-16" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="shopping_cart">shopping_cart</span>
+<span>Orders</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary hover:bg-surface-container-low scale-95 active:scale-90 transition-transform duration-150 p-2 rounded-lg w-16" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="more_horiz">more_horiz</span>
+<span>More</span>
+</a>
+</nav>
+</body></html>

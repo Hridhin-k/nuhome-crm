@@ -84,7 +84,21 @@ export const receiveItemsSchema = z.object({
     .array(
       z.object({
         order_item_id: uuid,
+        quantity: z.number().nonnegative(),
+      }),
+    )
+    .min(1),
+});
+
+export const writeOffItemsSchema = z.object({
+  order_id: uuid,
+  notes: z.string().optional(),
+  items: z
+    .array(
+      z.object({
+        order_item_id: uuid,
         quantity: z.number().positive(),
+        reason: z.enum(["shortage", "damaged", "returned", "cancelled"]),
       }),
     )
     .min(1),

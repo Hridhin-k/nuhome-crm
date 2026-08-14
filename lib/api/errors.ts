@@ -22,6 +22,12 @@ export function humanizeError(error: unknown) {
     .replace(/\s+Where:[\s\S]*$/, "")
     .trim();
 
+  if (/phone number already exists/i.test(cleaned)) {
+    return cleaned;
+  }
+  if (/customers_phone_normalized/i.test(cleaned)) {
+    return "A customer with this phone number already exists.";
+  }
   if (/already registered|duplicate key value/i.test(cleaned)) {
     return "That record already exists.";
   }
@@ -35,7 +41,7 @@ export function humanizeError(error: unknown) {
     return "You can’t approve or reject your own quote.";
   }
   if (/you recorded/i.test(cleaned)) {
-    return "You can’t verify a payment you recorded.";
+    return "You can’t verify or reject a payment you recorded.";
   }
   if (/delivery/i.test(cleaned) && /lock|outstanding|received/i.test(cleaned)) {
     return cleaned;

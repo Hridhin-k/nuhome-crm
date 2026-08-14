@@ -1,7 +1,7 @@
 import { QuoteBuilder } from "@/components/quotes/quote-builder";
 import { CustomerForm } from "@/components/customers/customer-form";
+import { PageFrame } from "@/components/app/page-frame";
 import { PageHeader } from "@/components/app/page-header";
-import { WorkflowStepper } from "@/components/app/workflow-stepper";
 import { EmptyState } from "@/components/app/empty-state";
 import { listCategories, listMaterials } from "@/lib/api/catalog";
 import { listCustomers } from "@/lib/api/customers";
@@ -40,32 +40,25 @@ export default async function WalkInPage({
 
   if (customers.length === 0 && !customerId) {
     return (
-      <div>
+      <PageFrame width="detail">
         <PageHeader
           title="Customer walk-in"
+          hideTitleOnMobile
           description="Start with a customer profile, then build the quote."
         />
-        <WorkflowStepper status="quote_draft" />
-        <div className="mt-6">
-          <EmptyState
-            title="New customer walk-in"
-            description="Create a customer profile to begin the quote flow."
-            action={
-              <CustomerForm defaultOpen returnTo="/walk-in" triggerClassName="w-full" />
-            }
-          />
-        </div>
-      </div>
+        <EmptyState
+          title="New customer walk-in"
+          description="Create a customer profile to begin the quote flow."
+          action={
+            <CustomerForm defaultOpen returnTo="/walk-in" triggerClassName="w-full" />
+          }
+        />
+      </PageFrame>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <PageHeader
-        title="Customer walk-in"
-        description="Profile check → Materials → Submit to Accounts"
-      />
-      <WorkflowStepper status="quote_draft" />
+    <PageFrame width="wide" className="space-y-5">
       <QuoteBuilder
         customers={customers.map((c) => ({
           id: c.id,
@@ -78,6 +71,6 @@ export default async function WalkInPage({
         returnTo="/walk-in"
         step={initialStep}
       />
-    </div>
+    </PageFrame>
   );
 }

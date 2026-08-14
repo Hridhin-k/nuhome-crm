@@ -4,9 +4,11 @@ import {
   createQuoteSchema,
   receiveItemsSchema,
   recordPaymentSchema,
+  rejectPaymentSchema,
   rejectQuoteSchema,
   reviseQuoteSchema,
   sendToVendorSchema,
+  writeOffItemsSchema,
 } from "@/lib/validation/workflow";
 import type { Database } from "@/types/database";
 
@@ -99,6 +101,16 @@ export async function verifyPayment(paymentId: string, notes?: string) {
   return data as WorkflowStatus;
 }
 
+export async function rejectPayment(input: unknown) {
+  const parsed = rejectPaymentSchema.parse(input);
+  const supabase = await createServerSupabaseClient();
+  const { error } = await supabase.rpc("reject_payment", {
+    p_payment_id: parsed.payment_id,
+    p_notes: parsed.notes,
+  });
+  throwIfError(error);
+}
+
 export async function sendOrderToVendor(input: unknown) {
   const parsed = sendToVendorSchema.parse(input);
   const supabase = await createServerSupabaseClient();
@@ -122,10 +134,26 @@ export async function markVendorDispatched(vendorOrderId: string) {
 
 export async function recordItemsReceived(input: unknown) {
   const parsed = receiveItemsSchema.parse(input);
+  const received = parsed.received.filter((row) => row.quantity > 0);
+  if (received.length === 0) {
+    throw new Error("Enter at least one received quantity");
+  }
   const supabase = await createServerSupabaseClient();
   const { data, error } = await supabase.rpc("record_items_received", {
     p_vendor_order_id: parsed.vendor_order_id,
-    p_received: parsed.received,
+    p_received: received,
+  });
+  throwIfError(error);
+  return data as WorkflowStatus;
+}
+
+export async function writeOffItems(input: unknown) {
+  const parsed = writeOffItemsSchema.parse(input);
+  const supabase = await createServerSupabaseClient();
+  const { data, error } = await supabase.rpc("write_off_order_items", {
+    p_order_id: parsed.order_id,
+    p_items: parsed.items,
+    p_notes: parsed.notes,
   });
   throwIfError(error);
   return data as WorkflowStatus;

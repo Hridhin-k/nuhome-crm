@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Quotes</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary": "#ffffff",
+                    "on-secondary-container": "#54647a",
+                    "surface-tint": "#5e5e5e",
+                    "secondary-fixed": "#d3e4fe",
+                    "on-surface-variant": "#4c4546",
+                    "surface-dim": "#dadada",
+                    "on-secondary-fixed-variant": "#38485d",
+                    "tertiary": "#000000",
+                    "tertiary-container": "#1b1b1b",
+                    "background": "#f9f9f9",
+                    "on-primary-fixed": "#1b1b1b",
+                    "on-surface": "#1b1b1b",
+                    "secondary-fixed-dim": "#b7c8e1",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary-fixed-dim": "#c6c6c6",
+                    "on-error": "#ffffff",
+                    "on-primary-container": "#848484",
+                    "tertiary-fixed": "#e2e2e2",
+                    "surface": "#f9f9f9",
+                    "on-primary": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "inverse-surface": "#303030",
+                    "surface-bright": "#f9f9f9",
+                    "error": "#ba1a1a",
+                    "outline": "#7e7576",
+                    "error-container": "#ffdad6",
+                    "surface-container-highest": "#e2e2e2",
+                    "secondary": "#505f76",
+                    "surface-container-low": "#f3f3f3",
+                    "on-primary-fixed-variant": "#474747",
+                    "on-tertiary-container": "#848484",
+                    "primary-container": "#1b1b1b",
+                    "on-secondary-fixed": "#0b1c30",
+                    "secondary-container": "#d0e1fb",
+                    "primary-fixed": "#e2e2e2",
+                    "surface-container-high": "#e8e8e8",
+                    "primary-fixed-dim": "#c6c6c6",
+                    "on-tertiary-fixed": "#1b1b1b",
+                    "on-background": "#1b1b1b",
+                    "surface-variant": "#e2e2e2",
+                    "surface-container": "#eeeeee",
+                    "primary": "#000000",
+                    "on-tertiary-fixed-variant": "#474747",
+                    "on-tertiary": "#ffffff",
+                    "inverse-primary": "#c6c6c6",
+                    "outline-variant": "#cfc4c5",
+                    "inverse-on-surface": "#f1f1f1"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "inline-gap": "8px",
+                    "stack-gap": "12px",
+                    "unit": "4px",
+                    "container-padding": "16px",
+                    "section-margin": "24px"
+            },
+            "fontFamily": {
+                    "headline-lg": ["Inter"],
+                    "data-tabular": ["Inter"],
+                    "body-md": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "subheading": ["Inter"],
+                    "label-caps": ["Inter"],
+                    "headline-md": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "data-tabular": ["13px", {"lineHeight": "18px", "fontWeight": "500"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "subheading": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                    "headline-md": ["22px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+            }
+          },
+        }
+      }
+    </script>
+<style>
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md h-screen w-full flex justify-center overflow-hidden">
+<!-- Mobile Container -->
+<div class="w-full max-w-md h-full bg-surface-bright relative flex flex-col shadow-xl">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center w-full px-container-padding h-11 bg-primary text-on-primary">
+<button class="transition-opacity duration-200 active:opacity-80 p-1 flex items-center justify-center rounded hover:bg-primary-container/20">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">menu</span>
+</button>
+<h1 class="font-headline-md text-headline-md font-bold text-on-primary">Nuhome Sales</h1>
+<button class="transition-opacity duration-200 active:opacity-80 p-1 flex items-center justify-center rounded hover:bg-primary-container/20">
+<div class="w-7 h-7 rounded-full bg-surface-container-high overflow-hidden" data-alt="A small, professional headshot avatar of a confident sales representative with a warm smile, well-lit in a corporate setting. The background is a clean, abstract soft gradient to match a modern light-mode interface." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDd9X-CH1NI4t0VVCekJ7qgB27VGKvGvDicLGGjXvxRBYOfw5_EcTyZ1tA5r8tUuWi4lIrKR9qg97HXPy_sgvXICDR5atsNuSSr4ZVIhIkzioCwFa0Qhm6Q3R1xIjpe1I90xyHgkZXqpLgEnF_NZiFlvvNMo6p8s2rrrtYt8WWJVJtctXHh3vHQm2lJMbgrcxyNC_07iI89jrRy6tuMXfgwCOPDhpXQvsC9Fg4SfmduE6A7M6-dHgekDA')"></div>
+</button>
+</header>
+<!-- Main Content Area -->
+<main class="flex-1 overflow-y-auto pb-[80px]">
+<!-- Page Header -->
+<div class="px-container-padding pt-section-margin pb-stack-gap">
+<div class="flex justify-between items-start mb-stack-gap">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Quotes</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-unit">Open work first. Closed jobs stay under Closed.</p>
+</div>
+<button class="h-[44px] px-4 bg-primary text-on-primary rounded font-subheading text-subheading flex items-center justify-center transition-opacity active:opacity-80">
+                        New quote
+                    </button>
+</div>
+<!-- Chips/Filters -->
+<div class="flex overflow-x-auto hide-scrollbar gap-inline-gap py-2 -mx-container-padding px-container-padding">
+<button class="whitespace-nowrap px-4 py-1.5 rounded-full bg-primary text-on-primary font-subheading text-subheading border border-primary">Open</button>
+<button class="whitespace-nowrap px-4 py-1.5 rounded-full bg-surface-container-lowest text-on-surface border border-outline-variant font-subheading text-subheading">Quotes</button>
+<button class="whitespace-nowrap px-4 py-1.5 rounded-full bg-surface-container-lowest text-on-surface border border-outline-variant font-subheading text-subheading">Payment</button>
+<button class="whitespace-nowrap px-4 py-1.5 rounded-full bg-surface-container-lowest text-on-surface border border-outline-variant font-subheading text-subheading">In progress</button>
+<button class="whitespace-nowrap px-4 py-1.5 rounded-full bg-surface-container-lowest text-on-surface border border-outline-variant font-subheading text-subheading">On hold</button>
+<button class="whitespace-nowrap px-4 py-1.5 rounded-full bg-surface-container-lowest text-on-surface border border-outline-variant font-subheading text-subheading">Delivery</button>
+<button class="whitespace-nowrap px-4 py-1.5 rounded-full bg-surface-container-lowest text-on-surface border border-outline-variant font-subheading text-subheading">Closed</button>
+</div>
+</div>
+<!-- Quotes List -->
+<div class="px-container-padding flex flex-col gap-stack-gap pb-section-margin">
+<!-- Quote 1 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-4 shadow-sm relative overflow-hidden">
+<div class="flex justify-between items-start mb-inline-gap">
+<div class="flex items-center gap-2">
+<span class="font-data-tabular text-data-tabular text-on-surface">NQ-1042</span>
+<span class="text-outline-variant">•</span>
+<span class="font-subheading text-subheading text-on-surface">Ananya Nair</span>
+</div>
+<span class="font-data-tabular text-data-tabular text-on-surface">₹1,05,000</span>
+</div>
+<div class="mb-stack-gap">
+<span class="inline-block px-2 py-1 rounded bg-[#e6f4ea] text-[#137333] font-label-caps text-label-caps">Approved</span>
+</div>
+<div class="p-3 bg-surface-container-low rounded">
+<p class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">info</span>
+                            Send the approved quote to the customer.
+                        </p>
+</div>
+</div>
+<!-- Quote 2 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-4 shadow-sm relative overflow-hidden">
+<div class="flex justify-between items-start mb-inline-gap">
+<div class="flex items-center gap-2">
+<span class="font-data-tabular text-data-tabular text-on-surface">NQ-1040</span>
+<span class="text-outline-variant">•</span>
+<span class="font-subheading text-subheading text-on-surface">Ramesh Pillai</span>
+</div>
+<span class="font-data-tabular text-data-tabular text-on-surface">₹78,400</span>
+</div>
+<div class="mb-stack-gap">
+<span class="inline-block px-2 py-1 rounded bg-[#fce8e6] text-[#c5221f] font-label-caps text-label-caps">Returned</span>
+</div>
+<div class="p-3 bg-surface-container-low rounded">
+<p class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">error</span>
+                            Revise this version and resubmit.
+                        </p>
+</div>
+</div>
+<!-- Quote 3 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-4 shadow-sm relative overflow-hidden">
+<div class="flex justify-between items-start mb-inline-gap">
+<div class="flex items-center gap-2">
+<span class="font-data-tabular text-data-tabular text-on-surface">NQ-1036</span>
+<span class="text-outline-variant">•</span>
+<span class="font-subheading text-subheading text-on-surface">Meera Krishnan</span>
+</div>
+<span class="font-data-tabular text-data-tabular text-on-surface">₹24,000</span>
+</div>
+<div>
+<span class="inline-block px-2 py-1 rounded bg-surface-container-highest text-on-surface-variant font-label-caps text-label-caps">Draft</span>
+</div>
+</div>
+</div>
+</main>
+<!-- Floating Action Button -->
+<button class="absolute bottom-[80px] right-container-padding w-14 h-14 bg-primary text-on-primary rounded-full shadow-lg flex items-center justify-center transition-transform active:scale-95 z-40">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add</span>
+</button>
+<!-- BottomNavBar -->
+<nav class="absolute bottom-0 w-full z-50 h-[64px] border-t border-outline-variant flex justify-around items-center bg-surface px-unit pb-safe">
+<button class="flex flex-col items-center justify-center text-secondary font-label-caps text-label-caps hover:bg-surface-container-low scale-95 active:scale-90 transition-transform duration-150 p-2 rounded-lg w-16">
+<span class="material-symbols-outlined mb-1">home</span>
+                Home
+            </button>
+<button class="flex flex-col items-center justify-center text-secondary font-label-caps text-label-caps hover:bg-surface-container-low scale-95 active:scale-90 transition-transform duration-150 p-2 rounded-lg w-16">
+<span class="material-symbols-outlined mb-1">group</span>
+                Customers
+            </button>
+<button class="flex flex-col items-center justify-center text-primary font-bold font-label-caps text-label-caps hover:bg-surface-container-low scale-95 active:scale-90 transition-transform duration-150 p-2 rounded-lg w-16 relative">
+<div class="absolute inset-0 bg-primary/10 rounded-lg -z-10"></div>
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">description</span>
+                Quotes
+            </button>
+<button class="flex flex-col items-center justify-center text-secondary font-label-caps text-label-caps hover:bg-surface-container-low scale-95 active:scale-90 transition-transform duration-150 p-2 rounded-lg w-16">
+<span class="material-symbols-outlined mb-1">shopping_cart</span>
+                Orders
+            </button>
+<button class="flex flex-col items-center justify-center text-secondary font-label-caps text-label-caps hover:bg-surface-container-low scale-95 active:scale-90 transition-transform duration-150 p-2 rounded-lg w-16">
+<span class="material-symbols-outlined mb-1">more_horiz</span>
+                More
+            </button>
+</nav>
+</div>
+</body></html>

@@ -6,6 +6,7 @@ import { listPendingApprovals, listQuotes } from "@/lib/api/quotes";
 import type { Accent } from "@/components/app/progress-bar";
 import type { AppRole } from "@/lib/workflow/types";
 import { ORDER_BUCKET_STATUSES } from "@/lib/workflow/status-buckets";
+import { orderHasOverdueVendor } from "@/lib/workflow/fulfillment";
 
 export type QueueCard = {
   title: string;
@@ -30,6 +31,18 @@ export type OperationsSnapshot = {
   stages: PipelineStage[];
   queues: QueueCard[];
 };
+
+function overdueVendorCount(
+  orders: { vendor_orders?: unknown }[],
+) {
+  return orders.filter((order) =>
+    orderHasOverdueVendor(
+      order.vendor_orders as
+        | { status: string; expected_delivery_at?: string | null }[]
+        | null,
+    ),
+  ).length;
+}
 
 function withAccents(cards: QueueCard[]): QueueCard[] {
   const cycle: Accent[] = ["cobalt", "violet", "forest", "cerulean"];
@@ -60,6 +73,7 @@ export const getOperationsSnapshot = cache(async (): Promise<OperationsSnapshot>
   const deliveries = orders.filter((o) =>
     (ORDER_BUCKET_STATUSES.delivery as readonly string[]).includes(o.status),
   ).length;
+  const overdue = overdueVendorCount(orders);
   const delivered = orders.filter((o) =>
     (ORDER_BUCKET_STATUSES.closed as readonly string[]).includes(o.status),
   ).length;
@@ -86,6 +100,7 @@ export const getOperationsSnapshot = cache(async (): Promise<OperationsSnapshot>
       accent: "violet",
     },
     { label: "Ready to deliver", count: deliveries, href: "/orders?bucket=delivery", accent: "forest" },
+    { label: "Vendor overdue", count: overdue, href: "/orders?bucket=active", accent: "violet" },
   ];
 
   const open = stages.reduce((sum, stage) => sum + stage.count, 0);
@@ -132,6 +147,14 @@ export const getOperationsSnapshot = cache(async (): Promise<OperationsSnapshot>
       progress: { value: hold, max: Math.max(open, 1) },
     },
     {
+      title: "Vendor overdue",
+      count: overdue,
+      href: "/orders?bucket=active",
+      detail: "Past expected delivery — still in transit or unsent",
+      accent: "violet",
+      progress: { value: overdue, max: Math.max(open, 1) },
+    },
+    {
       title: "Deliveries",
       count: deliveries,
       href: "/orders?bucket=delivery",
@@ -168,7 +191,8 @@ export const getHomeQueues = cache(async (role: AppRole): Promise<QueueCard[]> =
     const deliveries = orders.filter((o) =>
       (ORDER_BUCKET_STATUSES.delivery as readonly string[]).includes(o.status),
     ).length;
-    const max = Math.max(pendingQuotes + active + hold + deliveries, 1);
+    const overdue = overdueVendorCount(orders);
+    const max = Math.max(pendingQuotes + active + hold + deliveries + overdue, 1);
 
     return withAccents([
       {
@@ -190,6 +214,13 @@ export const getHomeQueues = cache(async (role: AppRole): Promise<QueueCard[]> =
         href: "/orders?bucket=active",
         detail: "In fulfillment — not closed",
         progress: { value: active, max },
+      },
+      {
+        title: "Vendor overdue",
+        count: overdue,
+        href: "/orders?bucket=active",
+        detail: "Past expected delivery",
+        progress: { value: overdue, max },
       },
       {
         title: "Orders on hold",
@@ -245,7 +276,8 @@ export const getHomeQueues = cache(async (role: AppRole): Promise<QueueCard[]> =
 
   if (role === "procurement") {
     const orders = await listOrders([...ORDER_BUCKET_STATUSES.active]);
-    const max = Math.max(orders.length, 1);
+    const overdue = overdueVendorCount(orders);
+    const max = Math.max(orders.length + overdue, 1);
     return withAccents([
       {
         title: "Awaiting vendor action",
@@ -277,38 +309,56 @@ export const getHomeQueues = cache(async (role: AppRole): Promise<QueueCard[]> =
           max,
         },
       },
+      {
+        title: "Vendor overdue",
+        count: overdue,
+        href: "/fulfillment",
+        detail: "Past expected delivery — still sent or in transit",
+        progress: { value: overdue, max },
+      },
     ]);
   }
 
-  const orders = await listOrders([
-    ...ORDER_BUCKET_STATUSES.delivery,
-    ...ORDER_BUCKET_STATUSES.hold,
+  const [gateOrders, activeOrders] = await Promise.all([
+    listOrders([
+      ...ORDER_BUCKET_STATUSES.delivery,
+      ...ORDER_BUCKET_STATUSES.hold,
+    ]),
+    listOrders([...ORDER_BUCKET_STATUSES.active]),
   ]);
-  const max = Math.max(orders.length, 1);
+  const overdue = overdueVendorCount(activeOrders);
+  const max = Math.max(gateOrders.length + overdue, 1);
   return withAccents([
     {
       title: "Ready for delivery",
-      count: orders.filter((o) => o.status === "delivery_unlocked").length,
+      count: gateOrders.filter((o) => o.status === "delivery_unlocked").length,
       href: "/ready",
       detail: "Balance cleared — complete handover",
       progress: {
-        value: orders.filter((o) => o.status === "delivery_unlocked").length,
+        value: gateOrders.filter((o) => o.status === "delivery_unlocked").length,
         max,
       },
     },
     {
-      title: "Blocked by payment",
-      count: orders.filter((o) =>
+      title: "Collect at handover",
+      count: gateOrders.filter((o) =>
         (ORDER_BUCKET_STATUSES.hold as readonly string[]).includes(o.status),
       ).length,
       href: "/orders?bucket=hold",
-      detail: "Items received, delivery locked",
+      detail: "Take cash or UPI, then Accounts verifies",
       progress: {
-        value: orders.filter((o) =>
+        value: gateOrders.filter((o) =>
           (ORDER_BUCKET_STATUSES.hold as readonly string[]).includes(o.status),
         ).length,
         max,
       },
+    },
+    {
+      title: "Vendor overdue",
+      count: overdue,
+      href: "/orders?bucket=active",
+      detail: "Past expected delivery",
+      progress: { value: overdue, max },
     },
   ]);
 });

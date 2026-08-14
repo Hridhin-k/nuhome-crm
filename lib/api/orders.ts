@@ -16,7 +16,7 @@ const listOrdersCached = cache(async (key: string) => {
   let request = db
     .from("orders")
     .select(
-      "id, status, updated_at, customer_id, quote_id, assigned_sales_id, on_hold_reason, customers(name, phone), quotes(quote_number)",
+      "id, status, updated_at, customer_id, quote_id, assigned_sales_id, on_hold_reason, customers(name, phone), quotes(quote_number, quote_versions!quotes_current_version_fk(total)), vendor_orders(status, expected_delivery_at)",
     )
     .order("updated_at", { ascending: false });
 
@@ -35,7 +35,7 @@ export const listOrdersForCustomer = cache(async (customerId: string) => {
     db
       .from("orders")
       .select(
-        "id, status, updated_at, customer_id, quote_id, assigned_sales_id, on_hold_reason, customers(name, phone), quotes(quote_number)",
+        "id, status, updated_at, customer_id, quote_id, assigned_sales_id, on_hold_reason, customers(name, phone), quotes(quote_number, quote_versions!quotes_current_version_fk(total)), vendor_orders(status, expected_delivery_at)",
       )
       .eq("customer_id", customerId)
       .order("updated_at", { ascending: false }),
@@ -88,17 +88,19 @@ export const getOrder = cache(async (id: string) => {
         .maybeSingle(),
       db
         .from("order_items")
-        .select("id, description, quantity, quantity_received, quantity_pending")
+        .select("id, description, quantity, quantity_received, quantity_written_off, write_off_reason, quantity_pending")
         .eq("order_id", id),
       db
         .from("payments")
-        .select("id, kind, amount, status, recorded_by, created_at, notes")
+        .select(
+          "id, kind, amount, status, recorded_by, created_at, notes, method, reference_number, payment_verifications(decision, notes, created_at)",
+        )
         .eq("order_id", id)
         .order("created_at", { ascending: false }),
       db
         .from("vendor_orders")
         .select(
-          "id, vendor_id, status, sent_at, dispatched_at, received_at, expected_delivery_at, vendors(name)",
+          "id, vendor_id, status, sent_at, dispatched_at, received_at, expected_delivery_at, vendors(name), vendor_order_items(id, order_item_id, quantity, quantity_received, quantity_written_off)",
         )
         .eq("order_id", id)
         .order("created_at", { ascending: false }),

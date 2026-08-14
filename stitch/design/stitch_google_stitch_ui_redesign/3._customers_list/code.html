@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Nuhome Sales - Customers</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary": "#ffffff",
+                    "on-secondary-container": "#54647a",
+                    "surface-tint": "#5e5e5e",
+                    "secondary-fixed": "#d3e4fe",
+                    "on-surface-variant": "#4c4546",
+                    "surface-dim": "#dadada",
+                    "on-secondary-fixed-variant": "#38485d",
+                    "tertiary": "#000000",
+                    "tertiary-container": "#1b1b1b",
+                    "background": "#f9f9f9",
+                    "on-primary-fixed": "#1b1b1b",
+                    "on-surface": "#1b1b1b",
+                    "secondary-fixed-dim": "#b7c8e1",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary-fixed-dim": "#c6c6c6",
+                    "on-error": "#ffffff",
+                    "on-primary-container": "#848484",
+                    "tertiary-fixed": "#e2e2e2",
+                    "surface": "#f9f9f9",
+                    "on-primary": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "inverse-surface": "#303030",
+                    "surface-bright": "#f9f9f9",
+                    "error": "#ba1a1a",
+                    "outline": "#7e7576",
+                    "error-container": "#ffdad6",
+                    "surface-container-highest": "#e2e2e2",
+                    "secondary": "#505f76",
+                    "surface-container-low": "#f3f3f3",
+                    "on-primary-fixed-variant": "#474747",
+                    "on-tertiary-container": "#848484",
+                    "primary-container": "#1b1b1b",
+                    "on-secondary-fixed": "#0b1c30",
+                    "secondary-container": "#d0e1fb",
+                    "primary-fixed": "#e2e2e2",
+                    "surface-container-high": "#e8e8e8",
+                    "primary-fixed-dim": "#c6c6c6",
+                    "on-tertiary-fixed": "#1b1b1b",
+                    "on-background": "#1b1b1b",
+                    "surface-variant": "#e2e2e2",
+                    "surface-container": "#eeeeee",
+                    "primary": "#000000",
+                    "on-tertiary-fixed-variant": "#474747",
+                    "on-tertiary": "#ffffff",
+                    "inverse-primary": "#c6c6c6",
+                    "outline-variant": "#cfc4c5",
+                    "inverse-on-surface": "#f1f1f1"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "inline-gap": "8px",
+                    "stack-gap": "12px",
+                    "unit": "4px",
+                    "container-padding": "16px",
+                    "section-margin": "24px"
+            },
+            "fontFamily": {
+                    "headline-lg": [
+                            "Inter"
+                    ],
+                    "data-tabular": [
+                            "Inter"
+                    ],
+                    "body-md": [
+                            "Inter"
+                    ],
+                    "body-sm": [
+                            "Inter"
+                    ],
+                    "subheading": [
+                            "Inter"
+                    ],
+                    "label-caps": [
+                            "Inter"
+                    ],
+                    "headline-md": [
+                            "Inter"
+                    ]
+            },
+            "fontSize": {
+                    "headline-lg": [
+                            "24px",
+                            {
+                                    "lineHeight": "32px",
+                                    "letterSpacing": "-0.02em",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "data-tabular": [
+                            "13px",
+                            {
+                                    "lineHeight": "18px",
+                                    "fontWeight": "500"
+                            }
+                    ],
+                    "body-md": [
+                            "16px",
+                            {
+                                    "lineHeight": "24px",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "body-sm": [
+                            "14px",
+                            {
+                                    "lineHeight": "20px",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "subheading": [
+                            "14px",
+                            {
+                                    "lineHeight": "20px",
+                                    "letterSpacing": "0.01em",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "label-caps": [
+                            "12px",
+                            {
+                                    "lineHeight": "16px",
+                                    "letterSpacing": "0.05em",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "headline-md": [
+                            "22px",
+                            {
+                                    "lineHeight": "28px",
+                                    "letterSpacing": "-0.01em",
+                                    "fontWeight": "600"
+                            }
+                    ]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        .pb-safe { padding-bottom: env(safe-area-inset-bottom, 16px); }
+        .pt-safe { padding-top: env(safe-area-inset-top, 0px); }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col font-body-md antialiased pt-safe">
+<!-- TopAppBar -->
+<header class="bg-primary dark:bg-primary docked full-width top-0 flat no shadows flex justify-between items-center w-full px-container-padding h-[56px] z-50 sticky top-0 pt-safe">
+<div class="flex items-center gap-inline-gap">
+<button class="text-on-primary hover:bg-primary-container/20 p-2 rounded-full transition-opacity duration-200 active:opacity-80 flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<h1 class="font-headline-md text-headline-md font-bold text-on-primary">Customers</h1>
+</div>
+<div class="flex items-center">
+<button class="bg-on-primary text-primary font-subheading text-subheading px-4 py-2 rounded-lg hover:bg-surface-container-high transition-opacity duration-200 active:opacity-80 flex items-center gap-1">
+<span class="material-symbols-outlined text-sm" data-icon="add">add</span> Add
+            </button>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-1 px-container-padding py-section-margin pb-[100px] flex flex-col gap-stack-gap w-full max-w-4xl mx-auto">
+<!-- Search -->
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant/70" data-icon="search">search</span>
+<input class="w-full h-[44px] pl-10 pr-4 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-md text-body-md shadow-sm transition-shadow" placeholder="Search customers..." type="text"/>
+</div>
+<!-- Customer List -->
+<div class="flex flex-col gap-stack-gap mt-4">
+<!-- Customer Card 1 -->
+<div class="bg-surface-container-lowest rounded-lg border border-outline-variant p-container-padding flex flex-col gap-inline-gap active:bg-surface-container-low transition-colors cursor-pointer">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-subheading text-subheading text-on-surface">Ananya Nair</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">+91 98470 11223</p>
+</div>
+<!-- Pill: Sent (Green on light green) -->
+<span class="px-2 py-1 rounded-full text-[11px] font-bold tracking-wide uppercase bg-[#E6F4EA] text-[#137333]">Sent</span>
+</div>
+<div class="pt-2 border-t border-outline-variant/30 flex justify-between items-center mt-1">
+<span class="font-data-tabular text-data-tabular text-on-surface-variant">Latest: <span class="font-semibold text-on-surface">NQ-1042</span></span>
+<span class="material-symbols-outlined text-on-surface-variant text-sm" data-icon="chevron_right">chevron_right</span>
+</div>
+</div>
+<!-- Customer Card 2 -->
+<div class="bg-surface-container-lowest rounded-lg border border-outline-variant p-container-padding flex flex-col gap-inline-gap active:bg-surface-container-low transition-colors cursor-pointer">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-subheading text-subheading text-on-surface">Ramesh Pillai</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">+91 98950 44011</p>
+</div>
+<!-- Pill: On hold (Amber on light amber) -->
+<span class="px-2 py-1 rounded-full text-[11px] font-bold tracking-wide uppercase bg-[#FEF7E0] text-[#B06000]">On hold</span>
+</div>
+<div class="pt-2 border-t border-outline-variant/30 flex justify-between items-center mt-1">
+<span class="font-data-tabular text-data-tabular text-on-surface-variant">Latest: <span class="font-semibold text-on-surface">NQ-1038</span></span>
+<span class="material-symbols-outlined text-on-surface-variant text-sm" data-icon="chevron_right">chevron_right</span>
+</div>
+</div>
+<!-- Customer Card 3 -->
+<div class="bg-surface-container-lowest rounded-lg border border-outline-variant p-container-padding flex flex-col gap-inline-gap active:bg-surface-container-low transition-colors cursor-pointer">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-subheading text-subheading text-on-surface">Meera Krishnan</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">+91 97461 22890</p>
+</div>
+<!-- Pill: Draft (Gray on light gray) -->
+<span class="px-2 py-1 rounded-full text-[11px] font-bold tracking-wide uppercase bg-surface-container text-on-surface-variant">New</span>
+</div>
+<div class="pt-2 border-t border-outline-variant/30 flex justify-between items-center mt-1">
+<span class="font-data-tabular text-data-tabular text-on-surface-variant/70 italic">No orders yet</span>
+<span class="material-symbols-outlined text-on-surface-variant text-sm" data-icon="chevron_right">chevron_right</span>
+</div>
+</div>
+</div>
+</main>
+<!-- FAB -->
+<button aria-label="Add Customer" class="fixed bottom-[88px] right-6 w-14 h-14 bg-primary text-on-primary rounded-full flex items-center justify-center shadow-lg hover:scale-105 active:scale-95 transition-transform z-40">
+<span class="material-symbols-outlined text-2xl" data-icon="add">add</span>
+</button>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center bg-surface px-unit pb-safe h-[64px] border-t border-outline-variant md:hidden">
+<button class="flex flex-col items-center justify-center text-secondary dark:text-secondary hover:bg-surface-container-low scale-95 active:scale-90 transition-transform duration-150 p-2 rounded-lg flex-1">
+<span class="material-symbols-outlined mb-1" data-icon="home">home</span>
+<span class="font-label-caps text-label-caps">Home</span>
+</button>
+<button class="flex flex-col items-center justify-center text-primary dark:text-primary font-bold hover:bg-surface-container-low scale-95 active:scale-90 transition-transform duration-150 p-2 rounded-lg flex-1">
+<span class="material-symbols-outlined mb-1" data-icon="group" data-weight="fill" style="font-variation-settings: 'FILL' 1;">group</span>
+<span class="font-label-caps text-label-caps">Customers</span>
+</button>
+<button class="flex flex-col items-center justify-center text-secondary dark:text-secondary hover:bg-surface-container-low scale-95 active:scale-90 transition-transform duration-150 p-2 rounded-lg flex-1">
+<span class="material-symbols-outlined mb-1" data-icon="description">description</span>
+<span class="font-label-caps text-label-caps">Quotes</span>
+</button>
+<button class="flex flex-col items-center justify-center text-secondary dark:text-secondary hover:bg-surface-container-low scale-95 active:scale-90 transition-transform duration-150 p-2 rounded-lg flex-1">
+<span class="material-symbols-outlined mb-1" data-icon="shopping_cart">shopping_cart</span>
+<span class="font-label-caps text-label-caps">Orders</span>
+</button>
+<button class="flex flex-col items-center justify-center text-secondary dark:text-secondary hover:bg-surface-container-low scale-95 active:scale-90 transition-transform duration-150 p-2 rounded-lg flex-1">
+<span class="material-symbols-outlined mb-1" data-icon="more_horiz">more_horiz</span>
+<span class="font-label-caps text-label-caps">More</span>
+</button>
+</nav>
+</body></html>

@@ -1,11 +1,15 @@
-import { AppLink } from "@/components/app/app-link";
 import { EmptyState } from "@/components/app/empty-state";
+import { PageFrame } from "@/components/app/page-frame";
 import { PageHeader } from "@/components/app/page-header";
-import { StatusBadge } from "@/components/app/status-badge";
+import { AppLink } from "@/components/app/app-link";
 import { listPendingApprovals } from "@/lib/api/quotes";
 import { rel } from "@/lib/api/rel";
 import { requirePermission } from "@/lib/auth/guards";
 import { formatInr } from "@/lib/format/money";
+import { relativeTime } from "@/lib/format/relative-time";
+import { cn } from "@/lib/utils";
+
+const THIN_MARGIN = 15;
 
 export default async function ApprovalsPage() {
   const [, quotes] = await Promise.all([
@@ -14,10 +18,10 @@ export default async function ApprovalsPage() {
   ]);
 
   return (
-    <div>
+    <PageFrame>
       <PageHeader
         title="Approvals"
-        description="Review quotes submitted by Sales. Rejected quotes return for revision."
+        description="Selling price, discount, and margin."
       />
       {quotes.length === 0 ? (
         <EmptyState
@@ -28,26 +32,55 @@ export default async function ApprovalsPage() {
         <ul className="flex flex-col gap-3">
           {quotes.map((quote) => {
             const version = rel(quote.quote_versions);
+            const total = Number(version?.total ?? 0);
+            const marginAmount = Number(version?.margin_amount ?? 0);
+            const marginPct =
+              Number(version?.margin_percent) ||
+              (total > 0 ? (marginAmount / total) * 100 : 0);
+            const thin = marginPct > 0 && marginPct < THIN_MARGIN;
             return (
               <li key={quote.id}>
                 <AppLink
-                  href={`/approvals/${quote.id}`}
-                  className="block rounded-xl border border-surface-variant bg-surface-container-lowest p-5 shadow-card"
+                  href={`/quotes/${quote.id}`}
+                  className="flex flex-col gap-2 rounded-lg border border-outline-variant bg-card p-4 shadow-card transition-colors hover:bg-surface-container-low"
                 >
-                  <div className="flex justify-between gap-3">
-                    <p className="font-medium">{quote.quote_number}</p>
-                    <StatusBadge status="quote_pending_accounts" />
+                  <div className="flex items-start justify-between gap-3">
+                    <span className="text-label-caps text-on-surface-variant">
+                      {quote.quote_number}
+                    </span>
+                    <span className="text-body-sm text-secondary">
+                      {relativeTime(quote.created_at)}
+                    </span>
                   </div>
-                  <p className="mt-1 text-sm text-on-surface-variant">
-                    {rel(quote.customers)?.name} · v{version?.version_number} ·{" "}
-                    {formatInr(Number(version?.total ?? 0))}
-                  </p>
+                  <div className="flex items-center justify-between gap-3">
+                    <h2 className="truncate pr-4 text-subheading text-on-surface">
+                      {rel(quote.customers)?.name ?? "Customer"}
+                    </h2>
+                    <span className="shrink-0 text-data-tabular text-primary">
+                      {formatInr(total)}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between pt-1">
+                    <span
+                      className={cn(
+                        "inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-bold tracking-wider uppercase",
+                        thin
+                          ? "border-error/20 bg-error-container text-on-error-container"
+                          : "border-surface-dim bg-surface-container-high text-on-surface-variant",
+                      )}
+                    >
+                      Margin {Math.round(marginPct)}%
+                    </span>
+                    <span className="text-[13px] text-subheading text-primary underline underline-offset-2">
+                      Review
+                    </span>
+                  </div>
                 </AppLink>
               </li>
             );
           })}
         </ul>
       )}
-    </div>
+    </PageFrame>
   );
 }

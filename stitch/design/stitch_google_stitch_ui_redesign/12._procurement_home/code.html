@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Procurement Home</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-bright": "#f9f9f9",
+                        "tertiary-container": "#1b1b1b",
+                        "error-container": "#ffdad6",
+                        "on-surface-variant": "#4c4546",
+                        "inverse-surface": "#303030",
+                        "on-primary-fixed": "#1b1b1b",
+                        "surface-tint": "#5e5e5e",
+                        "inverse-on-surface": "#f1f1f1",
+                        "outline": "#7e7576",
+                        "on-secondary-fixed": "#0b1c30",
+                        "secondary-container": "#d0e1fb",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "tertiary-fixed-dim": "#c6c6c6",
+                        "surface-container": "#eeeeee",
+                        "on-tertiary": "#ffffff",
+                        "outline-variant": "#cfc4c5",
+                        "primary-container": "#1b1b1b",
+                        "on-surface": "#1b1b1b",
+                        "error": "#ba1a1a",
+                        "on-error": "#ffffff",
+                        "on-secondary-container": "#54647a",
+                        "secondary": "#505f76",
+                        "surface-container-low": "#f3f3f3",
+                        "on-primary-container": "#848484",
+                        "on-secondary-fixed-variant": "#38485d",
+                        "on-error-container": "#93000a",
+                        "on-primary": "#ffffff",
+                        "primary-fixed-dim": "#c6c6c6",
+                        "primary": "#000000",
+                        "tertiary-fixed": "#e2e2e2",
+                        "surface-variant": "#e2e2e2",
+                        "secondary-fixed": "#d3e4fe",
+                        "on-tertiary-fixed": "#1b1b1b",
+                        "on-primary-fixed-variant": "#474747",
+                        "on-tertiary-fixed-variant": "#474747",
+                        "background": "#f9f9f9",
+                        "primary-fixed": "#e2e2e2",
+                        "tertiary": "#000000",
+                        "surface": "#f9f9f9",
+                        "on-background": "#1b1b1b",
+                        "surface-container-high": "#e8e8e8",
+                        "on-tertiary-container": "#848484",
+                        "surface-container-highest": "#e2e2e2",
+                        "surface-dim": "#dadada",
+                        "secondary-fixed-dim": "#b7c8e1",
+                        "inverse-primary": "#c6c6c6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "4px",
+                        "section-margin": "24px",
+                        "stack-gap": "12px",
+                        "inline-gap": "8px",
+                        "container-padding": "16px"
+                    },
+                    "fontFamily": {
+                        "subheading": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "data-tabular": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "subheading": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+                        "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                        "data-tabular": ["13px", { "lineHeight": "18px", "fontWeight": "500" }],
+                        "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-md": ["22px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .ios-divider {
+            position: relative;
+        }
+        .ios-divider:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 56px; /* Offset to clear the icon */
+            right: 0;
+            height: 1px;
+            background-color: theme('colors.outline-variant');
+        }
+    </style>
+</head>
+<body class="bg-surface-container-low text-on-surface antialiased pb-[80px] min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="sticky top-0 z-40 bg-primary dark:bg-primary text-on-primary dark:text-on-primary flex justify-between items-center w-full px-container-padding h-11">
+<button aria-label="Menu" class="flex items-center justify-center p-1 hover:bg-primary-container/20 transition-opacity duration-200 active:opacity-80 rounded-full">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h1 class="font-headline-md text-headline-md font-bold text-on-primary">Nuhome Sales</h1>
+<button aria-label="Profile" class="flex items-center justify-center rounded-full overflow-hidden w-7 h-7 hover:bg-primary-container/20 transition-opacity duration-200 active:opacity-80">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a corporate sales representative in a bright, modern office setting. High key lighting, clean crisp aesthetic, confident expression." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAl1E7xDBaZ-ZCcWVIZbvlACVaIoVoqINGLqrL81H77oBcfOjZlyp2rH1EWDLRA2Ive68eNWj_kc20OqnsM9ZofGSnnqpCkKiGoPODGapQX4vOTmDN_Rl0OaZ0x77VDsXJclkRyPV_Zc96j5kKY3oUz_yW1qJqHD64PyzwvvA7gGdAuGzokpNFH1NTt3cERM3pD2BDfSD6lh3WaZ43lhyH2E2aryUJ5tfODJEksyJtPXKFFLwfE4A-sdA"/>
+</button>
+</header>
+<!-- Main Canvas -->
+<main class="flex-1 w-full max-w-3xl mx-auto px-container-padding pt-6 pb-section-margin">
+<!-- Header Section -->
+<header class="mb-section-margin">
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-1 tracking-tight">Good morning, Arjun</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Procurement · 8 active</p>
+</header>
+<!-- Grouped List (iOS Style) -->
+<section class="bg-surface-container-lowest rounded-xl border border-outline-variant overflow-hidden shadow-sm">
+<!-- Row 1: New orders -->
+<a class="ios-divider flex items-center px-container-padding py-3 hover:bg-surface-container-low active:bg-surface-container transition-colors duration-150 relative" href="#">
+<div class="w-10 h-10 rounded-full bg-secondary-container/30 flex items-center justify-center mr-4 shrink-0">
+<span class="material-symbols-outlined text-secondary" data-weight="fill" style="font-variation-settings: 'FILL' 1;">inbox</span>
+</div>
+<div class="flex-1 flex flex-col justify-center min-w-0 pr-2">
+<div class="flex justify-between items-center w-full">
+<span class="font-subheading text-subheading text-on-surface truncate">New orders</span>
+<div class="flex items-center gap-inline-gap shrink-0">
+<span class="bg-primary text-on-primary font-label-caps text-label-caps px-2 py-0.5 rounded-full min-w-[24px] text-center">2</span>
+</div>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate mt-0.5">Ready to split and send to vendors</span>
+</div>
+<span class="material-symbols-outlined text-outline shrink-0">chevron_right</span>
+</a>
+<!-- Row 2: With vendors -->
+<a class="ios-divider flex items-center px-container-padding py-3 hover:bg-surface-container-low active:bg-surface-container transition-colors duration-150 relative" href="#">
+<div class="w-10 h-10 rounded-full bg-secondary-container/30 flex items-center justify-center mr-4 shrink-0">
+<span class="material-symbols-outlined text-secondary" data-weight="fill" style="font-variation-settings: 'FILL' 1;">storefront</span>
+</div>
+<div class="flex-1 flex flex-col justify-center min-w-0 pr-2">
+<div class="flex justify-between items-center w-full">
+<span class="font-subheading text-subheading text-on-surface truncate">With vendors</span>
+<div class="flex items-center gap-inline-gap shrink-0">
+<span class="bg-secondary-container text-on-secondary-container font-label-caps text-label-caps px-2 py-0.5 rounded-full min-w-[24px] text-center">5</span>
+</div>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate mt-0.5">Awaiting dispatch confirmation</span>
+</div>
+<span class="material-symbols-outlined text-outline shrink-0">chevron_right</span>
+</a>
+<!-- Row 3: Dispatched -->
+<a class="ios-divider flex items-center px-container-padding py-3 hover:bg-surface-container-low active:bg-surface-container transition-colors duration-150 relative" href="#">
+<div class="w-10 h-10 rounded-full bg-secondary-container/30 flex items-center justify-center mr-4 shrink-0">
+<span class="material-symbols-outlined text-secondary" data-weight="fill" style="font-variation-settings: 'FILL' 1;">local_shipping</span>
+</div>
+<div class="flex-1 flex flex-col justify-center min-w-0 pr-2">
+<div class="flex justify-between items-center w-full">
+<span class="font-subheading text-subheading text-on-surface truncate">Dispatched</span>
+<div class="flex items-center gap-inline-gap shrink-0">
+<span class="bg-secondary-container text-on-secondary-container font-label-caps text-label-caps px-2 py-0.5 rounded-full min-w-[24px] text-center">1</span>
+</div>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate mt-0.5">In transit to showroom</span>
+</div>
+<span class="material-symbols-outlined text-outline shrink-0">chevron_right</span>
+</a>
+<!-- Row 4: Received / GRN -->
+<a class="ios-divider flex items-center px-container-padding py-3 hover:bg-surface-container-low active:bg-surface-container transition-colors duration-150 relative opacity-60" href="#">
+<div class="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center mr-4 shrink-0">
+<span class="material-symbols-outlined text-on-surface-variant" data-weight="fill" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+</div>
+<div class="flex-1 flex flex-col justify-center min-w-0 pr-2">
+<div class="flex justify-between items-center w-full">
+<span class="font-subheading text-subheading text-on-surface truncate">Received / GRN</span>
+<div class="flex items-center gap-inline-gap shrink-0">
+<span class="bg-surface-variant text-on-surface-variant font-label-caps text-label-caps px-2 py-0.5 rounded-full min-w-[24px] text-center">0</span>
+</div>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate mt-0.5">No pending receipts</span>
+</div>
+<span class="material-symbols-outlined text-outline shrink-0">chevron_right</span>
+</a>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center bg-surface dark:bg-surface px-unit pb-safe border-t border-outline-variant h-[64px]">
+<!-- Home (Active) -->
+<a class="flex flex-col items-center justify-center text-primary dark:text-primary font-bold font-label-caps text-label-caps w-16 h-full scale-95 active:scale-90 transition-transform duration-150 hover:bg-surface-container-low rounded-lg" href="#">
+<span class="material-symbols-outlined mb-1" data-weight="fill" style="font-variation-settings: 'FILL' 1;">home</span>
+<span>Home</span>
+</a>
+<!-- Customers -->
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary font-label-caps text-label-caps w-16 h-full scale-95 active:scale-90 transition-transform duration-150 hover:bg-surface-container-low rounded-lg" href="#">
+<span class="material-symbols-outlined mb-1">group</span>
+<span>Customers</span>
+</a>
+<!-- Quotes -->
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary font-label-caps text-label-caps w-16 h-full scale-95 active:scale-90 transition-transform duration-150 hover:bg-surface-container-low rounded-lg" href="#">
+<span class="material-symbols-outlined mb-1">description</span>
+<span>Quotes</span>
+</a>
+<!-- Orders -->
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary font-label-caps text-label-caps w-16 h-full scale-95 active:scale-90 transition-transform duration-150 hover:bg-surface-container-low rounded-lg" href="#">
+<span class="material-symbols-outlined mb-1">shopping_cart</span>
+<span>Orders</span>
+</a>
+<!-- More -->
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary font-label-caps text-label-caps w-16 h-full scale-95 active:scale-90 transition-transform duration-150 hover:bg-surface-container-low rounded-lg" href="#">
+<span class="material-symbols-outlined mb-1">more_horiz</span>
+<span>More</span>
+</a>
+</nav>
+</body></html>

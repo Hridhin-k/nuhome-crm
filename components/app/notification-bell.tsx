@@ -147,7 +147,7 @@ export function NotificationBell({
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger
-        className="relative inline-flex size-10 items-center justify-center rounded-full text-on-surface-variant transition-colors hover:bg-surface-container hover:text-primary"
+        className="relative inline-flex size-10 items-center justify-center rounded-md text-white/75 transition-colors hover:bg-white/10 hover:text-white"
         aria-label={
           unreadCount > 0
             ? `${unreadCount} unread notifications`

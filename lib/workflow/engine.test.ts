@@ -6,6 +6,7 @@ import {
   assertCanRejectQuote,
   assertCanSendQuote,
   assertCanVerifyPayment,
+  assertCanRejectPayment,
   assertPaymentAmount,
   calculateOutstanding,
   resolveDeliveryGate,
@@ -28,6 +29,16 @@ describe("quote workflow", () => {
 
   it("returns a rejected quote to draft for revision", () => {
     expect(() => assertTransition("quote_rejected", "quote_draft")).not.toThrow();
+  });
+
+  it("lets sales withdraw an approved quote before send", () => {
+    expect(() => assertTransition("quote_approved", "quote_draft")).not.toThrow();
+    expect(() =>
+      assertTransition("quote_approved", "quote_sent_to_customer"),
+    ).not.toThrow();
+    expect(() =>
+      assertTransition("quote_sent_to_customer", "quote_draft"),
+    ).toThrow();
   });
 
   it("never sends a rejected quote to the customer", () => {
@@ -94,6 +105,30 @@ describe("payment and activation", () => {
         recordedBy: "accounts-1",
       }),
     ).toThrow(/you recorded/);
+
+    expect(() =>
+      assertCanRejectPayment({
+        actorId: "sales-1",
+        actorRole: "sales",
+        recordedBy: "other",
+      }),
+    ).toThrow(/Missing permission/);
+
+    expect(() =>
+      assertCanRejectPayment({
+        actorId: "accounts-1",
+        actorRole: "accounts",
+        recordedBy: "accounts-1",
+      }),
+    ).toThrow(/you recorded/);
+
+    expect(() =>
+      assertCanRejectPayment({
+        actorId: "accounts-1",
+        actorRole: "accounts",
+        recordedBy: "sales-1",
+      }),
+    ).not.toThrow();
   });
 
   it("activates the order on first verified payment terms", () => {
@@ -160,6 +195,12 @@ describe("vendor and delivery gate", () => {
     expect(() => assertTransition("items_received", "delivered")).toThrow();
     expect(() =>
       assertTransition("items_received", "delivery_pending_payment"),
+    ).not.toThrow();
+  });
+
+  it("allows closing remainder without a goods receipt", () => {
+    expect(() =>
+      assertTransition("sent_to_vendor", "items_received"),
     ).not.toThrow();
   });
 

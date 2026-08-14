@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Walk-in Step 2 — Materials</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary": "#ffffff",
+                        "on-secondary-container": "#54647a",
+                        "surface-tint": "#5e5e5e",
+                        "secondary-fixed": "#d3e4fe",
+                        "on-surface-variant": "#4c4546",
+                        "surface-dim": "#dadada",
+                        "on-secondary-fixed-variant": "#38485d",
+                        "tertiary": "#000000",
+                        "tertiary-container": "#1b1b1b",
+                        "background": "#f9f9f9",
+                        "on-primary-fixed": "#1b1b1b",
+                        "on-surface": "#1b1b1b",
+                        "secondary-fixed-dim": "#b7c8e1",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed-dim": "#c6c6c6",
+                        "on-error": "#ffffff",
+                        "on-primary-container": "#848484",
+                        "tertiary-fixed": "#e2e2e2",
+                        "surface": "#f9f9f9",
+                        "on-primary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "inverse-surface": "#303030",
+                        "surface-bright": "#f9f9f9",
+                        "error": "#ba1a1a",
+                        "outline": "#7e7576",
+                        "error-container": "#ffdad6",
+                        "surface-container-highest": "#e2e2e2",
+                        "secondary": "#505f76",
+                        "surface-container-low": "#f3f3f3",
+                        "on-primary-fixed-variant": "#474747",
+                        "on-tertiary-container": "#848484",
+                        "primary-container": "#1b1b1b",
+                        "on-secondary-fixed": "#0b1c30",
+                        "secondary-container": "#d0e1fb",
+                        "primary-fixed": "#e2e2e2",
+                        "surface-container-high": "#e8e8e8",
+                        "primary-fixed-dim": "#c6c6c6",
+                        "on-tertiary-fixed": "#1b1b1b",
+                        "on-background": "#1b1b1b",
+                        "surface-variant": "#e2e2e2",
+                        "surface-container": "#eeeeee",
+                        "primary": "#000000",
+                        "on-tertiary-fixed-variant": "#474747",
+                        "on-tertiary": "#ffffff",
+                        "inverse-primary": "#c6c6c6",
+                        "outline-variant": "#cfc4c5",
+                        "inverse-on-surface": "#f1f1f1"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "inline-gap": "8px",
+                        "stack-gap": "12px",
+                        "unit": "4px",
+                        "container-padding": "16px",
+                        "section-margin": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Inter"],
+                        "data-tabular": ["Inter"],
+                        "body-md": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "subheading": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "headline-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "data-tabular": ["13px", { "lineHeight": "18px", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "subheading": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+                        "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                        "headline-md": ["22px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen pt-11 pb-[80px] font-body-md antialiased selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center w-full px-container-padding h-11 bg-primary text-on-primary docked full-width top-0 fixed z-50">
+<div class="flex items-center gap-stack-gap">
+<button class="flex items-center justify-center transition-opacity duration-200 active:opacity-80 hover:bg-primary-container/20 p-1 rounded">
+<span class="material-symbols-outlined text-[24px]">menu</span>
+</button>
+<span class="font-headline-md text-headline-md font-bold text-on-primary">Nuhome Sales</span>
+</div>
+<div class="w-7 h-7 rounded-full overflow-hidden bg-surface-container border border-outline-variant flex items-center justify-center">
+<img class="w-full h-full object-cover" data-alt="A small, professional headshot avatar of a sales representative, brightly lit against a neutral background. High contrast, modern corporate style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuATPlSFGW5BfkigZV-PYdWsYtm1-XhnBx5yQ-H1xshCalcHvAvg5LG_u0xK2r9IsHnSV7SBqfkXhjjVBix_br383hicXCLJqv1Mc8fXin1gVVbEPCSuGnC3YwaquiZ2JBLAwVxdiRXGvkuj35WQAwKtH24Oo_Zeq_h00vH65FchNkX4A2z4oJIzLo877KtPFeEZ_z_XZG5fWeJDRj7XQVJOYZfBFLHH5wXvsvHPIfkTRnEgzOr5Pw6GWQ"/>
+</div>
+</header>
+<main class="px-container-padding flex flex-col gap-section-margin pt-section-margin max-w-2xl mx-auto">
+<!-- Segmented Control -->
+<div class="flex p-1 bg-surface-container-high rounded-lg w-full shadow-sm">
+<button class="flex-1 py-1.5 text-center rounded text-secondary font-subheading text-subheading hover:bg-surface-container-low transition-colors">Details</button>
+<button class="flex-1 py-1.5 text-center rounded bg-surface shadow-sm border border-outline-variant text-primary font-subheading text-subheading">Materials</button>
+</div>
+<!-- Catalogue Section -->
+<section class="bg-surface rounded-lg border border-outline-variant p-container-padding flex flex-col gap-stack-gap shadow-sm">
+<h2 class="font-subheading text-subheading text-primary uppercase tracking-wider">Catalogue</h2>
+<!-- Category Chips -->
+<div class="flex overflow-x-auto gap-inline-gap pb-2 hide-scrollbar -mx-container-padding px-container-padding">
+<button class="px-4 py-1.5 rounded-full bg-primary text-on-primary font-label-caps text-label-caps whitespace-nowrap transition-transform active:scale-95">SOFAS</button>
+<button class="px-4 py-1.5 rounded-full bg-surface-container-lowest border border-outline-variant text-secondary hover:bg-surface-container-low font-label-caps text-label-caps whitespace-nowrap transition-transform active:scale-95">WARDROBES</button>
+<button class="px-4 py-1.5 rounded-full bg-surface-container-lowest border border-outline-variant text-secondary hover:bg-surface-container-low font-label-caps text-label-caps whitespace-nowrap transition-transform active:scale-95">CURTAINS</button>
+<button class="px-4 py-1.5 rounded-full bg-surface-container-lowest border border-outline-variant text-secondary hover:bg-surface-container-low font-label-caps text-label-caps whitespace-nowrap transition-transform active:scale-95">LIGHTING</button>
+</div>
+<!-- Item List -->
+<div class="flex flex-col">
+<div class="flex justify-between items-center py-3 border-b border-surface-variant last:border-0 group">
+<div class="flex flex-col">
+<span class="font-body-md text-body-md text-primary font-semibold group-hover:text-secondary-fixed-variant transition-colors">Oslo 3-seater</span>
+<span class="font-data-tabular text-data-tabular text-secondary mt-0.5">SOF-014 · ₹42,000</span>
+</div>
+<button class="w-8 h-8 flex items-center justify-center rounded-full bg-surface-container-high text-primary hover:bg-surface-variant transition-colors active:scale-90">
+<span class="material-symbols-outlined text-[20px]">add</span>
+</button>
+</div>
+</div>
+<!-- Custom Line Action -->
+<button class="w-full h-[44px] mt-2 flex items-center justify-center gap-2 rounded border border-primary text-primary font-subheading text-subheading hover:bg-surface-container-low transition-colors active:bg-surface-container-high">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                Custom line
+            </button>
+</section>
+<!-- Line Items (Cart) Section -->
+<section class="bg-surface rounded-lg border border-outline-variant p-container-padding flex flex-col gap-stack-gap shadow-sm">
+<div class="flex justify-between items-end mb-1">
+<h2 class="font-subheading text-subheading text-primary uppercase tracking-wider">Line Items (2)</h2>
+</div>
+<div class="flex flex-col gap-4">
+<!-- Line Item 1 -->
+<div class="flex flex-col pb-4 border-b border-surface-variant last:border-0 last:pb-0">
+<div class="flex justify-between items-start mb-2">
+<span class="font-body-md text-body-md text-primary font-semibold">Oslo 3-seater</span>
+<span class="font-data-tabular text-data-tabular text-primary font-semibold">₹42,000</span>
+</div>
+<div class="flex justify-between items-center">
+<button class="text-secondary font-body-sm text-body-sm underline hover:text-primary transition-colors">Edit price</button>
+<div class="flex items-center gap-3 bg-surface-container border border-surface-variant rounded-full px-2 py-1">
+<button class="w-6 h-6 flex items-center justify-center rounded-full text-secondary hover:bg-surface-variant hover:text-primary transition-colors active:scale-90"><span class="material-symbols-outlined text-[16px]">remove</span></button>
+<span class="font-data-tabular text-data-tabular text-primary min-w-[1ch] text-center">1</span>
+<button class="w-6 h-6 flex items-center justify-center rounded-full text-secondary hover:bg-surface-variant hover:text-primary transition-colors active:scale-90"><span class="material-symbols-outlined text-[16px]">add</span></button>
+</div>
+</div>
+</div>
+<!-- Line Item 2 -->
+<div class="flex flex-col pb-4 border-b border-surface-variant last:border-0 last:pb-0">
+<div class="flex justify-between items-start mb-2">
+<span class="font-body-md text-body-md text-primary font-semibold">Teak wardrobe</span>
+<span class="font-data-tabular text-data-tabular text-primary font-semibold">₹68,000</span>
+</div>
+<div class="flex justify-between items-center">
+<button class="text-secondary font-body-sm text-body-sm underline hover:text-primary transition-colors">Edit price</button>
+<div class="flex items-center gap-3 bg-surface-container border border-surface-variant rounded-full px-2 py-1">
+<button class="w-6 h-6 flex items-center justify-center rounded-full text-secondary hover:bg-surface-variant hover:text-primary transition-colors active:scale-90"><span class="material-symbols-outlined text-[16px]">remove</span></button>
+<span class="font-data-tabular text-data-tabular text-primary min-w-[1ch] text-center">1</span>
+<button class="w-6 h-6 flex items-center justify-center rounded-full text-secondary hover:bg-surface-variant hover:text-primary transition-colors active:scale-90"><span class="material-symbols-outlined text-[16px]">add</span></button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Action Area -->
+<div class="mt-4 flex justify-end">
+<button class="h-[44px] px-6 bg-primary text-on-primary rounded flex items-center gap-2 font-subheading text-subheading hover:bg-primary-fixed-variant transition-colors active:scale-[0.98] shadow-sm">
+                Review
+                <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center bg-surface px-unit pb-safe h-[64px] border-t border-outline-variant">
+<button class="flex flex-col items-center justify-center text-secondary font-label-caps text-label-caps hover:bg-surface-container-low scale-95 active:scale-90 transition-transform duration-150 p-2 rounded-lg w-16">
+<span class="material-symbols-outlined mb-1">home</span>
+<span>Home</span>
+</button>
+<button class="flex flex-col items-center justify-center text-secondary font-label-caps text-label-caps hover:bg-surface-container-low scale-95 active:scale-90 transition-transform duration-150 p-2 rounded-lg w-16">
+<span class="material-symbols-outlined mb-1">group</span>
+<span>Customers</span>
+</button>
+<!-- Active State for Quote creation -->
+<button class="flex flex-col items-center justify-center text-primary font-bold hover:bg-surface-container-low scale-95 active:scale-90 transition-transform duration-150 p-2 rounded-lg w-16">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">description</span>
+<span>Quotes</span>
+</button>
+<button class="flex flex-col items-center justify-center text-secondary font-label-caps text-label-caps hover:bg-surface-container-low scale-95 active:scale-90 transition-transform duration-150 p-2 rounded-lg w-16">
+<span class="material-symbols-outlined mb-1">shopping_cart</span>
+<span>Orders</span>
+</button>
+<button class="flex flex-col items-center justify-center text-secondary font-label-caps text-label-caps hover:bg-surface-container-low scale-95 active:scale-90 transition-transform duration-150 p-2 rounded-lg w-16">
+<span class="material-symbols-outlined mb-1">more_horiz</span>
+<span>More</span>
+</button>
+</nav>
+</body></html>

@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Fulfillment Detail - Nuhome</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-container": "#1b1b1b",
+                        "outline": "#7e7576",
+                        "tertiary-fixed-dim": "#c6c6c6",
+                        "inverse-on-surface": "#f1f1f1",
+                        "tertiary": "#000000",
+                        "surface-container-highest": "#e2e2e2",
+                        "primary-fixed": "#e2e2e2",
+                        "secondary-fixed-dim": "#b7c8e1",
+                        "surface-tint": "#5e5e5e",
+                        "on-primary-fixed": "#1b1b1b",
+                        "surface-dim": "#dadada",
+                        "on-secondary-container": "#54647a",
+                        "on-tertiary-fixed-variant": "#474747",
+                        "outline-variant": "#cfc4c5",
+                        "primary": "#000000",
+                        "on-surface": "#1b1b1b",
+                        "on-tertiary-container": "#848484",
+                        "on-surface-variant": "#4c4546",
+                        "inverse-primary": "#c6c6c6",
+                        "surface": "#f9f9f9",
+                        "on-tertiary-fixed": "#1b1b1b",
+                        "on-secondary": "#ffffff",
+                        "on-secondary-fixed-variant": "#38485d",
+                        "error": "#ba1a1a",
+                        "on-primary-fixed-variant": "#474747",
+                        "on-error": "#ffffff",
+                        "background": "#f9f9f9",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "secondary": "#505f76",
+                        "surface-bright": "#f9f9f9",
+                        "surface-container-high": "#e8e8e8",
+                        "on-secondary-fixed": "#0b1c30",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed": "#e2e2e2",
+                        "secondary-fixed": "#d3e4fe",
+                        "surface-variant": "#e2e2e2",
+                        "tertiary-container": "#1b1b1b",
+                        "on-background": "#1b1b1b",
+                        "on-primary-container": "#848484",
+                        "error-container": "#ffdad6",
+                        "on-tertiary": "#ffffff",
+                        "inverse-surface": "#303030",
+                        "primary-fixed-dim": "#c6c6c6",
+                        "secondary-container": "#d0e1fb",
+                        "surface-container": "#eeeeee",
+                        "surface-container-low": "#f3f3f3"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "4px",
+                        "container-padding": "16px",
+                        "section-margin": "24px",
+                        "stack-gap": "12px",
+                        "inline-gap": "8px"
+                    },
+                    "fontFamily": {
+                        "data-tabular": ["Inter"],
+                        "body-md": ["Inter"],
+                        "subheading": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "data-tabular": ["13px", { "lineHeight": "18px", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "subheading": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+                        "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-md": ["22px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #F8F9FA; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0; }
+        .material-symbols-outlined.fill { font-variation-settings: 'FILL' 1; }
+        
+        /* Custom Stepper Input Styling */
+        input[type="number"]::-webkit-inner-spin-button, 
+        input[type="number"]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background pb-24 md:pb-0">
+<!-- TopAppBar -->
+<header class="bg-primary dark:bg-primary-container fixed top-0 w-full z-50 border-b border-outline-variant flat no shadows">
+<div class="flex justify-between items-center h-14 px-container-padding w-full">
+<button class="text-on-primary-fixed-variant hover:opacity-80 transition-opacity active:scale-95 flex items-center">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="font-headline-lg text-headline-lg text-on-primary dark:text-on-primary-container tracking-tight">NQ-1031</h1>
+<button class="text-on-primary-fixed-variant hover:opacity-80 transition-opacity active:scale-95 flex items-center">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="pt-14 px-container-padding max-w-4xl mx-auto md:mt-8">
+<!-- Status Header -->
+<section class="mt-section-margin mb-6 flex flex-col gap-2">
+<div class="flex justify-between items-start">
+<h2 class="font-headline-md text-headline-md text-on-background">Kerala Woods Batch</h2>
+<div class="bg-surface-container-high px-3 py-1 rounded-full border border-outline-variant">
+<span class="font-label-caps text-label-caps text-error">OVERDUE</span>
+</div>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">local_shipping</span>
+                Sent · expected 12 Aug
+            </p>
+</section>
+<!-- Segmented Control (Procurement Tabs) -->
+<div class="bg-surface-container rounded-lg p-1 flex mb-section-margin shadow-sm border border-outline-variant">
+<button class="flex-1 py-2 font-subheading text-subheading text-on-surface bg-surface-container-lowest rounded-md shadow-sm border border-outline-variant text-center">Receipt (GRN)</button>
+<button class="flex-1 py-2 font-subheading text-subheading text-on-surface-variant rounded-md text-center">Details</button>
+<button class="flex-1 py-2 font-subheading text-subheading text-on-surface-variant rounded-md text-center">History</button>
+</div>
+<!-- Secondary Action -->
+<div class="mb-section-margin">
+<button class="w-full h-11 border border-primary text-primary font-subheading text-subheading rounded bg-surface-container-lowest flex items-center justify-center gap-2 hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-[18px]">done_all</span>
+                Mark dispatched
+            </button>
+</div>
+<!-- Record Receipt Card (Bento/Glassmorphism inspired) -->
+<section class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 shadow-sm mb-section-margin relative overflow-hidden">
+<!-- Decorative subtle background -->
+<div class="absolute -right-10 -top-10 w-32 h-32 bg-secondary-container rounded-full blur-3xl opacity-30 pointer-events-none"></div>
+<h3 class="font-subheading text-subheading text-on-background mb-4 border-b border-outline-variant pb-2">Record Receipt</h3>
+<!-- Item List for Receiving -->
+<div class="flex flex-col gap-stack-gap">
+<!-- Item 1 -->
+<div class="flex flex-col gap-2 p-3 bg-surface rounded-lg border border-outline-variant">
+<div class="flex justify-between items-start">
+<div>
+<p class="font-subheading text-subheading text-on-background">Teak Wood Planks 2x4</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Expected: 150 units</p>
+</div>
+</div>
+<div class="flex items-center justify-between mt-2 pt-2 border-t border-outline-variant border-dashed">
+<span class="font-body-sm text-body-sm text-on-surface">Received Qty:</span>
+<div class="flex items-center bg-surface-container rounded-md border border-outline-variant">
+<button class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high rounded-l-md active:scale-95">
+<span class="material-symbols-outlined text-[18px]">remove</span>
+</button>
+<input aria-label="Quantity received" class="w-12 h-8 text-center font-data-tabular text-data-tabular bg-transparent border-none focus:ring-0 p-0 m-0" type="number" value="150"/>
+<button class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high rounded-r-md active:scale-95">
+<span class="material-symbols-outlined text-[18px]">add</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Item 2 (Shortage example) -->
+<div class="flex flex-col gap-2 p-3 bg-surface rounded-lg border border-outline-variant">
+<div class="flex justify-between items-start">
+<div>
+<p class="font-subheading text-subheading text-on-background">Rosewood Veneer Sheets</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Expected: 50 units</p>
+</div>
+</div>
+<div class="flex items-center justify-between mt-2 pt-2 border-t border-outline-variant border-dashed">
+<span class="font-body-sm text-body-sm text-on-surface">Received Qty:</span>
+<div class="flex items-center bg-surface-container rounded-md border border-outline-variant">
+<button class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high rounded-l-md active:scale-95">
+<span class="material-symbols-outlined text-[18px]">remove</span>
+</button>
+<input aria-label="Quantity received" class="w-12 h-8 text-center font-data-tabular text-data-tabular text-error bg-transparent border-none focus:ring-0 p-0 m-0" type="number" value="45"/>
+<button class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high rounded-r-md active:scale-95">
+<span class="material-symbols-outlined text-[18px]">add</span>
+</button>
+</div>
+</div>
+<!-- Close remainder section (only visible when received < expected) -->
+<div class="mt-2 bg-error-container/30 p-3 rounded border border-error-container">
+<p class="font-label-caps text-label-caps text-on-background mb-2">CLOSE REMAINDER (5 UNITS) REASON:</p>
+<div class="flex flex-wrap gap-2">
+<button class="px-3 py-1.5 rounded-full border border-primary bg-primary text-on-primary font-body-sm text-body-sm flex items-center gap-1 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[14px]">remove_shopping_cart</span>
+                                Shortage
+                            </button>
+<button class="px-3 py-1.5 rounded-full border border-outline-variant bg-surface text-on-surface font-body-sm text-body-sm active:scale-95 transition-transform">
+                                Damage
+                            </button>
+<button class="px-3 py-1.5 rounded-full border border-outline-variant bg-surface text-on-surface font-body-sm text-body-sm active:scale-95 transition-transform">
+                                Return
+                            </button>
+<button class="px-3 py-1.5 rounded-full border border-outline-variant bg-surface text-on-surface font-body-sm text-body-sm active:scale-95 transition-transform">
+                                Cancelled
+                            </button>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-4 pt-4 border-t border-outline-variant">
+<button class="w-full h-11 bg-primary text-on-primary font-subheading text-subheading rounded flex items-center justify-center hover:bg-on-surface-variant transition-colors active:scale-[0.98]">
+                    Confirm Receipt
+                </button>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="bg-surface dark:bg-surface-container fixed bottom-0 w-full z-50 h-16 border-t border-outline-variant flat no shadows md:hidden">
+<div class="fixed bottom-0 left-0 w-full flex justify-around items-center px-container-padding pb-safe h-full">
+<button class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-container-high active:scale-90 transition-transform duration-200 p-2 rounded-lg">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-caps text-label-caps mt-1">Home</span>
+</button>
+<button class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-container-high active:scale-90 transition-transform duration-200 p-2 rounded-lg">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span class="font-label-caps text-label-caps mt-1">Orders</span>
+</button>
+<button class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-container-high active:scale-90 transition-transform duration-200 p-2 rounded-lg">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-label-caps text-label-caps mt-1">Vendors</span>
+</button>
+<button class="flex flex-col items-center justify-center text-primary dark:text-primary-fixed font-bold hover:bg-surface-container-low dark:hover:bg-surface-container-high active:scale-90 transition-transform duration-200 p-2 rounded-lg">
+<span class="material-symbols-outlined fill">local_shipping</span>
+<span class="font-label-caps text-label-caps mt-1">Fulfillment</span>
+</button>
+<button class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-container-high active:scale-90 transition-transform duration-200 p-2 rounded-lg">
+<span class="material-symbols-outlined">more_horiz</span>
+<span class="font-label-caps text-label-caps mt-1">More</span>
+</button>
+</div>
+</nav>
+<script>
+        // Simple script to handle segmented control and chips toggle for demonstration
+        document.querySelectorAll('.rounded-full.border').forEach(button => {
+            button.addEventListener('click', function() {
+                if(this.parentElement.querySelector('.bg-primary')) {
+                    this.parentElement.querySelectorAll('button').forEach(btn => {
+                        btn.classList.remove('bg-primary', 'text-on-primary', 'border-primary');
+                        btn.classList.add('bg-surface', 'text-on-surface', 'border-outline-variant');
+                        if(btn.querySelector('.material-symbols-outlined')) {
+                            btn.querySelector('.material-symbols-outlined').remove();
+                        }
+                    });
+                }
+                
+                this.classList.remove('bg-surface', 'text-on-surface', 'border-outline-variant');
+                this.classList.add('bg-primary', 'text-on-primary', 'border-primary');
+                
+                if(!this.querySelector('.material-symbols-outlined')) {
+                    const icon = document.createElement('span');
+                    icon.className = 'material-symbols-outlined text-[14px]';
+                    // Determine icon based on text
+                    if(this.innerText.includes('Shortage')) icon.innerText = 'remove_shopping_cart';
+                    else if(this.innerText.includes('Damage')) icon.innerText = 'broken_image';
+                    else if(this.innerText.includes('Return')) icon.innerText = 'keyboard_return';
+                    else icon.innerText = 'cancel';
+                    
+                    this.prepend(icon);
+                }
+            });
+        });
+    </script>
+</body></html>

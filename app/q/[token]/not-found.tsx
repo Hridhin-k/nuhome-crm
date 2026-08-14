@@ -1,9 +1,7 @@
-import Link from "next/link";
-
 export default function PublicQuoteNotFound() {
   return (
-    <main className="flex min-h-dvh items-center justify-center bg-surface-container-low px-4 py-10">
-      <div className="max-w-md rounded-xl border border-surface-variant bg-white p-8 text-center shadow-card">
+    <main className="flex min-h-dvh items-center justify-center bg-background px-4 py-10">
+      <div className="max-w-md rounded-lg border border-border bg-card p-8 text-center">
         <h1 className="text-xl font-semibold text-on-surface">
           Quotation unavailable
         </h1>

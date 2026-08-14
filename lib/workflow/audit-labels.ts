@@ -100,6 +100,10 @@ const ACTION_COPY: Record<
     title: "Items received",
     detail: () => "Stock received at store",
   },
+  ITEMS_WRITTEN_OFF: {
+    title: "Shortage / remainder closed",
+    detail: () => "Unreceived quantity was written off",
+  },
   ORDER_PLACED_ON_HOLD: {
     title: "Order placed on hold",
     detail: () => "Delivery locked until full payment",

@@ -70,10 +70,26 @@ export function assertCanVerifyPayment(input: {
   actorRole: AppRole;
   recordedBy: string;
 }) {
+  assertCanDecidePayment(input);
+}
+
+export function assertCanRejectPayment(input: {
+  actorId: string;
+  actorRole: AppRole;
+  recordedBy: string;
+}) {
+  assertCanDecidePayment(input);
+}
+
+function assertCanDecidePayment(input: {
+  actorId: string;
+  actorRole: AppRole;
+  recordedBy: string;
+}) {
   assertPermission(input.actorRole, "payments.verify");
   if (input.actorId === input.recordedBy) {
     throw new WorkflowError(
-      "You cannot verify a payment you recorded",
+      "You cannot verify or reject a payment you recorded",
       "FORBIDDEN",
     );
   }

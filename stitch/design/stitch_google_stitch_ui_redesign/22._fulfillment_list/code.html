@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Nuhome - Fulfillment</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary-container": "#1b1b1b",
+                    "outline": "#7e7576",
+                    "tertiary-fixed-dim": "#c6c6c6",
+                    "inverse-on-surface": "#f1f1f1",
+                    "tertiary": "#000000",
+                    "surface-container-highest": "#e2e2e2",
+                    "primary-fixed": "#e2e2e2",
+                    "secondary-fixed-dim": "#b7c8e1",
+                    "surface-tint": "#5e5e5e",
+                    "on-primary-fixed": "#1b1b1b",
+                    "surface-dim": "#dadada",
+                    "on-secondary-container": "#54647a",
+                    "on-tertiary-fixed-variant": "#474747",
+                    "outline-variant": "#cfc4c5",
+                    "primary": "#000000",
+                    "on-surface": "#1b1b1b",
+                    "on-tertiary-container": "#848484",
+                    "on-surface-variant": "#4c4546",
+                    "inverse-primary": "#c6c6c6",
+                    "surface": "#f9f9f9",
+                    "on-tertiary-fixed": "#1b1b1b",
+                    "on-secondary": "#ffffff",
+                    "on-secondary-fixed-variant": "#38485d",
+                    "error": "#ba1a1a",
+                    "on-primary-fixed-variant": "#474747",
+                    "on-error": "#ffffff",
+                    "background": "#f9f9f9",
+                    "surface-container-lowest": "#ffffff",
+                    "on-primary": "#ffffff",
+                    "secondary": "#505f76",
+                    "surface-bright": "#f9f9f9",
+                    "surface-container-high": "#e8e8e8",
+                    "on-secondary-fixed": "#0b1c30",
+                    "on-error-container": "#93000a",
+                    "tertiary-fixed": "#e2e2e2",
+                    "secondary-fixed": "#d3e4fe",
+                    "surface-variant": "#e2e2e2",
+                    "tertiary-container": "#1b1b1b",
+                    "on-background": "#1b1b1b",
+                    "on-primary-container": "#848484",
+                    "error-container": "#ffdad6",
+                    "on-tertiary": "#ffffff",
+                    "inverse-surface": "#303030",
+                    "primary-fixed-dim": "#c6c6c6",
+                    "secondary-container": "#d0e1fb",
+                    "surface-container": "#eeeeee",
+                    "surface-container-low": "#f3f3f3"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "unit": "4px",
+                    "container-padding": "16px",
+                    "section-margin": "24px",
+                    "stack-gap": "12px",
+                    "inline-gap": "8px"
+            },
+            "fontFamily": {
+                    "data-tabular": ["Inter"],
+                    "body-md": ["Inter"],
+                    "subheading": ["Inter"],
+                    "label-caps": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "headline-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "data-tabular": ["13px", {"lineHeight": "18px", "fontWeight": "500"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "subheading": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-md": ["22px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        body { -webkit-tap-highlight-color: transparent; }
+        .pb-safe { padding-bottom: env(safe-area-inset-bottom, 20px); }
+        .pt-safe { padding-top: env(safe-area-inset-top, 0px); }
+        /* Hide scrollbar for segmented controls */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col pt-safe pb-safe md:hidden">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 border-b border-outline-variant bg-surface dark:bg-surface-container pt-safe">
+<div class="flex justify-between items-center h-14 px-container-padding w-full">
+<button class="text-primary hover:opacity-80 transition-opacity active:scale-95 flex items-center justify-center w-10 h-10 -ml-2 rounded-full">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">menu</span>
+</button>
+<h1 class="font-headline-md text-headline-md text-primary tracking-tight">Fulfillment</h1>
+<button class="text-primary hover:opacity-80 transition-opacity active:scale-95 flex items-center justify-center w-10 h-10 -mr-2 rounded-full">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">notifications</span>
+</button>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="flex-grow mt-[56px] mb-[64px] pb-8">
+<!-- Segmented Controls (Procurement Tabs) -->
+<div class="px-container-padding py-3 sticky top-[56px] z-40 bg-surface">
+<div class="bg-surface-container-high rounded-lg p-1 flex w-full relative">
+<!-- Active Indicator -->
+<div class="absolute inset-y-1 left-1 w-[calc(33.333%-2px)] bg-surface-container-lowest rounded shadow-sm border border-outline-variant/20 transition-all duration-300 z-0"></div>
+<button class="relative z-10 flex-1 py-1.5 font-subheading text-subheading text-primary text-center">Active</button>
+<button class="relative z-10 flex-1 py-1.5 font-subheading text-subheading text-on-surface-variant text-center">Procurement</button>
+<button class="relative z-10 flex-1 py-1.5 font-subheading text-subheading text-on-surface-variant text-center">History</button>
+</div>
+</div>
+<!-- Order List -->
+<div class="px-container-padding flex flex-col gap-stack-gap mt-2">
+<!-- Order Card 1 -->
+<div class="bg-surface-container-lowest rounded-lg border border-outline-variant p-4 flex flex-col gap-2 relative overflow-hidden">
+<div class="flex justify-between items-start mb-1">
+<div class="flex flex-col">
+<span class="font-headline-md text-headline-md text-primary">NQ-1042</span>
+<span class="font-body-md text-body-md text-on-surface-variant mt-1">Ananya Nair</span>
+</div>
+<div class="bg-[#e6f4ea] text-[#137333] px-2 py-0.5 rounded font-label-caps text-label-caps border border-[#ceead6]">Active</div>
+</div>
+<div class="flex items-center gap-2 mt-2">
+<span class="material-symbols-outlined text-outline text-[18px]">warning</span>
+<span class="font-data-tabular text-data-tabular text-on-surface-variant">2 lines unsent</span>
+</div>
+<button class="w-full mt-3 h-[44px] bg-primary text-on-primary rounded font-subheading text-subheading flex items-center justify-center hover:opacity-90 active:scale-[0.98] transition-all">
+                    Review Lines
+                </button>
+</div>
+<!-- Order Card 2 -->
+<div class="bg-surface-container-lowest rounded-lg border border-outline-variant p-4 flex flex-col gap-2 relative overflow-hidden">
+<div class="flex justify-between items-start mb-1">
+<div class="flex flex-col">
+<span class="font-headline-md text-headline-md text-primary">NQ-1031</span>
+<span class="font-body-md text-body-md text-on-surface-variant mt-1">Kavya</span>
+</div>
+<div class="flex flex-col items-end gap-1">
+<div class="bg-[#fef7e0] text-[#b06000] px-2 py-0.5 rounded font-label-caps text-label-caps border border-[#fadd9e]">With Vendor</div>
+<span class="font-label-caps text-label-caps text-error bg-error-container px-1 rounded">OVERDUE</span>
+</div>
+</div>
+<div class="flex items-center gap-2 mt-2">
+<span class="material-symbols-outlined text-outline text-[18px]">calendar_today</span>
+<span class="font-data-tabular text-data-tabular text-error font-semibold">Expected 12 Aug</span>
+</div>
+</div>
+<!-- Order Card 3 -->
+<div class="bg-surface-container-lowest rounded-lg border border-outline-variant p-4 flex flex-col gap-2 relative overflow-hidden">
+<div class="flex justify-between items-start mb-1">
+<div class="flex flex-col">
+<span class="font-headline-md text-headline-md text-primary">NQ-1028</span>
+<span class="font-body-md text-body-md text-on-surface-variant mt-1">Nuhome Direct</span>
+</div>
+<div class="bg-secondary-container text-on-secondary-container px-2 py-0.5 rounded font-label-caps text-label-caps border border-secondary-fixed">Dispatched</div>
+</div>
+<div class="flex items-center gap-2 mt-2">
+<span class="material-symbols-outlined text-outline text-[18px]">local_shipping</span>
+<span class="font-data-tabular text-data-tabular text-on-surface-variant">Expected 16 Aug</span>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 h-16 border-t border-outline-variant bg-surface dark:bg-surface-container pb-safe">
+<div class="flex justify-around items-center w-full h-full px-container-padding">
+<a class="flex flex-col items-center justify-center w-16 h-full text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">home</span>
+<span class="font-label-caps text-[10px] mt-1 leading-none tracking-widest uppercase">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center w-16 h-full text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">shopping_cart</span>
+<span class="font-label-caps text-[10px] mt-1 leading-none tracking-widest uppercase">Orders</span>
+</a>
+<a class="flex flex-col items-center justify-center w-16 h-full text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">inventory_2</span>
+<span class="font-label-caps text-[10px] mt-1 leading-none tracking-widest uppercase">Vendors</span>
+</a>
+<a class="flex flex-col items-center justify-center w-16 h-full text-primary dark:text-primary-fixed font-bold" href="#">
+<div class="bg-primary-container/10 px-4 py-1 rounded-full mb-0.5">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">local_shipping</span>
+</div>
+<span class="font-label-caps text-[10px] leading-none tracking-widest uppercase">Fulfillment</span>
+</a>
+<a class="flex flex-col items-center justify-center w-16 h-full text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">more_horiz</span>
+<span class="font-label-caps text-[10px] mt-1 leading-none tracking-widest uppercase">More</span>
+</a>
+</div>
+</nav>
+</body></html>

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Store Home - Delivery</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-bright": "#f9f9f9",
+                        "tertiary-container": "#1b1b1b",
+                        "error-container": "#ffdad6",
+                        "on-surface-variant": "#4c4546",
+                        "inverse-surface": "#303030",
+                        "on-primary-fixed": "#1b1b1b",
+                        "surface-tint": "#5e5e5e",
+                        "inverse-on-surface": "#f1f1f1",
+                        "outline": "#7e7576",
+                        "on-secondary-fixed": "#0b1c30",
+                        "secondary-container": "#d0e1fb",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "tertiary-fixed-dim": "#c6c6c6",
+                        "surface-container": "#eeeeee",
+                        "on-tertiary": "#ffffff",
+                        "outline-variant": "#cfc4c5",
+                        "primary-container": "#1b1b1b",
+                        "on-surface": "#1b1b1b",
+                        "error": "#ba1a1a",
+                        "on-error": "#ffffff",
+                        "on-secondary-container": "#54647a",
+                        "secondary": "#505f76",
+                        "surface-container-low": "#f3f3f3",
+                        "on-primary-container": "#848484",
+                        "on-secondary-fixed-variant": "#38485d",
+                        "on-error-container": "#93000a",
+                        "on-primary": "#ffffff",
+                        "primary-fixed-dim": "#c6c6c6",
+                        "primary": "#000000",
+                        "tertiary-fixed": "#e2e2e2",
+                        "surface-variant": "#e2e2e2",
+                        "secondary-fixed": "#d3e4fe",
+                        "on-tertiary-fixed": "#1b1b1b",
+                        "on-primary-fixed-variant": "#474747",
+                        "on-tertiary-fixed-variant": "#474747",
+                        "background": "#f9f9f9",
+                        "primary-fixed": "#e2e2e2",
+                        "tertiary": "#000000",
+                        "surface": "#f9f9f9",
+                        "on-background": "#1b1b1b",
+                        "surface-container-high": "#e8e8e8",
+                        "on-tertiary-container": "#848484",
+                        "surface-container-highest": "#e2e2e2",
+                        "surface-dim": "#dadada",
+                        "secondary-fixed-dim": "#b7c8e1",
+                        "inverse-primary": "#c6c6c6",
+                        "ios-canvas": "#F2F2F7",
+                        "ios-graphite": "#1C1C1E"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px",
+                        "ios-card": "10px"
+                    },
+                    "spacing": {
+                        "unit": "4px",
+                        "section-margin": "24px",
+                        "stack-gap": "12px",
+                        "inline-gap": "8px",
+                        "container-padding": "16px",
+                        "ios-padding": "16px"
+                    },
+                    "fontFamily": {
+                        "subheading": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "data-tabular": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "subheading": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+                        "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                        "data-tabular": ["13px", { "lineHeight": "18px", "fontWeight": "500" }],
+                        "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-md": ["22px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #F2F2F7;
+            -webkit-font-smoothing: antialiased;
+        }
+        .ios-grouped-list {
+            border-radius: 10px;
+            overflow: hidden;
+            background-color: #ffffff;
+            border: 1px solid #E2E8F0;
+        }
+        .ios-grouped-list-item {
+            border-bottom: 1px solid #E2E8F0;
+        }
+        .ios-grouped-list-item:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body class="bg-ios-canvas text-on-background pb-[80px]">
+<!-- Header Section -->
+<header class="pt-12 px-container-padding pb-4">
+<div class="flex items-center gap-3 mb-1">
+<h1 class="font-headline-lg text-headline-lg text-primary">Namaste, Vikram</h1>
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center overflow-hidden">
+<img alt="Vikram" class="w-full h-full object-cover" data-alt="A small, high-quality, professional headshot avatar of an Indian store manager named Vikram. Bright, soft lighting, modern corporate style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBhAgph09_qOeqN0RA4UNuXrSFoMnClip6Vh8lZwsNIjUQ05pdnmlNOenlZc_Glkqhn6eOgRw66f8DdlxD5H5z0eXPUgBFhfyMFGlPZ4c4uQWy85KOlG3WEgdfzFWDAi-2mhCruwi4SJRawuA67yje0EJuKeHMu41zVLsO9YNZY59EdxlR1X9q4JDiLc4am1lOSToulKMaSJ6NTA65FajZBfEcijc0wNPGoDvZkQeiPyHcKj68e7HvSrw"/>
+</div>
+</div>
+<p class="font-subheading text-subheading text-secondary">Store · 3 ready for handover</p>
+</header>
+<!-- Main Content -->
+<main class="px-container-padding space-y-6">
+<!-- Grouped List -->
+<div class="ios-grouped-list shadow-sm">
+<!-- Item 1: Ready for delivery -->
+<button class="ios-grouped-list-item w-full flex items-center justify-between p-4 bg-surface-container-lowest hover:bg-surface-container-low transition-colors text-left group">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-secondary-container text-primary flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">package_2</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h2 class="font-subheading text-subheading text-primary">Ready for delivery</h2>
+<span class="bg-primary text-on-primary font-label-caps text-label-caps px-2 py-0.5 rounded-full">3</span>
+</div>
+<p class="font-body-sm text-body-sm text-secondary mt-0.5 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">lock_open</span>
+                            Unlocked: Outstanding is ₹0
+                        </p>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors">chevron_right</span>
+</button>
+<!-- Item 2: Locked orders -->
+<button class="ios-grouped-list-item w-full flex items-center justify-between p-4 bg-surface-container-lowest hover:bg-surface-container-low transition-colors text-left group">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-container text-surface-tint flex items-center justify-center">
+<span class="material-symbols-outlined">lock</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h2 class="font-subheading text-subheading text-primary">Locked orders</h2>
+<span class="bg-surface-container text-on-surface-variant font-label-caps text-label-caps px-2 py-0.5 rounded-full">5</span>
+</div>
+<p class="font-body-sm text-body-sm text-secondary mt-0.5">
+                            Payment pending at handover
+                        </p>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors">chevron_right</span>
+</button>
+<!-- Item 3: Recently delivered -->
+<button class="ios-grouped-list-item w-full flex items-center justify-between p-4 bg-surface-container-lowest hover:bg-surface-container-low transition-colors text-left group">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-container text-surface-tint flex items-center justify-center">
+<span class="material-symbols-outlined">check_circle</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h2 class="font-subheading text-subheading text-primary">Recently delivered</h2>
+<span class="bg-surface-container text-on-surface-variant font-label-caps text-label-caps px-2 py-0.5 rounded-full">12</span>
+</div>
+<p class="font-body-sm text-body-sm text-secondary mt-0.5">
+                            Last 7 days
+                        </p>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors">chevron_right</span>
+</button>
+</div>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 h-[64px] bg-surface border-t border-outline-variant flex justify-around items-center px-unit pb-safe md:hidden">
+<!-- Home (Active) -->
+<button class="flex flex-col items-center justify-center text-primary font-bold w-full h-full scale-95 active:scale-90 transition-transform duration-150 hover:bg-surface-container-low rounded-lg">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-label-caps text-[10px]">Home</span>
+</button>
+<!-- Ready -->
+<button class="flex flex-col items-center justify-center text-secondary w-full h-full scale-95 active:scale-90 transition-transform duration-150 hover:bg-surface-container-low rounded-lg">
+<span class="material-symbols-outlined mb-1">package</span>
+<span class="font-label-caps text-[10px]">Ready</span>
+</button>
+<!-- Orders -->
+<button class="flex flex-col items-center justify-center text-secondary w-full h-full scale-95 active:scale-90 transition-transform duration-150 hover:bg-surface-container-low rounded-lg">
+<span class="material-symbols-outlined mb-1">list_alt</span>
+<span class="font-label-caps text-[10px]">Orders</span>
+</button>
+<!-- More -->
+<button class="flex flex-col items-center justify-center text-secondary w-full h-full scale-95 active:scale-90 transition-transform duration-150 hover:bg-surface-container-low rounded-lg">
+<span class="material-symbols-outlined mb-1">more_horiz</span>
+<span class="font-label-caps text-[10px]">More</span>
+</button>
+</nav>
+</body></html>

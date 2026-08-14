@@ -59,7 +59,7 @@ export const listPendingApprovals = cache(async () => {
     db
       .from("quotes")
       .select(
-        "id, quote_number, status, created_at, customer_id, customers(name), quote_versions!quotes_current_version_fk(version_number, total, margin_amount)",
+        "id, quote_number, status, created_at, customer_id, customers(name), quote_versions!quotes_current_version_fk(version_number, total, margin_amount, margin_percent)",
       )
       .eq("status", "quote_pending_accounts")
       .order("updated_at", { ascending: false }),

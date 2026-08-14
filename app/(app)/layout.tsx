@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { AppNavbar, MobileBottomNav } from "@/components/app/app-nav";
+import { WalkInFab } from "@/components/app/walk-in-fab";
 import { PrefetchRoutes } from "@/components/app/prefetch-routes";
 import { listNotifications } from "@/lib/api/notifications";
 import { requireUser } from "@/lib/auth/guards";
@@ -18,7 +19,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
   ];
 
   return (
-    <div className="flex min-h-dvh flex-col bg-background text-on-background">
+    <div className="flex min-h-dvh min-w-0 flex-col overflow-x-clip bg-background text-on-background">
       <AppNavbar
         items={items}
         name={user.fullName}
@@ -27,11 +28,12 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
         notifications={notifications}
       />
 
-      <main className="flex-1 overflow-y-auto bg-surface-container-lowest px-4 py-6 pb-28 md:px-6 md:py-8 md:pb-10">
-        <div className="mx-auto w-full max-w-7xl">{children}</div>
+      <main className="min-w-0 flex-1 overflow-x-clip overflow-y-auto bg-background px-4 pt-0 pb-[calc(5.5rem+env(safe-area-inset-bottom))] md:px-8 md:pt-6 md:pb-10">
+        <div className="pt-4 md:pt-0">{children}</div>
       </main>
 
       <MobileBottomNav items={items} />
+      {user.role === "sales" || user.role === "admin" ? <WalkInFab /> : null}
       <PrefetchRoutes hrefs={warm} />
     </div>
   );

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Nuhome Sales - Home</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary": "#ffffff",
+                        "on-secondary-container": "#54647a",
+                        "surface-tint": "#5e5e5e",
+                        "secondary-fixed": "#d3e4fe",
+                        "on-surface-variant": "#4c4546",
+                        "surface-dim": "#dadada",
+                        "on-secondary-fixed-variant": "#38485d",
+                        "tertiary": "#000000",
+                        "tertiary-container": "#1b1b1b",
+                        "background": "#f9f9f9",
+                        "on-primary-fixed": "#1b1b1b",
+                        "on-surface": "#1b1b1b",
+                        "secondary-fixed-dim": "#b7c8e1",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed-dim": "#c6c6c6",
+                        "on-error": "#ffffff",
+                        "on-primary-container": "#848484",
+                        "tertiary-fixed": "#e2e2e2",
+                        "surface": "#f9f9f9",
+                        "on-primary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "inverse-surface": "#303030",
+                        "surface-bright": "#f9f9f9",
+                        "error": "#ba1a1a",
+                        "outline": "#7e7576",
+                        "error-container": "#ffdad6",
+                        "surface-container-highest": "#e2e2e2",
+                        "secondary": "#505f76",
+                        "surface-container-low": "#f3f3f3",
+                        "on-primary-fixed-variant": "#474747",
+                        "on-tertiary-container": "#848484",
+                        "primary-container": "#1b1b1b",
+                        "on-secondary-fixed": "#0b1c30",
+                        "secondary-container": "#d0e1fb",
+                        "primary-fixed": "#e2e2e2",
+                        "surface-container-high": "#e8e8e8",
+                        "primary-fixed-dim": "#c6c6c6",
+                        "on-tertiary-fixed": "#1b1b1b",
+                        "on-background": "#1b1b1b",
+                        "surface-variant": "#e2e2e2",
+                        "surface-container": "#eeeeee",
+                        "primary": "#000000",
+                        "on-tertiary-fixed-variant": "#474747",
+                        "on-tertiary": "#ffffff",
+                        "inverse-primary": "#c6c6c6",
+                        "outline-variant": "#cfc4c5",
+                        "inverse-on-surface": "#f1f1f1"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "inline-gap": "8px",
+                        "stack-gap": "12px",
+                        "unit": "4px",
+                        "container-padding": "16px",
+                        "section-margin": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Inter"],
+                        "data-tabular": ["Inter"],
+                        "body-md": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "subheading": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "headline-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "data-tabular": ["13px", { "lineHeight": "18px", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "subheading": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+                        "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                        "headline-md": ["22px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen pb-[80px]">
+<!-- TopAppBar -->
+<header class="bg-primary dark:bg-primary text-on-primary dark:text-on-primary docked full-width top-0 bg-primary flat no shadows transition-opacity duration-200 active:opacity-80 flex justify-between items-center w-full px-container-padding h-11 hidden md:flex z-50">
+<div class="flex items-center gap-inline-gap cursor-pointer hover:bg-primary-container/20 p-1 rounded">
+<span class="material-symbols-outlined font-headline-md text-headline-md font-bold text-on-primary">menu</span>
+<span class="font-headline-md text-headline-md font-bold text-on-primary">Nuhome Sales</span>
+</div>
+<div class="flex items-center gap-inline-gap cursor-pointer hover:bg-primary-container/20 p-1 rounded">
+<img alt="Sales Representative Avatar" class="w-8 h-8 rounded-full object-cover" data-alt="A professional headshot of a female sales representative with a warm, confident smile. She is wearing modern, dark corporate attire against a clean, bright, light-mode background. The lighting is soft and flattering, creating a premium and trustworthy aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAz6EgIEc9hPv6cteRD91ePnbfWYQ7BEYRktiiq44zNK1rXJapdmjV4puhFYZ73ibzVH7TBAl8lRJ_yM0Zi2PzehXDfA_D1wNZfSFoWLTPX-hCsSjhIe8D8-2qp2MEJOWvIn-fJivnaim01M0JQMV_NO8uyP0JuvIVU2McXNhfHR-j2CgPIhXZUecqjHTHHfarZZeXWwvMPXR5jk-XMWq8JLnxnt2KFNej6BVqTFevZoIVfkkJiEuwEwg"/>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="max-w-7xl mx-auto md:px-container-padding w-full">
+<!-- Header Section -->
+<section class="bg-primary text-on-primary px-container-padding py-section-margin rounded-b-xl md:rounded-xl md:mt-4 mb-section-margin">
+<p class="font-label-caps text-label-caps text-on-primary/70 mb-unit">Good evening</p>
+<h1 class="font-headline-lg text-headline-lg mb-1">Priya</h1>
+<p class="font-body-sm text-body-sm text-on-primary/80">Sales · 6 waiting</p>
+</section>
+<!-- Bento Grid / Grouped Inbox List -->
+<div class="px-container-padding grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-stack-gap">
+<!-- Pending Quotes -->
+<div class="bg-surface-container-lowest rounded-lg border border-surface-variant p-container-padding flex flex-col justify-between hover:shadow-sm transition-shadow cursor-pointer">
+<div class="flex justify-between items-start mb-stack-gap">
+<div>
+<h2 class="font-subheading text-subheading text-on-surface mb-unit">Pending quotes</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Drafts, returns, and approved quotes to send</p>
+</div>
+<span class="bg-primary text-on-primary font-data-tabular text-data-tabular px-2 py-1 rounded-full">3</span>
+</div>
+<div class="flex items-center text-secondary mt-auto">
+<span class="material-symbols-outlined text-sm mr-1">description</span>
+<span class="font-body-sm text-body-sm">View all</span>
+</div>
+</div>
+<!-- Customers -->
+<div class="bg-surface-container-lowest rounded-lg border border-surface-variant p-container-padding flex flex-col justify-between hover:shadow-sm transition-shadow cursor-pointer">
+<div class="flex justify-between items-start mb-stack-gap">
+<div>
+<h2 class="font-subheading text-subheading text-on-surface mb-unit">Customers</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Open a profile to quote or take payment</p>
+</div>
+<span class="bg-primary-container text-on-primary-container font-data-tabular text-data-tabular px-2 py-1 rounded-full">48</span>
+</div>
+<div class="flex items-center text-secondary mt-auto">
+<span class="material-symbols-outlined text-sm mr-1">group</span>
+<span class="font-body-sm text-body-sm">View all</span>
+</div>
+</div>
+<!-- Active Orders -->
+<div class="bg-surface-container-lowest rounded-lg border border-surface-variant p-container-padding flex flex-col justify-between hover:shadow-sm transition-shadow cursor-pointer">
+<div class="flex justify-between items-start mb-stack-gap">
+<div>
+<h2 class="font-subheading text-subheading text-on-surface mb-unit">Active orders</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">In fulfillment — not closed</p>
+</div>
+<span class="bg-primary text-on-primary font-data-tabular text-data-tabular px-2 py-1 rounded-full">2</span>
+</div>
+<div class="flex items-center text-secondary mt-auto">
+<span class="material-symbols-outlined text-sm mr-1">shopping_cart</span>
+<span class="font-body-sm text-body-sm">View all</span>
+</div>
+</div>
+<!-- Vendor Overdue -->
+<div class="bg-surface-container-lowest rounded-lg border border-error p-container-padding flex flex-col justify-between hover:shadow-sm transition-shadow cursor-pointer">
+<div class="flex justify-between items-start mb-stack-gap">
+<div>
+<h2 class="font-subheading text-subheading text-error mb-unit">Vendor overdue</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Past expected delivery</p>
+</div>
+<span class="bg-error text-on-error font-data-tabular text-data-tabular px-2 py-1 rounded-full">1</span>
+</div>
+<div class="flex items-center text-error mt-auto">
+<span class="material-symbols-outlined text-sm mr-1">warning</span>
+<span class="font-body-sm text-body-sm">Action required</span>
+</div>
+</div>
+<!-- Orders on Hold -->
+<div class="bg-surface-container-lowest rounded-lg border border-surface-variant p-container-padding flex flex-col justify-between hover:shadow-sm transition-shadow cursor-pointer">
+<div class="flex justify-between items-start mb-stack-gap">
+<div>
+<h2 class="font-subheading text-subheading text-on-surface mb-unit">Orders on hold</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Delivery locked until payment</p>
+</div>
+<span class="bg-surface-variant text-on-surface font-data-tabular text-data-tabular px-2 py-1 rounded-full">1</span>
+</div>
+<div class="flex items-center text-secondary mt-auto">
+<span class="material-symbols-outlined text-sm mr-1">lock</span>
+<span class="font-body-sm text-body-sm">View all</span>
+</div>
+</div>
+<!-- Deliveries -->
+<div class="bg-surface-container-lowest rounded-lg border border-surface-variant p-container-padding flex flex-col justify-between hover:shadow-sm transition-shadow cursor-pointer opacity-70">
+<div class="flex justify-between items-start mb-stack-gap">
+<div>
+<h2 class="font-subheading text-subheading text-on-surface mb-unit">Deliveries</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Unlocked and ready to hand over</p>
+</div>
+<span class="bg-surface-variant text-on-surface font-data-tabular text-data-tabular px-2 py-1 rounded-full">0</span>
+</div>
+<div class="flex items-center text-secondary mt-auto">
+<span class="material-symbols-outlined text-sm mr-1">local_shipping</span>
+<span class="font-body-sm text-body-sm">View all</span>
+</div>
+</div>
+</div>
+</main>
+<!-- Floating Action Button -->
+<button class="fixed bottom-[80px] md:bottom-section-margin right-container-padding bg-primary text-on-primary w-14 h-14 rounded-full shadow-[0px_4px_12px_rgba(0,0,0,0.15)] flex items-center justify-center hover:bg-primary/90 transition-transform active:scale-95 z-40">
+<span class="material-symbols-outlined">add</span>
+</button>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden bg-surface dark:bg-surface text-primary dark:text-primary font-label-caps text-label-caps fixed bottom-0 w-full z-50 h-[64px] border-t border-outline-variant flat no shadows fixed bottom-0 left-0 w-full z-50 flex justify-around items-center bg-surface px-unit pb-safe pb-4 pt-2">
+<!-- Home (Active) -->
+<div class="flex flex-col items-center justify-center text-primary dark:text-primary font-bold hover:bg-surface-container-low scale-95 active:scale-90 transition-transform duration-150 p-1 w-16 cursor-pointer">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">home</span>
+<span>Home</span>
+</div>
+<!-- Customers -->
+<div class="flex flex-col items-center justify-center text-secondary dark:text-secondary hover:bg-surface-container-low scale-95 active:scale-90 transition-transform duration-150 p-1 w-16 cursor-pointer">
+<span class="material-symbols-outlined mb-1">group</span>
+<span>Customers</span>
+</div>
+<!-- Quotes -->
+<div class="flex flex-col items-center justify-center text-secondary dark:text-secondary hover:bg-surface-container-low scale-95 active:scale-90 transition-transform duration-150 p-1 w-16 cursor-pointer">
+<span class="material-symbols-outlined mb-1">description</span>
+<span>Quotes</span>
+</div>
+<!-- Orders -->
+<div class="flex flex-col items-center justify-center text-secondary dark:text-secondary hover:bg-surface-container-low scale-95 active:scale-90 transition-transform duration-150 p-1 w-16 cursor-pointer">
+<span class="material-symbols-outlined mb-1">shopping_cart</span>
+<span>Orders</span>
+</div>
+<!-- More -->
+<div class="flex flex-col items-center justify-center text-secondary dark:text-secondary hover:bg-surface-container-low scale-95 active:scale-90 transition-transform duration-150 p-1 w-16 cursor-pointer">
+<span class="material-symbols-outlined mb-1">more_horiz</span>
+<span>More</span>
+</div>
+</nav>
+</body></html>

@@ -1,8 +1,9 @@
 import { CustomerForm } from "@/components/customers/customer-form";
-import { AppLink } from "@/components/app/app-link";
+import { JobRow } from "@/components/app/job-row";
+import { PageFrame, wellClass } from "@/components/app/page-frame";
 import { PageHeader } from "@/components/app/page-header";
 import { EmptyState } from "@/components/app/empty-state";
-import { StatusBadge } from "@/components/app/status-badge";
+import { Search } from "lucide-react";
 import { listCustomers } from "@/lib/api/customers";
 import { listOrders } from "@/lib/api/orders";
 import { rel } from "@/lib/api/rel";
@@ -23,25 +24,30 @@ export default async function CustomersPage({
   ]);
 
   return (
-    <div>
+    <PageFrame>
       <PageHeader
         title="Customers"
+        hideTitleOnMobile
         action={
           roleHasPermission(user.role, "customers.write") ? (
             <CustomerForm />
           ) : null
         }
       />
-      <form className="mb-4">
+      <form className="relative mb-4">
         <label htmlFor="q" className="sr-only">
           Search
         </label>
+        <Search
+          className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-on-surface-variant/70"
+          aria-hidden
+        />
         <input
           id="q"
           name="q"
           defaultValue={q}
-          placeholder="Search name or phone"
-          className="h-11 min-h-11 w-full rounded-lg border border-outline-variant bg-surface px-3.5 text-on-surface placeholder:text-outline"
+          placeholder="Search customers..."
+          className="h-11 min-h-11 w-full rounded-lg border border-outline-variant bg-card px-3 pl-10 text-base text-on-surface placeholder:text-outline shadow-sm md:text-sm"
         />
       </form>
       {customers.length === 0 ? (
@@ -55,40 +61,27 @@ export default async function CustomersPage({
           }
         />
       ) : (
-        <ul className="flex flex-col gap-3">
+        <ul className={wellClass}>
           {customers.map((customer) => {
             const related = orders.filter((o) => o.customer_id === customer.id);
             const latest = latestOpenOrder(related);
             return (
-              <li key={customer.id}>
-                <AppLink
-                  href={`/customers/${customer.id}`}
-                  className="block rounded-xl border border-surface-variant bg-surface-container-lowest p-4 shadow-card transition-colors hover:bg-surface-container-low"
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <p className="font-medium">{customer.name}</p>
-                      <p className="text-sm text-on-surface-variant">
-                        {customer.phone ?? "No phone"}
-                      </p>
-                    </div>
-                    {latest ? (
-                      <StatusBadge status={latest.status as WorkflowStatus} />
-                    ) : null}
-                  </div>
-                  {latest ? (
-                    <p className="mt-2 text-sm text-on-surface-variant">
-                      Latest: {rel(latest.quotes)?.quote_number ?? "Order"}
-                    </p>
-                  ) : (
-                    <p className="mt-2 text-sm text-on-surface-variant">No orders yet</p>
-                  )}
-                </AppLink>
-              </li>
+              <JobRow
+                key={customer.id}
+                href={`/customers/${customer.id}`}
+                title={customer.name}
+                subtitle={customer.phone ?? "No phone"}
+                footer={
+                  latest
+                    ? `Latest: ${rel(latest.quotes)?.quote_number ?? "Order"}`
+                    : "No orders yet"
+                }
+                status={latest ? (latest.status as WorkflowStatus) : undefined}
+              />
             );
           })}
         </ul>
       )}
-    </div>
+    </PageFrame>
   );
 }

@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Nuhome - Reports</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-fixed": "#1b1b1b",
+                        "surface-container-lowest": "#ffffff",
+                        "on-error": "#ffffff",
+                        "secondary": "#505f76",
+                        "primary": "#000000",
+                        "on-secondary-fixed-variant": "#38485d",
+                        "error": "#ba1a1a",
+                        "surface-bright": "#f9f9f9",
+                        "on-tertiary-container": "#848484",
+                        "primary-fixed": "#e2e2e2",
+                        "secondary-container": "#d0e1fb",
+                        "on-primary-container": "#848484",
+                        "on-surface": "#1b1b1b",
+                        "on-tertiary": "#ffffff",
+                        "secondary-fixed-dim": "#b7c8e1",
+                        "on-primary-fixed-variant": "#474747",
+                        "secondary-fixed": "#d3e4fe",
+                        "surface-variant": "#e2e2e2",
+                        "surface-container-highest": "#e2e2e2",
+                        "primary-container": "#1b1b1b",
+                        "tertiary-fixed-dim": "#c6c6c6",
+                        "on-tertiary-fixed": "#1b1b1b",
+                        "surface-dim": "#dadada",
+                        "on-secondary": "#ffffff",
+                        "inverse-surface": "#303030",
+                        "outline": "#7e7576",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-fixed-variant": "#474747",
+                        "on-background": "#1b1b1b",
+                        "inverse-on-surface": "#f1f1f1",
+                        "on-secondary-fixed": "#0b1c30",
+                        "inverse-primary": "#c6c6c6",
+                        "primary-fixed-dim": "#c6c6c6",
+                        "surface-container-low": "#f3f3f3",
+                        "tertiary-container": "#1b1b1b",
+                        "on-primary": "#ffffff",
+                        "on-secondary-container": "#54647a",
+                        "surface-container": "#eeeeee",
+                        "surface-tint": "#5e5e5e",
+                        "background": "#f9f9f9",
+                        "tertiary-fixed": "#e2e2e2",
+                        "on-error-container": "#93000a",
+                        "tertiary": "#000000",
+                        "surface-container-high": "#e8e8e8",
+                        "surface": "#f9f9f9",
+                        "on-surface-variant": "#4c4546",
+                        "outline-variant": "#cfc4c5"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "inline-gap": "8px",
+                        "stack-gap": "12px",
+                        "container-padding": "16px",
+                        "section-margin": "24px",
+                        "unit": "4px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "data-tabular": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "subheading": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "data-tabular": ["13px", { "lineHeight": "18px", "fontWeight": "500" }],
+                        "headline-md": ["22px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                        "subheading": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+        .pt-safe { padding-top: env(safe-area-inset-top); }
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        /* Hide scrollbar for IE, Edge and Firefox */
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .bar-chart-row { transition: background-color 0.2s ease; }
+        .bar-chart-row:active { background-color: var(--tw-colors-surface-container); }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md h-full flex flex-col overflow-hidden">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full h-12 bg-primary dark:bg-primary border-b border-outline-variant flex items-center justify-between px-container-padding z-50 pt-safe">
+<button class="text-on-primary hover:opacity-80 active:scale-95 transition-transform flex items-center justify-center w-8 h-8">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">menu</span>
+</button>
+<div class="font-headline-lg text-headline-lg-mobile text-on-primary tracking-tight">
+            Reports
+        </div>
+<button class="text-on-primary hover:opacity-80 active:scale-95 transition-transform flex items-center justify-center w-8 h-8">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">notifications</span>
+</button>
+</header>
+<!-- Main Canvas -->
+<main class="flex-1 overflow-y-auto mt-12 mb-16 px-container-padding py-section-margin no-scrollbar">
+<!-- Header Section -->
+<div class="mb-section-margin">
+<h1 class="font-headline-md text-headline-md mb-2">Pipeline Summary</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Share of open work at each stage. Tap a bar to take action.</p>
+</div>
+<!-- Metric Cards -->
+<div class="grid grid-cols-2 gap-stack-gap mb-section-margin">
+<div class="bg-surface-container-lowest p-container-padding rounded-lg border border-outline-variant shadow-sm flex flex-col justify-between h-28">
+<span class="font-subheading text-subheading text-on-surface-variant">Total Open Value</span>
+<span class="font-headline-lg text-headline-lg">$1.2M</span>
+</div>
+<div class="bg-surface-container-lowest p-container-padding rounded-lg border border-outline-variant shadow-sm flex flex-col justify-between h-28">
+<span class="font-subheading text-subheading text-on-surface-variant">Active Jobs</span>
+<span class="font-headline-lg text-headline-lg">143</span>
+</div>
+</div>
+<!-- Pipeline Bar Chart Section -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm overflow-hidden mb-section-margin">
+<div class="p-container-padding border-b border-outline-variant bg-surface-bright flex justify-between items-center">
+<h2 class="font-subheading text-subheading text-on-surface">Work Stages</h2>
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]">more_horiz</span>
+</div>
+<div class="flex flex-col">
+<!-- Bar 1 -->
+<div class="bar-chart-row p-container-padding border-b border-outline-variant cursor-pointer group">
+<div class="flex justify-between items-end mb-unit">
+<span class="font-body-md text-body-md text-on-surface">Quotes in play</span>
+<span class="font-data-tabular text-data-tabular text-on-surface font-semibold">45</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-2 mt-2">
+<div class="bg-primary h-2 rounded-full w-[85%] group-hover:opacity-80 transition-opacity"></div>
+</div>
+</div>
+<!-- Bar 2 -->
+<div class="bar-chart-row p-container-padding border-b border-outline-variant cursor-pointer group">
+<div class="flex justify-between items-end mb-unit">
+<span class="font-body-md text-body-md text-on-surface">Awaiting accounts</span>
+<span class="font-data-tabular text-data-tabular text-on-surface font-semibold">12</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-2 mt-2">
+<div class="bg-primary h-2 rounded-full w-[25%] group-hover:opacity-80 transition-opacity"></div>
+</div>
+</div>
+<!-- Bar 3 -->
+<div class="bar-chart-row p-container-padding border-b border-outline-variant cursor-pointer group">
+<div class="flex justify-between items-end mb-unit">
+<span class="font-body-md text-body-md text-on-surface">Payments to verify</span>
+<span class="font-data-tabular text-data-tabular text-on-surface font-semibold">28</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-2 mt-2">
+<div class="bg-primary h-2 rounded-full w-[50%] group-hover:opacity-80 transition-opacity"></div>
+</div>
+</div>
+<!-- Bar 4 -->
+<div class="bar-chart-row p-container-padding border-b border-outline-variant cursor-pointer group">
+<div class="flex justify-between items-end mb-unit">
+<span class="font-body-md text-body-md text-on-surface">In fulfillment</span>
+<span class="font-data-tabular text-data-tabular text-on-surface font-semibold">34</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-2 mt-2">
+<div class="bg-primary h-2 rounded-full w-[60%] group-hover:opacity-80 transition-opacity"></div>
+</div>
+</div>
+<!-- Bar 5 -->
+<div class="bar-chart-row p-container-padding border-b border-outline-variant cursor-pointer group">
+<div class="flex justify-between items-end mb-unit">
+<span class="font-body-md text-body-md text-on-surface">Ready to deliver</span>
+<span class="font-data-tabular text-data-tabular text-on-surface font-semibold">18</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-2 mt-2">
+<div class="bg-primary h-2 rounded-full w-[35%] group-hover:opacity-80 transition-opacity"></div>
+</div>
+</div>
+<!-- Bar 6 (Warning state) -->
+<div class="bar-chart-row p-container-padding border-b border-outline-variant cursor-pointer group bg-error-container/20">
+<div class="flex justify-between items-end mb-unit">
+<div class="flex items-center gap-inline-gap">
+<span class="font-body-md text-body-md text-on-surface">On hold</span>
+<span class="bg-error-container text-on-error-container font-label-caps text-label-caps px-2 py-0.5 rounded-sm">Action Needed</span>
+</div>
+<span class="font-data-tabular text-data-tabular text-on-surface font-semibold">4</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-2 mt-2">
+<div class="bg-error h-2 rounded-full w-[10%] group-hover:opacity-80 transition-opacity"></div>
+</div>
+</div>
+<!-- Bar 7 (Warning state) -->
+<div class="bar-chart-row p-container-padding cursor-pointer group bg-error-container/20">
+<div class="flex justify-between items-end mb-unit">
+<div class="flex items-center gap-inline-gap">
+<span class="font-body-md text-body-md text-on-surface">Vendor overdue</span>
+<span class="material-symbols-outlined text-error text-[16px]">warning</span>
+</div>
+<span class="font-data-tabular text-data-tabular text-on-surface font-semibold">2</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-2 mt-2">
+<div class="bg-error h-2 rounded-full w-[5%] group-hover:opacity-80 transition-opacity"></div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-2 pb-safe bg-surface dark:bg-surface-container-low border-t border-outline-variant h-16 shadow-sm">
+<button class="flex flex-col items-center justify-center w-16 h-full hover:bg-surface-container-high active:opacity-70 transition-opacity rounded-lg mx-1 text-secondary dark:text-secondary-fixed-dim">
+<span class="material-symbols-outlined mb-1 text-[24px]" style="font-variation-settings: 'FILL' 0;">home</span>
+<span class="font-label-caps text-label-caps text-[10px]">Home</span>
+</button>
+<button class="flex flex-col items-center justify-center w-16 h-full hover:bg-surface-container-high active:opacity-70 transition-opacity rounded-lg mx-1 text-secondary dark:text-secondary-fixed-dim">
+<span class="material-symbols-outlined mb-1 text-[24px]" style="font-variation-settings: 'FILL' 0;">group</span>
+<span class="font-label-caps text-label-caps text-[10px]">Users</span>
+</button>
+<button class="flex flex-col items-center justify-center w-16 h-full hover:bg-surface-container-high active:opacity-70 transition-opacity rounded-lg mx-1 text-secondary dark:text-secondary-fixed-dim">
+<span class="material-symbols-outlined mb-1 text-[24px]" style="font-variation-settings: 'FILL' 0;">shopping_cart</span>
+<span class="font-label-caps text-label-caps text-[10px]">Orders</span>
+</button>
+<button class="flex flex-col items-center justify-center w-16 h-full hover:bg-surface-container-high active:opacity-70 transition-opacity rounded-lg mx-1 text-primary dark:text-primary-fixed bg-surface-container-highest/30">
+<span class="material-symbols-outlined mb-1 text-[24px]" style="font-variation-settings: 'FILL' 1;">bar_chart</span>
+<span class="font-label-caps text-label-caps text-[10px] font-bold">Reports</span>
+</button>
+<button class="flex flex-col items-center justify-center w-16 h-full hover:bg-surface-container-high active:opacity-70 transition-opacity rounded-lg mx-1 text-secondary dark:text-secondary-fixed-dim">
+<span class="material-symbols-outlined mb-1 text-[24px]" style="font-variation-settings: 'FILL' 0;">menu</span>
+<span class="font-label-caps text-label-caps text-[10px]">More</span>
+</button>
+</nav>
+<script>
+        // Simple micro-interaction for tapping bars
+        document.querySelectorAll('.bar-chart-row').forEach(row => {
+            row.addEventListener('click', function() {
+                // Flash effect to acknowledge tap before assumed navigation
+                this.style.backgroundColor = '#e2e2e2';
+                setTimeout(() => {
+                    this.style.backgroundColor = '';
+                }, 150);
+            });
+        });
+    </script>
+</body></html>

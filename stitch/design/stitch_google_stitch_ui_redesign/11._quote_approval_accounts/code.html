@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Account Approval Detail</title>
+<!-- Fonts & Icons -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+  .material-symbols-outlined {
+    font-family: 'Material Symbols Outlined';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-smoothing: antialiased;
+  }
+</style>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "surface-bright": "#f9f9f9",
+                "tertiary-container": "#1b1b1b",
+                "error-container": "#ffdad6",
+                "on-surface-variant": "#4c4546",
+                "inverse-surface": "#303030",
+                "on-primary-fixed": "#1b1b1b",
+                "surface-tint": "#5e5e5e",
+                "inverse-on-surface": "#f1f1f1",
+                "outline": "#7e7576",
+                "on-secondary-fixed": "#0b1c30",
+                "secondary-container": "#d0e1fb",
+                "surface-container-lowest": "#ffffff",
+                "on-secondary": "#ffffff",
+                "tertiary-fixed-dim": "#c6c6c6",
+                "surface-container": "#eeeeee",
+                "on-tertiary": "#ffffff",
+                "outline-variant": "#cfc4c5",
+                "primary-container": "#1b1b1b",
+                "on-surface": "#1b1b1b",
+                "error": "#ba1a1a",
+                "on-error": "#ffffff",
+                "on-secondary-container": "#54647a",
+                "secondary": "#505f76",
+                "surface-container-low": "#f3f3f3",
+                "on-primary-container": "#848484",
+                "on-secondary-fixed-variant": "#38485d",
+                "on-error-container": "#93000a",
+                "on-primary": "#ffffff",
+                "primary-fixed-dim": "#c6c6c6",
+                "primary": "#000000",
+                "tertiary-fixed": "#e2e2e2",
+                "surface-variant": "#e2e2e2",
+                "secondary-fixed": "#d3e4fe",
+                "on-tertiary-fixed": "#1b1b1b",
+                "on-primary-fixed-variant": "#474747",
+                "on-tertiary-fixed-variant": "#474747",
+                "background": "#f9f9f9",
+                "primary-fixed": "#e2e2e2",
+                "tertiary": "#000000",
+                "surface": "#f9f9f9",
+                "on-background": "#1b1b1b",
+                "surface-container-high": "#e8e8e8",
+                "on-tertiary-container": "#848484",
+                "surface-container-highest": "#e2e2e2",
+                "surface-dim": "#dadada",
+                "secondary-fixed-dim": "#b7c8e1",
+                "inverse-primary": "#c6c6c6"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+        },
+        "spacing": {
+                "unit": "4px",
+                "section-margin": "24px",
+                "stack-gap": "12px",
+                "inline-gap": "8px",
+                "container-padding": "16px"
+        },
+        "fontFamily": {
+                "subheading": ["Inter"],
+                "label-caps": ["Inter"],
+                "data-tabular": ["Inter"],
+                "headline-lg": ["Inter"],
+                "body-md": ["Inter"],
+                "headline-md": ["Inter"],
+                "body-sm": ["Inter"]
+        },
+        "fontSize": {
+                "subheading": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                "data-tabular": ["13px", {"lineHeight": "18px", "fontWeight": "500"}],
+                "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                "headline-md": ["22px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+        }
+      }
+    }
+  }
+</script>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col pt-11 pb-[180px] md:pb-0 relative">
+<!-- TopAppBar JSON Component -->
+<header class="bg-primary dark:bg-primary fixed top-0 w-full z-50 flex justify-between items-center px-container-padding h-11 flat no shadows">
+<div class="flex items-center gap-inline-gap">
+<button class="text-on-primary dark:text-on-primary hover:bg-primary-container/20 transition-opacity duration-200 active:opacity-80 flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<h1 class="font-headline-md text-headline-md font-bold text-on-primary">Nuhome Sales</h1>
+</div>
+<div class="flex items-center">
+<button class="text-on-primary dark:text-on-primary hover:bg-primary-container/20 transition-opacity duration-200 active:opacity-80 flex items-center justify-center w-8 h-8 rounded-full bg-surface-container-highest overflow-hidden">
+<span class="material-symbols-outlined text-on-surface" data-icon="person">person</span>
+</button>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 w-full max-w-2xl mx-auto px-container-padding py-section-margin flex flex-col gap-section-margin">
+<!-- Header Section -->
+<div class="flex flex-col gap-stack-gap">
+<div class="flex items-center justify-between">
+<h2 class="font-headline-lg text-headline-lg text-on-surface">NQ-1042 · Ananya Nair</h2>
+<span class="bg-surface-container-highest text-on-surface-variant font-label-caps text-label-caps px-2 py-1 rounded uppercase tracking-wider">Pending</span>
+</div>
+</div>
+<!-- Next Action Card -->
+<section class="bg-surface-container-lowest border border-outline-variant border-l-4 border-l-primary p-4 rounded-lg flex flex-col gap-inline-gap shadow-sm">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Next</span>
+<h3 class="font-subheading text-subheading text-on-surface">Approve Quote</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Review margins and discounts before approving for Sales.</p>
+</section>
+<!-- Financial Card (Bento Grid Style) -->
+<section class="bg-surface-container-lowest border border-outline-variant rounded-lg overflow-hidden flex flex-col">
+<div class="p-4 border-b border-outline-variant bg-surface-bright flex justify-between items-center">
+<h3 class="font-subheading text-subheading text-on-surface">Financial Summary</h3>
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="analytics">analytics</span>
+</div>
+<div class="grid grid-cols-2 gap-[1px] bg-outline-variant">
+<div class="bg-surface-container-lowest p-4 flex flex-col gap-1">
+<span class="font-label-caps text-label-caps text-on-surface-variant">Total Estimate</span>
+<span class="font-data-tabular text-data-tabular text-on-surface text-lg">₹1,05,000</span>
+</div>
+<div class="bg-surface-container-lowest p-4 flex flex-col gap-1">
+<span class="font-label-caps text-label-caps text-on-surface-variant">Total Cost</span>
+<span class="font-data-tabular text-data-tabular text-on-surface text-lg">₹72,000</span>
+</div>
+<div class="bg-surface-container-lowest p-4 flex flex-col gap-1">
+<span class="font-label-caps text-label-caps text-on-surface-variant">Margin</span>
+<div class="flex items-baseline gap-2">
+<span class="font-data-tabular text-data-tabular text-on-surface text-lg">₹33,000</span>
+<span class="font-label-caps text-label-caps text-secondary">(31%)</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-4 flex flex-col gap-1">
+<span class="font-label-caps text-label-caps text-on-surface-variant">Discount</span>
+<div class="flex items-baseline gap-2">
+<span class="font-data-tabular text-data-tabular text-on-surface text-lg">₹5,000</span>
+<span class="font-label-caps text-label-caps text-error">(4.5%)</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Line Items Section -->
+<section class="flex flex-col gap-stack-gap">
+<h3 class="font-subheading text-subheading text-on-surface px-1">Line Items</h3>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg overflow-hidden flex flex-col">
+<!-- Item 1 -->
+<div class="flex items-center p-4 gap-4 border-b border-outline-variant last:border-b-0">
+<div class="w-16 h-16 rounded bg-surface-container-high flex-shrink-0 relative overflow-hidden border border-outline-variant/50">
+<img class="w-full h-full object-cover absolute inset-0" data-alt="A clean, modern studio product shot of a minimalist Oslo 3-seater sofa upholstered in premium gray fabric. The background is pure white with soft, diffused studio lighting highlighting the texture of the fabric and the sleek wooden legs. High definition, corporate furniture catalog style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDM_9Shzlxbs1JGuEm_YCNQXiWpN2uJiPfV-N_a92P3uJyH78OQLh4hyk8S71Kx0QYyhfKvtjZiXVCMYwfmh9CKG4B8nkU--IfVevb6fVXoZz0dIFrMyRGGVUBj23_a-RGWNDzEiTeHrHaSYgpNK_3KB4rkO6Z8ctIMkRyeBO7HT2wEdCMoGShwHBaWn-kuwIghjZQygR9kDCE_nTSGwPtOam-5s1AtGW9vACtyGtUKMN2BotVvU8FRhw"/>
+</div>
+<div class="flex flex-col flex-1 gap-1">
+<h4 class="font-subheading text-subheading text-on-surface">Oslo 3-seater</h4>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Qty: 1</span>
+</div>
+<span class="font-data-tabular text-data-tabular text-on-surface font-semibold">₹42,000</span>
+</div>
+<!-- Item 2 -->
+<div class="flex items-center p-4 gap-4 border-b border-outline-variant last:border-b-0">
+<div class="w-16 h-16 rounded bg-surface-container-high flex-shrink-0 relative overflow-hidden border border-outline-variant/50">
+<img class="w-full h-full object-cover absolute inset-0" data-alt="A professional, well-lit studio image of a tall, modern Teak wardrobe with a natural wood finish. The piece features clean lines and minimal hardware, standing against a crisp, light gray background. Soft side lighting accentuates the natural grain of the wood, suitable for a high-end furniture catalog." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQJsMwgXRJf7UdtI-CMNwisRDjtr5FdRvlnhpliSjh4kwkkYthpioNiCKf7zykfYbP16i3MNT5PRZoQUrCYxdcTpDhW3T35BcqENTy0T-fj7JkPWTwZ7fnnukK5rO4IGLcunUjccOGyucVfc_YQkTv_blWJg4uSit86ENf9LUwXZ-_JTjiXARTAQ_hnpj5C4peTE3U2CMXxcU5br7oGrRsL0VtRvoLtpWcnUrnYRi0Hl-RLAPjgAbqHQ"/>
+</div>
+<div class="flex flex-col flex-1 gap-1">
+<h4 class="font-subheading text-subheading text-on-surface">Teak wardrobe</h4>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Qty: 1</span>
+</div>
+<span class="font-data-tabular text-data-tabular text-on-surface font-semibold">₹68,000</span>
+</div>
+</div>
+</section>
+</main>
+<!-- Pinned Footer Actions -->
+<div class="fixed bottom-[64px] md:bottom-0 left-0 w-full bg-surface-container-lowest border-t border-outline-variant p-4 flex flex-col gap-3 z-40 shadow-[0_-4px_12px_rgba(0,0,0,0.05)]">
+<div class="w-full max-w-2xl mx-auto flex flex-col gap-3">
+<button class="w-full h-[44px] bg-primary text-on-primary font-subheading text-subheading rounded flex items-center justify-center transition-transform duration-150 active:scale-[0.98]">
+        Approve Quote
+      </button>
+<button class="w-full h-[44px] bg-surface-container-lowest border border-primary text-primary font-subheading text-subheading rounded flex items-center justify-center transition-transform duration-150 active:scale-[0.98]">
+        Return for revision
+      </button>
+</div>
+</div>
+<!-- BottomNavBar JSON Component -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center bg-surface px-unit pb-safe h-[64px] border-t border-outline-variant">
+<button class="flex flex-col items-center justify-center text-secondary dark:text-secondary hover:bg-surface-container-low scale-95 active:scale-90 transition-transform duration-150 p-2 rounded-lg">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-label-caps text-label-caps mt-1">Home</span>
+</button>
+<button class="flex flex-col items-center justify-center text-secondary dark:text-secondary hover:bg-surface-container-low scale-95 active:scale-90 transition-transform duration-150 p-2 rounded-lg">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-label-caps text-label-caps mt-1">Customers</span>
+</button>
+<button class="flex flex-col items-center justify-center text-primary dark:text-primary font-bold hover:bg-surface-container-low scale-95 active:scale-90 transition-transform duration-150 p-2 rounded-lg">
+<span class="material-symbols-outlined" data-icon="description" style="font-variation-settings: 'FILL' 1;">description</span>
+<span class="font-label-caps text-label-caps mt-1">Quotes</span>
+</button>
+<button class="flex flex-col items-center justify-center text-secondary dark:text-secondary hover:bg-surface-container-low scale-95 active:scale-90 transition-transform duration-150 p-2 rounded-lg">
+<span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
+<span class="font-label-caps text-label-caps mt-1">Orders</span>
+</button>
+<button class="flex flex-col items-center justify-center text-secondary dark:text-secondary hover:bg-surface-container-low scale-95 active:scale-90 transition-transform duration-150 p-2 rounded-lg">
+<span class="material-symbols-outlined" data-icon="more_horiz">more_horiz</span>
+<span class="font-label-caps text-label-caps mt-1">More</span>
+</button>
+</nav>
+</body></html>

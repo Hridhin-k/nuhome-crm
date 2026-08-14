@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Nuhome - Materials</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-fixed": "#1b1b1b",
+                        "surface-container-lowest": "#ffffff",
+                        "on-error": "#ffffff",
+                        "secondary": "#505f76",
+                        "primary": "#000000",
+                        "on-secondary-fixed-variant": "#38485d",
+                        "error": "#ba1a1a",
+                        "surface-bright": "#f9f9f9",
+                        "on-tertiary-container": "#848484",
+                        "primary-fixed": "#e2e2e2",
+                        "secondary-container": "#d0e1fb",
+                        "on-primary-container": "#848484",
+                        "on-surface": "#1b1b1b",
+                        "on-tertiary": "#ffffff",
+                        "secondary-fixed-dim": "#b7c8e1",
+                        "on-primary-fixed-variant": "#474747",
+                        "secondary-fixed": "#d3e4fe",
+                        "surface-variant": "#e2e2e2",
+                        "surface-container-highest": "#e2e2e2",
+                        "primary-container": "#1b1b1b",
+                        "tertiary-fixed-dim": "#c6c6c6",
+                        "on-tertiary-fixed": "#1b1b1b",
+                        "surface-dim": "#dadada",
+                        "on-secondary": "#ffffff",
+                        "inverse-surface": "#303030",
+                        "outline": "#7e7576",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-fixed-variant": "#474747",
+                        "on-background": "#1b1b1b",
+                        "inverse-on-surface": "#f1f1f1",
+                        "on-secondary-fixed": "#0b1c30",
+                        "inverse-primary": "#c6c6c6",
+                        "primary-fixed-dim": "#c6c6c6",
+                        "surface-container-low": "#f3f3f3",
+                        "tertiary-container": "#1b1b1b",
+                        "on-primary": "#ffffff",
+                        "on-secondary-container": "#54647a",
+                        "surface-container": "#eeeeee",
+                        "surface-tint": "#5e5e5e",
+                        "background": "#f9f9f9",
+                        "tertiary-fixed": "#e2e2e2",
+                        "on-error-container": "#93000a",
+                        "tertiary": "#000000",
+                        "surface-container-high": "#e8e8e8",
+                        "surface": "#f9f9f9",
+                        "on-surface-variant": "#4c4546",
+                        "outline-variant": "#cfc4c5"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "inline-gap": "8px",
+                        "stack-gap": "12px",
+                        "container-padding": "16px",
+                        "section-margin": "24px",
+                        "unit": "4px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "data-tabular": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "subheading": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "data-tabular": ["13px", {"lineHeight": "18px", "fontWeight": "500"}],
+                        "headline-md": ["22px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                        "subheading": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { background-color: #F8F9FA; -webkit-tap-highlight-color: transparent; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        /* High density layout specific tweaks */
+        .dense-card { border-radius: 10px; border: 1px solid #E2E8F0; padding: 16px; background-color: white; }
+        .dense-input { height: 44px; border-radius: 6px; }
+        .dense-btn { height: 44px; border-radius: 6px; }
+    </style>
+</head>
+<body class="bg-background text-on-surface antialiased pt-12 pb-20">
+<!-- TopAppBar from JSON -->
+<header class="fixed top-0 w-full h-12 bg-primary dark:bg-primary text-on-primary dark:text-on-primary border-b border-outline-variant flex items-center justify-between px-container-padding z-50">
+<button class="hover:opacity-80 active:scale-95 transition-transform p-1 -ml-1 flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary" style="font-variation-settings: 'FILL' 0;">menu</span>
+</button>
+<h1 class="font-headline-lg text-headline-lg-mobile text-on-primary tracking-tight">Nuhome</h1>
+<button class="hover:opacity-80 active:scale-95 transition-transform p-1 -mr-1 flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary" style="font-variation-settings: 'FILL' 0;">notifications</span>
+</button>
+</header>
+<!-- Main Content Canvas -->
+<main class="w-full max-w-[1200px] mx-auto px-container-padding py-section-margin md:mt-6">
+<!-- Header & Actions -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-stack-gap mb-section-margin">
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface">Materials</h2>
+<p class="font-body-sm text-body-sm text-secondary mt-1">Manage catalog and pricing</p>
+</div>
+<div class="flex items-center gap-inline-gap w-full md:w-auto">
+<button class="dense-btn flex-1 md:flex-none px-4 flex items-center justify-center gap-2 border border-primary text-primary bg-surface-container-lowest font-subheading text-subheading hover:bg-surface-container-low transition-colors active:scale-95">
+<span class="material-symbols-outlined text-[18px]">upload_file</span>
+                    Import CSV
+                </button>
+<button class="dense-btn flex-1 md:flex-none px-6 flex items-center justify-center gap-2 bg-primary text-on-primary font-subheading text-subheading hover:opacity-90 transition-opacity active:scale-95 shadow-sm">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                    Add
+                </button>
+</div>
+</div>
+<!-- Search & Filters -->
+<div class="mb-section-margin space-y-stack-gap">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant z-10 pointer-events-none">search</span>
+<input class="w-full dense-input pl-10 pr-4 bg-surface-container-lowest border border-surface-container-highest text-on-surface placeholder:text-on-surface-variant focus:ring-1 focus:ring-primary focus:border-primary font-body-sm text-body-sm shadow-sm transition-all outline-none" placeholder="Search materials by name or SKU..." type="text"/>
+</div>
+<!-- Horizontal Chips -->
+<div class="w-full overflow-x-auto hide-scrollbar pb-2 -mx-container-padding px-container-padding md:mx-0 md:px-0">
+<div class="flex gap-inline-gap min-w-max">
+<button class="h-8 px-4 rounded-full bg-primary text-on-primary font-data-tabular text-data-tabular flex items-center shadow-sm">All</button>
+<button class="h-8 px-4 rounded-full bg-surface-container-highest border border-outline-variant text-on-surface-variant font-data-tabular text-data-tabular hover:bg-surface-container-low transition-colors flex items-center">Sofas</button>
+<button class="h-8 px-4 rounded-full bg-surface-container-highest border border-outline-variant text-on-surface-variant font-data-tabular text-data-tabular hover:bg-surface-container-low transition-colors flex items-center">Wardrobes</button>
+<button class="h-8 px-4 rounded-full bg-surface-container-highest border border-outline-variant text-on-surface-variant font-data-tabular text-data-tabular hover:bg-surface-container-low transition-colors flex items-center">Curtains</button>
+<button class="h-8 px-4 rounded-full bg-surface-container-highest border border-outline-variant text-on-surface-variant font-data-tabular text-data-tabular hover:bg-surface-container-low transition-colors flex items-center">Lighting</button>
+</div>
+</div>
+</div>
+<!-- Data List / Bento Grids -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-stack-gap">
+<!-- Active Item -->
+<div class="dense-card hover:border-outline transition-colors cursor-pointer group relative overflow-hidden flex flex-col justify-between">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h3 class="font-subheading text-subheading text-on-surface group-hover:text-primary transition-colors">Oslo 3-seater</h3>
+<p class="font-data-tabular text-data-tabular text-secondary mt-0.5">SOF-014</p>
+</div>
+<span class="px-2 py-1 rounded bg-[#e8f5e9] text-[#2e7d32] font-label-caps text-[10px] uppercase tracking-wider flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-[#4caf50]"></span> Active
+                    </span>
+</div>
+<div class="w-full h-32 mb-4 bg-surface-container rounded-md overflow-hidden relative">
+<img class="w-full h-full object-cover" data-alt="A modern minimalist light grey 3-seater sofa against a bright white background. High-key studio lighting creates soft shadows. Professional product photography style, corporate modern aesthetic, crisp details." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBd519vnfCLLr1KYGGWbfNYj3B8DIz_CXQ-b4gbkXPbp_hVCCKrty31lM9KKQ1hcb1FF0slZElSgfxqiVgk4p0g0SvAMLOaCKdHt5HYn6eJN9IIpp4e-NAP87T2x9fgAMtCmyeWwoj3rInoJl4HQGDiTpwu0SA-2muD4BqxEeLQCrugrIom3Xd2p8KpnDG00nGZJ4QNgzJNhNlemA8cBvHZzljrQAK7ul60sb3G9R7OR3HL9F5dZSyfIQ"/>
+</div>
+<div class="flex items-end justify-between mt-auto border-t border-surface-container-highest pt-3">
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-1">Sell Price</p>
+<p class="font-headline-md text-headline-md text-on-surface">₹42,000</p>
+</div>
+<button class="text-secondary hover:text-primary p-2 -mr-2">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Active Item 2 -->
+<div class="dense-card hover:border-outline transition-colors cursor-pointer group relative overflow-hidden flex flex-col justify-between">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h3 class="font-subheading text-subheading text-on-surface group-hover:text-primary transition-colors">Milan Modular Sofa</h3>
+<p class="font-data-tabular text-data-tabular text-secondary mt-0.5">SOF-022</p>
+</div>
+<span class="px-2 py-1 rounded bg-[#e8f5e9] text-[#2e7d32] font-label-caps text-[10px] uppercase tracking-wider flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-[#4caf50]"></span> Active
+                    </span>
+</div>
+<div class="w-full h-32 mb-4 bg-surface-container rounded-md overflow-hidden relative">
+<img class="w-full h-full object-cover" data-alt="A dark charcoal modular L-shaped sofa in a minimalist modern living space. Soft directional natural light from a window. High contrast professional photography, modern corporate interior style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDtVQYw03obf1sER2SpcL_ThyLkrZVmzMpF-dt42Tg7CNik_bFU3sKbTRrAYsAOg7TJfU4Xzzf866-lSH9ViIJYNFHD5q6869o3cOhCT_w8loUDUhWfvyjzAc1aUJmwJ5Exq5cLzhWtu08kqDoKyEuEDxsGqJqJnynNbhtLoX-ZAZrNFt61ulzZMGKuJPAmZNyBVXZZa3PkNFAKvsBSmeyrJRD7wacyutMgflDG-WwnaMKOxkBe2tWvpw"/>
+</div>
+<div class="flex items-end justify-between mt-auto border-t border-surface-container-highest pt-3">
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-1">Sell Price</p>
+<p class="font-headline-md text-headline-md text-on-surface">₹58,500</p>
+</div>
+<button class="text-secondary hover:text-primary p-2 -mr-2">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Inactive Item (Muted) -->
+<div class="dense-card border-surface-container-highest bg-surface-container-low opacity-75 grayscale-[50%] hover:grayscale-0 hover:opacity-100 transition-all cursor-pointer group relative overflow-hidden flex flex-col justify-between">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h3 class="font-subheading text-subheading text-on-surface-variant group-hover:text-on-surface transition-colors">Stockholm Armchair</h3>
+<p class="font-data-tabular text-data-tabular text-outline mt-0.5">SOF-008</p>
+</div>
+<span class="px-2 py-1 rounded bg-surface-container-highest text-on-surface-variant font-label-caps text-[10px] uppercase tracking-wider flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span> Draft
+                    </span>
+</div>
+<div class="w-full h-32 mb-4 bg-surface-container-highest rounded-md flex items-center justify-center relative overflow-hidden">
+<span class="material-symbols-outlined text-outline-variant text-[40px]">chair</span>
+</div>
+<div class="flex items-end justify-between mt-auto border-t border-surface-container-highest pt-3">
+<div>
+<p class="font-label-caps text-label-caps text-outline mb-1">Sell Price</p>
+<p class="font-headline-md text-headline-md text-on-surface-variant">₹18,000</p>
+</div>
+<button class="text-outline hover:text-primary p-2 -mr-2">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Active Item 3 - Wardrobe -->
+<div class="dense-card hover:border-outline transition-colors cursor-pointer group relative overflow-hidden flex flex-col justify-between">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h3 class="font-subheading text-subheading text-on-surface group-hover:text-primary transition-colors">Venezia Sliding Wardrobe</h3>
+<p class="font-data-tabular text-data-tabular text-secondary mt-0.5">WRD-102</p>
+</div>
+<span class="px-2 py-1 rounded bg-[#e8f5e9] text-[#2e7d32] font-label-caps text-[10px] uppercase tracking-wider flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-[#4caf50]"></span> Active
+                    </span>
+</div>
+<div class="w-full h-32 mb-4 bg-surface-container rounded-md overflow-hidden relative">
+<img class="w-full h-full object-cover" data-alt="A sleek modern sliding door wardrobe with mirrored panels and matte black trim. Clean white minimalist bedroom setting. Crisp architectural lighting, corporate professional interior design style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCmSCb00I2L79l8dfzqKoJFMDeqRUtwNIpcCooKSRxDnt6saGj8rIlFrsxNQy1zUbEKUXBINtgRXtMhDea06E3W7TDDitGFQMuzj2QG7hzwQWIXBJdieVxN8mvc0ef45A4fYJvv--aT3aN8eV_YssM1izidYgvZkwmkIz4ZXar6puEFqfDbLVwSuE15iqPA2pzjHro-GDv9RexxW1rRfGK3cC4Le6w88DNinLWb_9AmxMLqumVjQwZ5BQ"/>
+</div>
+<div class="flex items-end justify-between mt-auto border-t border-surface-container-highest pt-3">
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-1">Sell Price</p>
+<p class="font-headline-md text-headline-md text-on-surface">₹85,000</p>
+</div>
+<button class="text-secondary hover:text-primary p-2 -mr-2">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar from JSON -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-2 pb-safe bg-surface dark:bg-surface-container-low border-t border-outline-variant h-16 rounded-t-0 shadow-sm md:hidden">
+<button class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high active:opacity-70 transition-opacity w-full h-full">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 0;">home</span>
+<span class="font-label-caps text-label-caps">Home</span>
+</button>
+<button class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high active:opacity-70 transition-opacity w-full h-full">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 0;">group</span>
+<span class="font-label-caps text-label-caps">Customers</span>
+</button>
+<button class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high active:opacity-70 transition-opacity w-full h-full">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 0;">request_quote</span>
+<span class="font-label-caps text-label-caps">Quotes</span>
+</button>
+<button class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high active:opacity-70 transition-opacity w-full h-full">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 0;">shopping_cart</span>
+<span class="font-label-caps text-label-caps">Orders</span>
+</button>
+<!-- Setting 'More' as active to represent Admin/Catalog context fallback -->
+<button class="flex flex-col items-center justify-center text-primary dark:text-primary-fixed hover:bg-surface-container-high active:opacity-70 transition-opacity w-full h-full">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">menu</span>
+<span class="font-label-caps text-label-caps">More</span>
+</button>
+</nav>
+</body></html>

@@ -14,6 +14,7 @@ export function ConfirmActionSheet({
   confirmLabel,
   action,
   details,
+  triggerClassName,
 }: {
   title: string;
   description: string;
@@ -21,20 +22,26 @@ export function ConfirmActionSheet({
   confirmLabel: string;
   action: (formData: FormData) => void | Promise<void>;
   details?: string;
+  triggerClassName?: string;
 }) {
   return (
     <FormSheet
       title={title}
       description={description}
       trigger={
-        <span className="inline-flex h-12 min-h-12 w-full items-center justify-center rounded-lg bg-primary px-6 text-[15px] font-medium text-on-primary transition-transform active:scale-[0.98] motion-reduce:transition-none">
+        <span
+          className={
+            triggerClassName ??
+            "inline-flex h-11 min-h-11 w-full items-center justify-center rounded-lg bg-primary px-4 text-subheading text-on-primary transition-transform active:scale-[0.98] motion-reduce:transition-none"
+          }
+        >
           {triggerLabel}
         </span>
       }
     >
       <form action={action} className="flex min-h-0 flex-1 flex-col">
         <FormSheetBody>
-          <p className="text-[15px] leading-relaxed text-on-surface-variant">
+          <p className="text-[13px] leading-snug text-on-surface-variant">
             {details ?? "Confirm this step to continue the order."}
           </p>
         </FormSheetBody>

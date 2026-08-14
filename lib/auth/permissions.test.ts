@@ -8,6 +8,8 @@ describe("role permission matrix", () => {
     expect(roleHasPermission("sales", "deliveries.complete")).toBe(false);
     expect(roleHasPermission("accounts", "quotes.create")).toBe(false);
     expect(roleHasPermission("store", "quotes.approve")).toBe(false);
+    expect(roleHasPermission("store", "payments.record")).toBe(true);
+    expect(roleHasPermission("store", "payments.verify")).toBe(false);
   });
 
   it("gives admin every permission", () => {

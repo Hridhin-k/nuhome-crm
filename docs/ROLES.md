@@ -9,7 +9,7 @@ Stored in `roles`, `permissions`, `role_permissions`. `profiles.role` is the ass
 | quotes.approve / .reject | — | yes | — | — | yes |
 | quotes.send_to_customer | yes | — | — | — | yes |
 | quotes.read_margin | — | yes | — | — | yes |
-| payments.record | yes | — | — | — | yes |
+| payments.record | yes | — | — | yes | yes |
 | payments.verify | — | yes | — | — | yes |
 | orders.read | own | yes | activated+ | received+ | yes |
 | orders.send_to_vendor | — | — | yes | — | yes |
@@ -17,4 +17,4 @@ Stored in `roles`, `permissions`, `role_permissions`. `profiles.role` is the ass
 | deliveries.complete | — | — | — | if unlocked | yes |
 | admin.manage | — | — | — | — | yes |
 
-Sales cannot approve their own quote or verify payment, including when they also have a second role — Phase 2 RLS uses the acting permission, not a UI flag.
+Sales cannot approve their own quote or verify/reject a payment they recorded, including when they also have a second role — Phase 2 RLS uses the acting permission, not a UI flag.

@@ -415,6 +415,9 @@ export type Database = {
           quantity: number
           quantity_pending: number | null
           quantity_received: number
+          quantity_written_off: number
+          write_off_notes: string | null
+          write_off_reason: string | null
           quote_item_id: string | null
         }
         Insert: {
@@ -425,6 +428,9 @@ export type Database = {
           quantity: number
           quantity_pending?: number | null
           quantity_received?: number
+          quantity_written_off?: number
+          write_off_notes?: string | null
+          write_off_reason?: string | null
           quote_item_id?: string | null
         }
         Update: {
@@ -435,6 +441,9 @@ export type Database = {
           quantity?: number
           quantity_pending?: number | null
           quantity_received?: number
+          quantity_written_off?: number
+          write_off_notes?: string | null
+          write_off_reason?: string | null
           quote_item_id?: string | null
         }
         Relationships: [
@@ -986,6 +995,7 @@ export type Database = {
           quantity: number
           quantity_pending: number | null
           quantity_received: number
+          quantity_written_off: number
           vendor_order_id: string
         }
         Insert: {
@@ -994,6 +1004,7 @@ export type Database = {
           quantity: number
           quantity_pending?: number | null
           quantity_received?: number
+          quantity_written_off?: number
           vendor_order_id: string
         }
         Update: {
@@ -1002,6 +1013,7 @@ export type Database = {
           quantity?: number
           quantity_pending?: number | null
           quantity_received?: number
+          quantity_written_off?: number
           vendor_order_id?: string
         }
         Relationships: [
@@ -1175,6 +1187,15 @@ export type Database = {
         Args: { p_customer_id: string; p_items: Json; p_notes?: string }
         Returns: string
       }
+      find_customer_by_phone: {
+        Args: { p_phone: string }
+        Returns: {
+          id: string
+          name: string
+          phone: string | null
+        }[]
+      }
+      normalize_phone: { Args: { p_phone: string }; Returns: string }
       current_profile: {
         Args: never
         Returns: {
@@ -1243,6 +1264,10 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      order_item_available_to_send: {
+        Args: { p_order_item_id: string }
+        Returns: number
+      }
       quote_outstanding: { Args: { p_quote_id: string }; Returns: number }
       recalc_version_totals: {
         Args: { p_version_id: string }
@@ -1263,6 +1288,10 @@ export type Database = {
           p_reference?: string
         }
         Returns: string
+      }
+      write_off_order_items: {
+        Args: { p_items: Json; p_notes?: string; p_order_id: string }
+        Returns: Database["public"]["Enums"]["workflow_status"]
       }
       reject_payment: {
         Args: { p_notes: string; p_payment_id: string }

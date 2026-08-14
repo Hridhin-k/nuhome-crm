@@ -1,7 +1,10 @@
 import { AppLink } from "@/components/app/app-link";
 import { notFound } from "next/navigation";
+import { JobRow } from "@/components/app/job-row";
+import { Notice } from "@/components/app/notice";
+import { PageFrame, wellClass } from "@/components/app/page-frame";
 import { PageHeader } from "@/components/app/page-header";
-import { StatusBadge } from "@/components/app/status-badge";
+import { CustomerForm } from "@/components/customers/customer-form";
 import { buttonVariants } from "@/components/ui/button";
 import { getCustomer } from "@/lib/api/customers";
 import { listOrdersForCustomer } from "@/lib/api/orders";
@@ -17,11 +20,14 @@ import type { WorkflowStatus } from "@/lib/workflow/types";
 
 export default async function CustomerDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ notice?: string }>;
 }) {
   const user = await requireUser();
   const { id } = await params;
+  const { notice } = await searchParams;
   const [customer, theirs, theirOrders] = await Promise.all([
     getCustomer(id),
     listQuotesForCustomer(id),
@@ -40,16 +46,29 @@ export default async function CustomerDetailPage({
   );
 
   return (
-    <div className="flex flex-col gap-6">
+    <PageFrame width="detail" className="flex flex-col gap-5">
       <PageHeader
         title={customer.name}
         description={customer.phone ?? customer.email ?? ""}
+        action={
+          roleHasPermission(user.role, "customers.write") ? (
+            <CustomerForm
+              customer={customer}
+              trigger={
+                <span className="inline-flex h-9 min-h-9 items-center rounded-lg border border-outline-variant bg-surface-container-lowest px-3 text-[13px] font-medium text-primary">
+                  Edit
+                </span>
+              }
+            />
+          ) : null
+        }
       />
+      {notice === "updated" ? <Notice>Customer updated.</Notice> : null}
       {customer.address ? (
         <p className="text-sm text-on-surface-variant">{customer.address}</p>
       ) : null}
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="flex flex-col gap-2 sm:grid sm:grid-cols-2">
         {roleHasPermission(user.role, "quotes.create") ? (
           <AppLink
             href={`/walk-in?customerId=${id}&step=2`}
@@ -69,56 +88,45 @@ export default async function CustomerDetailPage({
       </div>
 
       <section>
-        <h2 className="mb-3 text-sm font-semibold">Quotes</h2>
-        <ul className="flex flex-col gap-2">
-          {theirs.map((quote) => {
-            const version = rel(quote.quote_versions);
-            const order = quote.order;
-            const status = displayWorkflowStatus(
-              quote.status as WorkflowStatus,
-              order?.status as WorkflowStatus | undefined,
-            );
-            return (
-              <li key={quote.id}>
-                <AppLink
+        <h2 className="mb-3 text-subheading text-on-surface">Quotes</h2>
+        {theirs.length === 0 ? (
+          <p className="text-sm text-on-surface-variant">No quotes yet.</p>
+        ) : (
+          <ul className={wellClass}>
+            {theirs.map((quote) => {
+              const version = rel(quote.quote_versions);
+              const order = quote.order;
+              const status = displayWorkflowStatus(
+                quote.status as WorkflowStatus,
+                order?.status as WorkflowStatus | undefined,
+              );
+              return (
+                <JobRow
+                  key={quote.id}
                   href={order ? `/orders/${order.id}` : `/quotes/${quote.id}`}
-                  className="flex items-center justify-between rounded-xl border border-surface-variant bg-surface-container-lowest px-4 py-3"
-                >
-                  <span>
-                    <span className="font-medium">{quote.quote_number}</span>
-                    <span className="ml-2 text-sm text-on-surface-variant">
-                      {formatInr(Number(version?.total ?? 0))}
-                    </span>
-                  </span>
-                  <StatusBadge status={status} />
-                </AppLink>
-              </li>
-            );
-          })}
-          {theirs.length === 0 ? (
-            <p className="text-sm text-on-surface-variant">No quotes yet.</p>
-          ) : null}
-        </ul>
+                  title={quote.quote_number}
+                  subtitle={formatInr(Number(version?.total ?? 0))}
+                  status={status}
+                />
+              );
+            })}
+          </ul>
+        )}
       </section>
 
       <section>
-        <h2 className="mb-3 text-sm font-semibold">Orders</h2>
-        <ul className="flex flex-col gap-2">
+        <h2 className="mb-3 text-subheading text-on-surface">Orders</h2>
+        <ul className={wellClass}>
           {theirOrders.map((order) => (
-            <li key={order.id}>
-              <AppLink
-                href={`/orders/${order.id}`}
-                className="flex items-center justify-between rounded-xl border border-surface-variant bg-surface-container-lowest px-4 py-3"
-              >
-                <span className="font-medium">
-                  {rel(order.quotes)?.quote_number ?? "Order"}
-                </span>
-                <StatusBadge status={order.status as WorkflowStatus} />
-              </AppLink>
-            </li>
+            <JobRow
+              key={order.id}
+              href={`/orders/${order.id}`}
+              title={rel(order.quotes)?.quote_number ?? "Order"}
+              status={order.status as WorkflowStatus}
+            />
           ))}
         </ul>
       </section>
-    </div>
+    </PageFrame>
   );
 }

@@ -1,28 +1,40 @@
 import type { ReactNode } from "react";
+import { cn } from "@/lib/utils";
 
 export function PageHeader({
   title,
   description,
   action,
+  hideTitleOnMobile = false,
 }: {
   title: string;
   description?: string;
   action?: ReactNode;
+  hideTitleOnMobile?: boolean;
 }) {
   return (
-    <div className="mb-8 flex items-start justify-between gap-4">
+    <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
       <div className="min-w-0">
-        {/* Desktop top bar already shows Overview — hide duplicate on md+ when title is Overview */}
-        <h1 className="text-[28px] leading-[34px] font-bold tracking-[-0.02em] text-primary md:text-display-lg">
+        <h1
+          className={cn(
+            "text-headline-lg text-on-surface",
+            hideTitleOnMobile && "hidden md:block",
+          )}
+        >
           {title}
         </h1>
         {description ? (
-          <p className="text-body-lg mt-2 text-on-surface-variant">
+          <p
+            className={cn(
+              "text-body-sm text-on-surface-variant",
+              hideTitleOnMobile ? "mt-0 md:mt-1" : "mt-1",
+            )}
+          >
             {description}
           </p>
         ) : null}
       </div>
-      {action ? <div className="shrink-0">{action}</div> : null}
+      {action ? <div className="shrink-0 self-start">{action}</div> : null}
     </div>
   );
 }

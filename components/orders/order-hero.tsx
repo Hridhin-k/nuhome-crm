@@ -1,6 +1,6 @@
 import { StatusBadge } from "@/components/app/status-badge";
-import { formatInrExact } from "@/lib/format/money";
-import { STATUS_BADGE_CLASS, STATUS_LABELS } from "@/lib/workflow/labels";
+import { formatInr } from "@/lib/format/money";
+import { STATUS_LABELS } from "@/lib/workflow/labels";
 import { isClosedOrderStatus } from "@/lib/workflow/status-buckets";
 import type { WorkflowStatus } from "@/lib/workflow/types";
 import { cn } from "@/lib/utils";
@@ -32,81 +32,52 @@ export function OrderHero({
   const closed = isClosedOrderStatus(status);
 
   return (
-    <section
-      className={cn(
-        "rounded-xl border bg-surface-container-lowest p-5 shadow-card",
-        closed
-          ? "border-zinc-300"
-          : blocked
-            ? "border-error/30"
-            : "border-surface-variant",
-      )}
-    >
-      <div className="flex flex-wrap items-start justify-between gap-4">
+    <header className="min-w-0 space-y-4">
+      <div className="flex min-w-0 items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">
-            Order
-          </p>
-          <h1 className="mt-1 text-[24px] font-bold leading-tight text-primary">
+          <p className="text-label-caps text-on-surface-variant">Order ID</p>
+          <h1 className="mt-1 truncate text-headline-lg text-on-surface">
             {quoteNumber}
           </h1>
-          <p className="mt-1 text-body-lg text-on-surface">{customerName}</p>
+          <p className="mt-1 truncate text-body-md text-on-surface-variant">
+            {customerName}
+          </p>
         </div>
         <StatusBadge status={status} />
       </div>
 
-      <dl className="mt-5 grid grid-cols-3 gap-3 border-t border-surface-variant pt-4">
+      <section className="grid grid-cols-3 gap-2 rounded-lg border border-outline-variant bg-card p-4 shadow-card">
         <div>
-          <dt className="text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant">
-            Order total
-          </dt>
-          <dd className="mt-1 text-lg font-semibold tabular-nums">
-            {formatInrExact(total)}
-          </dd>
+          <p className="text-label-caps text-on-surface-variant">Total</p>
+          <p className="mt-1 text-data-tabular text-on-surface">{formatInr(total)}</p>
         </div>
         <div>
-          <dt className="text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant">
-            Paid
-          </dt>
-          <dd className="mt-1 text-lg font-semibold tabular-nums text-success">
-            {formatInrExact(paid)}
-          </dd>
+          <p className="text-label-caps text-on-surface-variant">Paid</p>
+          <p className="mt-1 text-data-tabular text-success">{formatInr(paid)}</p>
         </div>
-        <div>
-          <dt className="text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant">
-            Outstanding
-          </dt>
-          <dd
+        <div className="text-right">
+          <p className="text-label-caps text-on-surface-variant">Due</p>
+          <p
             className={cn(
-              "mt-1 text-lg font-semibold tabular-nums",
+              "mt-1 text-data-tabular",
               outstanding > 0 ? "text-error" : "text-success",
             )}
           >
-            {formatInrExact(outstanding)}
-          </dd>
+            {formatInr(outstanding)}
+          </p>
         </div>
-      </dl>
+      </section>
 
-      <div
+      <p
         className={cn(
-          "mt-4 rounded-lg px-4 py-3 text-sm",
-          closed
-            ? "bg-zinc-100 text-zinc-700"
-            : blocked
-              ? "bg-error-container/50 text-on-error-container"
-              : STATUS_BADGE_CLASS[status],
+          "text-body-sm text-on-surface-variant",
+          blocked && !closed && "text-on-error-container",
         )}
         role="status"
         aria-label={`Order status: ${STATUS_LABELS[status]}. ${statusExplanation}`}
       >
-        <span className="font-semibold text-on-surface">
-          {STATUS_LABELS[status]}
-        </span>
-        <span className="mx-2 text-outline" aria-hidden>
-          ·
-        </span>
         {statusExplanation}
-      </div>
-    </section>
+      </p>
+    </header>
   );
 }

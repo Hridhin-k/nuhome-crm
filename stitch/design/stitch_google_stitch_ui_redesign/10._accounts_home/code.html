@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Accounts Dashboard - Nuhome</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-bright": "#f9f9f9",
+                        "tertiary-container": "#1b1b1b",
+                        "error-container": "#ffdad6",
+                        "on-surface-variant": "#4c4546",
+                        "inverse-surface": "#303030",
+                        "on-primary-fixed": "#1b1b1b",
+                        "surface-tint": "#5e5e5e",
+                        "inverse-on-surface": "#f1f1f1",
+                        "outline": "#7e7576",
+                        "on-secondary-fixed": "#0b1c30",
+                        "secondary-container": "#d0e1fb",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "tertiary-fixed-dim": "#c6c6c6",
+                        "surface-container": "#eeeeee",
+                        "on-tertiary": "#ffffff",
+                        "outline-variant": "#cfc4c5",
+                        "primary-container": "#1b1b1b",
+                        "on-surface": "#1b1b1b",
+                        "error": "#ba1a1a",
+                        "on-error": "#ffffff",
+                        "on-secondary-container": "#54647a",
+                        "secondary": "#505f76",
+                        "surface-container-low": "#f3f3f3",
+                        "on-primary-container": "#848484",
+                        "on-secondary-fixed-variant": "#38485d",
+                        "on-error-container": "#93000a",
+                        "on-primary": "#ffffff",
+                        "primary-fixed-dim": "#c6c6c6",
+                        "primary": "#000000",
+                        "tertiary-fixed": "#e2e2e2",
+                        "surface-variant": "#e2e2e2",
+                        "secondary-fixed": "#d3e4fe",
+                        "on-tertiary-fixed": "#1b1b1b",
+                        "on-primary-fixed-variant": "#474747",
+                        "on-tertiary-fixed-variant": "#474747",
+                        "background": "#f9f9f9",
+                        "primary-fixed": "#e2e2e2",
+                        "tertiary": "#000000",
+                        "surface": "#f9f9f9",
+                        "on-background": "#1b1b1b",
+                        "surface-container-high": "#e8e8e8",
+                        "on-tertiary-container": "#848484",
+                        "surface-container-highest": "#e2e2e2",
+                        "surface-dim": "#dadada",
+                        "secondary-fixed-dim": "#b7c8e1",
+                        "inverse-primary": "#c6c6c6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "4px",
+                        "section-margin": "24px",
+                        "stack-gap": "12px",
+                        "inline-gap": "8px",
+                        "container-padding": "16px"
+                    },
+                    "fontFamily": {
+                        "subheading": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "data-tabular": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "subheading": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+                        "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                        "data-tabular": ["13px", { "lineHeight": "18px", "fontWeight": "500" }],
+                        "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-md": ["22px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { background-color: #F8F9FA; -webkit-tap-highlight-color: transparent; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .material-symbols-outlined.filled { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        
+        /* iOS Style Grouped List Adjustments */
+        .ios-grouped-list {
+            background-color: theme('colors.surface-container-lowest');
+            border-radius: 10px;
+            border: 1px solid theme('colors.surface-variant');
+            overflow: hidden;
+        }
+        .ios-list-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            position: relative;
+        }
+        .ios-list-item:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 52px; /* Indent past icon */
+            right: 0;
+            height: 1px;
+            background-color: theme('colors.surface-variant');
+        }
+        .ios-list-item:active {
+            background-color: theme('colors.surface-container-low');
+        }
+    </style>
+</head>
+<body class="text-on-background pb-[80px]">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center w-full px-container-padding h-11 bg-primary dark:bg-primary docked full-width top-0 sticky z-40">
+<div class="flex items-center gap-inline-gap">
+<span class="material-symbols-outlined text-on-primary">menu</span>
+<h1 class="font-headline-md text-headline-md font-bold text-on-primary">Nuhome</h1>
+</div>
+<div>
+<span class="material-symbols-outlined text-on-primary">notifications</span>
+</div>
+</header>
+<!-- Main Content -->
+<main class="px-container-padding py-section-margin max-w-3xl mx-auto space-y-section-margin">
+<!-- Greeting Section -->
+<section class="mb-section-margin">
+<h2 class="font-headline-lg text-headline-lg text-primary mb-1">Good evening, Lakshmi</h2>
+<p class="font-body-md text-body-md text-secondary">Accounts · 4 pending items</p>
+</section>
+<!-- Action Items (Bento/Card style for prominence) -->
+<section class="grid grid-cols-2 gap-stack-gap mb-section-margin">
+<div class="bg-surface-container-lowest p-container-padding rounded-lg border border-surface-variant shadow-sm active:bg-surface-container-low transition-colors">
+<div class="w-8 h-8 rounded-full bg-error-container text-on-error-container flex items-center justify-center mb-2">
+<span class="material-symbols-outlined" style="font-size: 18px;">priority_high</span>
+</div>
+<div class="font-headline-lg text-headline-lg text-primary">3</div>
+<div class="font-subheading text-subheading text-on-surface-variant">Pending Approvals</div>
+</div>
+<div class="bg-surface-container-lowest p-container-padding rounded-lg border border-surface-variant shadow-sm active:bg-surface-container-low transition-colors">
+<div class="w-8 h-8 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center mb-2">
+<span class="material-symbols-outlined" style="font-size: 18px;">payments</span>
+</div>
+<div class="font-headline-lg text-headline-lg text-primary">1</div>
+<div class="font-subheading text-subheading text-on-surface-variant">Payment Verifications</div>
+</div>
+</section>
+<!-- Grouped List: Account Tasks -->
+<section>
+<h3 class="font-subheading text-subheading text-secondary uppercase tracking-wider mb-2 pl-2">Task Inbox</h3>
+<div class="ios-grouped-list shadow-sm">
+<!-- Quote approvals -->
+<div class="ios-list-item cursor-pointer">
+<div class="w-8 h-8 rounded bg-surface-container-high flex items-center justify-center mr-3 shrink-0">
+<span class="material-symbols-outlined text-primary" style="font-size: 20px;">request_quote</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-center">
+<span class="font-subheading text-subheading text-primary truncate">Quote approvals</span>
+<div class="bg-error text-on-error rounded-full w-5 h-5 flex items-center justify-center text-[10px] font-bold">3</div>
+</div>
+<p class="font-body-sm text-body-sm text-secondary truncate mt-0.5">Review selling price, discount, and margins</p>
+</div>
+<span class="material-symbols-outlined text-outline-variant ml-2 shrink-0">chevron_right</span>
+</div>
+<!-- Payment verification -->
+<div class="ios-list-item cursor-pointer">
+<div class="w-8 h-8 rounded bg-surface-container-high flex items-center justify-center mr-3 shrink-0">
+<span class="material-symbols-outlined text-primary" style="font-size: 20px;">fact_check</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-center">
+<span class="font-subheading text-subheading text-primary truncate">Payment verification</span>
+<div class="bg-primary text-on-primary rounded-full w-5 h-5 flex items-center justify-center text-[10px] font-bold">1</div>
+</div>
+<p class="font-body-sm text-body-sm text-secondary truncate mt-0.5">Verify recorded payments to activate orders</p>
+</div>
+<span class="material-symbols-outlined text-outline-variant ml-2 shrink-0">chevron_right</span>
+</div>
+<!-- Active orders -->
+<div class="ios-list-item cursor-pointer">
+<div class="w-8 h-8 rounded bg-surface-container-high flex items-center justify-center mr-3 shrink-0">
+<span class="material-symbols-outlined text-primary" style="font-size: 20px;">local_shipping</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-center">
+<span class="font-subheading text-subheading text-primary truncate">Active orders</span>
+<span class="font-body-sm text-body-sm text-secondary">12</span>
+</div>
+<p class="font-body-sm text-body-sm text-secondary truncate mt-0.5">Tracking fulfillment and outstanding</p>
+</div>
+<span class="material-symbols-outlined text-outline-variant ml-2 shrink-0">chevron_right</span>
+</div>
+<!-- Vendor payments -->
+<div class="ios-list-item cursor-pointer">
+<div class="w-8 h-8 rounded bg-surface-container-high flex items-center justify-center mr-3 shrink-0">
+<span class="material-symbols-outlined text-primary" style="font-size: 20px;">receipt_long</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-center">
+<span class="font-subheading text-subheading text-primary truncate">Vendor payments</span>
+<span class="font-body-sm text-body-sm text-secondary">2</span>
+</div>
+<p class="font-body-sm text-body-sm text-secondary truncate mt-0.5">Invoices waiting for clearance</p>
+</div>
+<span class="material-symbols-outlined text-outline-variant ml-2 shrink-0">chevron_right</span>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<!-- Applying exact style logic from JSON for structural commands -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center bg-surface px-unit pb-safe h-[64px] border-t border-outline-variant md:hidden">
+<!-- Home (Active) -->
+<button class="flex flex-col items-center justify-center text-primary dark:text-primary font-bold hover:bg-surface-container-low transition-transform duration-150 active:scale-90 w-16 h-full">
+<span class="material-symbols-outlined filled mb-1" data-weight="fill">home</span>
+<span class="font-label-caps text-label-caps">Home</span>
+</button>
+<!-- Customers (Inactive - Mapped to Approvals contextually based on user prompt but keeping JSON label integrity if forced, but user prompt says "Approvals, Payments, Orders". Resolving conflict: Use exact labels from user prompt for tab bar if JSON says otherwise, but JSON says label_texts: ["Home", "Customers", "Quotes", "Orders", "More"]. We will stick to user prompt labels for this specific request as it overrides generic JSON, wait, instructions say "You are strictly forbidden from altering labels, strings, product names, or icon names. If the JSON says icons: ["pool"], the HTML must use "pool"". Okay, adhering strictly to JSON. -->
+<button class="flex flex-col items-center justify-center text-secondary dark:text-secondary hover:bg-surface-container-low transition-transform duration-150 active:scale-90 w-16 h-full">
+<span class="material-symbols-outlined mb-1">group</span>
+<span class="font-label-caps text-label-caps">Customers</span>
+</button>
+<!-- Quotes -->
+<button class="flex flex-col items-center justify-center text-secondary dark:text-secondary hover:bg-surface-container-low transition-transform duration-150 active:scale-90 w-16 h-full">
+<span class="material-symbols-outlined mb-1">description</span>
+<span class="font-label-caps text-label-caps">Quotes</span>
+</button>
+<!-- Orders -->
+<button class="flex flex-col items-center justify-center text-secondary dark:text-secondary hover:bg-surface-container-low transition-transform duration-150 active:scale-90 w-16 h-full">
+<span class="material-symbols-outlined mb-1">shopping_cart</span>
+<span class="font-label-caps text-label-caps">Orders</span>
+</button>
+<!-- More -->
+<button class="flex flex-col items-center justify-center text-secondary dark:text-secondary hover:bg-surface-container-low transition-transform duration-150 active:scale-90 w-16 h-full">
+<span class="material-symbols-outlined mb-1">more_horiz</span>
+<span class="font-label-caps text-label-caps">More</span>
+</button>
+</nav>
+<!-- Desktop Nav Fallback (hidden on mobile, visible on md+) -->
+<!-- In a real app this would be integrated into the top bar or side nav, omitted here for brevity as focus is mobile-first dashboard -->
+</body></html>

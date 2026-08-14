@@ -29,9 +29,9 @@ export function PaymentForm({
   return (
     <FormSheet
       title="Record payment"
-      description="Accounts will verify this before it counts."
+      description="Accounts will verify this before it counts toward delivery. Delivery can log cash or UPI at handover."
       trigger={
-        <span className="inline-flex h-12 min-h-12 w-full items-center justify-center rounded-lg bg-primary px-6 text-[15px] font-medium text-on-primary">
+        <span className="inline-flex h-11 min-h-11 w-full items-center justify-center rounded-lg bg-primary px-4 text-subheading text-on-primary">
           Record payment
         </span>
       }

@@ -3,6 +3,7 @@ import { AdminCatalogNav } from "@/components/admin/admin-catalog-nav";
 import { CsvImportSheet } from "@/components/admin/csv-import-sheet";
 import { EmptyState } from "@/components/app/empty-state";
 import { Notice } from "@/components/app/notice";
+import { PageFrame } from "@/components/app/page-frame";
 import { PageHeader } from "@/components/app/page-header";
 import { VendorForm } from "@/components/vendors/vendor-form";
 import { listVendors } from "@/lib/api/catalog";
@@ -25,9 +26,10 @@ export default async function VendorsPage({
   const canWrite = roleHasPermission(user.role, "orders.send_to_vendor");
 
   return (
-    <div>
+    <PageFrame>
       <PageHeader
         title="Vendors"
+        hideTitleOnMobile
         description="Used when sending an activated order."
         action={
           canWrite ? (
@@ -65,7 +67,7 @@ export default async function VendorsPage({
           {vendors.map((vendor) => (
             <li
               key={vendor.id}
-              className="rounded-xl border border-surface-variant bg-surface-container-lowest px-4 py-4"
+              className="rounded-lg border border-outline-variant bg-card p-4 shadow-card"
             >
               <p className="font-medium">{vendor.name}</p>
               <p className="text-sm text-on-surface-variant">
@@ -76,6 +78,6 @@ export default async function VendorsPage({
           ))}
         </ul>
       )}
-    </div>
+    </PageFrame>
   );
 }

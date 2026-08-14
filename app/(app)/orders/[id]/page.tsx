@@ -3,12 +3,12 @@ import { notFound } from "next/navigation";
 import { ActivityTimeline } from "@/components/app/activity-timeline";
 import { Notice } from "@/components/app/notice";
 import { NextActionCard } from "@/components/app/next-action-card";
-import { WorkflowStepper } from "@/components/app/workflow-stepper";
+import { PageFrame, panelClass } from "@/components/app/page-frame";
 import { CompleteDeliveryForm } from "@/components/deliveries/complete-form";
 import { HoldCard } from "@/components/orders/hold-card";
 import { OrderHero } from "@/components/orders/order-hero";
-import { OrderTimeline } from "@/components/orders/timeline";
 import { PaymentForm } from "@/components/payments/payment-form";
+import { PaymentReviewActions } from "@/components/payments/payment-review-actions";
 import { listOrderActivity } from "@/lib/api/audit";
 import { getOrder } from "@/lib/api/orders";
 import { rel } from "@/lib/api/rel";
@@ -68,7 +68,7 @@ export default async function OrderDetailPage({
   });
 
   return (
-    <div className="flex flex-col gap-6">
+    <PageFrame width="detail" className="flex flex-col gap-4">
       {notice === "delivered" ? (
         <Notice>Order delivered. This job is now closed.</Notice>
       ) : null}
@@ -76,6 +76,9 @@ export default async function OrderDetailPage({
         <Notice>Payment recorded. Waiting for Accounts to verify.</Notice>
       ) : null}
       {notice === "verified" ? <Notice>Payment verified.</Notice> : null}
+      {notice === "payment-rejected" ? (
+        <Notice>Payment sent back to Sales. They can record a corrected entry.</Notice>
+      ) : null}
       {notice === "received" ? (
         <Notice>Items received. Delivery gate applied.</Notice>
       ) : null}
@@ -100,8 +103,6 @@ export default async function OrderDetailPage({
 
       <NextActionCard action={next} />
 
-      <WorkflowStepper status={status} outstanding={outstanding} />
-
       {status === "order_on_hold" ? (
         <HoldCard
           outstanding={outstanding}
@@ -110,24 +111,39 @@ export default async function OrderDetailPage({
         />
       ) : null}
 
-      <OrderTimeline
-        status={status}
-        activated={Boolean(order.activated_at)}
-      />
-
       {payments.length > 0 ? (
-        <section className="rounded-xl border border-surface-variant bg-surface-container-lowest p-5 shadow-card">
-          <h2 className="text-headline-sm text-on-surface">Payments</h2>
+        <section className={panelClass}>
+          <h2 className="text-subheading text-on-surface">Payments</h2>
           <ul className="mt-3 divide-y divide-surface-variant">
-            {payments.map((payment) => (
+            {payments.map((payment) => {
+              const verifications = Array.isArray(payment.payment_verifications)
+                ? payment.payment_verifications
+                : payment.payment_verifications
+                  ? [payment.payment_verifications]
+                  : [];
+              const rejectionNote =
+                payment.status === "rejected"
+                  ? verifications.find((row) => row.decision === "rejected")
+                      ?.notes
+                  : null;
+              const canReview =
+                payment.status === "pending" &&
+                payment.recorded_by !== user.id &&
+                roleHasPermission(user.role, "payments.verify");
+              return (
               <li
                 key={payment.id}
-                className="flex flex-wrap items-center justify-between gap-2 py-3 text-sm"
+                className="flex flex-col gap-3 py-3 text-sm"
               >
+                <div className="flex flex-wrap items-center justify-between gap-2">
                 <div>
                   <p className="font-medium capitalize">{payment.kind}</p>
                   <p className="text-on-surface-variant">
                     {new Date(payment.created_at).toLocaleString("en-IN")}
+                    {payment.method ? ` · ${payment.method}` : ""}
+                    {payment.reference_number
+                      ? ` · ${payment.reference_number}`
+                      : ""}
                   </p>
                 </div>
                 <div className="text-right">
@@ -150,25 +166,42 @@ export default async function OrderDetailPage({
                         : "Pending verification"}
                   </p>
                 </div>
+                </div>
+                {rejectionNote ? (
+                  <p className="text-sm text-destructive">
+                    Reason: {rejectionNote}
+                  </p>
+                ) : null}
+                {canReview ? (
+                  <PaymentReviewActions
+                    paymentId={payment.id}
+                    orderId={order.id}
+                    details={`${payment.kind} · ${formatInrExact(Number(payment.amount))}`}
+                  />
+                ) : null}
               </li>
-            ))}
+              );
+            })}
           </ul>
         </section>
       ) : null}
 
-      <section className="rounded-xl border border-surface-variant bg-surface-container-lowest p-5 shadow-card">
-        <h2 className="text-headline-sm text-on-surface">Items</h2>
+      <section className={panelClass}>
+        <h2 className="text-subheading text-on-surface">Items</h2>
         <ul className="mt-3 divide-y divide-surface-variant">
           {items.map((item) => (
             <li
               key={item.id}
-              className="flex justify-between py-3 text-sm"
+              className="flex min-w-0 justify-between gap-3 py-2.5 text-[13px]"
             >
-              <span>
+              <span className="min-w-0 break-words">
                 {item.description}
                 <span className="text-on-surface-variant">
                   {" "}
                   · {item.quantity_received}/{item.quantity} received
+                  {Number(item.quantity_written_off ?? 0) > 0
+                    ? ` · ${item.quantity_written_off} ${item.write_off_reason ?? "closed"}`
+                    : ""}
                 </span>
               </span>
             </li>
@@ -185,7 +218,7 @@ export default async function OrderDetailPage({
           />
         </section>
       ) : paymentWaitingMessage ? (
-        <section className="rounded-xl border border-surface-variant bg-surface-container-low px-5 py-4 text-sm text-on-surface-variant">
+        <section className="rounded-lg bg-muted px-5 py-4 text-sm text-on-surface-variant">
           {paymentWaitingMessage}
         </section>
       ) : null}
@@ -213,7 +246,7 @@ export default async function OrderDetailPage({
         </p>
       ) : null}
 
-      {roleHasPermission(user.role, "orders.send_to_vendor") ? (
+      {roleHasPermission(user.role, "fulfillment.update") ? (
         <AppLink
           href={`/fulfillment/${order.id}`}
           className="text-sm underline"
@@ -236,6 +269,6 @@ export default async function OrderDetailPage({
       ) : null}
 
       <ActivityTimeline events={activity} />
-    </div>
+    </PageFrame>
   );
 }

@@ -2,12 +2,20 @@
 
 import { useMemo, useState } from "react";
 import { CustomerForm } from "@/components/customers/customer-form";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 
 type Customer = { id: string; name: string; phone?: string | null };
+
+function initials(name: string) {
+  return name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join("");
+}
 
 export function CustomerPicker({
   customers,
@@ -37,35 +45,47 @@ export function CustomerPicker({
   return (
     <div className="flex flex-col gap-3">
       <div>
-        <Label htmlFor="customer-search">Customer</Label>
+        <Label htmlFor="customer-search" className="text-label-caps uppercase">
+          Select Customer
+        </Label>
         <Input
           id="customer-search"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search by name or phone…"
-          className="mt-2 h-11 min-h-11"
+          value={selected && !query ? selected.name : query}
+          onChange={(e) => {
+            onChange("");
+            setQuery(e.target.value);
+          }}
+          placeholder="Search customers..."
+          className="mt-1 h-11 min-h-11"
         />
       </div>
 
       {selected && !query ? (
-        <div className="flex items-center justify-between rounded-lg border border-primary/30 bg-primary/5 px-4 py-3">
-          <div>
-            <p className="font-medium text-on-surface">{selected.name}</p>
-            {selected.phone ? (
-              <p className="text-sm text-on-surface-variant">{selected.phone}</p>
-            ) : null}
+        <div className="flex items-center gap-3 rounded-lg border border-surface-variant bg-surface-container-low p-3">
+          <span className="inline-flex size-12 shrink-0 items-center justify-center rounded-full bg-secondary-container text-headline-md text-on-secondary-container">
+            {initials(selected.name) || "C"}
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-subheading text-on-surface">
+              {selected.name}
+            </p>
+            <p className="truncate text-body-sm text-on-surface-variant">
+              {selected.phone ?? "No phone"}
+            </p>
           </div>
-          <Button
+          <button
             type="button"
-            variant="outline"
-            size="sm"
-            onClick={() => onChange("")}
+            className="shrink-0 rounded-full px-2 py-1 text-body-sm text-primary"
+            onClick={() => {
+              onChange("");
+              setQuery("");
+            }}
           >
             Change
-          </Button>
+          </button>
         </div>
       ) : (
-        <div className="max-h-[200px] overflow-y-auto rounded-xl border border-surface-variant">
+        <div className="max-h-[200px] overflow-y-auto rounded-lg border border-border">
           {filtered.length === 0 ? (
             <p className="px-4 py-4 text-sm text-on-surface-variant">
               No customers match. Create a new profile below.
@@ -77,7 +97,7 @@ export function CustomerPicker({
                   <button
                     type="button"
                     className={cn(
-                      "flex min-h-12 w-full items-center justify-between px-4 py-2 text-left text-sm transition-colors hover:bg-surface-container",
+                      "flex min-h-11 w-full min-w-0 items-center justify-between gap-2 px-3 py-2 text-left text-[13px] transition-colors hover:bg-surface-container",
                       value === c.id && "bg-surface-container-high",
                     )}
                     onClick={() => {
@@ -85,9 +105,11 @@ export function CustomerPicker({
                       setQuery("");
                     }}
                   >
-                    <span className="font-medium">{c.name}</span>
+                    <span className="min-w-0 truncate font-medium">{c.name}</span>
                     {c.phone ? (
-                      <span className="text-on-surface-variant">{c.phone}</span>
+                      <span className="shrink-0 text-[12px] text-on-surface-variant">
+                        {c.phone}
+                      </span>
                     ) : null}
                   </button>
                 </li>
@@ -101,8 +123,8 @@ export function CustomerPicker({
         returnTo={returnTo}
         triggerClassName="w-full"
         trigger={
-          <span className="inline-flex h-11 w-full items-center justify-center rounded-lg border border-surface-variant bg-surface-container-lowest px-4 text-sm font-medium text-on-surface">
-            + New customer
+          <span className="inline-flex h-11 w-full items-center justify-center rounded-lg border border-outline-variant bg-surface-container-lowest px-4 text-subheading text-on-surface">
+            Create New Customer
           </span>
         }
       />

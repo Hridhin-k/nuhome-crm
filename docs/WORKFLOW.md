@@ -13,11 +13,15 @@ UI and Server Actions call `lib/workflow/service.ts`. They never update `quotes.
 quote_draft
   → quote_pending_accounts
       → quote_approved → quote_sent_to_customer → payment_pending_verification
-      → quote_rejected → quote_draft (new version)
+      → quote_approved → quote_draft          (correct before send, new version)
+      → quote_rejected → quote_draft          (new version)
 payment_pending_verification
   → order_active                         (first activation)
   → delivery_unlocked | order_on_hold    (after items received / on-hold repayment)
 order_active → sent_to_vendor → vendor_dispatched → items_received
+  (more vendor batches can be sent while in sent / dispatched / received)
+  sent_to_vendor → items_received          (close remainder without GRN)
+items_received
   → delivery_pending_payment
       → delivery_unlocked   (outstanding = 0)
       → order_on_hold       (outstanding > 0)
@@ -25,20 +29,27 @@ order_on_hold → payment_pending_verification
 delivery_unlocked → delivered → closed
 ```
 
+Drafts can be saved and edited until submitted. An approved quote can be withdrawn to draft before it is sent; Accounts must approve the new version.
+
 A rejected quote cannot be sent to the customer.
 
 ## Separation of duties
 
-- Sales cannot approve/reject quotes or verify payments.
+- Sales cannot approve/reject quotes or verify/reject payments.
 - The quote creator cannot approve that quote.
-- The payment recorder cannot verify that payment.
+- The payment recorder cannot verify or reject that payment.
+- Store (Delivery) can record payment at handover; they still cannot verify it.
+
+## Fulfillment
+
+Procurement can split a job across vendors and type received qty. Expected delivery on each batch drives overdue flags on Home and Fulfillment (Asia/Kolkata calendar date). Shortage, damage, return, or cancelled qty is closed with `write_off_order_items` so leftover units do not block the delivery gate.
 
 ## Delivery
 
 `complete_delivery` rejects unless:
 
 1. Status is `delivery_unlocked`
-2. All order items are fully received
+2. All order items are fully received or closed (shortage / damage / return)
 3. `order_balance().outstanding = 0`
 4. Caller has `deliveries.complete`
 

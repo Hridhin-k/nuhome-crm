@@ -17,32 +17,42 @@ export function OperationsPipeline({
   const peak = Math.max(...stages.map((stage) => stage.count), 1);
 
   return (
-    <section className="flex flex-col overflow-hidden rounded-xl border border-surface-variant bg-surface-container-lowest shadow-card">
-      <div className="flex flex-wrap items-end justify-between gap-4 border-b border-surface-variant bg-surface p-4">
-        <div>
-          <p className="text-label-md text-on-surface-variant uppercase">
+    <section className="flex flex-col overflow-hidden rounded-lg border border-outline-variant bg-card shadow-card">
+      <div className="flex flex-wrap items-end justify-between gap-3 border-b border-outline-variant px-4 py-4">
+        <div className="min-w-0">
+          <p className="text-label-caps text-on-surface-variant">
             Operations
           </p>
-          <h2 className="text-headline-sm mt-1 text-on-surface">
+          <h2 className="mt-0.5 text-subheading text-on-surface">
             What is moving
           </h2>
         </div>
-        <dl className="flex gap-6 text-right">
+        <dl className="flex min-w-0 gap-3 text-right">
           <div>
-            <dt className="text-label-md text-on-surface-variant">Open work</dt>
-            <dd className="text-headline-sm text-on-surface">{open}</dd>
+            <dt className="text-[10px] font-medium tracking-wide text-on-surface-variant uppercase">
+              Open
+            </dt>
+            <dd className="text-[16px] font-semibold text-on-surface">{open}</dd>
           </div>
           <div>
-            <dt className="text-label-md text-on-surface-variant">Customers</dt>
-            <dd className="text-headline-sm text-secondary">{customers}</dd>
+            <dt className="text-[10px] font-medium tracking-wide text-on-surface-variant uppercase">
+              Cust.
+            </dt>
+            <dd className="text-[16px] font-semibold text-secondary">
+              {customers}
+            </dd>
           </div>
           <div>
-            <dt className="text-label-md text-on-surface-variant">Delivered</dt>
-            <dd className="text-headline-sm text-success">{delivered}</dd>
+            <dt className="text-[10px] font-medium tracking-wide text-on-surface-variant uppercase">
+              Done
+            </dt>
+            <dd className="text-[16px] font-semibold text-success">
+              {delivered}
+            </dd>
           </div>
         </dl>
       </div>
-      <ul className="space-y-4 p-4">
+      <ul className="space-y-3 p-3">
         {stages.map((stage) => (
           <li key={stage.label}>
             <AppLink href={stage.href} className="block">

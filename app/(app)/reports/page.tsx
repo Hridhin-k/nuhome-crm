@@ -1,6 +1,7 @@
+import { InboxList } from "@/components/app/inbox-list";
 import { OperationsPipeline } from "@/components/app/operations-pipeline";
+import { PageFrame } from "@/components/app/page-frame";
 import { PageHeader } from "@/components/app/page-header";
-import { QueueCard } from "@/components/app/queue-card";
 import { getOperationsSnapshot } from "@/lib/api/dashboard";
 import { requirePermission } from "@/lib/auth/guards";
 
@@ -11,9 +12,10 @@ export default async function ReportsPage() {
   ]);
 
   return (
-    <div>
+    <PageFrame>
       <PageHeader
         title="Reports"
+        hideTitleOnMobile
         description="Share of open work at each stage. Open a bar to act."
       />
       <OperationsPipeline
@@ -22,11 +24,9 @@ export default async function ReportsPage() {
         customers={snapshot.customers}
         delivered={snapshot.delivered}
       />
-      <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-        {snapshot.queues.map((card) => (
-          <QueueCard key={card.title} {...card} />
-        ))}
+      <div className="mt-5">
+        <InboxList items={snapshot.queues} />
       </div>
-    </div>
+    </PageFrame>
   );
 }

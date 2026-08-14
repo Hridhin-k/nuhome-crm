@@ -2,8 +2,10 @@
 
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
+import { buttonVariants } from "@/components/ui/button";
 import {
   Sheet,
+  SheetClose,
   SheetContent,
   SheetDescription,
   SheetHeader,
@@ -40,11 +42,11 @@ export function FormSheet({
       </SheetTrigger>
       <SheetContent placement="form" size={size}>
         <SheetHeader className="shrink-0 px-5 pt-1 pb-3">
-          <SheetTitle className="text-[20px] font-semibold tracking-tight">
+          <SheetTitle className="text-headline-lg tracking-tight">
             {title}
           </SheetTitle>
           {description ? (
-            <SheetDescription className="text-[14px] leading-relaxed">
+            <SheetDescription className="text-body-sm">
               {description}
             </SheetDescription>
           ) : null}
@@ -88,7 +90,18 @@ export function FormSheetFooter({
         className,
       )}
     >
-      {children}
+      <div className="flex gap-2">
+        <SheetClose
+          type="button"
+          className={cn(
+            buttonVariants({ variant: "outline", size: "lg" }),
+            "flex-1",
+          )}
+        >
+          Cancel
+        </SheetClose>
+        <div className="min-w-0 flex-1">{children}</div>
+      </div>
     </div>
   );
 }

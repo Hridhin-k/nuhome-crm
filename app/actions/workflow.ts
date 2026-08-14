@@ -11,16 +11,18 @@ import {
   markVendorDispatched,
   recordItemsReceived,
   recordPayment,
+  rejectPayment,
   rejectQuote,
   reviseQuote,
   sendOrderToVendor,
   sendQuoteToCustomer,
   submitQuote,
   verifyPayment,
+  writeOffItems,
 } from "@/lib/workflow/service";
-import { createCustomerRow } from "@/lib/api/customers";
+import { createCustomerRow, updateCustomerRow } from "@/lib/api/customers";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
-import { customerSchema } from "@/lib/validation/workflow";
+import { customerSchema, rejectPaymentSchema } from "@/lib/validation/workflow";
 
 export type ActionState = { error?: string; notice?: string };
 
@@ -46,7 +48,14 @@ export async function createCustomerAction(
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Check the form" };
   }
+  const customerId = String(formData.get("customer_id") ?? "").trim();
   try {
+    if (customerId) {
+      await updateCustomerRow({ id: customerId, ...parsed.data });
+      revalidatePath("/customers");
+      revalidatePath(`/customers/${customerId}`);
+      redirect(`/customers/${customerId}?notice=updated`);
+    }
     const id = await createCustomerRow({
       ...parsed.data,
       createdBy: user.id,
@@ -63,21 +72,36 @@ export async function createCustomerAction(
   }
 }
 
-export async function createAndSubmitQuoteAction(
+export async function saveQuoteAction(
   _prev: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
-  await requirePermission("quotes.create");
+  const intent = String(formData.get("intent") ?? "submit");
+  await requirePermission(intent === "submit" ? "quotes.submit" : "quotes.create");
   try {
     const payload = JSON.parse(String(formData.get("payload") ?? "{}"));
-    const id = await createQuote(payload);
-    if (!id) {
-      return { error: "Could not create the quote." };
+    const existingId =
+      typeof payload.quote_id === "string" ? payload.quote_id : "";
+    if (existingId) {
+      await requirePermission("quotes.revise");
+      await reviseQuote(payload);
     }
-    await submitQuote(id);
+    const quoteId = existingId || (await createQuote(payload));
+    if (!quoteId) {
+      return { error: "Could not save the quote." };
+    }
+    if (intent === "submit") {
+      await requirePermission("quotes.submit");
+      await submitQuote(quoteId);
+      revalidatePath("/quotes");
+      revalidatePath("/home");
+      redirect(
+        `/quotes/${quoteId}?notice=${existingId ? "revised" : "submitted"}`,
+      );
+    }
     revalidatePath("/quotes");
     revalidatePath("/home");
-    redirect(`/quotes/${id}?notice=submitted`);
+    redirect(`/quotes/${quoteId}?notice=draft`);
   } catch (error) {
     rethrowNavigationError(error);
     return { error: humanizeError(error) };
@@ -149,17 +173,7 @@ export async function reviseQuoteAction(
   _prev: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
-  await requirePermission("quotes.revise");
-  try {
-    const payload = JSON.parse(String(formData.get("payload") ?? "{}"));
-    await reviseQuote(payload);
-    const quoteId = payload.quote_id as string;
-    await submitQuote(quoteId);
-    redirect(`/quotes/${quoteId}?notice=revised`);
-  } catch (error) {
-    rethrowNavigationError(error);
-    return { error: humanizeError(error) };
-  }
+  return saveQuoteAction(_prev, formData);
 }
 
 export async function recordPaymentAction(
@@ -202,18 +216,33 @@ export async function verifyPaymentAction(paymentId: string, orderId?: string) {
   }
 }
 
-export async function rejectPaymentAction(formData: FormData) {
+export async function rejectPaymentAction(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
   await requirePermission("payments.verify");
-  const paymentId = String(formData.get("payment_id"));
-  const supabase = await createServerSupabaseClient();
-  const { error } = await supabase.rpc("reject_payment", {
-    p_payment_id: paymentId,
-    p_notes: String(formData.get("notes") ?? "Rejected"),
+  const orderId = String(formData.get("order_id") ?? "").trim();
+  const parsed = rejectPaymentSchema.safeParse({
+    payment_id: formData.get("payment_id"),
+    notes: String(formData.get("reason") ?? formData.get("notes") ?? ""),
   });
-  if (error) {
-    redirect(`/payments?error=${encodeURIComponent(humanizeError(error))}`);
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Check the form" };
   }
-  redirect("/payments?notice=payment-rejected");
+  try {
+    await rejectPayment(parsed.data);
+    revalidatePath("/payments");
+    revalidatePath("/home");
+    revalidatePath("/orders");
+    if (orderId) {
+      revalidatePath(`/orders/${orderId}`);
+      redirect(`/orders/${orderId}?notice=payment-rejected`);
+    }
+    redirect("/payments?notice=payment-rejected");
+  } catch (error) {
+    rethrowNavigationError(error);
+    return { error: humanizeError(error) };
+  }
 }
 
 export async function sendToVendorAction(
@@ -223,13 +252,18 @@ export async function sendToVendorAction(
   await requirePermission("orders.send_to_vendor");
   const orderId = String(formData.get("order_id"));
   try {
-    const items = JSON.parse(String(formData.get("items") ?? "[]"));
+    const items = JSON.parse(String(formData.get("items") ?? "[]")).filter(
+      (row: { quantity?: number }) => Number(row.quantity) > 0,
+    );
     await sendOrderToVendor({
       order_id: orderId,
       vendor_id: String(formData.get("vendor_id")),
       expected_delivery: formData.get("expected_delivery") || undefined,
       items,
     });
+    revalidatePath("/fulfillment");
+    revalidatePath("/orders");
+    revalidatePath("/home");
     redirect(`/fulfillment/${orderId}?notice=sent-vendor`);
   } catch (error) {
     rethrowNavigationError(error);
@@ -241,6 +275,9 @@ export async function dispatchAction(vendorOrderId: string, orderId: string) {
   await requirePermission("fulfillment.update");
   try {
     await markVendorDispatched(vendorOrderId);
+    revalidatePath("/fulfillment");
+    revalidatePath("/orders");
+    revalidatePath("/home");
     redirect(`/fulfillment/${orderId}?notice=dispatched`);
   } catch (error) {
     rethrowNavigationError(error);
@@ -261,7 +298,32 @@ export async function receiveAction(
       vendor_order_id: String(formData.get("vendor_order_id")),
       received: JSON.parse(String(formData.get("received") ?? "[]")),
     });
-    redirect(`/orders/${orderId}?notice=received`);
+    revalidatePath("/fulfillment");
+    revalidatePath("/orders");
+    revalidatePath("/home");
+    redirect(`/fulfillment/${orderId}?notice=received`);
+  } catch (error) {
+    rethrowNavigationError(error);
+    return { error: humanizeError(error) };
+  }
+}
+
+export async function writeOffItemsAction(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  await requirePermission("fulfillment.update");
+  const orderId = String(formData.get("order_id"));
+  try {
+    await writeOffItems({
+      order_id: orderId,
+      notes: String(formData.get("notes") ?? "") || undefined,
+      items: JSON.parse(String(formData.get("items") ?? "[]")),
+    });
+    revalidatePath("/fulfillment");
+    revalidatePath("/orders");
+    revalidatePath("/home");
+    redirect(`/fulfillment/${orderId}?notice=written-off`);
   } catch (error) {
     rethrowNavigationError(error);
     return { error: humanizeError(error) };

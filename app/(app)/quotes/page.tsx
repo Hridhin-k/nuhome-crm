@@ -1,10 +1,11 @@
-import { AppLink } from "@/components/app/app-link";
 import { EmptyState } from "@/components/app/empty-state";
+import { JobRow } from "@/components/app/job-row";
 import { Notice } from "@/components/app/notice";
+import { PageFrame, wellClass } from "@/components/app/page-frame";
 import { PageHeader } from "@/components/app/page-header";
-import { StatusBadge } from "@/components/app/status-badge";
 import { StatusFilterNav } from "@/components/app/status-filter-nav";
 import { CustomerForm } from "@/components/customers/customer-form";
+import { AppLink } from "@/components/app/app-link";
 import { buttonVariants } from "@/components/ui/button";
 import { listCustomers } from "@/lib/api/customers";
 import { listQuotes } from "@/lib/api/quotes";
@@ -51,20 +52,17 @@ export default async function QuotesPage({
     canCreate && customers.length > 0 ? (
       <AppLink
         href="/walk-in"
-        className={cn(
-          buttonVariants({ size: "default" }),
-          "inline-flex h-11 items-center px-6",
-        )}
+        className={cn(buttonVariants({ size: "default" }), "inline-flex")}
       >
         New quote
       </AppLink>
     ) : null;
 
   return (
-    <div>
+    <PageFrame>
       <PageHeader
         title="Quotes"
-        description="Live job status — closed work stays under Closed."
+        description="Open work first. Closed jobs stay under Closed."
         action={quotes.length > 0 ? newQuoteAction : null}
       />
       {notice === "submitted" ? (
@@ -98,7 +96,7 @@ export default async function QuotesPage({
               description="Try Open to see every job that is still in progress."
             />
           ) : (
-            <ul className="grid gap-3 md:grid-cols-2">
+            <ul className={wellClass}>
               {visible.map((quote) => {
                 const version = rel(quote.quote_versions);
                 const status = displayWorkflowStatus(
@@ -109,30 +107,21 @@ export default async function QuotesPage({
                   ? `/orders/${quote.order.id}`
                   : `/quotes/${quote.id}`;
                 return (
-                  <li key={quote.id}>
-                    <AppLink
-                      href={href}
-                      className="block rounded-xl border border-surface-variant bg-surface-container-lowest p-5 shadow-card transition-colors hover:bg-surface-container-low"
-                    >
-                      <div className="flex justify-between gap-3">
-                        <p className="font-medium">{quote.quote_number}</p>
-                        <StatusBadge status={status} />
-                      </div>
-                      <p className="mt-1 text-sm text-on-surface-variant">
-                        {rel(quote.customers)?.name} ·{" "}
-                        {formatInr(Number(version?.total ?? 0))}
-                      </p>
-                      <p className="mt-3 text-sm text-on-surface">
-                        {STATUS_NEXT_LINE[status]}
-                      </p>
-                    </AppLink>
-                  </li>
+                  <JobRow
+                    key={quote.id}
+                    href={href}
+                    title={quote.quote_number}
+                    subtitle={rel(quote.customers)?.name ?? "Customer"}
+                    amount={formatInr(Number(version?.total ?? 0))}
+                    hint={STATUS_NEXT_LINE[status]}
+                    status={status}
+                  />
                 );
               })}
             </ul>
           )}
         </>
       )}
-    </div>
+    </PageFrame>
   );
 }

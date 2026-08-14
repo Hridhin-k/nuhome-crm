@@ -22,10 +22,10 @@ export function AdminCatalogNav({
           key={item.href}
           href={item.href}
           className={cn(
-            "rounded-lg border px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors",
+            "rounded-full border px-4 py-1.5 text-subheading whitespace-nowrap transition-colors",
             current === item.href
               ? "border-primary bg-primary text-on-primary"
-              : "border-surface-variant bg-surface-container-lowest text-on-surface-variant hover:bg-surface-container",
+              : "border-outline-variant bg-card text-on-surface hover:bg-muted",
           )}
         >
           {item.label}

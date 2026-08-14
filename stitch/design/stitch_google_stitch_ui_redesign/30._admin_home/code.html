@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<title>Admin Home - Nuhome</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-primary-fixed": "#1b1b1b",
+                    "surface-container-lowest": "#ffffff",
+                    "on-error": "#ffffff",
+                    "secondary": "#505f76",
+                    "primary": "#000000",
+                    "on-secondary-fixed-variant": "#38485d",
+                    "error": "#ba1a1a",
+                    "surface-bright": "#f9f9f9",
+                    "on-tertiary-container": "#848484",
+                    "primary-fixed": "#e2e2e2",
+                    "secondary-container": "#d0e1fb",
+                    "on-primary-container": "#848484",
+                    "on-surface": "#1b1b1b",
+                    "on-tertiary": "#ffffff",
+                    "secondary-fixed-dim": "#b7c8e1",
+                    "on-primary-fixed-variant": "#474747",
+                    "secondary-fixed": "#d3e4fe",
+                    "surface-variant": "#e2e2e2",
+                    "surface-container-highest": "#e2e2e2",
+                    "primary-container": "#1b1b1b",
+                    "tertiary-fixed-dim": "#c6c6c6",
+                    "on-tertiary-fixed": "#1b1b1b",
+                    "surface-dim": "#dadada",
+                    "on-secondary": "#ffffff",
+                    "inverse-surface": "#303030",
+                    "outline": "#7e7576",
+                    "error-container": "#ffdad6",
+                    "on-tertiary-fixed-variant": "#474747",
+                    "on-background": "#1b1b1b",
+                    "inverse-on-surface": "#f1f1f1",
+                    "on-secondary-fixed": "#0b1c30",
+                    "inverse-primary": "#c6c6c6",
+                    "primary-fixed-dim": "#c6c6c6",
+                    "surface-container-low": "#f3f3f3",
+                    "tertiary-container": "#1b1b1b",
+                    "on-primary": "#ffffff",
+                    "on-secondary-container": "#54647a",
+                    "surface-container": "#eeeeee",
+                    "surface-tint": "#5e5e5e",
+                    "background": "#f9f9f9",
+                    "tertiary-fixed": "#e2e2e2",
+                    "on-error-container": "#93000a",
+                    "tertiary": "#000000",
+                    "surface-container-high": "#e8e8e8",
+                    "surface": "#f9f9f9",
+                    "on-surface-variant": "#4c4546",
+                    "outline-variant": "#cfc4c5"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "inline-gap": "8px",
+                    "stack-gap": "12px",
+                    "container-padding": "16px",
+                    "section-margin": "24px",
+                    "unit": "4px",
+                    "safe": "env(safe-area-inset-bottom)"
+            },
+            "fontFamily": {
+                    "body-md": [
+                            "Inter"
+                    ],
+                    "data-tabular": [
+                            "Inter"
+                    ],
+                    "headline-md": [
+                            "Inter"
+                    ],
+                    "body-sm": [
+                            "Inter"
+                    ],
+                    "headline-lg": [
+                            "Inter"
+                    ],
+                    "label-caps": [
+                            "Inter"
+                    ],
+                    "subheading": [
+                            "Inter"
+                    ]
+            },
+            "fontSize": {
+                    "body-md": [
+                            "16px",
+                            {
+                                    "lineHeight": "24px",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "data-tabular": [
+                            "13px",
+                            {
+                                    "lineHeight": "18px",
+                                    "fontWeight": "500"
+                            }
+                    ],
+                    "headline-md": [
+                            "22px",
+                            {
+                                    "lineHeight": "28px",
+                                    "letterSpacing": "-0.01em",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "body-sm": [
+                            "14px",
+                            {
+                                    "lineHeight": "20px",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "headline-lg": [
+                            "24px",
+                            {
+                                    "lineHeight": "32px",
+                                    "letterSpacing": "-0.02em",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "label-caps": [
+                            "12px",
+                            {
+                                    "lineHeight": "16px",
+                                    "letterSpacing": "0.05em",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "subheading": [
+                            "14px",
+                            {
+                                    "lineHeight": "20px",
+                                    "letterSpacing": "0.01em",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "headline-md-mobile": [
+                            "20px",
+                            {
+                                    "lineHeight": "26px",
+                                    "letterSpacing": "-0.01em",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "headline-lg-mobile": [
+                            "22px",
+                            {
+                                    "lineHeight": "28px",
+                                    "letterSpacing": "-0.02em",
+                                    "fontWeight": "700"
+                            }
+                    ]
+            }
+    },
+        },
+      }
+    </script>
+<style>
+        body {
+            -webkit-tap-highlight-color: transparent;
+        }
+        /* Custom scrollbar for horizontal scrolling areas */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background pb-24 md:pb-0 pt-12 md:pt-16 min-h-screen">
+<!-- TopAppBar (Mobile & Web Context) -->
+<header class="fixed top-0 w-full h-12 flex items-center justify-between px-container-padding z-50 bg-primary dark:bg-primary border-b border-outline-variant flat no shadows text-on-primary dark:text-on-primary font-headline-md text-headline-md-mobile md:text-headline-md">
+<button aria-label="Menu" class="flex items-center justify-center p-2 -ml-2 text-on-primary hover:opacity-80 active:scale-95 transition-transform">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<div class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-primary tracking-tight">Nuhome</div>
+<button aria-label="Notifications" class="flex items-center justify-center p-2 -mr-2 text-on-primary hover:opacity-80 active:scale-95 transition-transform">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+</header>
+<!-- Main Canvas -->
+<main class="w-full max-w-7xl mx-auto md:px-container-padding flex flex-col gap-section-margin pt-4">
+<!-- Welcome Section -->
+<section class="px-container-padding md:px-0 flex justify-between items-end">
+<div>
+<p class="font-subheading text-subheading text-secondary mb-1">Admin Home</p>
+<h1 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">Rahul / Admin</h1>
+</div>
+<div class="text-right">
+<p class="font-body-sm text-body-sm text-secondary">System Status</p>
+<p class="font-data-tabular text-data-tabular text-primary flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-[#16a34a] inline-block"></span> Optimal
+                </p>
+</div>
+</section>
+<!-- Twin Wells (Bento Grid Style) -->
+<section class="px-container-padding md:px-0 grid grid-cols-1 md:grid-cols-2 gap-stack-gap">
+<!-- Well 1: Catalog -->
+<div class="bg-surface-container-lowest rounded-lg border border-outline-variant p-container-padding flex flex-col gap-stack-gap">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-primary">inventory_2</span>
+<h2 class="font-subheading text-subheading text-on-surface">Catalog</h2>
+</div>
+<div class="grid grid-cols-3 gap-2">
+<div class="bg-surface-container-low rounded p-3 flex flex-col items-center justify-center">
+<span class="font-headline-md text-headline-md-mobile text-primary">12</span>
+<span class="font-label-caps text-label-caps text-secondary mt-1 text-center">Users</span>
+</div>
+<div class="bg-surface-container-low rounded p-3 flex flex-col items-center justify-center">
+<span class="font-headline-md text-headline-md-mobile text-primary">6</span>
+<span class="font-label-caps text-label-caps text-secondary mt-1 text-center">Vendors</span>
+</div>
+<div class="bg-surface-container-low rounded p-3 flex flex-col items-center justify-center">
+<span class="font-headline-md text-headline-md-mobile text-primary">140</span>
+<span class="font-label-caps text-label-caps text-secondary mt-1 text-center">Materials</span>
+</div>
+</div>
+<button class="w-full h-11 border border-primary text-primary font-subheading text-subheading rounded flex items-center justify-center gap-2 hover:bg-surface-container-low transition-colors mt-auto">
+                    Manage Catalog
+                </button>
+</div>
+<!-- Well 2: Open-work inbox -->
+<div class="bg-surface-container-lowest rounded-lg border border-outline-variant p-container-padding flex flex-col gap-stack-gap">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-primary">inbox</span>
+<h2 class="font-subheading text-subheading text-on-surface">Open-work inbox</h2>
+</div>
+<div class="flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-[#f59e0b]"></span>
+<span class="font-body-sm text-body-sm text-on-surface">Pending approvals</span>
+</div>
+<span class="font-data-tabular text-data-tabular text-on-surface">8</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-[#3b82f6]"></span>
+<span class="font-body-sm text-body-sm text-on-surface">Payments to verify</span>
+</div>
+<span class="font-data-tabular text-data-tabular text-on-surface">3</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-[#16a34a]"></span>
+<span class="font-body-sm text-body-sm text-on-surface">Active</span>
+</div>
+<span class="font-data-tabular text-data-tabular text-on-surface">42</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-[#94a3b8]"></span>
+<span class="font-body-sm text-body-sm text-on-surface">Hold</span>
+</div>
+<span class="font-data-tabular text-data-tabular text-on-surface">5</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-[#ef4444]"></span>
+<span class="font-body-sm text-body-sm text-on-surface">Overdue</span>
+</div>
+<span class="font-data-tabular text-data-tabular text-error">2</span>
+</div>
+</div>
+<button class="w-full h-11 bg-primary text-surface-container-lowest font-subheading text-subheading rounded flex items-center justify-center gap-2 hover:opacity-90 transition-opacity mt-auto">
+                    View Inbox
+                </button>
+</div>
+</section>
+<!-- 'What is moving' Card -->
+<section class="px-container-padding md:px-0">
+<div class="bg-surface-container-lowest rounded-lg border border-outline-variant p-container-padding">
+<div class="flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined text-primary">monitoring</span>
+<h2 class="font-headline-md text-headline-md-mobile md:text-headline-md text-on-surface">What is moving</h2>
+</div>
+<div class="flex flex-col gap-5">
+<!-- Progress Item 1 -->
+<div class="flex flex-col gap-2">
+<div class="flex justify-between items-end">
+<span class="font-body-sm text-body-sm text-on-surface">Quotes in play</span>
+<span class="font-data-tabular text-data-tabular text-primary">18</span>
+</div>
+<div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 65%"></div>
+</div>
+</div>
+<!-- Progress Item 2 -->
+<div class="flex flex-col gap-2">
+<div class="flex justify-between items-end">
+<span class="font-body-sm text-body-sm text-on-surface">Awaiting accounts</span>
+<span class="font-data-tabular text-data-tabular text-primary">7</span>
+</div>
+<div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 25%"></div>
+</div>
+</div>
+<!-- Progress Item 3 -->
+<div class="flex flex-col gap-2">
+<div class="flex justify-between items-end">
+<span class="font-body-sm text-body-sm text-on-surface">Payments to verify</span>
+<span class="font-data-tabular text-data-tabular text-primary">3</span>
+</div>
+<div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-[#3b82f6] rounded-full" style="width: 15%"></div>
+</div>
+</div>
+<!-- Progress Item 4 -->
+<div class="flex flex-col gap-2">
+<div class="flex justify-between items-end">
+<span class="font-body-sm text-body-sm text-on-surface">In fulfillment</span>
+<span class="font-data-tabular text-data-tabular text-primary">31</span>
+</div>
+<div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 80%"></div>
+</div>
+</div>
+<!-- Progress Item 5 -->
+<div class="flex flex-col gap-2">
+<div class="flex justify-between items-end">
+<span class="font-body-sm text-body-sm text-on-surface">On hold</span>
+<span class="font-data-tabular text-data-tabular text-primary">5</span>
+</div>
+<div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-[#94a3b8] rounded-full" style="width: 20%"></div>
+</div>
+</div>
+<!-- Progress Item 6 -->
+<div class="flex flex-col gap-2">
+<div class="flex justify-between items-end">
+<span class="font-body-sm text-body-sm text-on-surface">Ready to deliver</span>
+<span class="font-data-tabular text-data-tabular text-primary">12</span>
+</div>
+<div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-[#16a34a] rounded-full" style="width: 45%"></div>
+</div>
+</div>
+<!-- Progress Item 7 -->
+<div class="flex flex-col gap-2">
+<div class="flex justify-between items-end">
+<span class="font-body-sm text-body-sm text-on-surface">Vendor overdue</span>
+<span class="font-data-tabular text-data-tabular text-error">2</span>
+</div>
+<div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-error rounded-full" style="width: 10%"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Floating Action Button (FAB) -->
+<button aria-label="Add Action" class="fixed bottom-20 right-4 md:bottom-8 md:right-8 w-14 h-14 bg-primary text-surface-container-lowest rounded-full flex items-center justify-center shadow-sm hover:opacity-90 active:scale-95 transition-all z-40">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add</span>
+</button>
+<!-- BottomNavBar (Mobile Context) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-2 pb-safe bg-surface dark:bg-surface-container-low border-t border-outline-variant h-16 rounded-t-0 shadow-sm">
+<!-- Active: Home -->
+<a class="flex flex-col items-center justify-center text-primary dark:text-primary-fixed w-16 h-full hover:bg-surface-container-high active:opacity-70 transition-opacity" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-label-caps text-label-caps">Home</span>
+</a>
+<!-- Inactive: Users -->
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim w-16 h-full hover:bg-surface-container-high active:opacity-70 transition-opacity" href="#">
+<span class="material-symbols-outlined mb-1">group</span>
+<span class="font-label-caps text-label-caps">Users</span>
+</a>
+<!-- Inactive: Orders -->
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim w-16 h-full hover:bg-surface-container-high active:opacity-70 transition-opacity" href="#">
+<span class="material-symbols-outlined mb-1">shopping_cart</span>
+<span class="font-label-caps text-label-caps">Orders</span>
+</a>
+<!-- Inactive: Reports (Replaced Quotes with Reports based on prompt, but keeping to JSON structure as much as possible while satisfying user request. Actually, strict rule says "Do not alter strings". Wait, the prompt says "Bottom navigation: Home (active), Users, Orders, Reports, More". The JSON has Home, Customers, Quotes, Orders, More. I must strictly follow the JSON labels: Home, Customers, Quotes, Orders, More. Conflict Resolution: "Use exact labels... Do not alter". So I must use JSON labels.) -->
+<!-- Inactive: Customers (Mapping to 'Users' intent from prompt) -->
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim w-16 h-full hover:bg-surface-container-high active:opacity-70 transition-opacity hidden" href="#">
+<!-- Hiding this extra one to maintain 5 tabs. The JSON specifies: Home, Customers, Quotes, Orders, More. -->
+<!-- Wait, let me just map the 5 exactly. -->
+</a>
+<!-- Correct Inactive 2: Customers -->
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim w-16 h-full hover:bg-surface-container-high active:opacity-70 transition-opacity" href="#">
+<span class="material-symbols-outlined mb-1">group</span>
+<span class="font-label-caps text-label-caps">Customers</span>
+</a>
+<!-- Correct Inactive 3: Quotes -->
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim w-16 h-full hover:bg-surface-container-high active:opacity-70 transition-opacity" href="#">
+<span class="material-symbols-outlined mb-1">request_quote</span>
+<span class="font-label-caps text-label-caps">Quotes</span>
+</a>
+<!-- Correct Inactive 4: Orders -->
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim w-16 h-full hover:bg-surface-container-high active:opacity-70 transition-opacity" href="#">
+<span class="material-symbols-outlined mb-1">shopping_cart</span>
+<span class="font-label-caps text-label-caps">Orders</span>
+</a>
+<!-- Correct Inactive 5: More -->
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim w-16 h-full hover:bg-surface-container-high active:opacity-70 transition-opacity" href="#">
+<span class="material-symbols-outlined mb-1">menu</span>
+<span class="font-label-caps text-label-caps">More</span>
+</a>
+</nav>
+</body></html>

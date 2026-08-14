@@ -15,7 +15,7 @@ export function StatusFilterNav({
   return (
     <nav
       aria-label={ariaLabel}
-      className="mb-5 flex gap-1 overflow-x-auto rounded-lg border border-surface-variant bg-surface-container-low p-1"
+      className="-mx-4 mb-4 flex gap-2 overflow-x-auto px-4 py-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
     >
       {items.map((item) => {
         const selected = item.id === active;
@@ -24,10 +24,10 @@ export function StatusFilterNav({
             key={item.id}
             href={hrefFor(item.id)}
             className={cn(
-              "shrink-0 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+              "shrink-0 rounded-full border px-4 py-1.5 text-subheading whitespace-nowrap transition-colors",
               selected
-                ? "bg-surface-container-lowest text-on-surface shadow-sm"
-                : "text-on-surface-variant hover:text-on-surface",
+                ? "border-primary bg-primary text-on-primary"
+                : "border-outline-variant bg-surface-container-lowest text-on-surface",
             )}
           >
             {item.label}

@@ -33,8 +33,8 @@ export function nextRequiredAction(input: {
     payments = [],
   } = input;
 
-  const salesCanRecord =
-    (role === "sales" || role === "admin") &&
+    const salesCanRecord =
+    (role === "sales" || role === "admin" || role === "store") &&
     canRecordPayment({ status, payments, outstanding });
 
   if (
@@ -57,18 +57,23 @@ export function nextRequiredAction(input: {
   switch (status) {
     case "quote_draft":
       return {
-        title: "Submit to Accounts",
-        detail: "This quote is a draft. Send it for approval.",
-        href: quoteId ? `/quotes/${quoteId}` : "/quotes",
-        cta: role === "sales" || role === "admin" ? "Submit" : undefined,
+        title: "Finish this draft",
+        detail: "Save more changes or submit to Accounts when it is ready.",
+        href: quoteId ? `/quotes/${quoteId}/revise` : "/quotes",
+        cta: role === "sales" || role === "admin" ? "Edit draft" : undefined,
       };
     case "quote_pending_accounts":
-      return {
-        title: "Waiting for Accounts to review",
-        detail: "Sales cannot send this quote until Accounts approves it.",
-        href: quoteId ? `/approvals/${quoteId}` : "/approvals",
-        cta: role === "accounts" || role === "admin" ? "Review" : undefined,
-      };
+      return role === "accounts" || role === "admin"
+        ? {
+            title: "Approve quote",
+            detail: "Review margins and discounts before approving for Sales.",
+            href: quoteId ? `/quotes/${quoteId}` : "/approvals",
+            cta: "Review",
+          }
+        : {
+            title: "Waiting for Accounts to review",
+            detail: "Sales cannot send this quote until Accounts approves it.",
+          };
     case "quote_rejected":
       return {
         title: "Revise and resubmit",
@@ -79,7 +84,8 @@ export function nextRequiredAction(input: {
     case "quote_approved":
       return {
         title: "Send to customer",
-        detail: "Only an approved quote can go to the customer.",
+        detail:
+          "Only an approved quote can go to the customer. Correct it first if something is wrong — Accounts will need to approve again.",
         href: quoteId ? `/quotes/${quoteId}` : "/quotes",
         cta: role === "sales" || role === "admin" ? "Send" : undefined,
       };
@@ -92,15 +98,26 @@ export function nextRequiredAction(input: {
         href: orderId ? `/orders/${orderId}` : "/orders",
         cta: salesCanRecord ? "Record payment" : undefined,
       };
-    case "payment_pending_verification":
+    case "payment_pending_verification": {
+      const rejected = payments.some((payment) => payment.status === "rejected");
+      if (!hasPendingPayment(payments) && rejected) {
+        return {
+          title: "Record a corrected payment",
+          detail:
+            "Accounts sent the last entry back. Log the right amount so they can verify again.",
+          href: orderId ? `/orders/${orderId}` : "/orders",
+          cta: salesCanRecord ? "Record payment" : undefined,
+        };
+      }
       return {
-        title: "Waiting for Accounts to verify payment",
+        title: "Waiting for Accounts to review payment",
         detail: activated
           ? "Delivery stays locked until this payment is verified."
-          : "The order cannot activate until verification succeeds.",
+          : "The order cannot activate until verification succeeds. Accounts can verify or send it back.",
         href: "/payments",
-        cta: role === "accounts" || role === "admin" ? "Verify" : undefined,
+        cta: role === "accounts" || role === "admin" ? "Review" : undefined,
       };
+    }
     case "order_active":
       return {
         title: "Waiting for vendor send",
@@ -137,7 +154,7 @@ export function nextRequiredAction(input: {
             : "Delivery check",
         detail:
           outstanding > 0
-            ? "Delivery is locked until full payment is verified."
+            ? "Sales or Delivery can take cash or UPI. Accounts must verify before handover."
             : "Payment is complete. Delivery can proceed.",
         href: orderId ? `/orders/${orderId}` : "/orders",
         cta:

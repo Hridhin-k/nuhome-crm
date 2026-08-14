@@ -168,9 +168,8 @@ A2. Build the quote (materials)
   Expected: Review shows all lines, subtotal, discount, tax, total.
 
   10. Add Notes: "Manual test — full payment path".
-  11. Tap the submit button (creates AND submits to Accounts).
-  Expected: Redirect to Quotes list or quote detail with notice
-            "Sent to Accounts for review" or "Submitted to Accounts."
+  11. Tap "Submit to Accounts" (not "Save draft").
+  Expected: Redirect to quote detail with notice "Submitted to Accounts."
             Status badge: "Awaiting approval".
             Next action: "Waiting for Accounts to review".
             Sales does NOT see Approve / Reject buttons.
@@ -273,6 +272,7 @@ A8. Accounts verifies the full payment (order activates)
   3. Tap "Verify payment", then confirm "Verify".
   Expected: Notice "Payment verified." Payment leaves the queue.
             Order status becomes "Order active".
+            Also confirm the card has a "Reject payment" button (do not use it here).
 
   4. As Sales, open the same order (should refresh live or after a moment).
   Expected: Status "Order active". Next action "Waiting for vendor send".
@@ -650,6 +650,67 @@ G4. Quotes list
   Expected: Walk-in flow.
   2. Empty quotes + no customers: prompt to add a customer first.
 
+G5. Save as draft
+  1. As Sales, walk-in → pick a customer → add one material.
+  2. Tap "Save draft" (from Materials or Review). Do not submit.
+  Expected: Quote detail. Notice "Draft saved…". Status "Draft".
+            Buttons: "Edit draft" and "Submit to Accounts".
+  3. Tap Edit draft, change a price, Save draft again.
+  Expected: Still one version in History. Totals match the new price.
+  4. Submit to Accounts from the quote page.
+  Expected: Status "Awaiting approval".
+
+G6. Correct an approved quote
+  1. After Accounts has approved (and before Send):
+     open the quote as Sales.
+  Expected: "Send to customer" and "Correct quote".
+  2. Tap Correct quote. Change a line. Submit revised quote.
+  Expected: Status back to "Awaiting approval". New version in History.
+            Public quotation link (if you still have it) should 404 until
+            Accounts approves again.
+  3. Accounts re-approves. Sales can send.
+
+G7. Edit customer + duplicate phone
+  1. As Sales, open a customer you created. Tap Edit.
+  2. Change name/phone/address/notes. Save.
+  Expected: Notice "Customer updated." Fields match.
+  3. Add a new customer with the same phone (try +91 vs 10-digit).
+  Expected: Error naming the existing customer. No second record.
+
+G8. Accounts rejects a payment
+  1. As Sales, send an approved quote and Record payment (UPI, a wrong amount is fine).
+  Expected: Status "Payment verification". Record payment is hidden.
+  2. As Accounts, Payments. Open the card.
+  Expected: "Verify payment" and "Reject payment".
+  3. Tap Reject payment. Leave reason blank and try submit.
+  Expected: Browser required-field, or "Rejection reason is required".
+  4. Enter reason: "Wrong UPI amount". Tap "Send back to Sales".
+  Expected: Redirect to the order. Notice "Payment sent back to Sales."
+            Payment row shows Rejected + the reason. Payments queue no longer
+            lists this entry.
+  5. As Sales, open the order.
+  Expected: Payment row "Rejected" with the reason.
+            Next action "Record a corrected payment".
+            Record payment is available again.
+  6. Record the correct amount. Accounts can now Verify.
+
+G9. Split vendor, partial GRN, shortage, Store collect
+  1. As Procurement, open an Active order in Fulfillment.
+  2. Send part of the qty to vendor A (set a line to less than remaining).
+     Set Expected delivery to yesterday.
+  Expected: Vendor card shows. Fulfillment list may show Overdue.
+  3. Send the remaining qty to vendor B (another vendor or the same).
+  Expected: Two vendor cards. Unsent 0 on those lines.
+  4. Mark A dispatched, then Record items received as 1 less than owed.
+  Expected: Receipt saved. Remainder still open. Close remainder is available.
+  5. Close remainder: reason Shortage, qty = leftover. Save.
+  Expected: Line shows received + closed. If everything is accounted and
+            paid, delivery unlocks; if balance remains, order goes on hold.
+  6. As Delivery (store@nuhome.demo), open an on-hold order.
+  Expected: Record payment is available. Collect cash/UPI.
+  7. As Accounts, verify that payment.
+  Expected: Delivery unlocked. Store can Complete delivery.
+
 
 ================================================================
 STATUS LABELS CHEAT SHEET (what you should see)
@@ -680,8 +741,8 @@ Create / revise / submit quote
 Approve / reject quote        Accounts, Admin (not the quote creator)
 See margin                    Accounts, Admin
 Send quote / WhatsApp         Sales, Admin
-Record payment                Sales, Admin
-Verify payment                Accounts, Admin (not the person who recorded it)
+Record payment                Sales, Delivery (store), Admin
+Verify / reject payment        Accounts, Admin (not the person who recorded it)
 Add vendor / send to vendor   Procurement, Admin
 Mark dispatched               Procurement, Admin
 Record items received         Procurement, Store, Admin
@@ -711,6 +772,14 @@ Date: _______________   Tester: _______________   Build/URL: _______________
 [ ] Realtime: other role dashboard updates without refresh
 [ ] Sign out / sign in switch works
 [ ] Admin Users list shows all demo people
+[ ] Save quote as draft and edit in place
+[ ] Correct approved quote before send (new version, re-approve)
+[ ] Edit customer profile
+[ ] Duplicate phone blocked (including +91 vs 10-digit)
+[ ] Accounts can reject a pending payment; Sales re-records
+[ ] Split vendor send + typed GRN + close shortage
+[ ] Overdue expected delivery shows on Fulfillment / Home
+[ ] Delivery (store) can record payment on hold
 
 Bugs found (quote number, role, steps, expected vs actual):
 1.

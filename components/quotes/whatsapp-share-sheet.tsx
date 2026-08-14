@@ -45,6 +45,8 @@ export function WhatsAppShareSheet({
   versionNumber,
   total,
   quoteUrl,
+  triggerLabel = "WhatsApp",
+  triggerClassName,
 }: {
   quoteId: string;
   customerName: string;
@@ -53,6 +55,8 @@ export function WhatsAppShareSheet({
   versionNumber: number;
   total: number;
   quoteUrl: string;
+  triggerLabel?: string;
+  triggerClassName?: string;
 }) {
   const [error, setError] = useState<string>();
   const [pending, startTransition] = useTransition();
@@ -86,9 +90,13 @@ export function WhatsAppShareSheet({
       title="Send via WhatsApp"
       description="Review the message before opening WhatsApp."
       trigger={
-        <span className="inline-flex h-12 min-h-12 w-full items-center justify-center gap-2 rounded-lg border border-[#25D366]/30 bg-[#25D366]/10 px-6 text-[15px] font-medium text-[#128C7E]">
-          <span aria-hidden>💬</span>
-          Send via WhatsApp
+        <span
+          className={
+            triggerClassName ??
+            "inline-flex h-11 min-h-11 w-full items-center justify-center rounded-lg border border-outline-variant bg-surface-container-lowest px-4 text-subheading text-on-surface"
+          }
+        >
+          {triggerLabel}
         </span>
       }
     >

@@ -5,7 +5,7 @@ export const WORKFLOW_TRANSITIONS: Record<WorkflowStatus, WorkflowStatus[]> = {
   quote_draft: ["quote_pending_accounts"],
   quote_pending_accounts: ["quote_approved", "quote_rejected"],
   quote_rejected: ["quote_draft"],
-  quote_approved: ["quote_sent_to_customer"],
+  quote_approved: ["quote_sent_to_customer", "quote_draft"],
   quote_sent_to_customer: ["payment_pending_verification"],
   payment_pending_verification: [
     "order_active",
@@ -13,7 +13,7 @@ export const WORKFLOW_TRANSITIONS: Record<WorkflowStatus, WorkflowStatus[]> = {
     "order_on_hold",
   ],
   order_active: ["sent_to_vendor"],
-  sent_to_vendor: ["vendor_dispatched"],
+  sent_to_vendor: ["vendor_dispatched", "items_received"],
   vendor_dispatched: ["items_received"],
   items_received: ["delivery_pending_payment"],
   delivery_pending_payment: ["delivery_unlocked", "order_on_hold"],

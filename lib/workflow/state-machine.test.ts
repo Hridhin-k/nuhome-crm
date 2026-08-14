@@ -16,6 +16,7 @@ describe("quote transitions", () => {
 
   it("requires a new version after rejection", () => {
     expect(() => assertTransition("quote_rejected", "quote_draft")).not.toThrow();
+    expect(() => assertTransition("quote_approved", "quote_draft")).not.toThrow();
     expect(() =>
       assertTransition("quote_rejected", "quote_sent_to_customer"),
     ).toThrow();
@@ -23,6 +24,12 @@ describe("quote transitions", () => {
 });
 
 describe("order transitions", () => {
+  it("allows closing remainder without a goods receipt", () => {
+    expect(() =>
+      assertTransition("sent_to_vendor", "items_received"),
+    ).not.toThrow();
+  });
+
   it("blocks delivery from items_received without the payment gate", () => {
     expect(() => assertTransition("items_received", "delivered")).toThrow();
     expect(() =>

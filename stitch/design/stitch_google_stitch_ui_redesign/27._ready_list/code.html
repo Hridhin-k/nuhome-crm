@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Ready - Nuhome Store</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-container": "#1b1b1b",
+                        "outline": "#7e7576",
+                        "tertiary-fixed-dim": "#c6c6c6",
+                        "inverse-on-surface": "#f1f1f1",
+                        "tertiary": "#000000",
+                        "surface-container-highest": "#e2e2e2",
+                        "primary-fixed": "#e2e2e2",
+                        "secondary-fixed-dim": "#b7c8e1",
+                        "surface-tint": "#5e5e5e",
+                        "on-primary-fixed": "#1b1b1b",
+                        "surface-dim": "#dadada",
+                        "on-secondary-container": "#54647a",
+                        "on-tertiary-fixed-variant": "#474747",
+                        "outline-variant": "#cfc4c5",
+                        "primary": "#000000",
+                        "on-surface": "#1b1b1b",
+                        "on-tertiary-container": "#848484",
+                        "on-surface-variant": "#4c4546",
+                        "inverse-primary": "#c6c6c6",
+                        "surface": "#f9f9f9",
+                        "on-tertiary-fixed": "#1b1b1b",
+                        "on-secondary": "#ffffff",
+                        "on-secondary-fixed-variant": "#38485d",
+                        "error": "#ba1a1a",
+                        "on-primary-fixed-variant": "#474747",
+                        "on-error": "#ffffff",
+                        "background": "#f9f9f9",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "secondary": "#505f76",
+                        "surface-bright": "#f9f9f9",
+                        "surface-container-high": "#e8e8e8",
+                        "on-secondary-fixed": "#0b1c30",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed": "#e2e2e2",
+                        "secondary-fixed": "#d3e4fe",
+                        "surface-variant": "#e2e2e2",
+                        "tertiary-container": "#1b1b1b",
+                        "on-background": "#1b1b1b",
+                        "on-primary-container": "#848484",
+                        "error-container": "#ffdad6",
+                        "on-tertiary": "#ffffff",
+                        "inverse-surface": "#303030",
+                        "primary-fixed-dim": "#c6c6c6",
+                        "secondary-container": "#d0e1fb",
+                        "surface-container": "#eeeeee",
+                        "surface-container-low": "#f3f3f3"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "4px",
+                        "container-padding": "16px",
+                        "section-margin": "24px",
+                        "stack-gap": "12px",
+                        "inline-gap": "8px"
+                    },
+                    "fontFamily": {
+                        "data-tabular": ["Inter"],
+                        "body-md": ["Inter"],
+                        "subheading": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "data-tabular": ["13px", {"lineHeight": "18px", "fontWeight": "500"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "subheading": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                        "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                        "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "headline-md": ["22px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .pb-safe { padding-bottom: env(safe-area-inset-bottom, 20px); }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background antialiased h-screen flex flex-col pt-14 pb-16">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-primary dark:bg-primary-container border-b border-outline-variant flex justify-between items-center h-14 px-container-padding text-on-primary dark:text-on-primary-container">
+<div class="flex items-center gap-inline-gap">
+<button class="hover:opacity-80 transition-opacity active:scale-95 text-on-primary">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<h1 class="font-headline-lg text-headline-lg text-on-primary dark:text-on-primary-container tracking-tight">Ready</h1>
+</div>
+<button class="hover:opacity-80 transition-opacity active:scale-95 text-on-primary">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 overflow-y-auto p-container-padding space-y-stack-gap">
+<!-- Segmented Control for Views -->
+<div class="bg-surface-container-highest p-1 rounded-lg flex w-full mb-section-margin shadow-sm">
+<button class="flex-1 py-2 font-subheading text-subheading text-on-surface-variant rounded-md text-center">New</button>
+<button class="flex-1 py-2 font-subheading text-subheading text-on-surface-variant rounded-md text-center">In Progress</button>
+<button class="flex-1 py-2 font-subheading text-subheading bg-surface text-on-surface shadow-sm rounded-md text-center border border-outline-variant">Ready</button>
+</div>
+<!-- Section Title -->
+<div class="flex justify-between items-end mb-4">
+<h2 class="font-headline-md text-headline-md">Handover Ready</h2>
+<span class="font-label-caps text-label-caps text-on-surface-variant bg-surface-container px-2 py-1 rounded-full">1 Order</span>
+</div>
+<!-- Ready Order Card -->
+<div class="bg-surface-container-lowest rounded-lg border border-outline-variant p-4 space-y-3 relative overflow-hidden group hover:shadow-md transition-shadow">
+<div class="absolute top-0 left-0 w-1 h-full bg-[#10b981]"></div>
+<div class="flex justify-between items-start">
+<div>
+<div class="flex items-center gap-2 mb-1">
+<span class="font-data-tabular text-data-tabular text-on-surface-variant">NQ-1042</span>
+<span class="bg-[#dcfce7] text-[#166534] font-label-caps text-label-caps px-2 py-0.5 rounded-full border border-[#bbf7d0]">Ready</span>
+</div>
+<h3 class="font-subheading text-subheading">Ananya Nair</h3>
+</div>
+<div class="text-right">
+<p class="font-label-caps text-label-caps text-on-surface-variant">Due</p>
+<p class="font-data-tabular text-data-tabular">₹0</p>
+</div>
+</div>
+<div class="bg-surface-container p-3 rounded-md border border-outline-variant flex items-start gap-3">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="info">info</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Complete handover with the customer.</p>
+</div>
+<div class="pt-2 flex justify-end gap-inline-gap">
+<button class="h-11 px-4 font-subheading text-subheading border border-primary text-primary rounded bg-surface-container-lowest hover:bg-surface-container-low transition-colors">
+                    View Details
+                </button>
+<button class="h-11 px-4 font-subheading text-subheading bg-primary text-on-primary rounded hover:opacity-90 transition-opacity flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]" data-icon="check_circle">check_circle</span>
+                    Complete
+                </button>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 h-16 bg-surface dark:bg-surface-container border-t border-outline-variant flex justify-around items-center px-container-padding pb-safe">
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-container-high p-2 rounded-lg active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-label-caps text-label-caps mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary dark:text-primary-fixed font-bold hover:bg-surface-container-low dark:hover:bg-surface-container-high p-2 rounded-lg active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="shopping_cart" data-weight="fill" style="font-variation-settings: 'FILL' 1;">shopping_cart</span>
+<span class="font-label-caps text-label-caps mt-1">Orders</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-container-high p-2 rounded-lg active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+<span class="font-label-caps text-label-caps mt-1">Vendors</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-container-high p-2 rounded-lg active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="local_shipping">local_shipping</span>
+<span class="font-label-caps text-label-caps mt-1">Fulfillment</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-container-high p-2 rounded-lg active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="more_horiz">more_horiz</span>
+<span class="font-label-caps text-label-caps mt-1">More</span>
+</a>
+</nav>
+</body></html>
