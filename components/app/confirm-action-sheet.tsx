@@ -5,7 +5,7 @@ import {
   FormSheetBody,
   FormSheetFooter,
 } from "@/components/app/form-sheet";
-import { Button } from "@/components/ui/button";
+import { SubmitButton } from "@/components/app/submit-button";
 
 export function ConfirmActionSheet({
   title,
@@ -27,7 +27,7 @@ export function ConfirmActionSheet({
       title={title}
       description={description}
       trigger={
-        <span className="inline-flex h-12 min-h-12 w-full items-center justify-center rounded-lg bg-primary px-6 text-[15px] font-medium text-on-primary">
+        <span className="inline-flex h-12 min-h-12 w-full items-center justify-center rounded-lg bg-primary px-6 text-[15px] font-medium text-on-primary transition-transform active:scale-[0.98] motion-reduce:transition-none">
           {triggerLabel}
         </span>
       }
@@ -39,9 +39,12 @@ export function ConfirmActionSheet({
           </p>
         </FormSheetBody>
         <FormSheetFooter>
-          <Button type="submit" size="lg" className="w-full">
-            {confirmLabel}
-          </Button>
+          <SubmitButton
+            idleLabel={confirmLabel}
+            pendingLabel={`${confirmLabel.replace(/\.?$/, "")}…`}
+            size="lg"
+            className="w-full"
+          />
         </FormSheetFooter>
       </form>
     </FormSheet>

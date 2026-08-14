@@ -190,33 +190,34 @@ export function QuoteBuilder({
         </nav>
       ) : null}
 
+      {activeStep === 1 && showCustomerStep ? (
+        <section className="rounded-xl border border-surface-variant bg-surface-container-lowest p-5 shadow-card">
+          <h2 className="text-headline-sm text-on-surface">Profile check</h2>
+          <p className="mt-1 text-sm text-on-surface-variant">
+            Select an existing customer or create a new lead.
+          </p>
+          <div className="mt-4">
+            <CustomerPicker
+              customers={customers}
+              value={customerId}
+              onChange={setCustomerId}
+              returnTo={returnTo}
+            />
+          </div>
+          <Button
+            type="button"
+            className="mt-6 h-11 w-full md:w-auto"
+            disabled={!customerId}
+            onClick={() => setActiveStep(2)}
+          >
+            Continue to materials
+          </Button>
+        </section>
+      ) : null}
+
+      {activeStep !== 1 || !showCustomerStep ? (
       <form action={action} className="flex flex-col gap-6">
         <input type="hidden" name="payload" value={JSON.stringify(payload)} />
-
-        {activeStep === 1 && showCustomerStep ? (
-          <section className="rounded-xl border border-surface-variant bg-surface-container-lowest p-5 shadow-card">
-            <h2 className="text-headline-sm text-on-surface">Profile check</h2>
-            <p className="mt-1 text-sm text-on-surface-variant">
-              Select an existing customer or create a new lead.
-            </p>
-            <div className="mt-4">
-              <CustomerPicker
-                customers={customers}
-                value={customerId}
-                onChange={setCustomerId}
-                returnTo={returnTo}
-              />
-            </div>
-            <Button
-              type="button"
-              className="mt-6 h-11 w-full md:w-auto"
-              disabled={!customerId}
-              onClick={() => setActiveStep(2)}
-            >
-              Continue to materials
-            </Button>
-          </section>
-        ) : null}
 
         {activeStep === 2 ? (
           <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
@@ -474,6 +475,7 @@ export function QuoteBuilder({
           </div>
         ) : null}
       </form>
+      ) : null}
     </div>
   );
 }

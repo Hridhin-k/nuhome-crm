@@ -871,6 +871,7 @@ export type Database = {
           current_version_id: string | null
           customer_id: string
           id: string
+          public_access_token: string | null
           quote_number: string
           sent_at: string | null
           status: Database["public"]["Enums"]["workflow_status"]
@@ -883,6 +884,7 @@ export type Database = {
           current_version_id?: string | null
           customer_id: string
           id?: string
+          public_access_token?: string | null
           quote_number: string
           sent_at?: string | null
           status?: Database["public"]["Enums"]["workflow_status"]
@@ -895,6 +897,7 @@ export type Database = {
           current_version_id?: string | null
           customer_id?: string
           id?: string
+          public_access_token?: string | null
           quote_number?: string
           sent_at?: string | null
           status?: Database["public"]["Enums"]["workflow_status"]
@@ -1287,6 +1290,7 @@ export type Database = {
         }
         Returns: string
       }
+      get_public_quote: { Args: { p_token: string }; Returns: Json }
       send_quote_to_customer: { Args: { p_quote_id: string }; Returns: string }
       submit_quote: { Args: { p_quote_id: string }; Returns: undefined }
       verify_payment: {

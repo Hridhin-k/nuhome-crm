@@ -30,7 +30,7 @@ export async function updateSession(request: NextRequest) {
 
   const path = request.nextUrl.pathname;
   const isLogin = path === "/login";
-  const isPublic = isLogin || path === "/";
+  const isPublic = isLogin || path === "/" || path.startsWith("/q/");
 
   if (!user && !isPublic) {
     const redirect = request.nextUrl.clone();

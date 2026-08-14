@@ -47,7 +47,7 @@ export async function getQuote(id: string) {
   const { data: quote, error } = await db
     .from("quotes")
     .select(
-      "id, quote_number, status, created_at, created_by, customer_id, current_version_id",
+      "id, quote_number, status, created_at, created_by, customer_id, current_version_id, public_access_token",
     )
     .eq("id", id)
     .maybeSingle();
@@ -62,7 +62,7 @@ export async function getQuote(id: string) {
   const [customer, versions, order] = await Promise.all([
     db
       .from("customers")
-      .select("id, name, phone, kind")
+      .select("id, name, phone, address, kind")
       .eq("id", quote.customer_id)
       .maybeSingle(),
     db

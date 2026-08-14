@@ -5,6 +5,7 @@ import {
   sendQuoteAction,
   submitQuoteAction,
 } from "@/app/actions/workflow";
+import { ActivityTimeline } from "@/components/app/activity-timeline";
 import { ConfirmActionSheet } from "@/components/app/confirm-action-sheet";
 import { NextActionCard } from "@/components/app/next-action-card";
 import { Notice } from "@/components/app/notice";
@@ -12,7 +13,11 @@ import { PageHeader } from "@/components/app/page-header";
 import { StatusBadge } from "@/components/app/status-badge";
 import { WorkflowStepper } from "@/components/app/workflow-stepper";
 import { RejectQuoteSheet } from "@/components/quotes/reject-sheet";
+import { WhatsAppShareSheet } from "@/components/quotes/whatsapp-share-sheet";
+import { listQuoteActivity } from "@/lib/api/audit";
 import { getQuote } from "@/lib/api/quotes";
+import { publicQuotePath, publicQuoteUrl } from "@/lib/quotes/public-url";
+import { getSiteUrl } from "@/lib/site-url";
 import { requireUser } from "@/lib/auth/guards";
 import { roleHasPermission } from "@/lib/auth/permissions";
 import { formatInrExact } from "@/lib/format/money";
@@ -32,7 +37,12 @@ export default async function QuoteDetailPage({
   const { id } = await params;
   const { notice, error } = await searchParams;
   const canRevise = roleHasPermission(user.role, "quotes.revise");
-  const detail = await getQuote(id);
+  const canShareWhatsApp = roleHasPermission(user.role, "quotes.send_to_customer");
+  const [detail, activity, siteUrl] = await Promise.all([
+    getQuote(id),
+    listQuoteActivity(id).catch(() => []),
+    getSiteUrl(),
+  ]);
   if (!detail) {
     notFound();
   }
@@ -54,6 +64,14 @@ export default async function QuoteDetailPage({
     orderId: order?.id,
     orderStatus,
   });
+  const canWhatsApp =
+    canShareWhatsApp &&
+    !orderClosed &&
+    (status === "quote_approved" || status === "quote_sent_to_customer") &&
+    current;
+  const publicUrl = quote.public_access_token
+    ? publicQuoteUrl(siteUrl, quote.public_access_token)
+    : null;
 
   return (
     <div className="flex flex-col gap-6">
@@ -225,12 +243,53 @@ export default async function QuoteDetailPage({
         {status === "quote_approved" &&
         !orderClosed &&
         roleHasPermission(user.role, "quotes.send_to_customer") ? (
-          <ConfirmActionSheet
-            title="Send to customer"
-            description="This marks the quote as sent. Capture the customer’s decision next."
-            triggerLabel="Send to customer"
-            confirmLabel="Send quote"
-            action={sendQuoteAction.bind(null, quote.id)}
+          <>
+            <ConfirmActionSheet
+              title="Send to customer"
+              description="This marks the quote as sent. Capture the customer’s decision next."
+              triggerLabel="Send to customer"
+              confirmLabel="Send quote"
+              action={sendQuoteAction.bind(null, quote.id)}
+            />
+            {canWhatsApp && current && publicUrl ? (
+              <WhatsAppShareSheet
+                quoteId={quote.id}
+                customerName={customer?.name ?? "Customer"}
+                customerPhone={customer?.phone}
+                quoteNumber={quote.quote_number}
+                versionNumber={current.version_number}
+                total={Number(current.total)}
+                quoteUrl={publicUrl}
+              />
+            ) : null}
+            {publicUrl ? (
+            <AppLink
+              href={publicQuotePath(quote.public_access_token!)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={cn(
+                buttonVariants({ variant: "outline", size: "lg" }),
+                "w-full text-center",
+              )}
+            >
+              View customer quotation
+            </AppLink>
+            ) : null}
+          </>
+        ) : null}
+        {status === "quote_sent_to_customer" &&
+        !orderClosed &&
+        canWhatsApp &&
+        current &&
+        publicUrl ? (
+          <WhatsAppShareSheet
+            quoteId={quote.id}
+            customerName={customer?.name ?? "Customer"}
+            customerPhone={customer?.phone}
+            quoteNumber={quote.quote_number}
+            versionNumber={current.version_number}
+            total={Number(current.total)}
+            quoteUrl={publicUrl}
           />
         ) : null}
         {status === "quote_rejected" && canRevise ? (
@@ -253,6 +312,8 @@ export default async function QuoteDetailPage({
           </AppLink>
         ) : null}
       </div>
+
+      <ActivityTimeline events={activity} />
     </div>
   );
 }

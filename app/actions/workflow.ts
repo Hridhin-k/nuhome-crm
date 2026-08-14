@@ -24,6 +24,13 @@ import { customerSchema } from "@/lib/validation/workflow";
 
 export type ActionState = { error?: string; notice?: string };
 
+type RpcClient = {
+  rpc(
+    fn: string,
+    args: Record<string, string>,
+  ): Promise<{ data: unknown; error: { message: string } | null }>;
+};
+
 export async function createCustomerAction(
   _prev: ActionState,
   formData: FormData,
@@ -301,6 +308,26 @@ export async function completeDeliveryAction(
     redirect(`/orders/${orderId}?notice=delivered`);
   } catch (error) {
     rethrowNavigationError(error);
+    return { error: humanizeError(error) };
+  }
+}
+
+export async function logWhatsAppShareAction(
+  quoteId: string,
+): Promise<ActionState> {
+  await requirePermission("quotes.send_to_customer");
+  try {
+    const supabase = await createServerSupabaseClient();
+    const { error } = await (supabase as unknown as RpcClient).rpc(
+      "log_quote_whatsapp_share",
+      { p_quote_id: quoteId },
+    );
+    if (error) {
+      throw error;
+    }
+    revalidatePath(`/quotes/${quoteId}`);
+    return {};
+  } catch (error) {
     return { error: humanizeError(error) };
   }
 }

@@ -3,6 +3,19 @@ import { timelineIndex, TIMELINE_STEPS } from "@/lib/workflow/labels";
 import type { WorkflowStatus } from "@/lib/workflow/types";
 import { cn } from "@/lib/utils";
 
+function stepState(
+  index: number,
+  current: number,
+  status: WorkflowStatus,
+) {
+  if (current > index) return "done" as const;
+  if (current === index) {
+    if (status === "order_on_hold") return "blocked" as const;
+    return "current" as const;
+  }
+  return "upcoming" as const;
+}
+
 export function OrderTimeline({
   status,
   activated = false,
@@ -29,43 +42,55 @@ export function OrderTimeline({
       />
       <ol>
         {TIMELINE_STEPS.map((step, index) => {
-          const done = current > index;
-          const here = current === index;
+          const state = stepState(index, current, status);
           return (
             <li key={step.key} className="flex gap-3">
               <div className="flex flex-col items-center">
                 <span
                   className={cn(
-                    "mt-0.5 size-2.5 rounded-full",
-                    here && "bg-primary ring-4 ring-surface-container-lowest",
-                    done && "bg-outline",
-                    !here && !done && "bg-surface-variant",
+                    "mt-0.5 flex size-6 items-center justify-center rounded-full text-xs font-bold",
+                    state === "done" && "bg-success text-on-primary",
+                    state === "current" &&
+                      "bg-primary text-on-primary ring-4 ring-primary/15",
+                    state === "blocked" &&
+                      "bg-error text-on-primary ring-4 ring-error/15",
+                    state === "upcoming" &&
+                      "border border-surface-variant bg-surface-container-lowest text-outline",
                   )}
-                />
+                  aria-hidden
+                >
+                  {state === "done" ? "✓" : state === "blocked" ? "!" : ""}
+                </span>
                 {index < TIMELINE_STEPS.length - 1 ? (
-                  <span
-                    className={cn(
-                      "w-0.5 flex-1",
-                      done || here ? "bg-surface-variant" : "bg-surface-variant",
-                    )}
-                  />
+                  <span className="mt-1 w-0.5 flex-1 bg-surface-variant" />
                 ) : null}
               </div>
-              <p
-                className={cn(
-                  "pb-5 text-[15px]",
-                  here && "font-semibold text-primary",
-                  done && "text-on-surface-variant",
-                  !here && !done && "text-outline",
-                )}
-              >
-                {step.label}
-                {here ? (
-                  <span className="ml-2 text-[12px] font-bold tracking-wide text-primary uppercase">
-                    Now
-                  </span>
+              <div className="min-w-0 flex-1 pb-5">
+                <p
+                  className={cn(
+                    "text-[15px]",
+                    state === "current" && "font-semibold text-primary",
+                    state === "blocked" && "font-semibold text-error",
+                    state === "done" && "text-on-surface-variant",
+                    state === "upcoming" && "text-outline",
+                  )}
+                >
+                  {step.label}
+                </p>
+                {state === "current" ? (
+                  <p className="mt-0.5 text-xs font-semibold uppercase tracking-wide text-primary">
+                    In progress
+                  </p>
                 ) : null}
-              </p>
+                {state === "blocked" ? (
+                  <p className="mt-0.5 text-xs font-semibold uppercase tracking-wide text-error">
+                    Blocked
+                  </p>
+                ) : null}
+                {state === "upcoming" ? (
+                  <p className="mt-0.5 text-xs text-outline">Upcoming</p>
+                ) : null}
+              </div>
             </li>
           );
         })}
