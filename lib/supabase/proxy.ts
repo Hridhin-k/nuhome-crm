@@ -24,22 +24,21 @@ export async function updateSession(request: NextRequest) {
     },
   });
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { data } = await supabase.auth.getClaims();
+  const signedIn = Boolean(data?.claims?.sub);
 
   const path = request.nextUrl.pathname;
   const isLogin = path === "/login";
   const isPublic = isLogin || path === "/" || path.startsWith("/q/");
 
-  if (!user && !isPublic) {
+  if (!signedIn && !isPublic) {
     const redirect = request.nextUrl.clone();
     redirect.pathname = "/login";
     redirect.searchParams.set("next", path);
     return NextResponse.redirect(redirect);
   }
 
-  if (user && isLogin) {
+  if (signedIn && isLogin) {
     const redirect = request.nextUrl.clone();
     redirect.pathname = "/home";
     return NextResponse.redirect(redirect);

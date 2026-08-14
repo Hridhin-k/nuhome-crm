@@ -1,7 +1,6 @@
 import type { ReactNode } from "react";
 import { AppNavbar, MobileBottomNav } from "@/components/app/app-nav";
 import { PrefetchRoutes } from "@/components/app/prefetch-routes";
-import { WorkflowRefreshListener } from "@/components/app/workflow-refresh-listener";
 import { listNotifications } from "@/lib/api/notifications";
 import { requireUser } from "@/lib/auth/guards";
 import { navForRole, roleLabel } from "@/lib/auth/nav";
@@ -9,14 +8,13 @@ import { navForRole, roleLabel } from "@/lib/auth/nav";
 export default async function AppLayout({ children }: { children: ReactNode }) {
   const user = await requireUser();
   const items = navForRole(user.role);
-  const [notifications] = await Promise.all([
-    listNotifications(user.id).catch(() => []),
-  ]);
+  const notifications = await listNotifications(user.id).catch(() => []);
   const warm = [
     ...items.map((item) => item.href),
     ...(user.role === "sales" || user.role === "admin"
       ? ["/walk-in", "/customers/new"]
       : []),
+    ...(user.role === "admin" ? ["/users", "/vendors", "/materials"] : []),
   ];
 
   return (
@@ -34,7 +32,6 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
       </main>
 
       <MobileBottomNav items={items} />
-      <WorkflowRefreshListener />
       <PrefetchRoutes hrefs={warm} />
     </div>
   );

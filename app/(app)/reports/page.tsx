@@ -5,8 +5,10 @@ import { getOperationsSnapshot } from "@/lib/api/dashboard";
 import { requirePermission } from "@/lib/auth/guards";
 
 export default async function ReportsPage() {
-  await requirePermission("admin.manage");
-  const snapshot = await getOperationsSnapshot();
+  const [, snapshot] = await Promise.all([
+    requirePermission("admin.manage"),
+    getOperationsSnapshot(),
+  ]);
 
   return (
     <div>

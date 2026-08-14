@@ -12,18 +12,18 @@ export type SessionUser = {
 
 export const getSessionUser = cache(async (): Promise<SessionUser | null> => {
   const supabase = await createServerSupabaseClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
+  const { data } = await supabase.auth.getClaims();
+  const claims = data?.claims;
+  if (!claims?.sub) {
     return null;
   }
+
+  const email = claims.email;
 
   const { data: profile, error } = await supabase
     .from("profiles")
     .select("full_name, role, is_active")
-    .eq("id", user.id)
+    .eq("id", claims.sub)
     .maybeSingle();
 
   if (error) {
@@ -31,9 +31,9 @@ export const getSessionUser = cache(async (): Promise<SessionUser | null> => {
   }
 
   return {
-    id: user.id,
-    email: user.email,
-    fullName: profile?.full_name ?? user.email ?? "User",
+    id: claims.sub,
+    email,
+    fullName: profile?.full_name ?? email ?? "User",
     role: (profile?.role as AppRole | undefined) ?? "sales",
     isActive: profile?.is_active ?? true,
   };

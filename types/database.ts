@@ -649,6 +649,7 @@ export type Database = {
       profiles: {
         Row: {
           created_at: string
+          email: string | null
           full_name: string
           id: string
           is_active: boolean
@@ -658,6 +659,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          email?: string | null
           full_name?: string
           id: string
           is_active?: boolean
@@ -667,6 +669,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          email?: string | null
           full_name?: string
           id?: string
           is_active?: boolean
@@ -1141,6 +1144,16 @@ export type Database = {
       admin_set_role: {
         Args: {
           p_role: Database["public"]["Enums"]["app_role"]
+          p_user_id: string
+        }
+        Returns: undefined
+      }
+      admin_update_user: {
+        Args: {
+          p_full_name?: string | null
+          p_is_active?: boolean | null
+          p_phone?: string | null
+          p_role?: Database["public"]["Enums"]["app_role"] | null
           p_user_id: string
         }
         Returns: undefined

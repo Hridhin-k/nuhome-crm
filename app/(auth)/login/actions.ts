@@ -36,6 +36,21 @@ export async function loginAction(
     return { error: "Email or password is incorrect" };
   }
 
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (user) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("is_active")
+      .eq("id", user.id)
+      .maybeSingle();
+    if (profile && profile.is_active === false) {
+      await supabase.auth.signOut();
+      return { error: "This account is inactive. Ask an admin to restore access." };
+    }
+  }
+
   const nextRaw = formString(formData, "next");
   const next =
     nextRaw.startsWith("/") && !nextRaw.startsWith("//") ? nextRaw : "/home";

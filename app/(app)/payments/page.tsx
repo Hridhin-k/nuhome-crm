@@ -3,7 +3,6 @@ import { ConfirmActionSheet } from "@/components/app/confirm-action-sheet";
 import { EmptyState } from "@/components/app/empty-state";
 import { Notice } from "@/components/app/notice";
 import { PageHeader } from "@/components/app/page-header";
-import { WorkflowStepper } from "@/components/app/workflow-stepper";
 import { listPendingPayments } from "@/lib/api/catalog";
 import { rel } from "@/lib/api/rel";
 import { requirePermission } from "@/lib/auth/guards";
@@ -14,9 +13,11 @@ export default async function PaymentsPage({
 }: {
   searchParams: Promise<{ notice?: string; error?: string }>;
 }) {
-  await requirePermission("payments.verify");
-  const { notice, error } = await searchParams;
-  const payments = await listPendingPayments();
+  const [, { notice, error }, payments] = await Promise.all([
+    requirePermission("payments.verify"),
+    searchParams,
+    listPendingPayments(),
+  ]);
 
   return (
     <div>
@@ -24,7 +25,6 @@ export default async function PaymentsPage({
         title="Payments"
         description="Verify advance, full, or nil payments recorded by Sales."
       />
-      <WorkflowStepper status="payment_pending_verification" />
       {notice === "verified" ? <Notice>Payment verified.</Notice> : null}
       {error ? <p className="mb-4 text-sm text-destructive">{error}</p> : null}
       {payments.length === 0 ? (

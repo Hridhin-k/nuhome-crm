@@ -3,6 +3,7 @@ import { EmptyState } from "@/components/app/empty-state";
 import { PageHeader } from "@/components/app/page-header";
 import { ProgressBar } from "@/components/app/progress-bar";
 import { StatusBadge } from "@/components/app/status-badge";
+import { OrderBucketNav } from "@/components/orders/order-bucket-nav";
 import { listOrders } from "@/lib/api/orders";
 import { rel } from "@/lib/api/rel";
 import { requireUser } from "@/lib/auth/guards";
@@ -11,24 +12,32 @@ import {
   TIMELINE_STEPS,
   timelineIndex,
 } from "@/lib/workflow/labels";
+import {
+  ORDER_BUCKET_ACCENT,
+  orderBucket,
+  statusesForOrderQuery,
+} from "@/lib/workflow/status-buckets";
 import type { WorkflowStatus } from "@/lib/workflow/types";
 
 export default async function OrdersPage({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string }>;
+  searchParams: Promise<{ status?: string; bucket?: string }>;
 }) {
-  const [{ status }] = await Promise.all([searchParams, requireUser()]);
-  const orders = await listOrders(
-    status ? (status as WorkflowStatus) : undefined,
-  );
+  const { status, bucket } = await searchParams;
+  const query = statusesForOrderQuery({ bucket, status });
+  const [, orders] = await Promise.all([
+    requireUser(),
+    listOrders(query.filter),
+  ]);
 
   return (
     <div>
       <PageHeader
         title="Orders"
-        description="Follow the job from payment to close."
+        description="Open work stays here. Closed jobs are only under Closed."
       />
+      <OrderBucketNav active={query.bucket === "attention" ? "open" : query.bucket} />
       {orders.length === 0 ? (
         <EmptyState
           title="No orders here"
@@ -39,6 +48,7 @@ export default async function OrdersPage({
           {orders.map((order) => {
             const workflowStatus = order.status as WorkflowStatus;
             const step = Math.max(timelineIndex(workflowStatus), 0);
+            const bucketId = orderBucket(workflowStatus);
             return (
               <li key={order.id}>
                 <AppLink
@@ -56,11 +66,9 @@ export default async function OrdersPage({
                   </p>
                   <ProgressBar
                     className="mt-4"
-                    value={step}
+                    value={bucketId === "closed" ? TIMELINE_STEPS.length - 1 : step}
                     max={TIMELINE_STEPS.length - 1}
-                    accent={
-                      workflowStatus === "order_on_hold" ? "violet" : "cobalt"
-                    }
+                    accent={ORDER_BUCKET_ACCENT[bucketId]}
                   />
                   <p className="mt-2 text-[13px] text-on-surface-variant">
                     {STATUS_LABELS[workflowStatus]}

@@ -23,6 +23,7 @@ import { requireUser } from "@/lib/auth/guards";
 import { roleHasPermission } from "@/lib/auth/permissions";
 import { formatInrExact } from "@/lib/format/money";
 import { nextRequiredAction } from "@/lib/workflow/next-action";
+import { displayWorkflowStatus, isClosedOrderStatus } from "@/lib/workflow/status-buckets";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import type { WorkflowStatus } from "@/lib/workflow/types";
@@ -58,9 +59,8 @@ export default async function QuoteDetailPage({
   const canSeeMargin = roleHasPermission(user.role, "quotes.read_margin");
   const status = quote.status as WorkflowStatus;
   const orderStatus = order?.status as WorkflowStatus | undefined;
-  const orderClosed =
-    orderStatus === "closed" || orderStatus === "delivered";
-  const displayStatus = orderClosed ? orderStatus! : status;
+  const orderClosed = orderStatus ? isClosedOrderStatus(orderStatus) : false;
+  const displayStatus = displayWorkflowStatus(status, orderStatus);
   const next = nextRequiredAction({
     status,
     role: user.role,

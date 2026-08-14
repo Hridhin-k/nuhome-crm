@@ -1,8 +1,6 @@
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
-export async function getDb() {
-  return createServerSupabaseClient();
-}
+export const getDb = createServerSupabaseClient;
 
 export async function throwQuery<T>(
   result: PromiseLike<{ data: T; error: { message: string } | null }>,

@@ -11,6 +11,8 @@ import { requireUser } from "@/lib/auth/guards";
 import { roleHasPermission } from "@/lib/auth/permissions";
 import { formatInr } from "@/lib/format/money";
 import { cn } from "@/lib/utils";
+import { canRecordPayment } from "@/lib/workflow/payment-recording";
+import { displayWorkflowStatus } from "@/lib/workflow/status-buckets";
 import type { WorkflowStatus } from "@/lib/workflow/types";
 
 export default async function CustomerDetailPage({
@@ -28,6 +30,14 @@ export default async function CustomerDetailPage({
   if (!customer) {
     notFound();
   }
+
+  const payableOrder = theirOrders.find((order) =>
+    canRecordPayment({
+      status: order.status as WorkflowStatus,
+      payments: [],
+      outstanding: 1,
+    }),
+  );
 
   return (
     <div className="flex flex-col gap-6">
@@ -48,9 +58,9 @@ export default async function CustomerDetailPage({
             Create quote
           </AppLink>
         ) : null}
-        {roleHasPermission(user.role, "payments.record") && theirOrders[0] ? (
+        {roleHasPermission(user.role, "payments.record") && payableOrder ? (
           <AppLink
-            href={`/orders/${theirOrders[0].id}#payment`}
+            href={`/orders/${payableOrder.id}#payment`}
             className={cn(buttonVariants({ variant: "outline", size: "lg" }))}
           >
             Record payment
@@ -63,10 +73,15 @@ export default async function CustomerDetailPage({
         <ul className="flex flex-col gap-2">
           {theirs.map((quote) => {
             const version = rel(quote.quote_versions);
+            const order = quote.order;
+            const status = displayWorkflowStatus(
+              quote.status as WorkflowStatus,
+              order?.status as WorkflowStatus | undefined,
+            );
             return (
               <li key={quote.id}>
                 <AppLink
-                  href={`/quotes/${quote.id}`}
+                  href={order ? `/orders/${order.id}` : `/quotes/${quote.id}`}
                   className="flex items-center justify-between rounded-xl border border-surface-variant bg-surface-container-lowest px-4 py-3"
                 >
                   <span>
@@ -75,7 +90,7 @@ export default async function CustomerDetailPage({
                       {formatInr(Number(version?.total ?? 0))}
                     </span>
                   </span>
-                  <StatusBadge status={quote.status as WorkflowStatus} />
+                  <StatusBadge status={status} />
                 </AppLink>
               </li>
             );

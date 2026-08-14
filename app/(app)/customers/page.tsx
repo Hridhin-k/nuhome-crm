@@ -8,6 +8,7 @@ import { listOrders } from "@/lib/api/orders";
 import { rel } from "@/lib/api/rel";
 import { requireUser } from "@/lib/auth/guards";
 import { roleHasPermission } from "@/lib/auth/permissions";
+import { latestOpenOrder } from "@/lib/workflow/status-buckets";
 import type { WorkflowStatus } from "@/lib/workflow/types";
 
 export default async function CustomersPage({
@@ -15,8 +16,7 @@ export default async function CustomersPage({
 }: {
   searchParams: Promise<{ q?: string }>;
 }) {
-  const user = await requireUser();
-  const { q } = await searchParams;
+  const [user, { q }] = await Promise.all([requireUser(), searchParams]);
   const [customers, orders] = await Promise.all([
     listCustomers(q),
     listOrders(),
@@ -58,7 +58,7 @@ export default async function CustomersPage({
         <ul className="flex flex-col gap-3">
           {customers.map((customer) => {
             const related = orders.filter((o) => o.customer_id === customer.id);
-            const latest = related[0];
+            const latest = latestOpenOrder(related);
             return (
               <li key={customer.id}>
                 <AppLink

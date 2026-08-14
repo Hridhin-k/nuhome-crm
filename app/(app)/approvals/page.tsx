@@ -2,15 +2,16 @@ import { AppLink } from "@/components/app/app-link";
 import { EmptyState } from "@/components/app/empty-state";
 import { PageHeader } from "@/components/app/page-header";
 import { StatusBadge } from "@/components/app/status-badge";
-import { WorkflowStepper } from "@/components/app/workflow-stepper";
 import { listPendingApprovals } from "@/lib/api/quotes";
 import { rel } from "@/lib/api/rel";
 import { requirePermission } from "@/lib/auth/guards";
 import { formatInr } from "@/lib/format/money";
 
 export default async function ApprovalsPage() {
-  await requirePermission("quotes.approve");
-  const quotes = await listPendingApprovals();
+  const [, quotes] = await Promise.all([
+    requirePermission("quotes.approve"),
+    listPendingApprovals(),
+  ]);
 
   return (
     <div>
@@ -18,7 +19,6 @@ export default async function ApprovalsPage() {
         title="Approvals"
         description="Review quotes submitted by Sales. Rejected quotes return for revision."
       />
-      <WorkflowStepper status="quote_pending_accounts" />
       {quotes.length === 0 ? (
         <EmptyState
           title="No pending quote approvals"

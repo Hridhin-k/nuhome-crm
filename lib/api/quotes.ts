@@ -1,34 +1,59 @@
+import { cache } from "react";
 import { getDb, throwQuery } from "@/lib/api/db";
 import type { WorkflowStatus } from "@/lib/workflow/types";
 
-export async function listQuotes() {
+const QUOTE_LIST_SELECT =
+  "id, quote_number, status, created_at, updated_at, customer_id, created_by, current_version_id, customers(name, phone), quote_versions!quotes_current_version_fk(version_number, total, status, rejection_reason)";
+
+type OrderRef = { id: string; status: string; quote_id: string };
+
+async function attachOrders<T extends { id: string }>(quotes: T[]) {
+  if (quotes.length === 0) {
+    return quotes.map((quote) => ({ ...quote, order: null as OrderRef | null }));
+  }
+
   const db = await getDb();
-  return throwQuery(
+  const orders = await throwQuery(
     db
-      .from("quotes")
-      .select(
-        "id, quote_number, status, created_at, updated_at, customer_id, created_by, current_version_id, customers(name, phone), quote_versions!quotes_current_version_fk(version_number, total, status, rejection_reason)",
-      )
-      .order("updated_at", { ascending: false }),
-    "Failed to load quotes",
+      .from("orders")
+      .select("id, status, quote_id")
+      .in(
+        "quote_id",
+        quotes.map((quote) => quote.id),
+      ),
+    "Failed to load order status",
   );
+
+  const byQuote = new Map(orders.map((order) => [order.quote_id, order]));
+  return quotes.map((quote) => ({
+    ...quote,
+    order: byQuote.get(quote.id) ?? null,
+  }));
 }
 
-export async function listQuotesForCustomer(customerId: string) {
+export const listQuotes = cache(async () => {
   const db = await getDb();
-  return throwQuery(
+  const quotes = await throwQuery(
+    db.from("quotes").select(QUOTE_LIST_SELECT).order("updated_at", { ascending: false }),
+    "Failed to load quotes",
+  );
+  return attachOrders(quotes);
+});
+
+export const listQuotesForCustomer = cache(async (customerId: string) => {
+  const db = await getDb();
+  const quotes = await throwQuery(
     db
       .from("quotes")
-      .select(
-        "id, quote_number, status, created_at, updated_at, customer_id, created_by, current_version_id, customers(name, phone), quote_versions!quotes_current_version_fk(version_number, total, status, rejection_reason)",
-      )
+      .select(QUOTE_LIST_SELECT)
       .eq("customer_id", customerId)
       .order("updated_at", { ascending: false }),
     "Failed to load quotes",
   );
-}
+  return attachOrders(quotes);
+});
 
-export async function listPendingApprovals() {
+export const listPendingApprovals = cache(async () => {
   const db = await getDb();
   return throwQuery(
     db
@@ -40,9 +65,9 @@ export async function listPendingApprovals() {
       .order("updated_at", { ascending: false }),
     "Failed to load approvals",
   );
-}
+});
 
-export async function getQuote(id: string) {
+export const getQuote = cache(async (id: string) => {
   const db = await getDb();
   const { data: quote, error } = await db
     .from("quotes")
@@ -100,4 +125,4 @@ export async function getQuote(id: string) {
     items: items.data ?? [],
     order: order.data,
   };
-}
+});

@@ -26,13 +26,14 @@ export default async function WalkInPage({
 }: {
   searchParams: Promise<{ customerId?: string; step?: string }>;
 }) {
-  await requirePermission("quotes.create");
-  const { customerId, step } = await searchParams;
-  const [customers, materials, categories] = await Promise.all([
-    listCustomers(),
-    listMaterials(),
-    listCategories(),
-  ]);
+  const [, { customerId, step }, customers, materials, categories] =
+    await Promise.all([
+      requirePermission("quotes.create"),
+      searchParams,
+      listCustomers(),
+      listMaterials(),
+      listCategories(),
+    ]);
 
   const initialStep =
     step === "2" || customerId ? (2 as const) : step === "3" ? (3 as const) : (1 as const);

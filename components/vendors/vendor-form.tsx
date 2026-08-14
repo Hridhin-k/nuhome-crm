@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
-import { createVendorAction, type ActionState } from "@/app/actions/workflow";
+import { createVendorAdminAction, type AdminActionState } from "@/app/actions/admin";
 import {
   FormSheet,
   FormSheetBody,
@@ -10,14 +10,15 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 
 export function VendorForm({
   triggerClassName = "w-auto",
 }: {
   triggerClassName?: string;
 }) {
-  const [state, action, pending] = useActionState<ActionState, FormData>(
-    createVendorAction,
+  const [state, action, pending] = useActionState<AdminActionState, FormData>(
+    createVendorAdminAction,
     {},
   );
   return (
@@ -37,6 +38,10 @@ export function VendorForm({
           <Input id="name" name="name" required className="h-11 min-h-11" />
           <Label htmlFor="phone">Phone</Label>
           <Input id="phone" name="phone" type="tel" className="h-11 min-h-11" />
+          <Label htmlFor="email">Email</Label>
+          <Input id="email" name="email" type="email" className="h-11 min-h-11" />
+          <Label htmlFor="notes">Notes</Label>
+          <Textarea id="notes" name="notes" rows={3} />
           {state.error ? (
             <p className="text-sm text-destructive">{state.error}</p>
           ) : null}

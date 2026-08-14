@@ -1,12 +1,13 @@
 import { cn } from "@/lib/utils";
 
-export type Accent = "cobalt" | "violet" | "forest" | "cerulean";
+export type Accent = "cobalt" | "violet" | "forest" | "cerulean" | "slate";
 
 export const accentText: Record<Accent, string> = {
   cobalt: "text-error",
   violet: "text-secondary",
   forest: "text-success",
   cerulean: "text-primary",
+  slate: "text-on-surface-variant",
 };
 
 export const accentFill: Record<Accent, string> = {
@@ -14,6 +15,7 @@ export const accentFill: Record<Accent, string> = {
   violet: "bg-secondary",
   forest: "bg-success",
   cerulean: "bg-primary",
+  slate: "bg-outline",
 };
 
 export const accentWash: Record<Accent, string> = {
@@ -21,6 +23,7 @@ export const accentWash: Record<Accent, string> = {
   violet: "bg-secondary/10",
   forest: "bg-success/10",
   cerulean: "bg-primary/10",
+  slate: "bg-surface-container",
 };
 
 export const accentLabel: Record<Accent, string> = {
@@ -28,6 +31,7 @@ export const accentLabel: Record<Accent, string> = {
   violet: "Pending",
   forest: "Ready",
   cerulean: "In Progress",
+  slate: "Closed",
 };
 
 export function ProgressBar({

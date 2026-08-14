@@ -121,6 +121,11 @@ const ACTION_COPY: Record<
     detail: (e) =>
       e.new_state ? `Role updated to ${e.new_state}` : "User role updated",
   },
+  PROFILE_UPDATED: {
+    title: "Staff profile updated",
+    detail: (e) =>
+      e.new_state ? `Status: ${e.new_state}` : "Profile updated",
+  },
 };
 
 export function formatAuditEvent(event: AuditEvent) {

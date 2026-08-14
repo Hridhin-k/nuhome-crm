@@ -1,6 +1,7 @@
+import { cache } from "react";
 import { getDb, throwQuery } from "@/lib/api/db";
 
-export async function listCustomers(query?: string) {
+export const listCustomers = cache(async (query?: string) => {
   const db = await getDb();
   let request = db
     .from("customers")
@@ -15,9 +16,9 @@ export async function listCustomers(query?: string) {
   }
 
   return throwQuery(request, "Failed to load customers");
-}
+});
 
-export async function getCustomer(id: string) {
+export const getCustomer = cache(async (id: string) => {
   const db = await getDb();
   const { data, error } = await db
     .from("customers")
@@ -29,7 +30,7 @@ export async function getCustomer(id: string) {
     throw new Error("Failed to load customer");
   }
   return data;
-}
+});
 
 export async function createCustomerRow(input: {
   name: string;

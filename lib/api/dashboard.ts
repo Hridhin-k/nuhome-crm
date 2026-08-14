@@ -5,6 +5,7 @@ import { listOrders } from "@/lib/api/orders";
 import { listPendingApprovals, listQuotes } from "@/lib/api/quotes";
 import type { Accent } from "@/components/app/progress-bar";
 import type { AppRole } from "@/lib/workflow/types";
+import { ORDER_BUCKET_STATUSES } from "@/lib/workflow/status-buckets";
 
 export type QueueCard = {
   title: string;
@@ -51,16 +52,16 @@ export const getOperationsSnapshot = cache(async (): Promise<OperationsSnapshot>
     ["quote_draft", "quote_rejected", "quote_approved"].includes(q.status),
   ).length;
   const active = orders.filter((o) =>
-    ["order_active", "sent_to_vendor", "vendor_dispatched", "items_received"].includes(
-      o.status,
-    ),
+    (ORDER_BUCKET_STATUSES.active as readonly string[]).includes(o.status),
   ).length;
-  const hold = orders.filter((o) => o.status === "order_on_hold").length;
+  const hold = orders.filter((o) =>
+    (ORDER_BUCKET_STATUSES.hold as readonly string[]).includes(o.status),
+  ).length;
   const deliveries = orders.filter((o) =>
-    ["delivery_unlocked", "delivery_pending_payment"].includes(o.status),
+    (ORDER_BUCKET_STATUSES.delivery as readonly string[]).includes(o.status),
   ).length;
   const delivered = orders.filter((o) =>
-    ["delivered", "closed"].includes(o.status),
+    (ORDER_BUCKET_STATUSES.closed as readonly string[]).includes(o.status),
   ).length;
 
   const stages: PipelineStage[] = [
@@ -77,14 +78,14 @@ export const getOperationsSnapshot = cache(async (): Promise<OperationsSnapshot>
       href: "/payments",
       accent: "cerulean",
     },
-    { label: "In fulfillment", count: active, href: "/fulfillment", accent: "cobalt" },
+    { label: "In fulfillment", count: active, href: "/orders?bucket=active", accent: "cobalt" },
     {
       label: "On hold",
       count: hold,
-      href: "/orders?status=order_on_hold",
+      href: "/orders?bucket=hold",
       accent: "violet",
     },
-    { label: "Ready to deliver", count: deliveries, href: "/ready", accent: "forest" },
+    { label: "Ready to deliver", count: deliveries, href: "/orders?bucket=delivery", accent: "forest" },
   ];
 
   const open = stages.reduce((sum, stage) => sum + stage.count, 0);
@@ -117,15 +118,15 @@ export const getOperationsSnapshot = cache(async (): Promise<OperationsSnapshot>
     {
       title: "Active orders",
       count: active,
-      href: "/orders",
-      detail: "In fulfillment",
+      href: "/orders?bucket=active",
+      detail: "In fulfillment — not closed",
       accent: "forest",
       progress: { value: active, max: Math.max(open, 1) },
     },
     {
       title: "Orders on hold",
       count: hold,
-      href: "/orders?status=order_on_hold",
+      href: "/orders?bucket=hold",
       detail: "Delivery locked until payment",
       accent: "violet",
       progress: { value: hold, max: Math.max(open, 1) },
@@ -133,8 +134,8 @@ export const getOperationsSnapshot = cache(async (): Promise<OperationsSnapshot>
     {
       title: "Deliveries",
       count: deliveries,
-      href: "/ready",
-      detail: "Received or ready to hand over",
+      href: "/orders?bucket=delivery",
+      detail: "Unlocked and ready to hand over",
       accent: "cerulean",
       progress: { value: deliveries, max: Math.max(open, 1) },
     },
@@ -159,13 +160,13 @@ export const getHomeQueues = cache(async (role: AppRole): Promise<QueueCard[]> =
       ["quote_draft", "quote_rejected", "quote_approved"].includes(q.status),
     ).length;
     const active = orders.filter((o) =>
-      ["order_active", "sent_to_vendor", "vendor_dispatched", "items_received"].includes(
-        o.status,
-      ),
+      (ORDER_BUCKET_STATUSES.active as readonly string[]).includes(o.status),
     ).length;
-    const hold = orders.filter((o) => o.status === "order_on_hold").length;
+    const hold = orders.filter((o) =>
+      (ORDER_BUCKET_STATUSES.hold as readonly string[]).includes(o.status),
+    ).length;
     const deliveries = orders.filter((o) =>
-      ["delivery_unlocked", "delivery_pending_payment"].includes(o.status),
+      (ORDER_BUCKET_STATUSES.delivery as readonly string[]).includes(o.status),
     ).length;
     const max = Math.max(pendingQuotes + active + hold + deliveries, 1);
 
@@ -186,22 +187,22 @@ export const getHomeQueues = cache(async (role: AppRole): Promise<QueueCard[]> =
       {
         title: "Active orders",
         count: active,
-        href: "/orders",
-        detail: "In fulfillment",
+        href: "/orders?bucket=active",
+        detail: "In fulfillment — not closed",
         progress: { value: active, max },
       },
       {
         title: "Orders on hold",
         count: hold,
-        href: "/orders?status=order_on_hold",
+        href: "/orders?bucket=hold",
         detail: "Delivery locked until payment",
         progress: { value: hold, max },
       },
       {
         title: "Deliveries",
         count: deliveries,
-        href: "/orders",
-        detail: "Received or ready to hand over",
+        href: "/orders?bucket=delivery",
+        detail: "Unlocked and ready to hand over",
         progress: { value: deliveries, max },
       },
     ]);
@@ -211,7 +212,10 @@ export const getHomeQueues = cache(async (role: AppRole): Promise<QueueCard[]> =
     const [approvals, payments, orders] = await Promise.all([
       listPendingApprovals(),
       listPendingPayments(),
-      listOrders(["payment_pending_verification", "order_on_hold"]),
+      listOrders([
+        ...ORDER_BUCKET_STATUSES.payment,
+        ...ORDER_BUCKET_STATUSES.hold,
+      ]),
     ]);
     const max = Math.max(approvals.length + payments.length + orders.length, 1);
     return withAccents([
@@ -232,7 +236,7 @@ export const getHomeQueues = cache(async (role: AppRole): Promise<QueueCard[]> =
       {
         title: "Orders requiring attention",
         count: orders.length,
-        href: "/orders",
+        href: "/orders?bucket=attention",
         detail: "Verification or on-hold balances",
         progress: { value: orders.length, max },
       },
@@ -240,11 +244,7 @@ export const getHomeQueues = cache(async (role: AppRole): Promise<QueueCard[]> =
   }
 
   if (role === "procurement") {
-    const orders = await listOrders([
-      "order_active",
-      "sent_to_vendor",
-      "vendor_dispatched",
-    ]);
+    const orders = await listOrders([...ORDER_BUCKET_STATUSES.active]);
     const max = Math.max(orders.length, 1);
     return withAccents([
       {
@@ -281,9 +281,8 @@ export const getHomeQueues = cache(async (role: AppRole): Promise<QueueCard[]> =
   }
 
   const orders = await listOrders([
-    "delivery_unlocked",
-    "order_on_hold",
-    "delivery_pending_payment",
+    ...ORDER_BUCKET_STATUSES.delivery,
+    ...ORDER_BUCKET_STATUSES.hold,
   ]);
   const max = Math.max(orders.length, 1);
   return withAccents([
@@ -300,13 +299,13 @@ export const getHomeQueues = cache(async (role: AppRole): Promise<QueueCard[]> =
     {
       title: "Blocked by payment",
       count: orders.filter((o) =>
-        ["order_on_hold", "delivery_pending_payment"].includes(o.status),
+        (ORDER_BUCKET_STATUSES.hold as readonly string[]).includes(o.status),
       ).length,
-      href: "/orders?status=order_on_hold",
+      href: "/orders?bucket=hold",
       detail: "Items received, delivery locked",
       progress: {
         value: orders.filter((o) =>
-          ["order_on_hold", "delivery_pending_payment"].includes(o.status),
+          (ORDER_BUCKET_STATUSES.hold as readonly string[]).includes(o.status),
         ).length,
         max,
       },

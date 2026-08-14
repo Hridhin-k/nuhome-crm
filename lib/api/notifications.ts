@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { getDb, throwQuery } from "@/lib/api/db";
 import type { AppNotification } from "@/lib/notifications/types";
 
@@ -24,7 +25,7 @@ function mapNotification(row: {
   };
 }
 
-export async function listNotifications(userId: string, limit = 30) {
+export const listNotifications = cache(async (userId: string, limit = 30) => {
   const db = await getDb();
   const rows = await throwQuery(
     db
@@ -36,7 +37,7 @@ export async function listNotifications(userId: string, limit = 30) {
     "Failed to load notifications",
   );
   return rows.map(mapNotification);
-}
+});
 
 export type { AppNotification } from "@/lib/notifications/types";
 export { notificationHref } from "@/lib/notifications/types";

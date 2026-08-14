@@ -22,6 +22,9 @@ export function humanizeError(error: unknown) {
     .replace(/\s+Where:[\s\S]*$/, "")
     .trim();
 
+  if (/already registered|duplicate key value/i.test(cleaned)) {
+    return "That record already exists.";
+  }
   if (/permission|42501|not authenticated/i.test(cleaned)) {
     return "You don’t have permission to do that.";
   }

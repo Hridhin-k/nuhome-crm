@@ -1,7 +1,17 @@
+import { cache } from "react";
 import { getDb, throwQuery } from "@/lib/api/db";
 import type { WorkflowStatus } from "@/lib/workflow/types";
 
-export async function listOrders(filter?: WorkflowStatus | WorkflowStatus[]) {
+export function listOrders(filter?: WorkflowStatus | WorkflowStatus[]) {
+  const key = !filter
+    ? ""
+    : Array.isArray(filter)
+      ? [...filter].sort().join(",")
+      : filter;
+  return listOrdersCached(key);
+}
+
+const listOrdersCached = cache(async (key: string) => {
   const db = await getDb();
   let request = db
     .from("orders")
@@ -10,16 +20,16 @@ export async function listOrders(filter?: WorkflowStatus | WorkflowStatus[]) {
     )
     .order("updated_at", { ascending: false });
 
-  if (Array.isArray(filter) && filter.length) {
-    request = request.in("status", filter);
-  } else if (typeof filter === "string") {
-    request = request.eq("status", filter);
+  if (key.includes(",")) {
+    request = request.in("status", key.split(",") as WorkflowStatus[]);
+  } else if (key) {
+    request = request.eq("status", key as WorkflowStatus);
   }
 
   return throwQuery(request, "Failed to load orders");
-}
+});
 
-export async function listOrdersForCustomer(customerId: string) {
+export const listOrdersForCustomer = cache(async (customerId: string) => {
   const db = await getDb();
   return throwQuery(
     db
@@ -31,9 +41,9 @@ export async function listOrdersForCustomer(customerId: string) {
       .order("updated_at", { ascending: false }),
     "Failed to load orders",
   );
-}
+});
 
-export async function listPaymentsForOrder(orderId: string) {
+export const listPaymentsForOrder = cache(async (orderId: string) => {
   const db = await getDb();
   return throwQuery(
     db
@@ -43,9 +53,9 @@ export async function listPaymentsForOrder(orderId: string) {
       .order("created_at", { ascending: false }),
     "Failed to load payments",
   );
-}
+});
 
-export async function getOrder(id: string) {
+export const getOrder = cache(async (id: string) => {
   const db = await getDb();
   const { data: order, error } = await db
     .from("orders")
@@ -110,4 +120,4 @@ export async function getOrder(id: string) {
     delivery: delivery.data,
     balance: balance.data,
   };
-}
+});

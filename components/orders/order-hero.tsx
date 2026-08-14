@@ -1,6 +1,7 @@
 import { StatusBadge } from "@/components/app/status-badge";
 import { formatInrExact } from "@/lib/format/money";
-import { STATUS_LABELS } from "@/lib/workflow/labels";
+import { STATUS_BADGE_CLASS, STATUS_LABELS } from "@/lib/workflow/labels";
+import { isClosedOrderStatus } from "@/lib/workflow/status-buckets";
 import type { WorkflowStatus } from "@/lib/workflow/types";
 import { cn } from "@/lib/utils";
 
@@ -28,12 +29,17 @@ export function OrderHero({
       ["items_received", "delivery_pending_payment", "order_on_hold"].includes(
         status,
       ));
+  const closed = isClosedOrderStatus(status);
 
   return (
     <section
       className={cn(
         "rounded-xl border bg-surface-container-lowest p-5 shadow-card",
-        blocked ? "border-error/30" : "border-surface-variant",
+        closed
+          ? "border-zinc-300"
+          : blocked
+            ? "border-error/30"
+            : "border-surface-variant",
       )}
     >
       <div className="flex flex-wrap items-start justify-between gap-4">
@@ -84,9 +90,11 @@ export function OrderHero({
       <div
         className={cn(
           "mt-4 rounded-lg px-4 py-3 text-sm",
-          blocked
-            ? "bg-error-container/50 text-on-error-container"
-            : "bg-surface-container text-on-surface-variant",
+          closed
+            ? "bg-zinc-100 text-zinc-700"
+            : blocked
+              ? "bg-error-container/50 text-on-error-container"
+              : STATUS_BADGE_CLASS[status],
         )}
         role="status"
         aria-label={`Order status: ${STATUS_LABELS[status]}. ${statusExplanation}`}

@@ -1,6 +1,7 @@
 import { OperationsPipeline } from "@/components/app/operations-pipeline";
 import { QueueCard } from "@/components/app/queue-card";
 import { getHomeQueues, getOperationsSnapshot } from "@/lib/api/dashboard";
+import { getCatalogSnapshot } from "@/lib/api/catalog";
 import { requireUser } from "@/lib/auth/guards";
 import { roleLabel } from "@/lib/auth/nav";
 import { AppLink } from "@/components/app/app-link";
@@ -13,7 +14,10 @@ export default async function HomePage() {
   const firstName = user.fullName.split(" ")[0] || user.fullName;
 
   if (user.role === "admin") {
-    const snapshot = await getOperationsSnapshot();
+    const [snapshot, catalog] = await Promise.all([
+      getOperationsSnapshot(),
+      getCatalogSnapshot(),
+    ]);
     return (
       <div className="space-y-6">
         {/* Mobile greeting */}
@@ -30,6 +34,33 @@ export default async function HomePage() {
         <div className="mb-2 hidden items-center justify-between md:flex">
           <h1 className="text-headline-md text-on-surface">Overview</h1>
         </div>
+
+        <section className="space-y-3">
+          <h2 className="text-headline-sm text-primary">Catalog</h2>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            <QueueCard
+              title="Users"
+              count={catalog.users}
+              href="/users"
+              detail="Add staff and assign roles"
+              accent="cobalt"
+            />
+            <QueueCard
+              title="Vendors"
+              count={catalog.vendors}
+              href="/vendors"
+              detail="Add or import suppliers"
+              accent="violet"
+            />
+            <QueueCard
+              title="Materials"
+              count={catalog.materials}
+              href="/materials"
+              detail="Catalogue for quoting"
+              accent="forest"
+            />
+          </div>
+        </section>
 
         {/* Metric bento — exact Stitch 3-up */}
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
