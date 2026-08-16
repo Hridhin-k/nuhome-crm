@@ -19,6 +19,7 @@ export function TaxInvoiceDocument({
   company,
   customer,
   quoteNumber,
+  orderNumber,
   version,
   items,
 }: {
@@ -41,6 +42,7 @@ export function TaxInvoiceDocument({
     address: string | null;
   } | null;
   quoteNumber: string;
+  orderNumber?: string;
   version: {
     version_number?: number;
     subtotal: number | string;
@@ -104,6 +106,14 @@ export function TaxInvoiceDocument({
                 {invoiceNumber}
               </span>
             </p>
+            {orderNumber ? (
+              <p>
+                <span className="text-secondary">Order: </span>
+                <span className="font-semibold text-on-surface">
+                  {orderNumber}
+                </span>
+              </p>
+            ) : null}
             <p>
               <span className="text-secondary">Quote: </span>
               <span className="font-semibold text-on-surface">{quoteNumber}</span>
@@ -233,7 +243,8 @@ export function TaxInvoiceDocument({
 
       <footer className="mt-10 border-t border-outline-variant pt-5 text-sm text-on-surface-variant">
         <p>
-          This is a GST tax invoice generated from order {quoteNumber}. Subject
+          This is a GST tax invoice generated from order{" "}
+          {orderNumber ?? quoteNumber}. Subject
           to the showroom&apos;s terms.
         </p>
       </footer>

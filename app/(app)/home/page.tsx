@@ -5,10 +5,12 @@ import { InboxList } from "@/components/app/inbox-list";
 import { PageFrame } from "@/components/app/page-frame";
 import { AppLink } from "@/components/app/app-link";
 import {
+  cardById,
   getHomeQueuesForRoles,
   getOperationsSnapshot,
   type QueueCard,
 } from "@/lib/api/dashboard";
+import { workWaiting } from "@/lib/workflow/home-counts";
 import { getCatalogSnapshot } from "@/lib/api/catalog";
 import { listRecentAudit } from "@/lib/api/reports";
 import { requireUser } from "@/lib/auth/guards";
@@ -45,10 +47,6 @@ function dateLabel(now = new Date()) {
   return `${date} • ${time} IST`;
 }
 
-function byTitle(queues: QueueCard[], match: string) {
-  return queues.find((card) => card.title.toLowerCase().includes(match));
-}
-
 function metric(
   card: QueueCard | undefined,
   spec: {
@@ -72,21 +70,21 @@ function metric(
 function roleMetrics(role: AppRole, queues: QueueCard[]): HeroMetric[] {
   if (role === "accounts") {
     return [
-      metric(byTitle(queues, "approval"), {
+      metric(cardById(queues, "approvals"), {
         label: "Approvals",
         href: "/approvals",
         tone: "violet",
         empty: "No quotes to review",
         filled: "Quotes to review",
       }),
-      metric(byTitle(queues, "verification") ?? byTitle(queues, "payment"), {
+      metric(cardById(queues, "payments"), {
         label: "Verify",
         href: "/payments",
         tone: "blue",
-        empty: "No payments waiting",
+        empty: "No receipts waiting",
         filled: "Receipts to confirm",
       }),
-      metric(byTitle(queues, "attention"), {
+      metric(cardById(queues, "attention"), {
         label: "Attention",
         href: "/orders?bucket=attention",
         tone: "amber",
@@ -98,21 +96,21 @@ function roleMetrics(role: AppRole, queues: QueueCard[]): HeroMetric[] {
 
   if (role === "procurement") {
     return [
-      metric(byTitle(queues, "awaiting vendor"), {
-        label: "Active",
+      metric(cardById(queues, "awaiting-vendor"), {
+        label: "Send",
         href: "/fulfillment",
         tone: "violet",
-        empty: "No orders to send",
-        filled: "Ready to send",
+        empty: "Nothing to send",
+        filled: "Not sent yet",
       }),
-      metric(byTitle(queues, "dispatch"), {
-        label: "Dispatch",
+      metric(cardById(queues, "vendor-dispatches"), {
+        label: "Sent",
         href: "/fulfillment",
         tone: "blue",
-        empty: "None in transit",
-        filled: "Waiting on vendor",
+        empty: "None waiting dispatch",
+        filled: "Sent, not dispatched",
       }),
-      metric(byTitle(queues, "overdue"), {
+      metric(cardById(queues, "vendor-overdue"), {
         label: "Overdue",
         href: "/fulfillment",
         tone: "rose",
@@ -124,21 +122,21 @@ function roleMetrics(role: AppRole, queues: QueueCard[]): HeroMetric[] {
 
   if (role === "store") {
     return [
-      metric(byTitle(queues, "ready"), {
+      metric(cardById(queues, "ready-delivery"), {
         label: "Ready",
         href: "/ready",
         tone: "green",
         empty: "Nothing to hand over",
         filled: "Unlocked for delivery",
       }),
-      metric(byTitle(queues, "collect") ?? byTitle(queues, "hold"), {
+      metric(cardById(queues, "collect-handover"), {
         label: "Hold",
         href: "/orders?bucket=hold",
         tone: "amber",
         empty: "No collections due",
         filled: "Collect at handover",
       }),
-      metric(byTitle(queues, "overdue"), {
+      metric(cardById(queues, "vendor-overdue"), {
         label: "Overdue",
         href: "/orders?bucket=active",
         tone: "rose",
@@ -149,26 +147,26 @@ function roleMetrics(role: AppRole, queues: QueueCard[]): HeroMetric[] {
   }
 
   return [
-    metric(byTitle(queues, "quote"), {
+    metric(cardById(queues, "pending-quotes"), {
       label: "Quotes",
-      href: "/quotes",
+      href: "/quotes?group=quote",
       tone: "violet",
       empty: "No open quotes",
-      filled: "Open quotes",
+      filled: "Not an order yet",
     }),
-    metric(byTitle(queues, "customer"), {
-      label: "Customers",
-      href: "/customers",
+    metric(cardById(queues, "payment"), {
+      label: "Payment",
+      href: "/orders?bucket=payment",
       tone: "blue",
-      empty: "No customers yet",
-      filled: "Open customers",
+      empty: "No payment waiting",
+      filled: "Sent or verifying",
     }),
-    metric(byTitle(queues, "active"), {
+    metric(cardById(queues, "active-orders"), {
       label: "Active",
       href: "/orders?bucket=active",
       tone: "green",
       empty: "No active orders",
-      filled: "Active orders",
+      filled: "With vendor or store",
     }),
   ];
 }
@@ -240,14 +238,14 @@ export default async function HomePage() {
             {
               label: "In play",
               value: snapshot.open,
-              href: "/orders",
+              href: "/quotes",
               tone: "violet",
               hint: filledHint(snapshot.open, "Floor is quiet", "Open jobs"),
             },
             {
               label: "Overdue",
               value: snapshot.overdue,
-              href: "/orders?bucket=active",
+              href: "/fulfillment",
               tone: "rose",
               hint: filledHint(snapshot.overdue, "Vendors on time", "Past expected date"),
             },
@@ -256,7 +254,11 @@ export default async function HomePage() {
               value: snapshot.delivered,
               href: "/orders?bucket=closed",
               tone: "green",
-              hint: filledHint(snapshot.delivered, "None closed yet", "Delivered jobs"),
+              hint: filledHint(
+                snapshot.delivered,
+                "None delivered yet",
+                "Delivered or closed",
+              ),
             },
           ]}
         />
@@ -315,7 +317,7 @@ export default async function HomePage() {
   }
 
   const queues = await getHomeQueuesForRoles(user.roles);
-  const openCount = queues.reduce((sum, card) => sum + card.count, 0);
+  const openCount = workWaiting(queues);
 
   return (
     <PageFrame>

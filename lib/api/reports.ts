@@ -6,6 +6,7 @@ import { listProfiles, profileRoles } from "@/lib/api/catalog";
 import { rel, relList } from "@/lib/api/rel";
 import { roleLabels } from "@/lib/auth/nav";
 import { daysSitting, inDateRange, matchesSearch, rangeToIso } from "@/lib/search";
+import { orderRef } from "@/lib/orders/ref";
 import type { AuditEvent } from "@/lib/workflow/audit-labels";
 import { isVendorOrderOverdue } from "@/lib/workflow/fulfillment";
 import { isClosedOrderStatus, isCompletedSaleStatus } from "@/lib/workflow/status-buckets";
@@ -178,11 +179,10 @@ const getBusinessReportCached = cache(
       const days = daysSitting(order.updated_at);
       if (days < 3) continue;
       bump(order.assigned_sales_id, "agingOrders");
-      const quote = rel(order.quotes);
       aging.push({
         id: order.id,
         href: `/orders/${order.id}`,
-        title: quote?.quote_number ?? "Order",
+        title: orderRef(order),
         owner: nameOf(order.assigned_sales_id),
         days,
         status,
@@ -242,6 +242,7 @@ export type CollectionRow = {
   method: string;
   reference: string;
   quoteNumber: string;
+  orderNumber: string;
   recordedBy: string;
 };
 
@@ -270,6 +271,9 @@ const listCollectionsCached = cache(async (key: string): Promise<CollectionRow[]
   const quoteByOrder = new Map(
     orders.map((order) => [order.id, rel(order.quotes)?.quote_number ?? ""]),
   );
+  const orderNoById = new Map(
+    orders.map((order) => [order.id, orderRef(order)]),
+  );
   return payments.map((row) => ({
     id: row.id,
     paidAt: row.paid_at,
@@ -278,6 +282,7 @@ const listCollectionsCached = cache(async (key: string): Promise<CollectionRow[]
     method: row.method ?? "",
     reference: row.reference_number ?? "",
     quoteNumber: (row.order_id ? quoteByOrder.get(row.order_id) : null) ?? "",
+    orderNumber: (row.order_id ? orderNoById.get(row.order_id) : null) ?? "",
     recordedBy: names.get(row.recorded_by) ?? "Staff",
   }));
 });

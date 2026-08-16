@@ -28,6 +28,7 @@ export default async function TaxInvoicePage({
         company={cargo.company}
         customer={cargo.customer}
         quoteNumber={cargo.quote?.quote_number ?? "Quote"}
+        orderNumber={cargo.orderNumber}
         version={version}
         items={cargo.items}
       />

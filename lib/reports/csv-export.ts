@@ -103,9 +103,10 @@ export function queuesCsv(snapshot: OperationsSnapshot) {
 
 export function collectionsCsv(rows: CollectionRow[]) {
   return toCsv(
-    ["paid_at_ist", "quote", "amount", "kind", "method", "reference", "recorded_by"],
+    ["paid_at_ist", "order", "quote", "amount", "kind", "method", "reference", "recorded_by"],
     rows.map((row) => [
       formatIstDateTime(row.paidAt),
+      row.orderNumber,
       row.quoteNumber,
       row.amount,
       row.kind,

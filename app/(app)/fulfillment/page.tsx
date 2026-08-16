@@ -4,6 +4,7 @@ import { PageFrame, wellClass } from "@/components/app/page-frame";
 import { PageHeader } from "@/components/app/page-header";
 import { listOrders } from "@/lib/api/orders";
 import { rel } from "@/lib/api/rel";
+import { orderRef } from "@/lib/orders/ref";
 import { requirePermission } from "@/lib/auth/guards";
 import { ORDER_BUCKET_STATUSES } from "@/lib/workflow/status-buckets";
 import {
@@ -50,8 +51,13 @@ export default async function FulfillmentPage() {
               <JobRow
                 key={order.id}
                 href={`/fulfillment/${order.id}`}
-                title={rel(order.quotes)?.quote_number ?? "Order"}
-                subtitle={rel(order.customers)?.name ?? "Customer"}
+                title={orderRef(order)}
+                subtitle={[
+                  rel(order.quotes)?.quote_number,
+                  rel(order.customers)?.name ?? "Customer",
+                ]
+                  .filter(Boolean)
+                  .join(" · ")}
                 hint={
                   overdue
                     ? `Overdue${expected ? ` · expected ${expected}` : ""}`

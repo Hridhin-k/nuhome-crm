@@ -1,5 +1,6 @@
 import { cache } from "react";
 import { getDb, throwQuery } from "@/lib/api/db";
+import { isOrderNumber } from "@/lib/orders/ref";
 import type { AttachmentKind } from "@/lib/validation/documents";
 import type { Database } from "@/types/database";
 
@@ -252,9 +253,22 @@ export async function upsertWarranty(input: {
 
 export const getTaxInvoice = cache(async (orderId: string) => {
   const db = await getDb();
+  let resolvedId = orderId;
+  if (isOrderNumber(orderId)) {
+    const { data: match } = await db
+      .from("orders")
+      .select("id")
+      .ilike("order_number", orderId.trim())
+      .maybeSingle();
+    if (!match) {
+      throw new Error("Order not found");
+    }
+    resolvedId = match.id;
+  }
+
   const { data: invoiceNumber, error: invoiceError } = await db.rpc(
     "ensure_tax_invoice",
-    { p_order_id: orderId },
+    { p_order_id: resolvedId },
   );
   if (invoiceError || !invoiceNumber) {
     throw new Error("Could not issue a tax invoice for this order");
@@ -262,8 +276,8 @@ export const getTaxInvoice = cache(async (orderId: string) => {
 
   const { data: order, error: orderError } = await db
     .from("orders")
-    .select("id, quote_id, customer_id, status, invoice_number, invoice_issued_at")
-    .eq("id", orderId)
+    .select("id, quote_id, customer_id, status, invoice_number, invoice_issued_at, order_number")
+    .eq("id", resolvedId)
     .maybeSingle();
   if (orderError || !order) {
     throw new Error("Order not found");
@@ -305,6 +319,7 @@ export const getTaxInvoice = cache(async (orderId: string) => {
     company,
     customer: customer.data,
     quote: quote.data,
+    orderNumber: order.order_number,
     items,
   };
 });

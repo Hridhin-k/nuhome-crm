@@ -197,9 +197,10 @@ function BusinessPrint({
 function CollectionsTable({ rows }: { rows: CollectionRow[] }) {
   return (
     <PrintTable
-      headers={["When", "Quote", "Amount", "Kind", "Method", "By"]}
+      headers={["When", "Order", "Quote", "Amount", "Kind", "Method", "By"]}
       rows={rows.map((row) => [
         formatIstDateTime(row.paidAt),
+        row.orderNumber,
         row.quoteNumber,
         formatInr(row.amount),
         row.kind,

@@ -11,6 +11,7 @@ import { rel } from "@/lib/api/rel";
 import { requireUser } from "@/lib/auth/guards";
 import { rolesHavePermission } from "@/lib/auth/permissions";
 import { latestOpenOrder } from "@/lib/workflow/status-buckets";
+import { orderRef } from "@/lib/orders/ref";
 import type { WorkflowStatus } from "@/lib/workflow/types";
 
 export default async function CustomersPage({
@@ -40,7 +41,7 @@ export default async function CustomersPage({
       <ListSearchForm
         action="/customers"
         q={q}
-        placeholder="Name, phone, email, or quote number"
+        placeholder="Name, phone, email, quote, or order ID"
       />
       {customers.length === 0 ? (
         <EmptyState
@@ -65,7 +66,7 @@ export default async function CustomersPage({
                 subtitle={customer.phone ?? "No phone"}
                 footer={
                   latest
-                    ? `Latest: ${rel(latest.quotes)?.quote_number ?? "Order"}`
+                    ? `Latest: ${orderRef(latest)}`
                     : names.get(customer.created_by ?? "")
                       ? `Walk-in · ${names.get(customer.created_by ?? "")}`
                       : "No orders yet"

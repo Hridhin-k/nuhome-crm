@@ -6,6 +6,7 @@ import type { WorkflowStatus } from "@/lib/workflow/types";
 import { cn } from "@/lib/utils";
 
 export function OrderHero({
+  orderNumber,
   quoteNumber,
   customerName,
   status,
@@ -14,7 +15,8 @@ export function OrderHero({
   outstanding,
   statusExplanation,
 }: {
-  quoteNumber: string;
+  orderNumber: string;
+  quoteNumber?: string;
   customerName: string;
   status: WorkflowStatus;
   total: number;
@@ -37,10 +39,11 @@ export function OrderHero({
         <div className="min-w-0">
           <p className="text-label-caps text-on-surface-variant">Order ID</p>
           <h1 className="mt-1 truncate text-headline-lg tracking-tight text-on-surface">
-            {quoteNumber}
+            {orderNumber}
           </h1>
           <p className="mt-1 truncate text-body-md text-on-surface-variant">
             {customerName}
+            {quoteNumber ? ` · ${quoteNumber}` : ""}
           </p>
         </div>
         <StatusBadge status={status} />

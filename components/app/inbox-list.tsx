@@ -27,6 +27,7 @@ export type InboxItem = {
   alert?: boolean;
   accent?: Accent;
   progress?: { value: number; max: number };
+  kind?: "queue" | "directory" | "flag";
 };
 
 function inboxIcon(title: string) {
@@ -63,7 +64,9 @@ function isAlertItem(item: InboxItem) {
 }
 
 export function pickHomeFocus(items: InboxItem[]) {
-  const live = items.filter((item) => item.count > 0);
+  const live = items.filter(
+    (item) => item.count > 0 && item.kind !== "directory",
+  );
   return (
     live.find((item) => isAlertItem(item)) ??
     live.find((item) => {
@@ -91,7 +94,9 @@ export function InboxList({
   const rest = focus
     ? items.filter((item) => item.title !== focus.title)
     : items;
-  const allClear = items.every((item) => item.count === 0);
+  const allClear = items
+    .filter((item) => item.kind !== "directory")
+    .every((item) => item.count === 0);
 
   return (
     <div className="flex flex-col gap-3">

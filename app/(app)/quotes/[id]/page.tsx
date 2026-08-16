@@ -136,6 +136,7 @@ export default async function QuoteDetailPage({
               </h1>
               <p className="mt-0.5 truncate text-body-sm text-on-surface-variant">
                 {quote.quote_number}
+                {order?.order_number ? ` · ${order.order_number}` : ""}
                 {current ? ` · v${current.version_number}` : ""}
               </p>
             </>
@@ -463,6 +464,7 @@ export default async function QuoteDetailPage({
               )}
             >
               {orderClosed ? "View closed order" : "Open order"}
+              {order.order_number ? ` ${order.order_number}` : ""}
             </AppLink>
           ) : null}
         </div>
@@ -475,6 +477,7 @@ export default async function QuoteDetailPage({
           )}
         >
           Open order
+          {order.order_number ? ` ${order.order_number}` : ""}
         </AppLink>
       ) : null}
 

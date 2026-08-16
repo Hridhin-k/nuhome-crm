@@ -47,6 +47,7 @@ export default async function PaymentsPage({
           {payments.map((payment) => {
             const quote = rel(payment.quotes);
             const customer = rel(quote?.customers);
+            const order = rel(payment.orders);
             const details = [
               kindLabel(payment.kind),
               formatInr(Number(payment.amount)),
@@ -63,7 +64,9 @@ export default async function PaymentsPage({
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
                     <p className="text-subheading text-on-surface">
-                      {customer?.name ?? quote?.quote_number}
+                      {order?.order_number ??
+                        customer?.name ??
+                        quote?.quote_number}
                     </p>
                     <span className="rounded-full bg-secondary-container px-2 py-0.5 text-label-caps text-on-secondary-container">
                       {kindLabel(payment.kind)}
@@ -73,7 +76,12 @@ export default async function PaymentsPage({
                     {formatInr(Number(payment.amount))}
                   </p>
                   <p className="mt-1 text-data-tabular text-on-surface-variant">
-                    {[payment.method, payment.reference_number]
+                    {[
+                      customer?.name,
+                      quote?.quote_number,
+                      payment.method,
+                      payment.reference_number,
+                    ]
                       .filter(Boolean)
                       .join(" · ") || "No method recorded"}
                   </p>

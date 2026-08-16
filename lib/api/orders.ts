@@ -1,9 +1,10 @@
 import { cache } from "react";
 import { getDb, throwQuery } from "@/lib/api/db";
+import { isOrderNumber } from "@/lib/orders/ref";
 import type { WorkflowStatus } from "@/lib/workflow/types";
 
 const ORDER_LIST_SELECT =
-  "id, status, updated_at, created_at, customer_id, quote_id, assigned_sales_id, on_hold_reason, customers(name, phone), quotes(quote_number, quote_versions!quotes_current_version_fk(total, margin_amount)), vendor_orders(status, expected_delivery_at, received_at, sent_at, dispatched_at)";
+  "id, order_number, status, updated_at, created_at, customer_id, quote_id, assigned_sales_id, on_hold_reason, customers(name, phone), quotes(quote_number, quote_versions!quotes_current_version_fk(total, margin_amount)), vendor_orders(status, expected_delivery_at, received_at, sent_at, dispatched_at)";
 
 export function listOrders(filter?: WorkflowStatus | WorkflowStatus[]) {
   const key = !filter
@@ -56,13 +57,15 @@ export const listPaymentsForOrder = cache(async (orderId: string) => {
 
 export const getOrder = cache(async (id: string) => {
   const db = await getDb();
-  const { data: order, error } = await db
-    .from("orders")
-    .select(
-      "id, status, quote_id, customer_id, assigned_sales_id, on_hold_reason, activated_at, created_at, updated_at",
-    )
-    .eq("id", id)
-    .maybeSingle();
+  const lookup = isOrderNumber(id)
+    ? db.from("orders").select(
+        "id, order_number, status, quote_id, customer_id, assigned_sales_id, on_hold_reason, activated_at, created_at, updated_at",
+      ).ilike("order_number", id.trim())
+    : db.from("orders").select(
+        "id, order_number, status, quote_id, customer_id, assigned_sales_id, on_hold_reason, activated_at, created_at, updated_at",
+      ).eq("id", id);
+
+  const { data: order, error } = await lookup.maybeSingle();
 
   if (error) {
     throw new Error("Failed to load order");
@@ -71,6 +74,7 @@ export const getOrder = cache(async (id: string) => {
     return null;
   }
 
+  const orderId = order.id;
   const [customer, quote, items, payments, vendorOrders, delivery, balance] =
     await Promise.all([
       db
@@ -88,27 +92,27 @@ export const getOrder = cache(async (id: string) => {
       db
         .from("order_items")
         .select("id, description, quantity, quantity_received, quantity_written_off, write_off_reason, quantity_pending")
-        .eq("order_id", id),
+        .eq("order_id", orderId),
       db
         .from("payments")
         .select(
           "id, kind, amount, status, recorded_by, created_at, notes, method, reference_number, payment_verifications(decision, notes, created_at)",
         )
-        .eq("order_id", id)
+        .eq("order_id", orderId)
         .order("created_at", { ascending: false }),
       db
         .from("vendor_orders")
         .select(
           "id, vendor_id, status, sent_at, dispatched_at, received_at, expected_delivery_at, vendors(name), vendor_order_items(id, order_item_id, quantity, quantity_received, quantity_written_off)",
         )
-        .eq("order_id", id)
+        .eq("order_id", orderId)
         .order("created_at", { ascending: false }),
       db
         .from("deliveries")
         .select("id, delivered_at, notes")
-        .eq("order_id", id)
+        .eq("order_id", orderId)
         .maybeSingle(),
-      db.rpc("order_balance", { p_order_id: id }),
+      db.rpc("order_balance", { p_order_id: orderId }),
     ]);
 
   return {

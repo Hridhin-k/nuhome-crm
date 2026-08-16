@@ -68,6 +68,7 @@ export default async function QuotesPage({
       matchesSearch(
         [
           quote.quote_number,
+          quote.order?.order_number,
           customer?.name,
           customer?.phone,
           names.get(quote.created_by),
@@ -92,7 +93,7 @@ export default async function QuotesPage({
     <PageFrame>
       <PageHeader
         title="Quotes"
-        description="Floor book is shared. Search by quote number, phone, or date."
+        description="Floor book is shared. Search by quote number, order ID, phone, or date."
         action={quotes.length > 0 ? newQuoteAction : null}
       />
       {notice === "submitted" ? (
@@ -117,7 +118,7 @@ export default async function QuotesPage({
             from={from}
             to={to}
             showDates
-            placeholder="Quote number, customer, phone..."
+            placeholder="Quote number, order ID, customer, phone..."
             hidden={{
               group: activeGroup === "open" ? undefined : activeGroup,
               status: exactStatus,
@@ -156,8 +157,9 @@ export default async function QuotesPage({
                   <JobRow
                     key={quote.id}
                     href={href}
-                    title={quote.quote_number}
+                    title={quote.order?.order_number ?? quote.quote_number}
                     subtitle={[
+                      quote.order ? quote.quote_number : null,
                       rel(quote.customers)?.name ?? "Customer",
                       names.get(quote.created_by),
                     ]

@@ -88,8 +88,10 @@ export default async function FulfillmentDetailPage({
   return (
     <PageFrame width="detail" className="flex flex-col gap-5">
       <PageHeader
-        title={detail.quote?.quote_number ?? "Fulfillment"}
-        description={detail.customer?.name}
+        title={detail.order.order_number}
+        description={[detail.quote?.quote_number, detail.customer?.name]
+          .filter(Boolean)
+          .join(" · ")}
       />
       {notice === "sent-vendor" ? <Notice>Sent to vendor.</Notice> : null}
       {notice === "dispatched" ? <Notice>Marked as dispatched.</Notice> : null}

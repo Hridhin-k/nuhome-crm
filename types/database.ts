@@ -586,6 +586,7 @@ export type Database = {
           customer_id: string
           id: string
           on_hold_reason: string | null
+          order_number: string
           quote_id: string
           status: Database["public"]["Enums"]["workflow_status"]
           updated_at: string
@@ -599,6 +600,7 @@ export type Database = {
           customer_id: string
           id?: string
           on_hold_reason?: string | null
+          order_number?: string
           quote_id: string
           status?: Database["public"]["Enums"]["workflow_status"]
           updated_at?: string
@@ -612,6 +614,7 @@ export type Database = {
           customer_id?: string
           id?: string
           on_hold_reason?: string | null
+          order_number?: string
           quote_id?: string
           status?: Database["public"]["Enums"]["workflow_status"]
           updated_at?: string

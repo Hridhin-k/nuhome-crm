@@ -127,7 +127,8 @@ export default async function OrderDetailPage({
       ) : null}
 
       <OrderHero
-        quoteNumber={quote?.quote_number ?? "Order"}
+        orderNumber={order.order_number}
+        quoteNumber={quote?.quote_number}
         customerName={customer?.name ?? "Customer"}
         status={status}
         total={total}

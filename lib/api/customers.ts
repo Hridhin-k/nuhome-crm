@@ -16,8 +16,14 @@ export const listCustomers = cache(async (query?: string) => {
       db.from("quotes").select("customer_id").ilike("quote_number", `%${q}%`),
       "Failed to search quotes",
     );
+    const ordered = await throwQuery(
+      db.from("orders").select("customer_id").ilike("order_number", `%${q}%`),
+      "Failed to search orders",
+    );
     const quoteCustomerIds = [
-      ...new Set(quoted.map((row) => row.customer_id).filter(Boolean)),
+      ...new Set(
+        [...quoted, ...ordered].map((row) => row.customer_id).filter(Boolean),
+      ),
     ];
     request = request.or(
       [

@@ -4,6 +4,7 @@ import { PageFrame, wellClass } from "@/components/app/page-frame";
 import { PageHeader } from "@/components/app/page-header";
 import { listOrders } from "@/lib/api/orders";
 import { rel } from "@/lib/api/rel";
+import { orderRef } from "@/lib/orders/ref";
 import { requirePermission } from "@/lib/auth/guards";
 import type { WorkflowStatus } from "@/lib/workflow/types";
 
@@ -31,8 +32,13 @@ export default async function ReadyPage() {
             <JobRow
               key={order.id}
               href={`/orders/${order.id}`}
-              title={rel(order.quotes)?.quote_number ?? "Order"}
-              subtitle={rel(order.customers)?.name ?? undefined}
+              title={orderRef(order)}
+              subtitle={[
+                rel(order.quotes)?.quote_number,
+                rel(order.customers)?.name,
+              ]
+                .filter(Boolean)
+                .join(" · ") || undefined}
               hint="Complete handover with the customer."
               status={order.status as WorkflowStatus}
             />

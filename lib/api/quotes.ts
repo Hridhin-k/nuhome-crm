@@ -5,7 +5,7 @@ import type { WorkflowStatus } from "@/lib/workflow/types";
 const QUOTE_LIST_SELECT =
   "id, quote_number, status, created_at, updated_at, customer_id, created_by, current_version_id, customers(name, phone), quote_versions!quotes_current_version_fk(version_number, total, margin_amount, margin_percent, status, rejection_reason)";
 
-type OrderRef = { id: string; status: string; quote_id: string };
+type OrderRef = { id: string; status: string; quote_id: string; order_number: string };
 
 async function attachOrders<T extends { id: string }>(quotes: T[]) {
   if (quotes.length === 0) {
@@ -16,7 +16,7 @@ async function attachOrders<T extends { id: string }>(quotes: T[]) {
   const orders = await throwQuery(
     db
       .from("orders")
-      .select("id, status, quote_id, assigned_sales_id")
+      .select("id, status, quote_id, assigned_sales_id, order_number")
       .in(
         "quote_id",
         quotes.map((quote) => quote.id),
@@ -97,7 +97,7 @@ export const getQuote = cache(async (id: string) => {
       )
       .eq("quote_id", id)
       .order("version_number", { ascending: false }),
-    db.from("orders").select("id, status").eq("quote_id", id).maybeSingle(),
+    db.from("orders").select("id, status, order_number").eq("quote_id", id).maybeSingle(),
   ]);
 
   const versionIds = (versions.data ?? []).map((v) => v.id);

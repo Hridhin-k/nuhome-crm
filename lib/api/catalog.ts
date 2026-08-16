@@ -93,7 +93,7 @@ export const listPendingPayments = cache(async () => {
     db
       .from("payments")
       .select(
-        "id, amount, kind, method, reference_number, status, created_at, quote_id, order_id, recorded_by, quotes(quote_number, customers(name))",
+        "id, amount, kind, method, reference_number, status, created_at, quote_id, order_id, recorded_by, quotes(quote_number, customers(name)), orders(order_number)",
       )
       .eq("status", "pending")
       .order("created_at", { ascending: false }),

@@ -51,7 +51,10 @@ const ACTION_COPY: Record<
   },
   QUOTE_SENT_TO_CUSTOMER: {
     title: "Quote sent to customer",
-    detail: () => "Customer can review and confirm",
+    detail: (e) =>
+      e.metadata?.order_number
+        ? `Customer can review ${String(e.metadata.order_number)}`
+        : "Customer can review and confirm",
   },
   QUOTE_SHARED_VIA_WHATSAPP: {
     title: "Shared via WhatsApp",
@@ -59,7 +62,10 @@ const ACTION_COPY: Record<
   },
   ORDER_CREATED: {
     title: "Order created",
-    detail: () => "Order opened from approved quote",
+    detail: (e) =>
+      e.metadata?.order_number
+        ? `Order ${String(e.metadata.order_number)} opened from approved quote`
+        : "Order opened from approved quote",
   },
   PAYMENT_RECORDED: {
     title: "Payment recorded",

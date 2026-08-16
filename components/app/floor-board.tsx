@@ -24,15 +24,6 @@ export function FloorBoard({
   customers: number;
   delivered: number;
 }) {
-  const live = census
-    .filter(
-      (cell) =>
-        cell.status !== "delivered" &&
-        cell.status !== "closed" &&
-        cell.status !== "cancelled",
-    )
-    .reduce((sum, cell) => sum + cell.count, 0);
-
   return (
     <section className="overflow-hidden rounded-2xl border border-outline-variant bg-card shadow-card">
       <div className="flex flex-wrap items-end justify-between gap-3 border-b border-outline-variant px-4 py-4">
@@ -50,13 +41,13 @@ export function FloorBoard({
             <dt className="text-[10px] font-medium tracking-wide text-on-surface-variant uppercase">
               In play
             </dt>
-            <dd className="text-headline-sm text-on-surface">{live}</dd>
+            <dd className="text-headline-sm text-on-surface">{open}</dd>
           </div>
           <div>
             <dt className="text-[10px] font-medium tracking-wide text-on-surface-variant uppercase">
-              Open
+              Overdue
             </dt>
-            <dd className="text-headline-sm text-on-surface">{open}</dd>
+            <dd className="text-headline-sm text-error">{overdue}</dd>
           </div>
           <div>
             <dt className="text-[10px] font-medium tracking-wide text-on-surface-variant uppercase">
@@ -81,7 +72,7 @@ export function FloorBoard({
       </ul>
       <div className="flex flex-wrap gap-2 border-t border-outline-variant px-3 py-3">
         <AttentionChip
-          href="/orders?bucket=active"
+          href="/fulfillment"
           label="Vendor overdue"
           count={overdue}
           alert

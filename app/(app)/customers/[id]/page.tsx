@@ -15,6 +15,7 @@ import { rel } from "@/lib/api/rel";
 import { requireUser } from "@/lib/auth/guards";
 import { rolesHavePermission } from "@/lib/auth/permissions";
 import { formatInr } from "@/lib/format/money";
+import { orderRef } from "@/lib/orders/ref";
 import { cn } from "@/lib/utils";
 import { canRecordPayment } from "@/lib/workflow/payment-recording";
 import { displayWorkflowStatus } from "@/lib/workflow/status-buckets";
@@ -154,7 +155,8 @@ export default async function CustomerDetailPage({
             <JobRow
               key={order.id}
               href={`/orders/${order.id}`}
-              title={rel(order.quotes)?.quote_number ?? "Order"}
+              title={orderRef(order)}
+              subtitle={rel(order.quotes)?.quote_number}
               status={order.status as WorkflowStatus}
             />
           ))}

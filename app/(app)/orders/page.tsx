@@ -10,6 +10,7 @@ import { rel } from "@/lib/api/rel";
 import { requireUser } from "@/lib/auth/guards";
 import { formatInr } from "@/lib/format/money";
 import { inDateRange, matchesSearch, parseYmd } from "@/lib/search";
+import { orderRef } from "@/lib/orders/ref";
 import { STATUS_NEXT_LINE } from "@/lib/workflow/labels";
 import { statusesForOrderQuery } from "@/lib/workflow/status-buckets";
 import type { WorkflowStatus } from "@/lib/workflow/types";
@@ -42,6 +43,7 @@ export default async function OrdersPage({
     return (
       matchesSearch(
         [
+          order.order_number,
           quote?.quote_number,
           customer?.name,
           customer?.phone,
@@ -65,7 +67,7 @@ export default async function OrdersPage({
         from={from}
         to={to}
         showDates
-        placeholder="Quote number, customer, phone..."
+        placeholder="Order ID, quote number, customer, phone..."
         hidden={{ bucket: query.bucket === "open" ? undefined : query.bucket }}
       />
       <OrderBucketNav
@@ -91,8 +93,8 @@ export default async function OrdersPage({
               <JobRow
                 key={order.id}
                 href={`/orders/${order.id}`}
-                title={quote?.quote_number ?? "Order"}
-                subtitle={[rel(order.customers)?.name, owner]
+                title={orderRef(order)}
+                subtitle={[quote?.quote_number, rel(order.customers)?.name, owner]
                   .filter(Boolean)
                   .join(" · ")}
                 amount={total ? formatInr(total) : undefined}
