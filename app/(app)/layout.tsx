@@ -20,7 +20,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
   ];
 
   return (
-    <div className="flex min-h-dvh min-w-0 flex-col overflow-x-clip bg-background text-on-background">
+    <div className="flex min-h-dvh min-w-0 flex-col bg-background text-on-background">
       <div className="print:hidden">
       <AppNavbar
         items={items}
@@ -31,7 +31,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
       />
       </div>
 
-      <main className="min-w-0 flex-1 overflow-x-clip overflow-y-auto bg-background px-4 pt-0 pb-[calc(5.5rem+env(safe-area-inset-bottom))] print:bg-white print:px-0 print:pb-0 md:px-8 md:pt-6 md:pb-10">
+      <main className="min-w-0 flex-1 bg-background px-4 pt-0 pb-[calc(5.5rem+env(safe-area-inset-bottom))] print:bg-white print:px-0 print:pb-0 md:px-8 md:pt-6 md:pb-10">
         <div className="pt-4 md:pt-0">{children}</div>
       </main>
 

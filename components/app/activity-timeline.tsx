@@ -30,7 +30,7 @@ export function ActivityTimeline({
 }) {
   if (events.length === 0) {
     return (
-      <section className="rounded-lg border border-outline-variant bg-card p-4 shadow-card">
+      <section className="rounded-2xl border border-outline-variant bg-card p-4 shadow-card">
         <h2 className="text-subheading text-on-surface">Activity</h2>
         <p className="mt-3 text-sm text-on-surface-variant">{emptyMessage}</p>
       </section>
@@ -40,7 +40,7 @@ export function ActivityTimeline({
   const groups = groupAuditByDay(events);
 
   return (
-    <section className="rounded-lg border border-outline-variant bg-card p-4 shadow-card">
+    <section className="rounded-2xl border border-outline-variant bg-card p-4 shadow-card">
       <h2 className="text-subheading text-on-surface">Activity</h2>
       <div className="mt-4 space-y-6">
         {groups.map((group) => (

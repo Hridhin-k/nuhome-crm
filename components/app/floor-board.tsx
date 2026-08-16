@@ -34,7 +34,7 @@ export function FloorBoard({
     .reduce((sum, cell) => sum + cell.count, 0);
 
   return (
-    <section className="overflow-hidden rounded-lg border border-outline-variant bg-card shadow-card">
+    <section className="overflow-hidden rounded-2xl border border-outline-variant bg-card shadow-card">
       <div className="flex flex-wrap items-end justify-between gap-3 border-b border-outline-variant px-4 py-4">
         <div className="min-w-0">
           <p className="text-label-caps text-on-surface-variant">Floor</p>
@@ -107,7 +107,7 @@ function FloorTile({ cell }: { cell: StatusCensus }) {
     <AppLink
       href={cell.href}
       className={cn(
-        "flex min-h-16 flex-col justify-between rounded-md px-3 py-2 transition-opacity",
+        "flex min-h-[4.25rem] flex-col justify-between rounded-xl px-3 py-2.5 transition-opacity",
         STATUS_BADGE_CLASS[cell.status as WorkflowStatus],
         muted && "opacity-45",
       )}

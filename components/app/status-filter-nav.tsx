@@ -15,7 +15,7 @@ export function StatusFilterNav({
   return (
     <nav
       aria-label={ariaLabel}
-      className="-mx-4 mb-4 flex gap-2 overflow-x-auto px-4 py-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      className="-mx-4 mb-4 flex gap-2 overflow-x-auto overscroll-x-contain px-4 py-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
     >
       {items.map((item) => {
         const selected = item.id === active;
