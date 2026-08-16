@@ -48,3 +48,9 @@ export const getSessionUser = cache(async (): Promise<SessionUser | null> => {
     isActive: profile?.is_active ?? true,
   };
 });
+
+export const getAccessToken = cache(async () => {
+  const supabase = await createServerSupabaseClient();
+  const { data } = await supabase.auth.getSession();
+  return data.session?.access_token ?? null;
+});

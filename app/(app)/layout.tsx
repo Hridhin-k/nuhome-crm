@@ -6,12 +6,17 @@ import { PrefetchRoutes } from "@/components/app/prefetch-routes";
 import { RouteProgress } from "@/components/app/route-progress";
 import { NotificationBellFallback } from "@/components/app/notification-bell";
 import { NotificationBellLoader } from "@/components/app/notification-bell-loader";
+import { LiveRefresh } from "@/components/app/live-refresh";
 import { requireUser } from "@/lib/auth/guards";
+import { getAccessToken } from "@/lib/auth/session";
 import { navForRoles, roleLabels } from "@/lib/auth/nav";
 import { rolesHavePermission } from "@/lib/auth/permissions";
 
 export default async function AppLayout({ children }: { children: ReactNode }) {
-  const user = await requireUser();
+  const [user, accessToken] = await Promise.all([
+    requireUser(),
+    getAccessToken(),
+  ]);
   const items = navForRoles(user.roles, user.role);
   const canQuote = rolesHavePermission(user.roles, "quotes.create");
   const canAdmin = rolesHavePermission(user.roles, "admin.manage");
@@ -48,6 +53,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
         {canQuote ? <WalkInFab /> : null}
       </div>
       <PrefetchRoutes hrefs={warm} />
+      <LiveRefresh userId={user.id} accessToken={accessToken} />
     </div>
   );
 }

@@ -11,7 +11,10 @@ import {
   notificationHref,
   type AppNotification,
 } from "@/lib/notifications/types";
-import { createBrowserSupabaseClient } from "@/lib/supabase/client";
+import {
+  bindRealtimeAuth,
+  createBrowserSupabaseClient,
+} from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 import {
   Sheet,
@@ -73,9 +76,11 @@ export function NotificationBellFallback() {
 export function NotificationBell({
   userId,
   initial,
+  accessToken,
 }: {
   userId: string;
   initial: AppNotification[];
+  accessToken: string | null;
 }) {
   const [open, setOpen] = useState(false);
   const [items, setItems] = useState(initial);
@@ -92,45 +97,57 @@ export function NotificationBell({
 
   useEffect(() => {
     const supabase = createBrowserSupabaseClient();
-    const channel = supabase
-      .channel(`notifications:${userId}`)
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "notifications",
-          filter: `user_id=eq.${userId}`,
-        },
-        (payload) => {
-          const next = mapRow(payload.new as Record<string, unknown>);
-          setItems((current) => [
-            next,
-            ...current.filter((item) => item.id !== next.id),
-          ]);
-        },
-      )
-      .on(
-        "postgres_changes",
-        {
-          event: "UPDATE",
-          schema: "public",
-          table: "notifications",
-          filter: `user_id=eq.${userId}`,
-        },
-        (payload) => {
-          const next = mapRow(payload.new as Record<string, unknown>);
-          setItems((current) =>
-            current.map((item) => (item.id === next.id ? next : item)),
-          );
-        },
-      )
-      .subscribe();
+    let cancelled = false;
+    let channel: ReturnType<typeof supabase.channel> | null = null;
+
+    void (async () => {
+      await bindRealtimeAuth(accessToken);
+      if (cancelled) {
+        return;
+      }
+      channel = supabase
+        .channel(`notifications:${userId}`)
+        .on(
+          "postgres_changes",
+          {
+            event: "INSERT",
+            schema: "public",
+            table: "notifications",
+            filter: `user_id=eq.${userId}`,
+          },
+          (payload) => {
+            const next = mapRow(payload.new as Record<string, unknown>);
+            setItems((current) => [
+              next,
+              ...current.filter((item) => item.id !== next.id),
+            ]);
+          },
+        )
+        .on(
+          "postgres_changes",
+          {
+            event: "UPDATE",
+            schema: "public",
+            table: "notifications",
+            filter: `user_id=eq.${userId}`,
+          },
+          (payload) => {
+            const next = mapRow(payload.new as Record<string, unknown>);
+            setItems((current) =>
+              current.map((item) => (item.id === next.id ? next : item)),
+            );
+          },
+        )
+        .subscribe();
+    })();
 
     return () => {
-      void supabase.removeChannel(channel);
+      cancelled = true;
+      if (channel) {
+        void supabase.removeChannel(channel);
+      }
     };
-  }, [userId]);
+  }, [userId, accessToken]);
 
   function markRead(id: string) {
     setItems((current) =>
