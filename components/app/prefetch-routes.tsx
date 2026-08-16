@@ -11,7 +11,9 @@ export function PrefetchRoutes({ hrefs }: { hrefs: string[] }) {
   useEffect(() => {
     const routes = key.split("|").filter(Boolean);
     for (const href of routes) {
-      void router.prefetch(href);
+      void router.prefetch(href, { kind: "full" } as Parameters<
+        typeof router.prefetch
+      >[1]);
     }
   }, [key, router]);
 

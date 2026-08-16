@@ -1,7 +1,5 @@
-import {
-  QuoteBuilder,
-  linesFromQuoteItems,
-} from "@/components/quotes/quote-builder";
+import { QuoteBuilder } from "@/components/quotes/quote-builder";
+import { linesFromQuoteItems } from "@/lib/quotes/lines";
 import { PageFrame } from "@/components/app/page-frame";
 import { PageHeader } from "@/components/app/page-header";
 import { listCategories, listMaterials } from "@/lib/api/catalog";

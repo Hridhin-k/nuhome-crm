@@ -31,6 +31,17 @@ const listOrdersCached = cache(async (key: string) => {
   return throwQuery(request, "Failed to load orders");
 });
 
+export const listOrderFooters = cache(async () => {
+  const db = await getDb();
+  return throwQuery(
+    db
+      .from("orders")
+      .select("id, order_number, status, customer_id, updated_at")
+      .order("updated_at", { ascending: false }),
+    "Failed to load orders",
+  );
+});
+
 export const listOrdersForCustomer = cache(async (customerId: string) => {
   const db = await getDb();
   return throwQuery(

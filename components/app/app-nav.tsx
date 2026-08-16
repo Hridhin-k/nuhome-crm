@@ -1,14 +1,13 @@
 "use client";
 
 import { AppLink } from "@/components/app/app-link";
-import { NotificationBell } from "@/components/app/notification-bell";
 import { usePathname } from "next/navigation";
 import { NavIcon } from "@/components/app/nav-icon";
 import { ChevronLeft } from "lucide-react";
 import { navChrome } from "@/lib/auth/nav-chrome";
-import type { AppNotification } from "@/lib/notifications/types";
 import { cn } from "@/lib/utils";
 import type { NavItem } from "@/lib/auth/nav";
+import type { ReactNode } from "react";
 
 export function MobileBottomNav({ items }: { items: NavItem[] }) {
   const pathname = usePathname();
@@ -56,14 +55,12 @@ export function AppNavbar({
   items,
   name,
   role,
-  userId,
-  notifications,
+  bell,
 }: {
   items: NavItem[];
   name: string;
   role: string;
-  userId: string;
-  notifications: AppNotification[];
+  bell: ReactNode;
 }) {
   const pathname = usePathname();
   const { title, backHref } = navChrome(pathname);
@@ -128,7 +125,7 @@ export function AppNavbar({
         </nav>
 
         <div className="ml-auto flex w-16 shrink-0 items-center justify-end gap-1 md:w-auto md:gap-2">
-          <NotificationBell userId={userId} initial={notifications} />
+          {bell}
           <AppLink
             href="/more"
             className="inline-flex items-center gap-2 rounded-lg py-1 pr-1 pl-1 transition-colors hover:bg-white/10"

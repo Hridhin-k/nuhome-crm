@@ -2,6 +2,17 @@ import { cache } from "react";
 import { getDb, throwQuery } from "@/lib/api/db";
 import { sanitizeSearch } from "@/lib/search";
 
+export const countCustomers = cache(async () => {
+  const db = await getDb();
+  const { count, error } = await db
+    .from("customers")
+    .select("id", { count: "exact", head: true });
+  if (error) {
+    throw new Error(`Failed to count customers: ${error.message}`);
+  }
+  return count ?? 0;
+});
+
 export const listCustomers = cache(async (query?: string) => {
   const db = await getDb();
   const q = sanitizeSearch(query);

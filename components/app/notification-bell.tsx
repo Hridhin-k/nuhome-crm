@@ -59,6 +59,17 @@ function mapRow(row: Record<string, unknown>): AppNotification {
   };
 }
 
+export function NotificationBellFallback() {
+  return (
+    <span
+      className="inline-flex size-10 items-center justify-center rounded-md text-white/75"
+      aria-hidden
+    >
+      <Bell className="size-5" />
+    </span>
+  );
+}
+
 export function NotificationBell({
   userId,
   initial,

@@ -78,7 +78,7 @@ export const getQuote = cache(async (id: string) => {
     .maybeSingle();
 
   if (error) {
-    throw new Error("Failed to load quote");
+    throw new Error(`Failed to load quote: ${error.message}`);
   }
   if (!quote) {
     return null;
@@ -112,7 +112,7 @@ export const getQuote = cache(async (id: string) => {
     : { data: [], error: null };
 
   if (items.error) {
-    throw new Error("Failed to load quote items");
+    throw new Error(`Failed to load quote items: ${items.error.message}`);
   }
 
   return {

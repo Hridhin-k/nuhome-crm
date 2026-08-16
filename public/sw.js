@@ -1,4 +1,4 @@
-const VERSION = "nuhome-pwa-v2";
+const VERSION = "nuhome-pwa-v4";
 const PRECACHE = [
   "/offline.html",
   "/icons/icon-192.png",
@@ -35,6 +35,14 @@ self.addEventListener("fetch", (event) => {
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
   if (url.pathname.startsWith("/api/")) return;
+  // Let Next.js RSC / prefetch flights hit the network directly.
+  if (
+    request.headers.get("RSC") ||
+    request.headers.get("Next-Router-Prefetch") ||
+    request.headers.get("Next-Router-Segment-Prefetch")
+  ) {
+    return;
+  }
 
   if (request.mode === "navigate") {
     event.respondWith(
@@ -46,7 +54,7 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  if (url.pathname.startsWith("/icons/") || url.pathname.startsWith("/_next/static/")) {
+  if (url.pathname.startsWith("/icons/")) {
     event.respondWith(
       caches.match(request).then((cached) => {
         if (cached) return cached;

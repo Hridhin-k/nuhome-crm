@@ -6,7 +6,7 @@ import { PageHeader } from "@/components/app/page-header";
 import { EmptyState } from "@/components/app/empty-state";
 import { listProfiles } from "@/lib/api/catalog";
 import { listCustomers } from "@/lib/api/customers";
-import { listOrders } from "@/lib/api/orders";
+import { listOrderFooters } from "@/lib/api/orders";
 import { rel } from "@/lib/api/rel";
 import { requireUser } from "@/lib/auth/guards";
 import { rolesHavePermission } from "@/lib/auth/permissions";
@@ -19,10 +19,11 @@ export default async function CustomersPage({
 }: {
   searchParams: Promise<{ q?: string }>;
 }) {
-  const [user, { q }] = await Promise.all([requireUser(), searchParams]);
-  const [customers, orders, profiles] = await Promise.all([
+  const { q } = await searchParams;
+  const [user, customers, orders, profiles] = await Promise.all([
+    requireUser(),
     listCustomers(q),
-    listOrders(),
+    listOrderFooters(),
     listProfiles(),
   ]);
   const names = new Map(profiles.map((p) => [p.id, p.full_name || "Staff"]));

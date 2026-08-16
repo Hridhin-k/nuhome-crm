@@ -1,6 +1,6 @@
 import { cache } from "react";
 import { listPendingPayments } from "@/lib/api/catalog";
-import { listCustomers } from "@/lib/api/customers";
+import { countCustomers } from "@/lib/api/customers";
 import { listOrders } from "@/lib/api/orders";
 import { listPendingApprovals, listQuotes } from "@/lib/api/quotes";
 import type { Accent } from "@/components/app/progress-bar";
@@ -78,9 +78,9 @@ function scale(value: number, max: number) {
 }
 
 export const getOperationsSnapshot = cache(async (): Promise<OperationsSnapshot> => {
-  const [quotes, customers, orders, approvals, payments] = await Promise.all([
+  const [quotes, customerCount, orders, approvals, payments] = await Promise.all([
     listQuotes(),
-    listCustomers(),
+    countCustomers(),
     listOrders(),
     listPendingApprovals(),
     listPendingPayments(),
@@ -240,7 +240,7 @@ export const getOperationsSnapshot = cache(async (): Promise<OperationsSnapshot>
 
   return {
     open,
-    customers: customers.length,
+    customers: customerCount,
     delivered,
     pendingApprovals: approvals.length,
     pendingPayments: payments.length,
@@ -259,9 +259,9 @@ export const getHomeQueues = cache(async (role: AppRole): Promise<QueueCard[]> =
   }
 
   if (role === "sales") {
-    const [quotes, customers, orders] = await Promise.all([
+    const [quotes, customerCount, orders] = await Promise.all([
       listQuotes(),
-      listCustomers(),
+      countCustomers(),
       listOrders(),
     ]);
     const pendingQuotes = openQuoteCount(quotes);
@@ -325,7 +325,7 @@ export const getHomeQueues = cache(async (role: AppRole): Promise<QueueCard[]> =
       {
         id: "customers",
         title: "Customers",
-        count: customers.length,
+        count: customerCount,
         href: "/customers",
         detail: "Profiles on file — not open work",
         kind: "directory",

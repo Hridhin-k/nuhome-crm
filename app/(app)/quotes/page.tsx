@@ -5,11 +5,9 @@ import { ListSearchForm } from "@/components/app/list-search-form";
 import { PageFrame, wellClass } from "@/components/app/page-frame";
 import { PageHeader } from "@/components/app/page-header";
 import { StatusFilterNav } from "@/components/app/status-filter-nav";
-import { CustomerForm } from "@/components/customers/customer-form";
 import { AppLink } from "@/components/app/app-link";
 import { buttonVariants } from "@/components/ui/button";
 import { listProfiles } from "@/lib/api/catalog";
-import { listCustomers } from "@/lib/api/customers";
 import { listQuotes } from "@/lib/api/quotes";
 import { rel } from "@/lib/api/rel";
 import { requireUser } from "@/lib/auth/guards";
@@ -39,12 +37,11 @@ export default async function QuotesPage({
     to?: string;
   }>;
 }) {
-  const [user, { notice, group, status, q, from: fromRaw, to: toRaw }, quotes, allCustomers, profiles] =
+  const [user, { notice, group, status, q, from: fromRaw, to: toRaw }, quotes, profiles] =
     await Promise.all([
     requireUser(),
     searchParams,
     listQuotes(),
-    listCustomers(),
     listProfiles(),
   ]);
   const from = parseYmd(fromRaw) ?? undefined;
@@ -53,7 +50,6 @@ export default async function QuotesPage({
   const activeGroup = parseQuoteGroup(group);
   const exactStatus = parseWorkflowStatus(status);
   const canCreate = rolesHavePermission(user.roles, "quotes.create");
-  const customers = canCreate ? allCustomers : [];
 
   const allowed = new Set(QUOTE_GROUP_STATUSES[activeGroup]);
   const visible = quotes.filter((quote) => {
@@ -79,8 +75,7 @@ export default async function QuotesPage({
     );
   });
 
-  const newQuoteAction =
-    canCreate && customers.length > 0 ? (
+  const newQuoteAction = canCreate ? (
       <AppLink
         href="/walk-in"
         className={cn(buttonVariants({ size: "default" }), "inline-flex")}
@@ -103,12 +98,7 @@ export default async function QuotesPage({
         <EmptyState
           title="No quotes yet"
           description="Create a quote to get started."
-          action={
-            newQuoteAction ??
-            (canCreate ? (
-              <CustomerForm triggerClassName="w-full" returnTo="/walk-in" />
-            ) : undefined)
-          }
+          action={newQuoteAction ?? undefined}
         />
       ) : (
         <>

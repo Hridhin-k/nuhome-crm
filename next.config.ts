@@ -9,7 +9,6 @@ const nextConfig: NextConfig = {
       dynamic: 300,
       static: 300,
     },
-    dynamicOnHover: true,
     useOffline: true,
   },
   async headers() {

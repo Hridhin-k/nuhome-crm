@@ -14,54 +14,18 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { DEFAULT_GST_RATE, lineGstAmount, lineTotalWithGst } from "@/lib/gst";
+import { DEFAULT_GST_RATE, lineTotalWithGst } from "@/lib/gst";
 import { formatInrExact } from "@/lib/format/money";
+import {
+  lineFromMaterial,
+  withGst,
+  type QuoteLine,
+} from "@/lib/quotes/lines";
 import { cn } from "@/lib/utils";
 
-export type QuoteLine = {
-  key: string;
-  material_id?: string;
-  description: string;
-  quantity: number;
-  unit_price: number;
-  unit_cost: number;
-  discount: number;
-  tax: number;
-  hsn_code?: string;
-  gst_rate: number;
-};
+export type { QuoteLine };
 
 type Customer = { id: string; name: string; phone?: string | null };
-
-function withGst(line: QuoteLine): QuoteLine {
-  if (!line.gst_rate) {
-    return line;
-  }
-  return {
-    ...line,
-    tax: lineGstAmount(
-      line.quantity,
-      line.unit_price,
-      line.discount,
-      line.gst_rate,
-    ),
-  };
-}
-
-function lineFromMaterial(material: PickerMaterial): QuoteLine {
-  return withGst({
-    key: crypto.randomUUID(),
-    material_id: material.id,
-    description: material.name,
-    quantity: 1,
-    unit_price: Number(material.default_sell_price),
-    unit_cost: Number(material.default_cost),
-    discount: 0,
-    tax: 0,
-    hsn_code: material.hsn_code ?? undefined,
-    gst_rate: Number(material.gst_rate ?? DEFAULT_GST_RATE),
-  });
-}
 
 export function QuoteBuilder({
   customers,
@@ -177,6 +141,35 @@ export function QuoteBuilder({
     { n: 3 as const, label: "Review" },
   ];
 
+  const stepNav = (
+    <nav
+      aria-label="Quote steps"
+      className="relative flex gap-1 overflow-hidden rounded-lg bg-surface-container-high p-1"
+    >
+      {steps
+        .filter((s) => showCustomerStep || s.n !== 1)
+        .map((s) => (
+          <button
+            key={s.n}
+            type="button"
+            onClick={() => {
+              if (s.n === 2 && showCustomerStep && !customerId) return;
+              if (s.n === 3 && lines.length === 0) return;
+              setActiveStep(s.n);
+            }}
+            className={cn(
+              "relative z-10 flex min-w-0 flex-1 items-center justify-center rounded-md px-2 py-2 text-subheading transition-colors",
+              activeStep === s.n
+                ? "bg-card text-primary shadow-[0_2px_8px_rgba(0,0,0,0.08)]"
+                : "text-outline",
+            )}
+          >
+            {s.label}
+          </button>
+        ))}
+    </nav>
+  );
+
   return (
     <div className="flex min-w-0 flex-col gap-4">
       {rejectionReason ? (
@@ -195,29 +188,7 @@ export function QuoteBuilder({
         </div>
       ) : null}
 
-      {showCustomerStep ? (
-        <nav aria-label="Quote steps" className="relative flex gap-1 overflow-hidden rounded-lg bg-surface-container-high p-1">
-          {steps.map((s) => (
-            <button
-              key={s.n}
-              type="button"
-              onClick={() => {
-                if (s.n === 2 && !customerId) return;
-                if (s.n === 3 && lines.length === 0) return;
-                setActiveStep(s.n);
-              }}
-              className={cn(
-                "relative z-10 flex min-w-0 flex-1 items-center justify-center rounded-md px-2 py-2 text-subheading transition-colors",
-                activeStep === s.n
-                  ? "bg-card text-primary shadow-[0_2px_8px_rgba(0,0,0,0.08)]"
-                  : "text-outline",
-              )}
-            >
-              {s.label}
-            </button>
-          ))}
-        </nav>
-      ) : null}
+      {showCustomerStep ? stepNav : null}
 
       {activeStep === 1 && showCustomerStep ? (
         <section className="rounded-lg border border-outline-variant bg-card p-4 shadow-card">
@@ -248,6 +219,7 @@ export function QuoteBuilder({
 
       {activeStep !== 1 || !showCustomerStep ? (
       <form action={action} className="flex min-w-0 flex-col gap-4">
+        {!showCustomerStep ? stepNav : null}
         <input type="hidden" name="payload" value={JSON.stringify(payload)} />
 
         {activeStep === 2 ? (
@@ -436,7 +408,7 @@ export function QuoteBuilder({
           </div>
         ) : null}
 
-        {activeStep === 3 || !showCustomerStep ? (
+        {activeStep === 3 ? (
           <div className="flex min-w-0 flex-col gap-3">
             {showCustomerStep ? (
               <div className="flex items-center gap-4 rounded-lg border border-surface-variant bg-card p-4">
@@ -586,7 +558,7 @@ export function QuoteBuilder({
           </div>
         ) : null}
 
-        {activeStep === 2 && showCustomerStep ? (
+        {activeStep === 2 ? (
           <div className="sticky bottom-[calc(4rem+env(safe-area-inset-bottom))] z-20 -mx-4 flex justify-end border-t border-outline-variant bg-card px-4 py-3 md:static md:mx-0 md:rounded-lg md:border">
             <Button
               type="button"
@@ -601,34 +573,5 @@ export function QuoteBuilder({
       </form>
       ) : null}
     </div>
-  );
-}
-
-export function linesFromQuoteItems(
-  items: {
-    material_id: string | null;
-    description: string;
-    quantity: number | string;
-    unit_price: number | string;
-    unit_cost: number | string;
-    discount: number | string;
-    tax: number | string;
-    hsn_code?: string | null;
-    gst_rate?: number | string | null;
-  }[],
-): QuoteLine[] {
-  return items.map((item) =>
-    withGst({
-      key: crypto.randomUUID(),
-      material_id: item.material_id ?? undefined,
-      description: item.description,
-      quantity: Number(item.quantity),
-      unit_price: Number(item.unit_price),
-      unit_cost: Number(item.unit_cost),
-      discount: Number(item.discount),
-      tax: Number(item.tax),
-      hsn_code: item.hsn_code ?? undefined,
-      gst_rate: Number(item.gst_rate ?? 0),
-    }),
   );
 }
