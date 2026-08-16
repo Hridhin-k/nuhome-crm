@@ -29,8 +29,18 @@ export async function updateSession(request: NextRequest) {
 
   const path = request.nextUrl.pathname;
   const isLogin = path === "/login";
+  const isPwaPublic =
+    path === "/manifest.webmanifest" ||
+    path === "/manifest.json" ||
+    path === "/sw.js" ||
+    path === "/offline" ||
+    path === "/offline.html" ||
+    path === "/icon" ||
+    path.startsWith("/icon/") ||
+    path.startsWith("/apple-icon");
   const isAuthPublic =
     isLogin ||
+    isPwaPublic ||
     path === "/" ||
     path === "/forgot-password" ||
     path === "/update-password" ||
