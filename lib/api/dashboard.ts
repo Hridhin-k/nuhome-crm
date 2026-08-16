@@ -4,8 +4,13 @@ import { listCustomers } from "@/lib/api/customers";
 import { listOrders } from "@/lib/api/orders";
 import { listPendingApprovals, listQuotes } from "@/lib/api/quotes";
 import type { Accent } from "@/components/app/progress-bar";
-import type { AppRole, WorkflowStatus } from "@/lib/workflow/types";
-import { isCompletedSaleStatus, ORDER_BUCKET_STATUSES } from "@/lib/workflow/status-buckets";
+import { WORKFLOW_STATUSES, type AppRole, type WorkflowStatus } from "@/lib/workflow/types";
+import {
+  displayWorkflowStatus,
+  floorHref,
+  isCompletedSaleStatus,
+  ORDER_BUCKET_STATUSES,
+} from "@/lib/workflow/status-buckets";
 import { orderHasOverdueVendor } from "@/lib/workflow/fulfillment";
 
 export type QueueCard = {
@@ -24,10 +29,21 @@ export type PipelineStage = {
   accent: Accent;
 };
 
+export type StatusCensus = {
+  status: WorkflowStatus;
+  count: number;
+  href: string;
+};
+
 export type OperationsSnapshot = {
   open: number;
   customers: number;
   delivered: number;
+  pendingApprovals: number;
+  pendingPayments: number;
+  overdue: number;
+  asOf: string;
+  census: StatusCensus[];
   stages: PipelineStage[];
   queues: QueueCard[];
 };
@@ -77,6 +93,22 @@ export const getOperationsSnapshot = cache(async (): Promise<OperationsSnapshot>
   const delivered = orders.filter((o) =>
     isCompletedSaleStatus(o.status as WorkflowStatus),
   ).length;
+
+  const censusCounts = Object.fromEntries(
+    WORKFLOW_STATUSES.map((status) => [status, 0]),
+  ) as Record<WorkflowStatus, number>;
+  for (const quote of quotes) {
+    const status = displayWorkflowStatus(
+      quote.status as WorkflowStatus,
+      quote.order?.status as WorkflowStatus | undefined,
+    );
+    censusCounts[status] += 1;
+  }
+  const census: StatusCensus[] = WORKFLOW_STATUSES.map((status) => ({
+    status,
+    count: censusCounts[status],
+    href: floorHref(status),
+  }));
 
   const stages: PipelineStage[] = [
     { label: "Quotes in play", count: pendingQuotes, href: "/quotes", accent: "cobalt" },
@@ -164,7 +196,18 @@ export const getOperationsSnapshot = cache(async (): Promise<OperationsSnapshot>
     },
   ]);
 
-  return { open, customers: customers.length, delivered, stages, queues };
+  return {
+    open,
+    customers: customers.length,
+    delivered,
+    pendingApprovals: approvals.length,
+    pendingPayments: payments.length,
+    overdue,
+    asOf: new Date().toISOString(),
+    census,
+    stages,
+    queues,
+  };
 });
 
 export const getHomeQueues = cache(async (role: AppRole): Promise<QueueCard[]> => {

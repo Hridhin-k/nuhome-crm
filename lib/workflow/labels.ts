@@ -41,49 +41,42 @@ export const STATUS_TONE: Record<
   cancelled: "cancelled",
 };
 
-const BADGE_DRAFT = "bg-surface-container-highest text-on-surface-variant";
-const BADGE_WAITING = "bg-warning-container text-warning";
-const BADGE_BLOCKED = "bg-[#fce8e6] text-[#c5221f]";
-const BADGE_ACTIVE = "bg-secondary-container text-on-secondary-container";
-const BADGE_DONE = "bg-success-container text-success";
-const BADGE_HOLD = "bg-warning-container text-warning";
-
 export const STATUS_BADGE_CLASS: Record<WorkflowStatus, string> = {
-  quote_draft: BADGE_DRAFT,
-  quote_pending_accounts: BADGE_WAITING,
-  quote_rejected: BADGE_BLOCKED,
-  quote_approved: BADGE_DONE,
-  quote_sent_to_customer: BADGE_DONE,
-  payment_pending_verification: BADGE_WAITING,
-  order_active: BADGE_ACTIVE,
-  sent_to_vendor: BADGE_WAITING,
-  vendor_dispatched: BADGE_WAITING,
-  items_received: BADGE_ACTIVE,
-  delivery_pending_payment: BADGE_HOLD,
-  order_on_hold: BADGE_HOLD,
-  delivery_unlocked: BADGE_DONE,
-  delivered: BADGE_DONE,
-  closed: BADGE_DONE,
-  cancelled: BADGE_BLOCKED,
+  quote_draft: "bg-[#e8e8e8] text-[#3c3c3c]",
+  quote_pending_accounts: "bg-[#fff3c4] text-[#8a5a00]",
+  quote_rejected: "bg-[#fce8e6] text-[#c5221f]",
+  quote_approved: "bg-[#d2f4ea] text-[#0f6b5c]",
+  quote_sent_to_customer: "bg-[#d2e3fc] text-[#174ea6]",
+  payment_pending_verification: "bg-[#fde7c7] text-[#b06000]",
+  order_active: "bg-[#e0e7ff] text-[#3730a3]",
+  sent_to_vendor: "bg-[#ede7f6] text-[#5b2c83]",
+  vendor_dispatched: "bg-[#fce7f3] text-[#9d174d]",
+  items_received: "bg-[#cffafe] text-[#0e7490]",
+  delivery_pending_payment: "bg-[#ffdad6] text-[#8b1a1a]",
+  order_on_hold: "bg-[#fef3c7] text-[#92400e]",
+  delivery_unlocked: "bg-[#ecfccb] text-[#3f6212]",
+  delivered: "bg-[#e6f4ea] text-[#137333]",
+  closed: "bg-[#e2e8f0] text-[#334155]",
+  cancelled: "bg-[#ffe4e6] text-[#9f1239]",
 };
 
 export const STATUS_DOT_CLASS: Record<WorkflowStatus, string> = {
-  quote_draft: "bg-outline",
-  quote_pending_accounts: "bg-warning",
-  quote_rejected: "bg-error",
-  quote_approved: "bg-secondary",
-  quote_sent_to_customer: "bg-warning",
-  payment_pending_verification: "bg-warning",
-  order_active: "bg-secondary",
-  sent_to_vendor: "bg-warning",
-  vendor_dispatched: "bg-warning",
-  items_received: "bg-secondary",
-  delivery_pending_payment: "bg-error",
-  order_on_hold: "bg-error",
-  delivery_unlocked: "bg-secondary",
-  delivered: "bg-success",
-  closed: "bg-success",
-  cancelled: "bg-error",
+  quote_draft: "bg-[#6b6b6b]",
+  quote_pending_accounts: "bg-[#f9a825]",
+  quote_rejected: "bg-[#c5221f]",
+  quote_approved: "bg-[#0f6b5c]",
+  quote_sent_to_customer: "bg-[#174ea6]",
+  payment_pending_verification: "bg-[#ef6c00]",
+  order_active: "bg-[#3730a3]",
+  sent_to_vendor: "bg-[#5b2c83]",
+  vendor_dispatched: "bg-[#9d174d]",
+  items_received: "bg-[#0e7490]",
+  delivery_pending_payment: "bg-[#ba1a1a]",
+  order_on_hold: "bg-[#b45309]",
+  delivery_unlocked: "bg-[#3f6212]",
+  delivered: "bg-[#137333]",
+  closed: "bg-[#334155]",
+  cancelled: "bg-[#9f1239]",
 };
 
 export const STATUS_NEXT_LINE: Record<WorkflowStatus, string> = {

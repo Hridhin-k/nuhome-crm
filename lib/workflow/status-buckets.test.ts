@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { ORDER_STATUSES } from "@/lib/workflow/types";
 import {
   displayWorkflowStatus,
+  floorHref,
   isClosedOrderStatus,
   latestOpenOrder,
   ORDER_BUCKET_STATUSES,
@@ -50,6 +51,16 @@ describe("order status buckets", () => {
     expect(quoteListGroup("payment_pending_verification")).toBe("payment");
     expect(quoteListGroup("order_active")).toBe("active");
     expect(quoteListGroup("quote_draft")).toBe("quote");
+  });
+
+  it("deep-links the floor board into the matching list", () => {
+    expect(floorHref("quote_draft")).toBe(
+      "/quotes?group=quote&status=quote_draft",
+    );
+    expect(floorHref("cancelled")).toBe(
+      "/quotes?group=closed&status=cancelled",
+    );
+    expect(floorHref("sent_to_vendor")).toBe("/orders?status=sent_to_vendor");
   });
 
   it("prefers an open order over a closed one for customer badges", () => {

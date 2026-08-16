@@ -1,13 +1,20 @@
 import { ActivityTimeline } from "@/components/app/activity-timeline";
+import { FloorBoard } from "@/components/app/floor-board";
 import { InboxList } from "@/components/app/inbox-list";
 import { JobRow } from "@/components/app/job-row";
 import { ListSearchForm } from "@/components/app/list-search-form";
 import { OperationsPipeline } from "@/components/app/operations-pipeline";
 import { PageFrame, wellClass } from "@/components/app/page-frame";
 import { PageHeader } from "@/components/app/page-header";
+import { ReportExportBar } from "@/components/app/report-export-bar";
 import { StatusFilterNav } from "@/components/app/status-filter-nav";
 import { getOperationsSnapshot } from "@/lib/api/dashboard";
-import { getBusinessReport, listAdminAudit } from "@/lib/api/reports";
+import {
+  AUDIT_EXPORT_LIMIT,
+  AUDIT_PAGE_LIMIT,
+  getBusinessReport,
+  listAdminAudit,
+} from "@/lib/api/reports";
 import { requirePermission } from "@/lib/auth/guards";
 import { formatInr } from "@/lib/format/money";
 import {
@@ -18,6 +25,7 @@ import {
 import { AUDIT_ACTIONS } from "@/lib/workflow/types";
 
 const VIEWS = [
+  { id: "floor", label: "Floor" },
   { id: "business", label: "Business" },
   { id: "pipeline", label: "Queues" },
   { id: "audit", label: "Audit" },
@@ -26,8 +34,10 @@ const VIEWS = [
 type ReportView = (typeof VIEWS)[number]["id"];
 
 function parseView(value?: string): ReportView {
-  if (value === "pipeline" || value === "audit") return value;
-  return "business";
+  if (value === "business" || value === "pipeline" || value === "audit") {
+    return value;
+  }
+  return "floor";
 }
 
 function Metric({
@@ -70,7 +80,9 @@ export default async function ReportsPage({
 
   const [, snapshot, business, audit] = await Promise.all([
     requirePermission("admin.manage"),
-    view === "pipeline" ? getOperationsSnapshot() : Promise.resolve(null),
+    view === "pipeline" || view === "floor"
+      ? getOperationsSnapshot()
+      : Promise.resolve(null),
     view === "business" ? getBusinessReport(from, to) : Promise.resolve(null),
     view === "audit"
       ? listAdminAudit({ from, to, action, q: params.q })
@@ -84,7 +96,7 @@ export default async function ReportsPage({
       <PageHeader
         title="Reports"
         hideTitleOnMobile
-        description="Collections, margin, aging, vendor SLA, and who is sitting on work."
+        description="Live floor, collections, queues, and a complete audit trail. Export CSV or print to PDF."
       />
       <StatusFilterNav
         ariaLabel="Report view"
@@ -92,19 +104,42 @@ export default async function ReportsPage({
         items={VIEWS.map((item) => ({ id: item.id, label: item.label }))}
         hrefFor={(id) => pathWithQuery("/reports", { view: id, from, to })}
       />
-      <ListSearchForm
-        action="/reports"
-        q={view === "audit" ? params.q : undefined}
+      {view === "floor" || view === "pipeline" ? null : (
+        <ListSearchForm
+          action="/reports"
+          q={view === "audit" ? params.q : undefined}
+          from={from}
+          to={to}
+          showDates
+          placeholder={
+            view === "audit"
+              ? "Actor, action, or entity..."
+              : "Date range applies to this view"
+          }
+          hidden={{ view, action }}
+        />
+      )}
+
+      <ReportExportBar
+        view={view}
         from={from}
         to={to}
-        showDates
-        placeholder={
-          view === "audit"
-            ? "Actor, action, or entity..."
-            : "Date range applies to this view"
-        }
-        hidden={{ view, action }}
+        action={action}
+        q={params.q}
       />
+
+      {view === "floor" && snapshot ? (
+        <FloorBoard
+          census={snapshot.census}
+          asOf={snapshot.asOf}
+          overdue={snapshot.overdue}
+          pendingPayments={snapshot.pendingPayments}
+          pendingApprovals={snapshot.pendingApprovals}
+          open={snapshot.open}
+          customers={snapshot.customers}
+          delivered={snapshot.delivered}
+        />
+      ) : null}
 
       {view === "business" && business ? (
         <div className="flex flex-col gap-4">
@@ -171,7 +206,7 @@ export default async function ReportsPage({
               </p>
             ) : (
               <ul className={wellClass}>
-                {business.aging.map((job) => (
+                {business.aging.slice(0, 20).map((job) => (
                   <JobRow
                     key={job.id}
                     href={job.href}
@@ -203,6 +238,10 @@ export default async function ReportsPage({
 
       {view === "audit" && audit ? (
         <div className="flex flex-col gap-3">
+          <p className="text-body-sm text-on-surface-variant">
+            Showing the latest {Math.min(audit.length, AUDIT_PAGE_LIMIT)} events.
+            CSV and PDF export up to {AUDIT_EXPORT_LIMIT.toLocaleString("en-IN")}.
+          </p>
           <nav
             className="-mx-1 flex gap-2 overflow-x-auto pb-1"
             aria-label="Common audit actions"

@@ -144,7 +144,7 @@ export const QUOTE_GROUP_IDS = [
 
 export type QuoteGroupId = (typeof QUOTE_GROUP_IDS)[number];
 
-const QUOTE_ONLY_STATUSES = [
+export const QUOTE_ONLY_STATUSES = [
   "quote_draft",
   "quote_pending_accounts",
   "quote_rejected",
@@ -181,6 +181,17 @@ export function parseQuoteGroup(value: string | undefined): QuoteGroupId {
     return value as QuoteGroupId;
   }
   return "open";
+}
+
+/** Deep-link from the admin floor board into the matching list. */
+export function floorHref(status: WorkflowStatus) {
+  if (
+    (QUOTE_ONLY_STATUSES as readonly string[]).includes(status) ||
+    status === "cancelled"
+  ) {
+    return `/quotes?group=${quoteListGroup(status)}&status=${status}`;
+  }
+  return `/orders?status=${status}`;
 }
 
 export function latestOpenOrder<T extends { status: string }>(orders: T[]): T | undefined {

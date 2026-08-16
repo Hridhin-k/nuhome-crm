@@ -25,14 +25,21 @@ import {
   QUOTE_GROUP_LABELS,
   QUOTE_GROUP_STATUSES,
 } from "@/lib/workflow/status-buckets";
-import type { WorkflowStatus } from "@/lib/workflow/types";
+import { parseWorkflowStatus, type WorkflowStatus } from "@/lib/workflow/types";
 
 export default async function QuotesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ notice?: string; group?: string; q?: string; from?: string; to?: string }>;
+  searchParams: Promise<{
+    notice?: string;
+    group?: string;
+    status?: string;
+    q?: string;
+    from?: string;
+    to?: string;
+  }>;
 }) {
-  const [user, { notice, group, q, from: fromRaw, to: toRaw }, quotes, allCustomers, profiles] =
+  const [user, { notice, group, status, q, from: fromRaw, to: toRaw }, quotes, allCustomers, profiles] =
     await Promise.all([
     requireUser(),
     searchParams,
@@ -44,6 +51,7 @@ export default async function QuotesPage({
   const to = parseYmd(toRaw) ?? undefined;
   const names = new Map(profiles.map((p) => [p.id, p.full_name || "Staff"]));
   const activeGroup = parseQuoteGroup(group);
+  const exactStatus = parseWorkflowStatus(status);
   const canCreate = rolesHavePermission(user.roles, "quotes.create");
   const customers = canCreate ? allCustomers : [];
 
@@ -56,6 +64,7 @@ export default async function QuotesPage({
     const customer = rel(quote.customers);
     return (
       allowed.has(status) &&
+      (!exactStatus || status === exactStatus) &&
       matchesSearch(
         [
           quote.quote_number,
@@ -109,7 +118,10 @@ export default async function QuotesPage({
             to={to}
             showDates
             placeholder="Quote number, customer, phone..."
-            hidden={{ group: activeGroup === "open" ? undefined : activeGroup }}
+            hidden={{
+              group: activeGroup === "open" ? undefined : activeGroup,
+              status: exactStatus,
+            }}
           />
           <StatusFilterNav
             ariaLabel="Quote status"

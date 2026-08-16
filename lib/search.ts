@@ -64,3 +64,15 @@ export function pathWithQuery(
   const qs = search.toString();
   return qs ? `${path}?${qs}` : path;
 }
+
+export function formatIstDateTime(iso: string | Date = new Date()) {
+  return new Intl.DateTimeFormat("en-IN", {
+    timeZone: KOLKATA,
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  }).format(typeof iso === "string" ? new Date(iso) : iso);
+}

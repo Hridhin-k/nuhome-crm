@@ -132,8 +132,15 @@
   body {
     @apply bg-background text-on-background;
     overflow-x: clip;
-    font-size: 16px;
-    line-height: 24px;
+    font-size: 14px;
+    line-height: 20px;
+  }
+
+  @media (min-width: 768px) {
+    body {
+      font-size: 16px;
+      line-height: 24px;
+    }
   }
 
   ::selection {
@@ -148,76 +155,121 @@
   }
 
   .text-label-caps {
-    font-size: 12px;
+    font-size: 10px;
     font-weight: 700;
-    line-height: 16px;
+    line-height: 14px;
     letter-spacing: 0.05em;
   }
 
   .text-label-md {
-    font-size: 12px;
+    font-size: 10px;
     font-weight: 700;
-    line-height: 16px;
+    line-height: 14px;
     letter-spacing: 0.05em;
   }
 
   .text-data-tabular {
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 500;
-    line-height: 18px;
+    line-height: 16px;
     font-variant-numeric: tabular-nums;
   }
 
   .text-display-lg {
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 700;
-    line-height: 32px;
+    line-height: 26px;
     letter-spacing: -0.02em;
   }
 
   .text-headline-lg {
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 700;
-    line-height: 32px;
+    line-height: 26px;
     letter-spacing: -0.02em;
   }
 
   .text-headline-md {
-    font-size: 22px;
+    font-size: 18px;
     font-weight: 600;
-    line-height: 28px;
+    line-height: 24px;
     letter-spacing: -0.01em;
   }
 
   .text-headline-sm {
-    font-size: 16px;
-    font-weight: 600;
-    line-height: 22px;
-  }
-
-  .text-subheading {
     font-size: 14px;
     font-weight: 600;
     line-height: 20px;
+  }
+
+  .text-subheading {
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 18px;
     letter-spacing: 0.01em;
   }
 
   .text-body-lg {
-    font-size: 16px;
-    font-weight: 400;
-    line-height: 24px;
-  }
-
-  .text-body-md {
-    font-size: 16px;
-    font-weight: 400;
-    line-height: 24px;
-  }
-
-  .text-body-sm {
     font-size: 14px;
     font-weight: 400;
     line-height: 20px;
+  }
+
+  .text-body-md {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+  }
+
+  .text-body-sm {
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 18px;
+  }
+
+  @media (min-width: 768px) {
+    .text-label-caps,
+    .text-label-md {
+      font-size: 12px;
+      line-height: 16px;
+    }
+
+    .text-data-tabular {
+      font-size: 13px;
+      line-height: 18px;
+    }
+
+    .text-display-lg,
+    .text-headline-lg {
+      font-size: 24px;
+      line-height: 32px;
+    }
+
+    .text-headline-md {
+      font-size: 22px;
+      line-height: 28px;
+    }
+
+    .text-headline-sm {
+      font-size: 16px;
+      line-height: 22px;
+    }
+
+    .text-subheading {
+      font-size: 14px;
+      line-height: 20px;
+    }
+
+    .text-body-lg,
+    .text-body-md {
+      font-size: 16px;
+      line-height: 24px;
+    }
+
+    .text-body-sm {
+      font-size: 14px;
+      line-height: 20px;
+    }
   }
 
   @media print {

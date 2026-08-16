@@ -1,9 +1,11 @@
+import { ActivityTimeline } from "@/components/app/activity-timeline";
+import { FloorBoard } from "@/components/app/floor-board";
 import { InboxList } from "@/components/app/inbox-list";
-import { OperationsPipeline } from "@/components/app/operations-pipeline";
 import { PageFrame } from "@/components/app/page-frame";
 import { AppLink } from "@/components/app/app-link";
 import { getHomeQueuesForRoles, getOperationsSnapshot } from "@/lib/api/dashboard";
 import { getCatalogSnapshot } from "@/lib/api/catalog";
+import { listRecentAudit } from "@/lib/api/reports";
 import { requireUser } from "@/lib/auth/guards";
 import { roleLabels } from "@/lib/auth/nav";
 import { rolesHavePermission } from "@/lib/auth/permissions";
@@ -77,91 +79,71 @@ export default async function HomePage() {
   const hello = greeting();
 
   if (user.roles.includes("admin")) {
-    const [snapshot, catalog] = await Promise.all([
+    const [snapshot, catalog, recent] = await Promise.all([
       getOperationsSnapshot(),
       getCatalogSnapshot(),
+      listRecentAudit(12),
     ]);
     return (
       <PageFrame>
         <HomeHero
           hello={hello}
           firstName={firstName}
-          subtitle="Catalog and open work"
+          subtitle="Live floor — every job, every status"
         />
         <div className="space-y-5">
-          <section className="grid grid-cols-1 gap-3 md:grid-cols-2">
-            <div className="flex flex-col gap-3 rounded-lg border border-outline-variant bg-card p-4 shadow-card">
-              <h2 className="text-subheading text-on-surface">Catalog</h2>
-              <div className="grid grid-cols-3 gap-2">
-                {[
-                  { label: "Users", count: catalog.users, href: "/users" },
-                  { label: "Vendors", count: catalog.vendors, href: "/vendors" },
-                  {
-                    label: "Materials",
-                    count: catalog.materials,
-                    href: "/materials",
-                  },
-                ].map((item) => (
-                  <AppLink
-                    key={item.label}
-                    href={item.href}
-                    className="flex flex-col items-center rounded bg-surface-container-low p-3"
-                  >
-                    <span className="text-headline-md text-primary">
-                      {item.count}
-                    </span>
-                    <span className="mt-1 text-center text-label-caps text-secondary">
-                      {item.label}
-                    </span>
-                  </AppLink>
-                ))}
-              </div>
-              <AppLink
-                href="/users"
-                className="mt-auto inline-flex h-11 items-center justify-center rounded-lg border border-primary text-subheading text-primary"
-              >
-                Manage Catalog
-              </AppLink>
-            </div>
-            <div className="flex flex-col gap-3 rounded-lg border border-outline-variant bg-card p-4 shadow-card">
-              <h2 className="text-subheading text-on-surface">Open-work inbox</h2>
-              <ul className="flex flex-col gap-3">
-                {snapshot.queues.slice(0, 5).map((queue) => (
-                  <li key={queue.title}>
-                    <AppLink
-                      href={queue.href}
-                      className="flex items-center justify-between gap-3"
-                    >
-                      <span className="text-body-sm text-on-surface">
-                        {queue.title}
-                      </span>
-                      <span
-                        className={
-                          queue.title.toLowerCase().includes("overdue")
-                            ? "text-data-tabular text-error"
-                            : "text-data-tabular"
-                        }
-                      >
-                        {queue.count}
-                      </span>
-                    </AppLink>
-                  </li>
-                ))}
-              </ul>
-              <AppLink
-                href="/orders"
-                className="mt-auto inline-flex h-11 items-center justify-center rounded-lg bg-primary text-subheading text-on-primary"
-              >
-                View Inbox
-              </AppLink>
-            </div>
-          </section>
-          <OperationsPipeline
-            stages={snapshot.stages}
+          <FloorBoard
+            census={snapshot.census}
+            asOf={snapshot.asOf}
+            overdue={snapshot.overdue}
+            pendingPayments={snapshot.pendingPayments}
+            pendingApprovals={snapshot.pendingApprovals}
             open={snapshot.open}
             customers={snapshot.customers}
             delivered={snapshot.delivered}
           />
+          <section className="rounded-lg border border-outline-variant bg-card p-4 shadow-card">
+            <div className="mb-3 flex items-baseline justify-between gap-3">
+              <h2 className="text-subheading text-on-surface">Catalog</h2>
+              <AppLink href="/users" className="text-body-sm text-primary">
+                Manage
+              </AppLink>
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              {[
+                { label: "Users", count: catalog.users, href: "/users" },
+                { label: "Vendors", count: catalog.vendors, href: "/vendors" },
+                {
+                  label: "Materials",
+                  count: catalog.materials,
+                  href: "/materials",
+                },
+              ].map((item) => (
+                <AppLink
+                  key={item.label}
+                  href={item.href}
+                  className="flex flex-col items-center rounded bg-surface-container-low p-3"
+                >
+                  <span className="text-headline-sm text-primary">
+                    {item.count}
+                  </span>
+                  <span className="mt-1 text-center text-label-caps text-secondary">
+                    {item.label}
+                  </span>
+                </AppLink>
+              ))}
+            </div>
+          </section>
+          <ActivityTimeline
+            events={recent}
+            emptyMessage="No floor activity yet."
+          />
+          <AppLink
+            href="/reports?view=floor"
+            className="inline-flex h-11 w-full items-center justify-center rounded-lg bg-primary text-subheading text-on-primary"
+          >
+            Reports and exports
+          </AppLink>
         </div>
       </PageFrame>
     );

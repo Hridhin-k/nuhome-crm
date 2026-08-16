@@ -29,6 +29,15 @@ export const WORKFLOW_STATUSES = [
 
 export type WorkflowStatus = (typeof WORKFLOW_STATUSES)[number];
 
+export function parseWorkflowStatus(
+  value?: string | null,
+): WorkflowStatus | undefined {
+  if (!value) return undefined;
+  return (WORKFLOW_STATUSES as readonly string[]).includes(value)
+    ? (value as WorkflowStatus)
+    : undefined;
+}
+
 export const QUOTE_STATUSES = [
   "quote_draft",
   "quote_pending_accounts",

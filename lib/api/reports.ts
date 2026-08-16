@@ -229,24 +229,130 @@ const getBusinessReportCached = cache(
       delivered,
       vendor: { batches, onTime, late, overdueOpen },
       sitting,
-      aging: aging.slice(0, 20),
+      aging,
     };
   },
 );
+
+export type CollectionRow = {
+  id: string;
+  paidAt: string;
+  amount: number;
+  kind: string;
+  method: string;
+  reference: string;
+  quoteNumber: string;
+  recordedBy: string;
+};
+
+export function listCollections(from: string, to: string) {
+  return listCollectionsCached(`${from}|${to}`);
+}
+
+const listCollectionsCached = cache(async (key: string): Promise<CollectionRow[]> => {
+  const [from, to] = key.split("|");
+  const db = await getDb();
+  const [payments, orders, profiles] = await Promise.all([
+    throwQuery(
+      db
+        .from("payments")
+        .select("id, amount, paid_at, kind, method, reference_number, recorded_by, order_id")
+        .eq("status", "verified")
+        .gte("paid_at", from)
+        .lte("paid_at", to)
+        .order("paid_at", { ascending: false }),
+      "Failed to load collections",
+    ),
+    listOrders(),
+    listProfiles(),
+  ]);
+  const names = new Map(profiles.map((p) => [p.id, p.full_name || "Staff"]));
+  const quoteByOrder = new Map(
+    orders.map((order) => [order.id, rel(order.quotes)?.quote_number ?? ""]),
+  );
+  return payments.map((row) => ({
+    id: row.id,
+    paidAt: row.paid_at,
+    amount: Number(row.amount ?? 0),
+    kind: row.kind,
+    method: row.method ?? "",
+    reference: row.reference_number ?? "",
+    quoteNumber: (row.order_id ? quoteByOrder.get(row.order_id) : null) ?? "",
+    recordedBy: names.get(row.recorded_by) ?? "Staff",
+  }));
+});
+
+function mapAuditRow(
+  row: {
+    id: string;
+    actor_id: string | null;
+    actor_role: string | null;
+    action: string;
+    entity_type: string;
+    entity_id: string | null;
+    old_state: string | null;
+    new_state: string | null;
+    metadata: unknown;
+    created_at: string;
+  },
+  names: Map<string, string>,
+): AuditEvent {
+  return {
+    id: row.id,
+    actor_id: row.actor_id,
+    actor_role: row.actor_role as AppRole | null,
+    actor_name: (row.actor_id ? names.get(row.actor_id) : null) ?? "Someone",
+    action: row.action,
+    entity_type: row.entity_type,
+    entity_id: row.entity_id,
+    old_state: row.old_state,
+    new_state: row.new_state,
+    metadata: (row.metadata ?? {}) as Record<string, unknown>,
+    created_at: row.created_at,
+  };
+}
+
+export const AUDIT_EXPORT_LIMIT = 2000;
+export const AUDIT_PAGE_LIMIT = 200;
 
 export function listAdminAudit(input: {
   from: string;
   to: string;
   action?: string;
   q?: string;
+  limit?: number;
 }) {
+  const limit = input.limit ?? AUDIT_PAGE_LIMIT;
   return listAdminAuditCached(
-    `${input.from}|${input.to}|${input.action ?? ""}|${input.q ?? ""}`,
+    `${input.from}|${input.to}|${input.action ?? ""}|${input.q ?? ""}|${limit}`,
   );
 }
 
+export function listRecentAudit(limit = 12) {
+  return listRecentAuditCached(limit);
+}
+
+const listRecentAuditCached = cache(async (limit: number): Promise<AuditEvent[]> => {
+  const db = await getDb();
+  const [rows, profiles] = await Promise.all([
+    throwQuery(
+      db
+        .from("audit_logs")
+        .select(
+          "id, actor_id, actor_role, action, entity_type, entity_id, old_state, new_state, metadata, created_at",
+        )
+        .order("created_at", { ascending: false })
+        .limit(limit),
+      "Failed to load audit",
+    ),
+    listProfiles(),
+  ]);
+  const names = new Map(profiles.map((p) => [p.id, p.full_name || "Staff"]));
+  return rows.map((row) => mapAuditRow(row, names));
+});
+
 const listAdminAuditCached = cache(async (key: string): Promise<AuditEvent[]> => {
-  const [from, to, action, q] = key.split("|");
+  const [from, to, action, q, limitRaw] = key.split("|");
   const { start, end } = rangeToIso(from, to);
   const db = await getDb();
   let request = db
@@ -257,7 +363,7 @@ const listAdminAuditCached = cache(async (key: string): Promise<AuditEvent[]> =>
     .gte("created_at", start)
     .lte("created_at", end)
     .order("created_at", { ascending: false })
-    .limit(200);
+    .limit(Number(limitRaw) || AUDIT_PAGE_LIMIT);
 
   if (action) {
     request = request.eq("action", action);
@@ -270,19 +376,7 @@ const listAdminAuditCached = cache(async (key: string): Promise<AuditEvent[]> =>
   const names = new Map(profiles.map((p) => [p.id, p.full_name || "Staff"]));
 
   return rows
-    .map((row) => ({
-      id: row.id,
-      actor_id: row.actor_id,
-      actor_role: row.actor_role as AppRole | null,
-      actor_name: (row.actor_id ? names.get(row.actor_id) : null) ?? "Someone",
-      action: row.action,
-      entity_type: row.entity_type,
-      entity_id: row.entity_id,
-      old_state: row.old_state,
-      new_state: row.new_state,
-      metadata: (row.metadata ?? {}) as Record<string, unknown>,
-      created_at: row.created_at,
-    }))
+    .map((row) => mapAuditRow(row, names))
     .filter((event) =>
       matchesSearch(
         [event.actor_name, event.action, event.entity_type, event.old_state, event.new_state],
