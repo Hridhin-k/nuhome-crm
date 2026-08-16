@@ -2,6 +2,7 @@ import { PageFrame, wellClass } from "@/components/app/page-frame";
 import { PageHeader } from "@/components/app/page-header";
 import { JobRow } from "@/components/app/job-row";
 import { ChangePasswordForm } from "@/components/app/change-password-form";
+import { InstallHint } from "@/components/pwa/install-hint";
 import { logoutAction } from "@/app/(auth)/login/actions";
 import { Button } from "@/components/ui/button";
 import { requireUser } from "@/lib/auth/guards";
@@ -34,8 +35,9 @@ export default async function MorePage() {
   return (
     <PageFrame width="detail">
       <PageHeader title="More" />
-      <div className="mb-6 flex items-center gap-3 rounded-lg border border-outline-variant bg-card p-4 shadow-card">
-        <span className="inline-flex size-12 shrink-0 items-center justify-center rounded-full bg-surface-container-highest text-headline-md text-primary">
+      <InstallHint />
+      <div className="mb-6 flex items-center gap-3 rounded-2xl border border-outline-variant bg-card p-4 shadow-card">
+        <span className="inline-flex size-12 shrink-0 items-center justify-center rounded-full bg-secondary-container text-headline-md text-on-secondary-container">
           {initials || "N"}
         </span>
         <div className="min-w-0 flex-1">
@@ -47,7 +49,7 @@ export default async function MorePage() {
               {user.email}
             </p>
           ) : null}
-          <span className="mt-1 inline-flex rounded-full bg-surface-container-low px-2 py-0.5 text-label-caps text-secondary">
+          <span className="mt-1 inline-flex items-center rounded-full bg-secondary-container px-2.5 py-0.5 text-label-caps text-on-secondary-container">
             {roleLabels(user.roles)}
           </span>
         </div>

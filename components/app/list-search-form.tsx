@@ -39,7 +39,7 @@ export function ListSearchForm({
           name="q"
           defaultValue={q}
           placeholder={placeholder}
-          className="h-11 min-h-11 w-full rounded-lg border border-outline-variant bg-card px-3 pl-10 text-base text-on-surface placeholder:text-outline shadow-sm md:text-sm"
+          className="h-11 min-h-11 w-full rounded-xl border border-outline-variant bg-card px-3 pl-10 text-base text-on-surface placeholder:text-outline shadow-card md:text-sm"
         />
       </div>
       {showDates ? (
@@ -50,7 +50,7 @@ export function ListSearchForm({
               type="date"
               name="from"
               defaultValue={from}
-              className="h-11 min-h-11 rounded-lg border border-outline-variant bg-card px-3 text-sm text-on-surface"
+              className="h-11 min-h-11 rounded-xl border border-outline-variant bg-card px-3 text-sm text-on-surface shadow-card"
             />
           </label>
           <label className="flex flex-col gap-1 text-xs text-on-surface-variant">
@@ -59,7 +59,7 @@ export function ListSearchForm({
               type="date"
               name="to"
               defaultValue={to}
-              className="h-11 min-h-11 rounded-lg border border-outline-variant bg-card px-3 text-sm text-on-surface"
+              className="h-11 min-h-11 rounded-xl border border-outline-variant bg-card px-3 text-sm text-on-surface shadow-card"
             />
           </label>
         </div>

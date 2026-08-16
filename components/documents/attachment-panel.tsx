@@ -37,7 +37,7 @@ export function AttachmentPanel({
   );
 
   return (
-    <section className="rounded-lg border border-outline-variant bg-card p-4 shadow-card">
+    <section className="rounded-2xl border border-outline-variant bg-card p-4 shadow-card">
       <h2 className="text-subheading text-on-surface">Files</h2>
       <p className="mt-1 text-body-sm text-on-surface-variant">
         Measurement sheets, drawings, and photos that used to live on WhatsApp.

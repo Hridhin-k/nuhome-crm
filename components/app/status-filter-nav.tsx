@@ -27,7 +27,7 @@ export function StatusFilterNav({
               "shrink-0 rounded-full border px-4 py-1.5 text-subheading whitespace-nowrap transition-colors",
               selected
                 ? "border-primary bg-primary text-on-primary"
-                : "border-outline-variant bg-surface-container-lowest text-on-surface",
+                : "border-outline-variant/80 bg-card text-on-surface shadow-card",
             )}
           >
             {item.label}

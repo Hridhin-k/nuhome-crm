@@ -29,7 +29,7 @@ export const wellClass =
   "flex flex-col gap-3";
 
 export const panelClass =
-  "rounded-lg border border-outline-variant bg-card p-4 shadow-card";
+  "rounded-2xl border border-outline-variant bg-card p-4 shadow-card";
 
 export const listRowClass =
-  "block min-w-0 rounded-lg border border-outline-variant bg-card p-4 shadow-card transition-colors hover:bg-surface-container-low/60 active:bg-surface-container-low";
+  "block min-w-0 rounded-2xl border border-outline-variant bg-card p-4 shadow-card transition-colors hover:bg-surface-container-low/50 active:bg-surface-container-low";

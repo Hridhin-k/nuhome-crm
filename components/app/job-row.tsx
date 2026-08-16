@@ -97,7 +97,7 @@ export function JobRow({
           </div>
         </div>
         {hintText ? (
-          <div className="mt-3 rounded bg-surface-container-low p-3">
+          <div className="mt-3 rounded-xl bg-surface-container-low p-3">
             <p className="flex items-start gap-2 text-body-sm text-on-surface-variant">
               <Info className="mt-0.5 size-4 shrink-0" aria-hidden />
               <span>{hintText}</span>

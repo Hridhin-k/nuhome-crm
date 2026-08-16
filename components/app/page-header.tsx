@@ -17,7 +17,7 @@ export function PageHeader({
       <div className="min-w-0">
         <h1
           className={cn(
-            "text-headline-lg text-on-surface",
+            "text-headline-lg tracking-tight text-on-surface",
             hideTitleOnMobile && "hidden md:block",
           )}
         >

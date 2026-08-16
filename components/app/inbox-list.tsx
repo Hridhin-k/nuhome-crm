@@ -127,54 +127,51 @@ function ClearDesk() {
 function FocusCard({ item }: { item: InboxItem }) {
   const Icon = inboxIcon(item.title);
   const alert = isAlertItem(item);
+  const cta = focusCta(item);
 
   return (
     <AppLink
       href={item.href}
       className={cn(
-        "flex min-w-0 flex-col justify-between gap-5 rounded-2xl border bg-card p-5 shadow-card md:flex-row md:items-end",
-        alert ? "border-error" : "border-primary/20",
+        "relative min-w-0 overflow-hidden rounded-2xl border bg-card p-4 shadow-card",
+        alert ? "border-error" : "border-outline-variant",
       )}
     >
-      <div className="min-w-0">
-        <p className="text-label-caps text-on-surface-variant">Start here</p>
-        <div className="mt-3 flex items-start gap-3">
-          <span
-            className={cn(
-              "inline-flex size-11 shrink-0 items-center justify-center rounded-xl",
-              alert
-                ? "bg-error-container text-error"
-                : "bg-secondary-container text-on-secondary-container",
-            )}
-          >
-            <Icon className="size-5" aria-hidden />
-          </span>
-          <div className="min-w-0">
-            <p
-              className={cn(
-                "text-subheading",
-                alert ? "text-error" : "text-on-surface",
-              )}
-            >
-              {item.title}
-            </p>
-            <p className="mt-1 text-body-sm text-on-surface-variant">
-              {item.detail}
-            </p>
-          </div>
-        </div>
-      </div>
-      <div className="flex shrink-0 items-end justify-between gap-6 md:flex-col md:items-end">
-        <p
+      <p
+        className={cn(
+          "text-[11px] font-semibold",
+          alert ? "text-error" : "text-on-secondary-container",
+        )}
+      >
+        Start here
+      </p>
+      <div className="mt-3 flex items-start gap-3">
+        <span
           className={cn(
-            "text-display-lg tabular-nums tracking-tight",
-            alert ? "text-error" : "text-on-surface",
+            "inline-flex size-12 shrink-0 items-center justify-center rounded-2xl",
+            alert
+              ? "bg-error-container text-error"
+              : "bg-secondary-container text-on-secondary-container",
           )}
         >
-          {item.count}
+          <Icon className="size-5" aria-hidden />
+        </span>
+        <div className="min-w-0">
+          <p className="text-subheading text-on-surface">{item.title}</p>
+          <p className="mt-1 text-body-sm text-on-surface-variant">{item.detail}</p>
+        </div>
+      </div>
+      <div className="mt-5 flex items-center justify-between gap-3 border-t border-outline-variant/50 pt-3">
+        <p className="text-body-sm text-on-surface-variant">
+          {item.count} {item.title}
         </p>
-        <span className="inline-flex items-center gap-1 text-subheading text-primary">
-          {focusCta(item)}
+        <span
+          className={cn(
+            "inline-flex items-center gap-0.5 text-[13px] font-semibold",
+            alert ? "text-error" : "text-on-secondary-container",
+          )}
+        >
+          {cta}
           <ChevronRight className="size-4" aria-hidden />
         </span>
       </div>

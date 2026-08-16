@@ -36,7 +36,7 @@ export function OrderHero({
       <div className="flex min-w-0 items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="text-label-caps text-on-surface-variant">Order ID</p>
-          <h1 className="mt-1 truncate text-headline-lg text-on-surface">
+          <h1 className="mt-1 truncate text-headline-lg tracking-tight text-on-surface">
             {quoteNumber}
           </h1>
           <p className="mt-1 truncate text-body-md text-on-surface-variant">
@@ -46,20 +46,24 @@ export function OrderHero({
         <StatusBadge status={status} />
       </div>
 
-      <section className="grid grid-cols-3 gap-2 rounded-lg border border-outline-variant bg-card p-4 shadow-card">
-        <div>
+      <section className="grid grid-cols-3 divide-x divide-outline-variant/60 rounded-2xl border border-outline-variant bg-card shadow-card">
+        <div className="px-3 py-3 md:px-4">
           <p className="text-label-caps text-on-surface-variant">Total</p>
-          <p className="mt-1 text-data-tabular text-on-surface">{formatInr(total)}</p>
+          <p className="mt-1.5 text-[15px] font-semibold tabular-nums tracking-tight text-on-surface md:text-data-tabular">
+            {formatInr(total)}
+          </p>
         </div>
-        <div>
+        <div className="px-3 py-3 md:px-4">
           <p className="text-label-caps text-on-surface-variant">Paid</p>
-          <p className="mt-1 text-data-tabular text-success">{formatInr(paid)}</p>
+          <p className="mt-1.5 text-[15px] font-semibold tabular-nums tracking-tight text-success md:text-data-tabular">
+            {formatInr(paid)}
+          </p>
         </div>
-        <div className="text-right">
+        <div className="px-3 py-3 text-right md:px-4">
           <p className="text-label-caps text-on-surface-variant">Due</p>
           <p
             className={cn(
-              "mt-1 text-data-tabular",
+              "mt-1.5 text-[15px] font-semibold tabular-nums tracking-tight md:text-data-tabular",
               outstanding > 0 ? "text-error" : "text-success",
             )}
           >

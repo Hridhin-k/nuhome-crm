@@ -18,18 +18,20 @@ export function NextActionCard({
   return (
     <section
       className={cn(
-        "relative min-w-0 overflow-hidden rounded-lg border border-outline-variant bg-card shadow-card",
+        "relative min-w-0 overflow-hidden rounded-2xl border border-outline-variant bg-card shadow-card",
       )}
     >
       <div
         className={cn(
           "absolute inset-y-0 left-0 w-2",
-          blocked ? "bg-error" : "bg-primary",
+          blocked ? "bg-error" : "bg-on-secondary-container",
         )}
       />
       <div className="flex flex-col gap-4 p-4 pl-6 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0">
-          <p className="text-label-caps text-on-surface-variant">Next</p>
+          <p className="text-[11px] font-semibold text-on-secondary-container">
+            Next
+          </p>
           <p className="mt-1 text-subheading text-on-surface">{action.title}</p>
           <p className="mt-1 text-body-sm text-on-surface-variant">
             {action.detail}

@@ -15,7 +15,7 @@ export function HoldCard({
 }) {
   return (
     <section className="flex flex-col gap-3">
-      <div className="flex items-start gap-3 rounded-lg border border-error/20 bg-error-container p-4 text-on-error-container">
+      <div className="flex items-start gap-3 rounded-2xl border border-error/20 bg-error-container p-4 text-on-error-container">
         <Lock className="mt-0.5 size-5 shrink-0" aria-hidden />
         <div>
           <p className="text-subheading">Delivery locked until balance verified</p>
@@ -24,7 +24,7 @@ export function HoldCard({
           </p>
         </div>
       </div>
-      <div className="flex items-center justify-between rounded-lg border border-outline-variant border-l-4 border-l-error bg-card p-4">
+      <div className="flex items-center justify-between rounded-2xl border border-outline-variant border-l-4 border-l-error bg-card p-4 shadow-card">
         <span className="text-subheading text-on-surface">
           Outstanding before delivery
         </span>

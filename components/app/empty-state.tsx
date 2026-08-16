@@ -17,7 +17,7 @@ export function EmptyState({
   action?: ReactNode;
 }) {
   return (
-    <div className="rounded-lg border border-dashed border-outline-variant bg-card px-4 py-10 text-center">
+    <div className="rounded-2xl border border-dashed border-outline-variant bg-card px-4 py-10 text-center shadow-card">
       <h2 className="text-subheading text-on-surface">{title}</h2>
       <p className="mx-auto mt-1.5 max-w-sm text-body-sm text-on-surface-variant">
         {description}

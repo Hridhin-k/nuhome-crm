@@ -17,7 +17,7 @@ export function OperationsPipeline({
   const peak = Math.max(...stages.map((stage) => stage.count), 1);
 
   return (
-    <section className="flex flex-col overflow-hidden rounded-lg border border-outline-variant bg-card shadow-card">
+    <section className="flex flex-col overflow-hidden rounded-2xl border border-outline-variant bg-card shadow-card">
       <div className="flex flex-wrap items-end justify-between gap-3 border-b border-outline-variant px-4 py-4">
         <div className="min-w-0">
           <p className="text-label-caps text-on-surface-variant">

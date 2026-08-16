@@ -50,9 +50,9 @@ function Metric({
   hint?: string;
 }) {
   return (
-    <div className="rounded-lg border border-outline-variant bg-card p-4 shadow-card">
+    <div className="rounded-2xl border border-outline-variant bg-card p-4 shadow-card">
       <p className="text-label-caps text-on-surface-variant">{label}</p>
-      <p className="mt-1 text-headline-md text-on-surface">{value}</p>
+      <p className="mt-1 text-headline-md tracking-tight text-on-surface">{value}</p>
       {hint ? (
         <p className="mt-1 text-xs text-on-surface-variant">{hint}</p>
       ) : null}
@@ -165,7 +165,7 @@ export default async function ReportsPage({
               hint="Jobs closed in range"
             />
           </div>
-          <section className="rounded-lg border border-outline-variant bg-card p-4 shadow-card">
+          <section className="rounded-2xl border border-outline-variant bg-card p-4 shadow-card">
             <h2 className="text-subheading text-on-surface">Vendor SLA</h2>
             <p className="mt-1 text-sm text-on-surface-variant">
               {business.vendor.batches === 0

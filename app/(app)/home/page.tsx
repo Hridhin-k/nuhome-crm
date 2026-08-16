@@ -1,10 +1,14 @@
 import { ActivityTimeline } from "@/components/app/activity-timeline";
 import { FloorBoard } from "@/components/app/floor-board";
-import { HomeHero, HomeSection } from "@/components/app/home-hero";
+import { HomeHero, HomeSection, type HeroMetric } from "@/components/app/home-hero";
 import { InboxList } from "@/components/app/inbox-list";
 import { PageFrame } from "@/components/app/page-frame";
 import { AppLink } from "@/components/app/app-link";
-import { getHomeQueuesForRoles, getOperationsSnapshot } from "@/lib/api/dashboard";
+import {
+  getHomeQueuesForRoles,
+  getOperationsSnapshot,
+  type QueueCard,
+} from "@/lib/api/dashboard";
 import { getCatalogSnapshot } from "@/lib/api/catalog";
 import { listRecentAudit } from "@/lib/api/reports";
 import { requireUser } from "@/lib/auth/guards";
@@ -20,55 +24,157 @@ function greeting(now = new Date()) {
       timeZone: "Asia/Kolkata",
     }).format(now),
   );
-  if (hour < 12) return "Good morning";
-  if (hour < 17) return "Good afternoon";
-  return "Good evening";
+  if (hour < 12) return "Good morning 👋";
+  if (hour < 17) return "Good afternoon 👋";
+  return "Good evening 👋";
 }
 
 function dateLabel(now = new Date()) {
-  return `${new Intl.DateTimeFormat("en-IN", {
+  const date = new Intl.DateTimeFormat("en-IN", {
     weekday: "long",
     day: "numeric",
     month: "short",
+    timeZone: "Asia/Kolkata",
+  }).format(now);
+  const time = new Intl.DateTimeFormat("en-IN", {
     hour: "numeric",
     minute: "2-digit",
     hour12: true,
     timeZone: "Asia/Kolkata",
-  }).format(now)} IST`;
+  }).format(now);
+  return `${date} • ${time} IST`;
 }
 
-function heroMetrics(
-  queues: { title: string; count: number }[],
-) {
-  const overdue = queues.find((card) =>
-    card.title.toLowerCase().includes("overdue"),
-  );
-  const rest = queues.filter((card) => card !== overdue);
-  const ordered =
-    overdue && overdue.count > 0
-      ? [rest[0], overdue, rest[1]].filter(Boolean)
-      : queues;
-  return ordered.slice(0, 3).map((card) => ({
-    label: metricLabel(card.title),
-    value: String(card.count),
-    alert: card.title.toLowerCase().includes("overdue"),
-  }));
+function byTitle(queues: QueueCard[], match: string) {
+  return queues.find((card) => card.title.toLowerCase().includes(match));
 }
 
-function metricLabel(title: string) {
-  const key = title.toLowerCase();
-  if (key.includes("approval")) return "Approvals";
-  if (key.includes("verification") || key.includes("payment")) return "Verify";
-  if (key.includes("customer")) return "Customers";
-  if (key.includes("overdue")) return "Overdue";
-  if (key.includes("hold") || key.includes("collect")) return "Hold";
-  if (key.includes("ready") || key.includes("deliver")) return "Ready";
-  if (key.includes("quote")) return "Quotes";
-  if (key.includes("dispatch")) return "Dispatch";
-  if (key.includes("expected") || key.includes("item")) return "Incoming";
-  if (key.includes("attention")) return "Attention";
-  if (key.includes("active") || key.includes("awaiting vendor")) return "Active";
-  return title.split(" ")[0] ?? title;
+function metric(
+  card: QueueCard | undefined,
+  spec: {
+    label: string;
+    href: string;
+    tone: HeroMetric["tone"];
+    empty: string;
+    filled: string;
+  },
+): HeroMetric {
+  const value = card?.count ?? 0;
+  return {
+    label: spec.label,
+    value,
+    href: card?.href ?? spec.href,
+    tone: spec.tone,
+    hint: value === 0 ? spec.empty : spec.filled,
+  };
+}
+
+function roleMetrics(role: AppRole, queues: QueueCard[]): HeroMetric[] {
+  if (role === "accounts") {
+    return [
+      metric(byTitle(queues, "approval"), {
+        label: "Approvals",
+        href: "/approvals",
+        tone: "violet",
+        empty: "No quotes to review",
+        filled: "Quotes to review",
+      }),
+      metric(byTitle(queues, "verification") ?? byTitle(queues, "payment"), {
+        label: "Verify",
+        href: "/payments",
+        tone: "blue",
+        empty: "No payments waiting",
+        filled: "Receipts to confirm",
+      }),
+      metric(byTitle(queues, "attention"), {
+        label: "Attention",
+        href: "/orders?bucket=attention",
+        tone: "amber",
+        empty: "No orders waiting",
+        filled: "Jobs need a look",
+      }),
+    ];
+  }
+
+  if (role === "procurement") {
+    return [
+      metric(byTitle(queues, "awaiting vendor"), {
+        label: "Active",
+        href: "/fulfillment",
+        tone: "violet",
+        empty: "No orders to send",
+        filled: "Ready to send",
+      }),
+      metric(byTitle(queues, "dispatch"), {
+        label: "Dispatch",
+        href: "/fulfillment",
+        tone: "blue",
+        empty: "None in transit",
+        filled: "Waiting on vendor",
+      }),
+      metric(byTitle(queues, "overdue"), {
+        label: "Overdue",
+        href: "/fulfillment",
+        tone: "rose",
+        empty: "Vendors on time",
+        filled: "Past expected date",
+      }),
+    ];
+  }
+
+  if (role === "store") {
+    return [
+      metric(byTitle(queues, "ready"), {
+        label: "Ready",
+        href: "/ready",
+        tone: "green",
+        empty: "Nothing to hand over",
+        filled: "Unlocked for delivery",
+      }),
+      metric(byTitle(queues, "collect") ?? byTitle(queues, "hold"), {
+        label: "Hold",
+        href: "/orders?bucket=hold",
+        tone: "amber",
+        empty: "No collections due",
+        filled: "Collect at handover",
+      }),
+      metric(byTitle(queues, "overdue"), {
+        label: "Overdue",
+        href: "/orders?bucket=active",
+        tone: "rose",
+        empty: "Vendors on time",
+        filled: "Past expected date",
+      }),
+    ];
+  }
+
+  return [
+    metric(byTitle(queues, "quote"), {
+      label: "Quotes",
+      href: "/quotes",
+      tone: "violet",
+      empty: "No open quotes",
+      filled: "Open quotes",
+    }),
+    metric(byTitle(queues, "customer"), {
+      label: "Customers",
+      href: "/customers",
+      tone: "blue",
+      empty: "No customers yet",
+      filled: "Open customers",
+    }),
+    metric(byTitle(queues, "active"), {
+      label: "Active",
+      href: "/orders?bucket=active",
+      tone: "green",
+      empty: "No active orders",
+      filled: "Active orders",
+    }),
+  ];
+}
+
+function filledHint(value: number, empty: string, filled: string) {
+  return value === 0 ? empty : filled;
 }
 
 function deskLine(primary: AppRole, roles: AppRole[], openCount: number) {
@@ -109,10 +215,9 @@ function heroAction(roles: AppRole[]) {
 
 export default async function HomePage() {
   const user = await requireUser();
-  const firstName = user.fullName.split(" ")[0] || user.fullName;
   const hello = greeting();
   const today = dateLabel();
-  const desk = roleLabels(user.roles);
+  const badge = roleLabels(user.roles);
 
   if (user.roles.includes("admin")) {
     const [snapshot, catalog, recent] = await Promise.all([
@@ -126,19 +231,33 @@ export default async function HomePage() {
       <PageFrame>
         <HomeHero
           hello={hello}
-          firstName={firstName}
-          desk={desk}
-          line={deskLine(user.role, user.roles, waiting)}
+          role="admin"
+          badge={badge}
+          line={deskLine("admin", user.roles, waiting)}
           dateLabel={today}
           action={heroAction(user.roles)}
           metrics={[
-            { label: "In play", value: String(snapshot.open) },
+            {
+              label: "In play",
+              value: snapshot.open,
+              href: "/orders",
+              tone: "violet",
+              hint: filledHint(snapshot.open, "Floor is quiet", "Open jobs"),
+            },
             {
               label: "Overdue",
-              value: String(snapshot.overdue),
-              alert: true,
+              value: snapshot.overdue,
+              href: "/orders?bucket=active",
+              tone: "rose",
+              hint: filledHint(snapshot.overdue, "Vendors on time", "Past expected date"),
             },
-            { label: "Done", value: String(snapshot.delivered) },
+            {
+              label: "Done",
+              value: snapshot.delivered,
+              href: "/orders?bucket=closed",
+              tone: "green",
+              hint: filledHint(snapshot.delivered, "None closed yet", "Delivered jobs"),
+            },
           ]}
         />
         <div className="space-y-8">
@@ -202,12 +321,12 @@ export default async function HomePage() {
     <PageFrame>
       <HomeHero
         hello={hello}
-        firstName={firstName}
-        desk={desk}
+        role={user.role}
+        badge={badge}
         line={deskLine(user.role, user.roles, openCount)}
         dateLabel={today}
         action={heroAction(user.roles)}
-        metrics={heroMetrics(queues)}
+        metrics={roleMetrics(user.role, queues)}
       />
       <HomeSection title="Your board">
         <InboxList
