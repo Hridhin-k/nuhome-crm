@@ -9,7 +9,7 @@ export default function manifest(): MetadataRoute.Manifest {
     start_url: "/",
     scope: "/",
     display: "standalone",
-    display_override: ["standalone", "minimal-ui"],
+    prefer_related_applications: false,
     background_color: "#f9f9f9",
     theme_color: "#000000",
     lang: "en",
@@ -20,13 +20,11 @@ export default function manifest(): MetadataRoute.Manifest {
         src: "/icons/icon-192.png",
         sizes: "192x192",
         type: "image/png",
-        purpose: "any",
       },
       {
         src: "/icons/icon-512.png",
         sizes: "512x512",
         type: "image/png",
-        purpose: "any",
       },
       {
         src: "/icons/icon-maskable-512.png",

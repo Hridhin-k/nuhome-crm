@@ -1,6 +1,6 @@
-const VERSION = "nuhome-pwa-v1";
+const VERSION = "nuhome-pwa-v2";
 const PRECACHE = [
-  "/offline",
+  "/offline.html",
   "/icons/icon-192.png",
   "/icons/icon-512.png",
   "/icons/icon-maskable-512.png",
@@ -9,7 +9,11 @@ const PRECACHE = [
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(VERSION).then((cache) => cache.addAll(PRECACHE)).then(() => self.skipWaiting()),
+    (async () => {
+      const cache = await caches.open(VERSION);
+      await Promise.allSettled(PRECACHE.map((url) => cache.add(url)));
+      await self.skipWaiting();
+    })(),
   );
 });
 
@@ -35,7 +39,7 @@ self.addEventListener("fetch", (event) => {
   if (request.mode === "navigate") {
     event.respondWith(
       fetch(request).catch(async () => {
-        const cached = await caches.match("/offline");
+        const cached = await caches.match("/offline.html");
         return cached ?? Response.error();
       }),
     );
