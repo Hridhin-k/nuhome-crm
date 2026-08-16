@@ -8,6 +8,9 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
+    "test:unit": "vitest run lib components",
+    "test:integration": "vitest run tests/integration",
+    "test:regression": "vitest run tests/regression",
     "typecheck": "tsc --noEmit",
     "gen:types": "supabase gen types typescript --linked > types/database.ts",
     "icons:pwa": "node scripts/generate-pwa-icons.mjs"

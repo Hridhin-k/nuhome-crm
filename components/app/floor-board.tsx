@@ -1,5 +1,9 @@
 import { AppLink } from "@/components/app/app-link";
-import { STATUS_BADGE_CLASS, STATUS_LABELS } from "@/lib/workflow/labels";
+import {
+  STATUS_DOT_CLASS,
+  STATUS_LABELS,
+  STATUS_TILE_CLASS,
+} from "@/lib/workflow/labels";
 import { formatIstDateTime } from "@/lib/search";
 import { cn } from "@/lib/utils";
 import type { StatusCensus } from "@/lib/api/dashboard";
@@ -94,17 +98,22 @@ export function FloorBoard({
 
 function FloorTile({ cell }: { cell: StatusCensus }) {
   const muted = cell.count === 0;
+  const status = cell.status as WorkflowStatus;
   return (
     <AppLink
       href={cell.href}
       className={cn(
         "flex min-h-[4.25rem] flex-col justify-between rounded-xl px-3 py-2.5 transition-opacity",
-        STATUS_BADGE_CLASS[cell.status as WorkflowStatus],
-        muted && "opacity-45",
+        STATUS_TILE_CLASS[status],
+        muted && "opacity-40",
       )}
     >
-      <span className="text-[10px] font-bold tracking-wide uppercase md:text-[11px]">
-        {STATUS_LABELS[cell.status]}
+      <span className="flex min-w-0 items-center gap-1.5 text-[10px] font-bold tracking-wide uppercase md:text-[11px]">
+        <span
+          className={cn("size-1.5 shrink-0 rounded-full", STATUS_DOT_CLASS[status])}
+          aria-hidden
+        />
+        <span className="min-w-0 truncate">{STATUS_LABELS[cell.status]}</span>
       </span>
       <span className="text-headline-sm tabular-nums">{cell.count}</span>
     </AppLink>
