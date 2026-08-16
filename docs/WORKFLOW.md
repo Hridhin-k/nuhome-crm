@@ -27,6 +27,7 @@ items_received
       → order_on_hold       (outstanding > 0)
 order_on_hold → payment_pending_verification
 delivery_unlocked → delivered → closed
+cancelled                          (dead quote or order; not from delivered / closed)
 ```
 
 Drafts can be saved and edited until submitted. An approved quote can be withdrawn to draft before it is sent; Accounts must approve the new version.
@@ -39,6 +40,8 @@ A rejected quote cannot be sent to the customer.
 - The quote creator cannot approve that quote.
 - The payment recorder cannot verify or reject that payment.
 - Store (Delivery) can record payment at handover; they still cannot verify it.
+- Sales can record another installment while the order is active or with the vendor. That payment is verified by Accounts; the job stays on the vendor path.
+- Sales, Procurement, or Admin can cancel a live quote/order with a reason. Accounts can cancel a quote still waiting for approval.
 
 ## Fulfillment
 
@@ -54,3 +57,24 @@ Procurement can split a job across vendors and type received qty. Expected deliv
 4. Caller has `deliveries.complete`
 
 Outstanding is `quote total − sum(verified payments)`, computed in Postgres.
+
+Warranty starts on delivery (max catalogue months on the order, default 12). Sales or Store then schedule installation and can add an AMC on the closed order.
+
+## Notifications
+
+`audit_logs` insert fans out in-app rows (bell + realtime):
+
+| Event | Who |
+| --- | --- |
+| Quote submitted | Accounts |
+| Quote approved / returned | Sales (quote owner) |
+| Payment recorded | Accounts |
+| Order activated | Procurement |
+| Vendor dispatched | Assigned sales |
+| Order on hold | Assigned sales |
+| Delivery unlocked | Store / Delivery |
+| Order delivered | Assigned sales |
+| Order cancelled (vendor stage) | Procurement + assigned sales |
+| Pending quote cancelled | Accounts |
+
+The person who took the action is not notified of their own work. There is no email or SMS.

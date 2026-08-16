@@ -18,7 +18,8 @@ describe("order status buckets", () => {
     expect(ORDER_BUCKET_STATUSES.open).not.toContain("delivered");
     expect(orderBucket("closed")).toBe("closed");
     expect(orderBucket("delivered")).toBe("closed");
-    expect(orderBucket("order_active")).toBe("active");
+    expect(orderBucket("cancelled")).toBe("closed");
+    expect(ORDER_BUCKET_STATUSES.open).not.toContain("cancelled");
     expect(orderBucket("payment_pending_verification")).toBe("payment");
   });
 
@@ -45,6 +46,7 @@ describe("order status buckets", () => {
 
   it("groups a closed order separately from payment and in-progress", () => {
     expect(quoteListGroup("closed")).toBe("closed");
+    expect(quoteListGroup("cancelled")).toBe("closed");
     expect(quoteListGroup("payment_pending_verification")).toBe("payment");
     expect(quoteListGroup("order_active")).toBe("active");
     expect(quoteListGroup("quote_draft")).toBe("quote");

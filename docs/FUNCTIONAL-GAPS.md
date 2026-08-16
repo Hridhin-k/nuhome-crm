@@ -12,23 +12,33 @@ Around that spine, a lot of real shop-floor work is missing, one-way, or only ha
 
 | Stage | Who | What the app supports |
 | --- | --- | --- |
-| Customer | Sales | Create and edit a profile; phone numbers must be unique |
-| Quote | Sales | Save a draft, submit to Accounts, or correct an approved quote before send |
+| Customer | Sales | Create and edit a profile; phone unique; shared floor book; search name, phone, email, quote number |
+| Quote | Sales | Save a draft, submit, or pick up a colleague's walk-in; search by quote number, phone, or date |
+| Reports | Admin | Date range, collections, margin, vendor SLA, who is sitting on work, and an audit log |
 | Approval | Accounts | Approve, or reject with a reason |
 | Revision | Sales | Revise a rejected quote, or withdraw an approved quote before send, then resubmit |
 | Send | Sales | Mark sent, public quotation link, WhatsApp share |
-| Payment | Sales → Accounts | Record advance / full / nil; Accounts verifies or rejects with a reason |
+| Invoice | Sales / Accounts | Print GST tax invoice (HSN, GST %, GSTIN, bill-to / site) |
+| Files | Sales / Store | Measurement sheets, drawings, and photos on a customer, quote, or order |
+| Address | Sales | Billing vs site address; customer GSTIN |
+| After handover | Sales / Store | Schedule installation; warranty issued on delivery; AMC |
+| Cancel | Sales / Procurement / Admin | Cancel a quote or order that will never complete; Accounts can kill a pending quote. Pending payments are dropped. |
+| Payment | Sales → Accounts | Record advance / full / nil / another installment while the job is with the vendor; Accounts verifies or rejects with a reason |
 | Fulfillment | Procurement | Split lines across vendors, hold qty back, type a partial GRN, close shortage/damage/return |
 | Goods in | Procurement / Store | Record received qty; close remainder so the job is not stuck |
 | Delivery dates | Procurement / Sales / Store | Expected date on each vendor batch; overdue queue on Home and Fulfillment |
 | Delivery gate | System | Unlock if outstanding = 0; otherwise on hold |
 | Handover | Store | Collect outstanding cash/UPI, then complete delivery when unlocked |
-| Admin | Admin | Users + roles, vendors, materials, CSV import |
+| Admin | Admin | Users + extra hats, vendors (edit / contacts / inactive), materials (edit sheet), CSV, cover for leave |
+| Password | All / Admin | Forgot-password email, change-password on More, admin generate-once reset |
 | Live UI | All roles | Dashboards refresh when orders / payments / quotes change |
+| Notifications | Next role | Bell when a quote is submitted, payment recorded, order activates, vendor dispatches, job goes on hold, delivery unlocks, goods are handed over, or a job is cancelled |
 
 Hard rules that **are** in place:
 
-- Sales cannot approve their own quote or verify a payment they recorded.
+- Sales cannot approve their own quote or verify a payment they recorded — including when they also wear an extra hat.
+- Extra roles combine permissions (“Sales + Delivery on Saturday”). Cover for leave moves open customers, quotes, and orders to another salesperson.
+- Sales work a shared floor book. Payment recording still stays with the assigned salesperson.
 - Accounts can reject a pending payment; Sales then records a corrected one.
 - A rejected quote cannot be sent to the customer.
 - Delivery requires outstanding = 0 (computed on the server).
@@ -48,8 +58,7 @@ Hard rules that **are** in place:
 
 | Gap | Why it matters |
 | --- | --- |
-| **Balance cannot be collected during fulfillment** | Extra payment is only allowed when the quote is just sent, a payment is pending/rejected, or the order is on hold / delivery-check. While the job is active, with the vendor, or in transit, Sales cannot log another installment. |
-| **No proof, receipt, or invoice** | Payment is amount + method + a text reference. No screenshot, GST invoice, or customer receipt after verify. |
+| **No payment screenshot or receipt** | Payment is amount + method + a text reference. Tax invoices exist on the order; there is still no upload of a UPI screenshot or a simple receipt after verify. |
 | **Nil (credit) is a stub** | It activates the order with the full amount still outstanding. The job then goes on hold after goods arrive. There is no credit limit, due date, or “collect later” plan. |
 | **No refunds, excess payment, or allocation across jobs** | Overpay, reverse, or split a receipt across two orders is not a flow. |
 
@@ -61,67 +70,38 @@ Hard rules that **are** in place:
 | Gap | Why it matters |
 | --- | --- |
 | **No proof of delivery beyond a notes box** | No signature, photo, or item-level handover. |
-| **Nothing can be cancelled or put on commercial hold** | No cancel quote, cancel order, customer postpone, or vendor fail. On-hold exists only for unpaid delivery. |
+| **No commercial hold or vendor-fail path** | On-hold exists only for unpaid delivery. A dead quote or order can now be cancelled with a reason. There is still no customer postpone or vendor-fail status. |
 
 ---
 
 ## 5. Who gets told
 
-Notifications fire only for **quote approved** and **quote returned**.
+The bell notifies the **next role** for floor handoffs: quote submitted, payment recorded, order active, vendor dispatched, on hold, delivery unlocked, delivered, and cancelled jobs. Quote approved / returned still go to Sales.
 
-| Role | Not notified when |
-| --- | --- |
-| Accounts | A quote is submitted, or a payment is recorded |
-| Procurement | An order becomes active |
-| Store / Delivery | Delivery is unlocked |
-| Sales | A job goes on hold, is dispatched, or is delivered |
-
-Dashboards can refresh live, but people still have to be looking at the screen.
+There is still no email, SMS, or WhatsApp ping. If nobody opens the app, the work sits until they do.
 
 ---
 
 ## 6. Admin and staff operations
 
-| Gap | Why it matters |
-| --- | --- |
-| **No forgot-password, change-password, or admin reset** | Admin sets a password at create time and must share it out of band. CSV-generated passwords are shown once. |
-| **Vendors are add-only** | No edit, deactivate, or extra contacts after create. |
-| **Materials are barely maintainable** | Add, CSV upsert by SKU, or hide. No edit sheet for a single item. |
-| **One role per person** | No “Sales + Store on Saturday.” |
-| **No reassignment** | Jobs stay with the creator / assigned salesperson. Cover for leave is not a flow. |
+Closed. Staff can reset access, edit vendors and materials after create, wear more than one hat, and reassign open sales work. See **What works today**.
 
 ---
 
 ## 7. Visibility and reporting
 
-| Gap | Why it matters |
-| --- | --- |
-| **Reports are open-queue counts, not a business report** | No date range, collections, margin, aging, vendor SLA, or “who is sitting on work.” |
-| **Lists are thin** | Orders and quotes have no search by quote number, phone, or date. Customer search is name/phone only. |
-| **Sales is siloed** | They mainly see customers and quotes they created. A shared floor book (“any salesperson can pick up this walk-in”) is not the model. |
-| **Audit is per-record only** | A timeline on the quote/order exists. There is no admin report for “who changed this role / verified this payment.” |
+Closed. Admin Reports has a date range, collections, margin, vendor SLA, who is sitting on work, and an audit log. Quotes and orders search by quote number, phone, and date. Customers search name, phone, email, or quote number. Sales share a floor book. See **What works today**.
 
 ---
 
 ## 8. Documents the shop will still do on WhatsApp or paper
 
-These are not in the product at all:
-
-- GST / HSN and a real tax invoice
-- Measurement sheets and drawings
-- File attachments
-- Site address vs billing address
-- Installation scheduling after delivery
-- Warranty / AMC
+Closed. The shop can print a GST tax invoice, keep measurement sheets and drawings on the job, split billing vs site, book installation after handover, and record warranty / AMC. See **What works today**.
 
 ---
 
 ## 9. Highest-impact holes for a live floor
 
-If only a few gaps are closed first, these unblock real operations:
+Closed. Sales can collect a further installment while the job is active or with the vendor, without waiting for GRN or hold. Sales, Procurement, or Admin can cancel a quote or order that will never complete (Accounts can cancel a quote still waiting for approval). Refunds, proof of delivery, and commercial hold remain open above.
 
-1. **Collect balance while the order is with the vendor** — customer pays in installments without waiting for GRN / hold.
-2. **Notify the next role that work arrived** — submit, payment recorded, order active, delivery unlocked, on hold.
-3. **Cancel a dead job** — quote or order that will never complete.
-
-The core state machine is there. The gaps are everything around **exceptions**, **money after activation**, and **day-2 operations**.
+See **What works today**.

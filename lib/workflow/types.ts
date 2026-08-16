@@ -24,6 +24,7 @@ export const WORKFLOW_STATUSES = [
   "delivery_unlocked",
   "delivered",
   "closed",
+  "cancelled",
 ] as const;
 
 export type WorkflowStatus = (typeof WORKFLOW_STATUSES)[number];
@@ -50,6 +51,7 @@ export const ORDER_STATUSES = [
   "delivery_unlocked",
   "delivered",
   "closed",
+  "cancelled",
 ] as const;
 
 export type OrderStatus = (typeof ORDER_STATUSES)[number];
@@ -81,8 +83,11 @@ export const AUDIT_ACTIONS = [
   "DELIVERY_UNLOCKED",
   "ORDER_DELIVERED",
   "ORDER_CLOSED",
+  "QUOTE_CANCELLED",
+  "ORDER_CANCELLED",
   "ROLE_CHANGED",
   "PROFILE_UPDATED",
+  "WORK_REASSIGNED",
 ] as const;
 
 export type AuditAction = (typeof AUDIT_ACTIONS)[number];

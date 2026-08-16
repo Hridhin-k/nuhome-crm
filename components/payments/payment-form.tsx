@@ -29,7 +29,7 @@ export function PaymentForm({
   return (
     <FormSheet
       title="Record payment"
-      description="Accounts will verify this before it counts toward delivery. Delivery can log cash or UPI at handover."
+      description="Accounts will verify this before it counts toward delivery. You can log another installment while the job is with the vendor. Delivery can log cash or UPI at handover."
       trigger={
         <span className="inline-flex h-11 min-h-11 w-full items-center justify-center rounded-lg bg-primary px-4 text-subheading text-on-primary">
           Record payment

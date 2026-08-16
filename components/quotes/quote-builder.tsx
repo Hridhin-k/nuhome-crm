@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { DEFAULT_GST_RATE, lineGstAmount, lineTotalWithGst } from "@/lib/gst";
 import { formatInrExact } from "@/lib/format/money";
 import { cn } from "@/lib/utils";
 
@@ -26,12 +27,29 @@ export type QuoteLine = {
   unit_cost: number;
   discount: number;
   tax: number;
+  hsn_code?: string;
+  gst_rate: number;
 };
 
 type Customer = { id: string; name: string; phone?: string | null };
 
-function lineFromMaterial(material: PickerMaterial): QuoteLine {
+function withGst(line: QuoteLine): QuoteLine {
+  if (!line.gst_rate) {
+    return line;
+  }
   return {
+    ...line,
+    tax: lineGstAmount(
+      line.quantity,
+      line.unit_price,
+      line.discount,
+      line.gst_rate,
+    ),
+  };
+}
+
+function lineFromMaterial(material: PickerMaterial): QuoteLine {
+  return withGst({
     key: crypto.randomUUID(),
     material_id: material.id,
     description: material.name,
@@ -40,7 +58,9 @@ function lineFromMaterial(material: PickerMaterial): QuoteLine {
     unit_cost: Number(material.default_cost),
     discount: 0,
     tax: 0,
-  };
+    hsn_code: material.hsn_code ?? undefined,
+    gst_rate: Number(material.gst_rate ?? DEFAULT_GST_RATE),
+  });
 }
 
 export function QuoteBuilder({
@@ -116,6 +136,7 @@ export function QuoteBuilder({
         unit_cost: 0,
         discount: 0,
         tax: 0,
+        gst_rate: DEFAULT_GST_RATE,
       },
     ]);
   }
@@ -126,7 +147,7 @@ export function QuoteBuilder({
 
   function updateLine(key: string, patch: Partial<QuoteLine>) {
     setLines((rows) =>
-      rows.map((r) => (r.key === key ? { ...r, ...patch } : r)),
+      rows.map((r) => (r.key === key ? withGst({ ...r, ...patch }) : r)),
     );
   }
 
@@ -138,6 +159,8 @@ export function QuoteBuilder({
     unit_cost: line.unit_cost,
     discount: line.discount,
     tax: line.tax,
+    hsn_code: line.hsn_code,
+    gst_rate: line.gst_rate,
   }));
 
   const payload = reviseQuoteId
@@ -280,9 +303,12 @@ export function QuoteBuilder({
                         <div className="flex shrink-0 items-center gap-2">
                           <p className="text-data-tabular font-semibold">
                             {formatInrExact(
-                              line.quantity * line.unit_price -
-                                line.discount +
-                                line.tax,
+                              lineTotalWithGst(
+                                line.quantity,
+                                line.unit_price,
+                                line.discount,
+                                line.gst_rate,
+                              ),
                             )}
                           </p>
                           <Button
@@ -340,7 +366,8 @@ export function QuoteBuilder({
                         </div>
                       </div>
                       {openLine === line.key ? (
-                      <div className="mt-3 grid grid-cols-3 gap-2">
+                      <>
+                      <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
                         <div>
                           <Label className="text-xs">Price</Label>
                           <Input
@@ -370,20 +397,36 @@ export function QuoteBuilder({
                           />
                         </div>
                         <div>
-                          <Label className="text-xs">Tax</Label>
+                          <Label className="text-xs">HSN</Label>
+                          <Input
+                            className="mt-1 h-10"
+                            value={line.hsn_code ?? ""}
+                            onChange={(e) =>
+                              updateLine(line.key, {
+                                hsn_code: e.target.value,
+                              })
+                            }
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-xs">GST %</Label>
                           <Input
                             type="number"
                             inputMode="decimal"
                             className="mt-1 h-10"
-                            value={line.tax}
+                            value={line.gst_rate}
                             onChange={(e) =>
                               updateLine(line.key, {
-                                tax: Number(e.target.value),
+                                gst_rate: Number(e.target.value),
                               })
                             }
                           />
                         </div>
                       </div>
+                      <p className="mt-1 text-body-sm text-on-surface-variant">
+                        GST {formatInrExact(line.tax)}
+                      </p>
+                      </>
                       ) : null}
                     </li>
                   ))}
@@ -434,13 +477,18 @@ export function QuoteBuilder({
                       </p>
                       <p className="mt-1 text-body-sm text-on-surface-variant">
                         Qty: {line.quantity}
+                        {line.hsn_code ? ` · HSN ${line.hsn_code}` : ""}
+                        {line.gst_rate ? ` · GST ${line.gst_rate}%` : ""}
                       </p>
                     </div>
                     <p className="shrink-0 text-data-tabular">
                       {formatInrExact(
-                        line.quantity * line.unit_price -
-                          line.discount +
-                          line.tax,
+                        lineTotalWithGst(
+                          line.quantity,
+                          line.unit_price,
+                          line.discount,
+                          line.gst_rate,
+                        ),
                       )}
                     </p>
                   </li>
@@ -481,7 +529,7 @@ export function QuoteBuilder({
                 </span>
               </div>
               <div className="flex justify-between text-body-md">
-                <span className="text-on-surface-variant">Tax</span>
+                <span className="text-on-surface-variant">GST</span>
                 <span className="text-data-tabular">
                   {formatInrExact(totals.tax)}
                 </span>
@@ -565,16 +613,22 @@ export function linesFromQuoteItems(
     unit_cost: number | string;
     discount: number | string;
     tax: number | string;
+    hsn_code?: string | null;
+    gst_rate?: number | string | null;
   }[],
 ): QuoteLine[] {
-  return items.map((item) => ({
-    key: crypto.randomUUID(),
-    material_id: item.material_id ?? undefined,
-    description: item.description,
-    quantity: Number(item.quantity),
-    unit_price: Number(item.unit_price),
-    unit_cost: Number(item.unit_cost),
-    discount: Number(item.discount),
-    tax: Number(item.tax),
-  }));
+  return items.map((item) =>
+    withGst({
+      key: crypto.randomUUID(),
+      material_id: item.material_id ?? undefined,
+      description: item.description,
+      quantity: Number(item.quantity),
+      unit_price: Number(item.unit_price),
+      unit_cost: Number(item.unit_cost),
+      discount: Number(item.discount),
+      tax: Number(item.tax),
+      hsn_code: item.hsn_code ?? undefined,
+      gst_rate: Number(item.gst_rate ?? 0),
+    }),
+  );
 }

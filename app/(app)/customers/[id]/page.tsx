@@ -5,13 +5,15 @@ import { Notice } from "@/components/app/notice";
 import { PageFrame, wellClass } from "@/components/app/page-frame";
 import { PageHeader } from "@/components/app/page-header";
 import { CustomerForm } from "@/components/customers/customer-form";
+import { AttachmentPanel } from "@/components/documents/attachment-panel";
 import { buttonVariants } from "@/components/ui/button";
 import { getCustomer } from "@/lib/api/customers";
+import { listAttachments } from "@/lib/api/documents";
 import { listOrdersForCustomer } from "@/lib/api/orders";
 import { listQuotesForCustomer } from "@/lib/api/quotes";
 import { rel } from "@/lib/api/rel";
 import { requireUser } from "@/lib/auth/guards";
-import { roleHasPermission } from "@/lib/auth/permissions";
+import { rolesHavePermission } from "@/lib/auth/permissions";
 import { formatInr } from "@/lib/format/money";
 import { cn } from "@/lib/utils";
 import { canRecordPayment } from "@/lib/workflow/payment-recording";
@@ -28,10 +30,11 @@ export default async function CustomerDetailPage({
   const user = await requireUser();
   const { id } = await params;
   const { notice } = await searchParams;
-  const [customer, theirs, theirOrders] = await Promise.all([
+  const [customer, theirs, theirOrders, files] = await Promise.all([
     getCustomer(id),
     listQuotesForCustomer(id),
     listOrdersForCustomer(id),
+    listAttachments("customer", id).catch(() => []),
   ]);
   if (!customer) {
     notFound();
@@ -51,7 +54,7 @@ export default async function CustomerDetailPage({
         title={customer.name}
         description={customer.phone ?? customer.email ?? ""}
         action={
-          roleHasPermission(user.role, "customers.write") ? (
+          rolesHavePermission(user.roles, "customers.write") ? (
             <CustomerForm
               customer={customer}
               trigger={
@@ -64,12 +67,42 @@ export default async function CustomerDetailPage({
         }
       />
       {notice === "updated" ? <Notice>Customer updated.</Notice> : null}
-      {customer.address ? (
-        <p className="text-sm text-on-surface-variant">{customer.address}</p>
+      {notice === "uploaded" ? <Notice>File uploaded.</Notice> : null}
+      {notice === "file-removed" ? <Notice>File removed.</Notice> : null}
+      {customer.gstin || customer.billing_address || customer.site_address || customer.address ? (
+        <div className="rounded-lg border border-outline-variant bg-card p-4 text-sm text-on-surface">
+          {customer.gstin ? (
+            <p>
+              <span className="text-on-surface-variant">GSTIN · </span>
+              {customer.gstin}
+            </p>
+          ) : null}
+          {customer.billing_address || customer.address ? (
+            <p className="mt-2 whitespace-pre-wrap">
+              <span className="text-on-surface-variant">Billing · </span>
+              {customer.billing_address || customer.address}
+            </p>
+          ) : null}
+          {customer.site_address &&
+          customer.site_address !== (customer.billing_address || customer.address) ? (
+            <p className="mt-2 whitespace-pre-wrap">
+              <span className="text-on-surface-variant">Site · </span>
+              {customer.site_address}
+            </p>
+          ) : null}
+        </div>
       ) : null}
 
+      <AttachmentPanel
+        entityType="customer"
+        entityId={id}
+        returnTo={`/customers/${id}`}
+        files={files}
+        canUpload={rolesHavePermission(user.roles, "customers.write")}
+      />
+
       <div className="flex flex-col gap-2 sm:grid sm:grid-cols-2">
-        {roleHasPermission(user.role, "quotes.create") ? (
+        {rolesHavePermission(user.roles, "quotes.create") ? (
           <AppLink
             href={`/walk-in?customerId=${id}&step=2`}
             className={cn(buttonVariants({ size: "lg" }))}
@@ -77,7 +110,7 @@ export default async function CustomerDetailPage({
             Create quote
           </AppLink>
         ) : null}
-        {roleHasPermission(user.role, "payments.record") && payableOrder ? (
+        {rolesHavePermission(user.roles, "payments.record") && payableOrder ? (
           <AppLink
             href={`/orders/${payableOrder.id}#payment`}
             className={cn(buttonVariants({ variant: "outline", size: "lg" }))}

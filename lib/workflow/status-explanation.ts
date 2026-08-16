@@ -33,6 +33,8 @@ export function orderStatusExplanation(input: {
       return "Order delivered. Closing out.";
     case "closed":
       return "This order is complete. No further action required.";
+    case "cancelled":
+      return "This job was cancelled. No further action.";
     default:
       return "Track progress in the timeline below.";
   }

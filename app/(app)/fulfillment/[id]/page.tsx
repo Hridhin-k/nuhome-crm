@@ -13,7 +13,7 @@ import { listVendors } from "@/lib/api/catalog";
 import { getOrder } from "@/lib/api/orders";
 import { rel } from "@/lib/api/rel";
 import { requirePermission } from "@/lib/auth/guards";
-import { roleHasPermission } from "@/lib/auth/permissions";
+import { rolesHavePermission } from "@/lib/auth/permissions";
 import {
   availableToSend,
   formatExpectedDate,
@@ -80,7 +80,7 @@ export default async function FulfillmentDetailPage({
       quantity_written_off: Number(item.quantity_written_off ?? 0),
     }),
   }));
-  const canSend = roleHasPermission(user.role, "orders.send_to_vendor");
+  const canSend = rolesHavePermission(user.roles, "orders.send_to_vendor");
   const canClose =
     detail.vendorOrders.length > 0 &&
     closeItems.some((item) => item.remaining > 0);

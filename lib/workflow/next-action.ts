@@ -15,12 +15,14 @@ export type NextAction = {
 export function nextRequiredAction(input: {
   status: WorkflowStatus;
   role: AppRole;
+  roles?: AppRole[];
   outstanding?: number;
   orderId?: string;
   quoteId?: string;
   activated?: boolean;
   orderStatus?: WorkflowStatus;
-  payments?: { status: string }[];
+    payments?: { status: string }[];
+    hasInstallation?: boolean;
 }): NextAction {
   const {
     status,
@@ -31,10 +33,13 @@ export function nextRequiredAction(input: {
     activated,
     orderStatus,
     payments = [],
+    hasInstallation = true,
   } = input;
+  const hats = input.roles?.length ? input.roles : [role];
+  const can = (check: AppRole) => hats.includes(check);
 
     const salesCanRecord =
-    (role === "sales" || role === "admin" || role === "store") &&
+    (can("sales") || can("admin") || can("store")) &&
     canRecordPayment({ status, payments, outstanding });
 
   if (
@@ -45,6 +50,7 @@ export function nextRequiredAction(input: {
     return nextRequiredAction({
       status: orderStatus,
       role,
+      roles: hats,
       outstanding,
       orderId,
       quoteId,
@@ -60,10 +66,10 @@ export function nextRequiredAction(input: {
         title: "Finish this draft",
         detail: "Save more changes or submit to Accounts when it is ready.",
         href: quoteId ? `/quotes/${quoteId}/revise` : "/quotes",
-        cta: role === "sales" || role === "admin" ? "Edit draft" : undefined,
+        cta: can("sales") || can("admin") ? "Edit draft" : undefined,
       };
     case "quote_pending_accounts":
-      return role === "accounts" || role === "admin"
+      return can("accounts") || can("admin")
         ? {
             title: "Approve quote",
             detail: "Review margins and discounts before approving for Sales.",
@@ -79,7 +85,7 @@ export function nextRequiredAction(input: {
         title: "Revise and resubmit",
         detail: "Accounts returned this quote. Create a new version.",
         href: quoteId ? `/quotes/${quoteId}` : "/quotes",
-        cta: role === "sales" || role === "admin" ? "Revise" : undefined,
+        cta: can("sales") || can("admin") ? "Revise" : undefined,
       };
     case "quote_approved":
       return {
@@ -87,7 +93,7 @@ export function nextRequiredAction(input: {
         detail:
           "Only an approved quote can go to the customer. Correct it first if something is wrong — Accounts will need to approve again.",
         href: quoteId ? `/quotes/${quoteId}` : "/quotes",
-        cta: role === "sales" || role === "admin" ? "Send" : undefined,
+        cta: can("sales") || can("admin") ? "Send" : undefined,
       };
     case "quote_sent_to_customer":
       return {
@@ -115,7 +121,7 @@ export function nextRequiredAction(input: {
           ? "Delivery stays locked until this payment is verified."
           : "The order cannot activate until verification succeeds. Accounts can verify or send it back.",
         href: "/payments",
-        cta: role === "accounts" || role === "admin" ? "Review" : undefined,
+        cta: can("accounts") || can("admin") ? "Review" : undefined,
       };
     }
     case "order_active":
@@ -124,7 +130,7 @@ export function nextRequiredAction(input: {
         detail: "Procurement can place this with a vendor.",
         href: orderId ? `/fulfillment/${orderId}` : "/fulfillment",
         cta:
-          role === "procurement" || role === "admin" ? "Send to vendor" : undefined,
+          can("procurement") || can("admin") ? "Send to vendor" : undefined,
       };
     case "sent_to_vendor":
       return {
@@ -132,7 +138,7 @@ export function nextRequiredAction(input: {
         detail: "Mark dispatch when the vendor ships.",
         href: orderId ? `/fulfillment/${orderId}` : "/fulfillment",
         cta:
-          role === "procurement" || role === "admin" ? "Mark dispatched" : undefined,
+          can("procurement") || can("admin") ? "Mark dispatched" : undefined,
       };
     case "vendor_dispatched":
       return {
@@ -140,7 +146,7 @@ export function nextRequiredAction(input: {
         detail: "Record received quantities when stock arrives.",
         href: orderId ? `/fulfillment/${orderId}` : "/fulfillment",
         cta:
-          role === "procurement" || role === "store" || role === "admin"
+          can("procurement") || can("store") || can("admin")
             ? "Record receipt"
             : undefined,
       };
@@ -160,7 +166,7 @@ export function nextRequiredAction(input: {
         cta:
           salesCanRecord
             ? "Record payment"
-            : role === "store" || role === "admin"
+            : can("store") || can("admin")
               ? "Open delivery"
               : undefined,
       };
@@ -169,16 +175,30 @@ export function nextRequiredAction(input: {
         title: "Ready for delivery",
         detail: "Balance is cleared. Complete delivery with the customer.",
         href: orderId ? `/orders/${orderId}` : "/ready",
-        cta: role === "store" || role === "admin" ? "Complete delivery" : undefined,
+        cta: can("store") || can("admin") ? "Complete delivery" : undefined,
       };
     case "delivered":
       return { title: "Delivered", detail: "This order is closing." };
     case "closed":
+      return !hasInstallation && (can("store") || can("sales") || can("admin"))
+        ? {
+            title: "Schedule installation",
+            detail: "Goods are with the customer. Book the site date.",
+            href: orderId ? `/orders/${orderId}` : "/orders",
+            cta: "Schedule",
+          }
+        : {
+            title: "Order closed",
+            detail: "This quote's order has been delivered and closed.",
+            href: orderId ? `/orders/${orderId}` : undefined,
+            cta: orderId ? "View order" : undefined,
+          };
+    case "cancelled":
       return {
-        title: "Order closed",
-        detail: "This quote's order has been delivered and closed.",
-        href: orderId ? `/orders/${orderId}` : undefined,
-        cta: orderId ? "View order" : undefined,
+        title: "Cancelled",
+        detail: "This job will not continue.",
+        href: orderId ? `/orders/${orderId}` : quoteId ? `/quotes/${quoteId}` : undefined,
+        cta: orderId || quoteId ? "View" : undefined,
       };
   }
 }

@@ -21,6 +21,13 @@ const HEADER_ALIASES: Record<string, string> = {
   default_sell_price: "sell_price",
   cost: "cost",
   default_cost: "cost",
+  hsn: "hsn_code",
+  hsn_code: "hsn_code",
+  gst: "gst_rate",
+  gst_rate: "gst_rate",
+  gst_percent: "gst_rate",
+  warranty: "warranty_months",
+  warranty_months: "warranty_months",
 };
 
 export function normalizeCsvHeader(header: string) {

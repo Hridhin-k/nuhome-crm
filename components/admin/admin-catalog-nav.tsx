@@ -5,6 +5,7 @@ const ITEMS = [
   { href: "/users", label: "Users" },
   { href: "/vendors", label: "Vendors" },
   { href: "/materials", label: "Materials" },
+  { href: "/company", label: "Company" },
 ] as const;
 
 export function AdminCatalogNav({

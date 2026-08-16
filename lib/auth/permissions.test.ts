@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { roleHasPermission } from "@/lib/auth/permissions";
+import { roleHasPermission, rolesHavePermission } from "@/lib/auth/permissions";
 
 describe("role permission matrix", () => {
   it("enforces separation of duties", () => {
@@ -15,5 +15,14 @@ describe("role permission matrix", () => {
   it("gives admin every permission", () => {
     expect(roleHasPermission("admin", "admin.manage")).toBe(true);
     expect(roleHasPermission("admin", "quotes.approve")).toBe(true);
+  });
+
+  it("combines extra hats", () => {
+    expect(rolesHavePermission(["sales", "store"], "deliveries.complete")).toBe(
+      true,
+    );
+    expect(rolesHavePermission(["sales", "store"], "quotes.create")).toBe(true);
+    expect(rolesHavePermission(["sales", "store"], "quotes.approve")).toBe(false);
+    expect(rolesHavePermission("sales", "deliveries.complete")).toBe(false);
   });
 });

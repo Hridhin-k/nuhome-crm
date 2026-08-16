@@ -13,17 +13,21 @@ import { PageFrame, panelClass } from "@/components/app/page-frame";
 import { StatusBadge } from "@/components/app/status-badge";
 import { StickyActionBar } from "@/components/app/sticky-action-bar";
 import { RejectQuoteSheet } from "@/components/quotes/reject-sheet";
+import { CancelJobSheet } from "@/components/quotes/cancel-sheet";
 import { WhatsAppShareSheet } from "@/components/quotes/whatsapp-share-sheet";
+import { AttachmentPanel } from "@/components/documents/attachment-panel";
 import { listQuoteActivity } from "@/lib/api/audit";
+import { listAttachments } from "@/lib/api/documents";
 import { listPaymentsForOrder } from "@/lib/api/orders";
 import { getQuote } from "@/lib/api/quotes";
 import { publicQuotePath, publicQuoteUrl } from "@/lib/quotes/public-url";
 import { getCustomerSiteUrl } from "@/lib/site-url";
 import { requireUser } from "@/lib/auth/guards";
-import { roleHasPermission } from "@/lib/auth/permissions";
+import { rolesHavePermission } from "@/lib/auth/permissions";
 import { formatInr, formatInrExact } from "@/lib/format/money";
 import { nextRequiredAction } from "@/lib/workflow/next-action";
 import { displayWorkflowStatus, isClosedOrderStatus } from "@/lib/workflow/status-buckets";
+import { canCancelJob, isCancelledStatus } from "@/lib/workflow/cancel";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import type { WorkflowStatus } from "@/lib/workflow/types";
@@ -38,12 +42,13 @@ export default async function QuoteDetailPage({
   const user = await requireUser();
   const { id } = await params;
   const { notice, error } = await searchParams;
-  const canRevise = roleHasPermission(user.role, "quotes.revise");
-  const canShareWhatsApp = roleHasPermission(user.role, "quotes.send_to_customer");
-  const [detail, activity, siteUrl] = await Promise.all([
+  const canRevise = rolesHavePermission(user.roles, "quotes.revise");
+  const canShareWhatsApp = rolesHavePermission(user.roles, "quotes.send_to_customer");
+  const [detail, activity, siteUrl, files] = await Promise.all([
     getQuote(id),
     listQuoteActivity(id).catch(() => []),
     getCustomerSiteUrl(),
+    listAttachments("quote", id).catch(() => []),
   ]);
   if (!detail) {
     notFound();
@@ -56,16 +61,23 @@ export default async function QuoteDetailPage({
   const current =
     versions.find((v) => v.id === quote.current_version_id) ?? versions[0];
   const currentItems = items.filter((i) => i.version_id === current?.id);
-  const canSeeMargin = roleHasPermission(user.role, "quotes.read_margin");
-  const canApprove = roleHasPermission(user.role, "quotes.approve");
-  const canSend = roleHasPermission(user.role, "quotes.send_to_customer");
+  const canSeeMargin = rolesHavePermission(user.roles, "quotes.read_margin");
+  const canApprove = rolesHavePermission(user.roles, "quotes.approve");
+  const canSend = rolesHavePermission(user.roles, "quotes.send_to_customer");
   const status = quote.status as WorkflowStatus;
   const orderStatus = order?.status as WorkflowStatus | undefined;
   const orderClosed = orderStatus ? isClosedOrderStatus(orderStatus) : false;
+  const cancelled = isCancelledStatus(displayWorkflowStatus(status, orderStatus));
+  const canCancel = canCancelJob({
+    quoteStatus: status,
+    orderStatus,
+    roles: user.roles,
+  });
   const displayStatus = displayWorkflowStatus(status, orderStatus);
   const next = nextRequiredAction({
     status,
     role: user.role,
+    roles: user.roles,
     quoteId: quote.id,
     orderId: order?.id,
     orderStatus,
@@ -142,6 +154,8 @@ export default async function QuoteDetailPage({
       {notice === "draft" ? (
         <Notice>Draft saved. Submit to Accounts when you are ready.</Notice>
       ) : null}
+      {notice === "uploaded" ? <Notice>File uploaded.</Notice> : null}
+      {notice === "file-removed" ? <Notice>File removed.</Notice> : null}
       {error ? (
         <p className="rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
           {error}
@@ -164,7 +178,9 @@ export default async function QuoteDetailPage({
         }
       />
 
-      {orderClosed ? (
+      {cancelled ? (
+        <Notice>This job was cancelled.</Notice>
+      ) : orderClosed ? (
         <Notice>This quote&apos;s order has been delivered and closed.</Notice>
       ) : null}
 
@@ -222,7 +238,7 @@ export default async function QuoteDetailPage({
             <table className="w-full min-w-[520px] border-collapse text-left">
               <thead className="border-b border-outline-variant bg-surface-container-low">
                 <tr>
-                  {["Item", "Qty", "Sell", "Cost", "Disc", "Line Total"].map(
+                  {["Item", "HSN", "Qty", "Sell", "Cost", "Disc", "Line Total"].map(
                     (col) => (
                       <th
                         key={col}
@@ -246,6 +262,9 @@ export default async function QuoteDetailPage({
                     <tr key={item.id}>
                       <td className="max-w-[150px] truncate p-3 text-data-tabular">
                         {item.description}
+                      </td>
+                      <td className="p-3 text-right text-data-tabular text-secondary">
+                        {item.hsn_code ?? "—"}
                       </td>
                       <td className="p-3 text-right text-data-tabular">
                         {item.quantity}
@@ -295,6 +314,10 @@ export default async function QuoteDetailPage({
                   </span>
                   <span className="text-body-sm text-on-surface-variant">
                     Qty {item.quantity}
+                    {item.hsn_code ? ` · HSN ${item.hsn_code}` : ""}
+                    {Number(item.gst_rate) > 0
+                      ? ` · GST ${item.gst_rate}%`
+                      : ""}
                   </span>
                 </span>
                 <span className="shrink-0 text-data-tabular">
@@ -323,6 +346,23 @@ export default async function QuoteDetailPage({
         </section>
       ) : current?.notes && !accountsReview ? (
         <p className="text-sm text-on-surface-variant">{current.notes}</p>
+      ) : null}
+
+      <AttachmentPanel
+        entityType="quote"
+        entityId={quote.id}
+        returnTo={`/quotes/${quote.id}`}
+        files={files}
+        canUpload={rolesHavePermission(user.roles, "quotes.create")}
+      />
+
+      {order ? (
+        <AppLink
+          href={`/orders/${order.id}/invoice`}
+          className={cn(buttonVariants({ variant: "outline", size: "lg" }), "w-full text-center")}
+        >
+          Tax invoice
+        </AppLink>
       ) : null}
 
       {salesSend ? (
@@ -379,7 +419,7 @@ export default async function QuoteDetailPage({
             </AppLink>
           ) : null}
           {status === "quote_draft" &&
-          roleHasPermission(user.role, "quotes.submit") ? (
+          rolesHavePermission(user.roles, "quotes.submit") ? (
             <ConfirmActionSheet
               title="Submit to Accounts"
               description="The customer will not see this quote until it is approved and sent."
@@ -436,6 +476,13 @@ export default async function QuoteDetailPage({
         >
           Open order
         </AppLink>
+      ) : null}
+
+      {canCancel ? (
+        <CancelJobSheet
+          quoteId={quote.id}
+          returnTo={`/quotes/${quote.id}`}
+        />
       ) : null}
 
       {!accountsReview && versions.length > 1 ? (

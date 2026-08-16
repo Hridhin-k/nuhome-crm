@@ -3,12 +3,14 @@ import type { PublicQuote } from "@/lib/api/public-quote";
 import { formatInrExact } from "@/lib/format/money";
 
 export function CustomerQuoteDocument({ quote }: { quote: PublicQuote }) {
-  const { customer, version, items } = quote;
+  const { customer, version, items, company } = quote;
   const issued = new Date(version.created_at).toLocaleDateString("en-IN", {
     day: "numeric",
     month: "long",
     year: "numeric",
   });
+  const billing = customer?.billing_address || customer?.address;
+  const site = customer?.site_address;
 
   return (
     <article className="customer-quote mx-auto max-w-2xl overflow-hidden rounded-lg border border-outline-variant bg-white px-6 py-8 shadow-card print:border-0 print:shadow-none md:px-12 md:py-12">
@@ -16,9 +18,14 @@ export function CustomerQuoteDocument({ quote }: { quote: PublicQuote }) {
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <p className="text-headline-lg tracking-tight text-primary">
-              Nuhome
+              {company?.legal_name ?? "Nuhome"}
             </p>
             <p className="mt-1 text-headline-md text-secondary">Quotation</p>
+            {company?.gstin ? (
+              <p className="mt-2 text-body-sm text-on-surface-variant">
+                GSTIN {company.gstin}
+              </p>
+            ) : null}
           </div>
           <div className="space-y-1 text-right text-data-tabular text-on-surface-variant">
             <p>
@@ -50,9 +57,19 @@ export function CustomerQuoteDocument({ quote }: { quote: PublicQuote }) {
               {customer.phone}
             </p>
           ) : null}
-          {customer?.address ? (
-            <p className="mt-1 text-body-sm text-on-surface-variant">
-              {customer.address}
+          {customer?.gstin ? (
+            <p className="text-body-sm text-on-surface-variant">
+              GSTIN {customer.gstin}
+            </p>
+          ) : null}
+          {billing ? (
+            <p className="mt-1 whitespace-pre-wrap text-body-sm text-on-surface-variant">
+              {billing}
+            </p>
+          ) : null}
+          {site && site !== billing ? (
+            <p className="mt-1 whitespace-pre-wrap text-body-sm text-on-surface-variant">
+              Site: {site}
             </p>
           ) : null}
         </div>
@@ -63,6 +80,7 @@ export function CustomerQuoteDocument({ quote }: { quote: PublicQuote }) {
           <thead>
             <tr className="border-b border-outline-variant text-left text-on-surface-variant">
               <th className="pb-2 font-medium">Item</th>
+              <th className="pb-2 font-medium">HSN</th>
               <th className="pb-2 text-right font-medium">Qty</th>
               <th className="pb-2 text-right font-medium">Amount</th>
             </tr>
@@ -71,6 +89,9 @@ export function CustomerQuoteDocument({ quote }: { quote: PublicQuote }) {
             {items.map((item, index) => (
               <tr key={`${item.description}-${index}`}>
                 <td className="py-3 pr-3">{item.description}</td>
+                <td className="py-3 pr-3 text-on-surface-variant">
+                  {item.hsn_code ?? "—"}
+                </td>
                 <td className="py-3 text-right tabular-nums">{item.quantity}</td>
                 <td className="py-3 text-right tabular-nums">
                   {formatInrExact(Number(item.line_total))}
@@ -99,7 +120,7 @@ export function CustomerQuoteDocument({ quote }: { quote: PublicQuote }) {
           ) : null}
           {Number(version.tax) > 0 ? (
             <div className="flex justify-between">
-              <dt className="text-on-surface-variant">Tax</dt>
+              <dt className="text-on-surface-variant">GST</dt>
               <dd className="tabular-nums">
                 {formatInrExact(Number(version.tax))}
               </dd>

@@ -47,6 +47,48 @@ export function navForRole(role: AppRole) {
   return NAV[role];
 }
 
+export function navForRoles(roles: AppRole[], primary: AppRole): NavItem[] {
+  const uniqueRoles = [primary, ...roles.filter((role) => role !== primary)];
+  const seen = new Set<string>();
+  const merged: NavItem[] = [];
+  for (const role of uniqueRoles) {
+    for (const item of NAV[role]) {
+      if (item.href === "/more" || seen.has(item.href)) continue;
+      seen.add(item.href);
+      merged.push(item);
+    }
+  }
+  const more = NAV[primary].find((item) => item.href === "/more") ?? {
+    href: "/more" as const,
+    label: "More",
+    icon: "more" as const,
+  };
+  if (merged.length <= 4) {
+    return [...merged, more];
+  }
+  return [...merged.slice(0, 4), more];
+}
+
+export function overflowNavForRoles(
+  roles: AppRole[],
+  primary: AppRole,
+): NavItem[] {
+  const bar = new Set(navForRoles(roles, primary).map((item) => item.href));
+  const uniqueRoles = [primary, ...roles.filter((role) => role !== primary)];
+  const extras: NavItem[] = [];
+  const seen = new Set<string>();
+  for (const role of uniqueRoles) {
+    for (const item of NAV[role]) {
+      if (item.href === "/more" || bar.has(item.href) || seen.has(item.href)) {
+        continue;
+      }
+      seen.add(item.href);
+      extras.push(item);
+    }
+  }
+  return extras;
+}
+
 export function roleLabel(role: AppRole) {
   switch (role) {
     case "sales":
@@ -60,4 +102,9 @@ export function roleLabel(role: AppRole) {
     case "admin":
       return "Admin";
   }
+}
+
+export function roleLabels(roles: AppRole[]) {
+  const unique = [...new Set(roles)];
+  return unique.map(roleLabel).join(" + ");
 }

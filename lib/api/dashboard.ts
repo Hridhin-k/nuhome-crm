@@ -4,8 +4,8 @@ import { listCustomers } from "@/lib/api/customers";
 import { listOrders } from "@/lib/api/orders";
 import { listPendingApprovals, listQuotes } from "@/lib/api/quotes";
 import type { Accent } from "@/components/app/progress-bar";
-import type { AppRole } from "@/lib/workflow/types";
-import { ORDER_BUCKET_STATUSES } from "@/lib/workflow/status-buckets";
+import type { AppRole, WorkflowStatus } from "@/lib/workflow/types";
+import { isCompletedSaleStatus, ORDER_BUCKET_STATUSES } from "@/lib/workflow/status-buckets";
 import { orderHasOverdueVendor } from "@/lib/workflow/fulfillment";
 
 export type QueueCard = {
@@ -75,7 +75,7 @@ export const getOperationsSnapshot = cache(async (): Promise<OperationsSnapshot>
   ).length;
   const overdue = overdueVendorCount(orders);
   const delivered = orders.filter((o) =>
-    (ORDER_BUCKET_STATUSES.closed as readonly string[]).includes(o.status),
+    isCompletedSaleStatus(o.status as WorkflowStatus),
   ).length;
 
   const stages: PipelineStage[] = [
@@ -362,3 +362,21 @@ export const getHomeQueues = cache(async (role: AppRole): Promise<QueueCard[]> =
     },
   ]);
 });
+
+export async function getHomeQueuesForRoles(roles: AppRole[]) {
+  if (roles.includes("admin")) {
+    return getHomeQueues("admin");
+  }
+  const unique = [...new Set(roles)];
+  const groups = await Promise.all(unique.map((role) => getHomeQueues(role)));
+  const seen = new Set<string>();
+  const merged: QueueCard[] = [];
+  for (const group of groups) {
+    for (const card of group) {
+      if (seen.has(card.title)) continue;
+      seen.add(card.title);
+      merged.push(card);
+    }
+  }
+  return merged;
+}

@@ -59,3 +59,11 @@ const ROLE_PERMISSIONS: Record<AppRole, Permission[]> = {
 export function roleHasPermission(role: AppRole, permission: Permission) {
   return ROLE_PERMISSIONS[role].includes(permission);
 }
+
+export function rolesHavePermission(
+  roles: AppRole[] | AppRole,
+  permission: Permission,
+) {
+  const list = Array.isArray(roles) ? roles : [roles];
+  return list.some((role) => roleHasPermission(role, permission));
+}

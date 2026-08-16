@@ -8,7 +8,7 @@ import { PageHeader } from "@/components/app/page-header";
 import { VendorForm } from "@/components/vendors/vendor-form";
 import { listVendors } from "@/lib/api/catalog";
 import { requireUser } from "@/lib/auth/guards";
-import { roleHasPermission } from "@/lib/auth/permissions";
+import { rolesHavePermission } from "@/lib/auth/permissions";
 
 export default async function VendorsPage({
   searchParams,
@@ -19,11 +19,11 @@ export default async function VendorsPage({
     requireUser(),
     searchParams,
   ]);
-  const isAdmin = user.role === "admin";
+  const isAdmin = rolesHavePermission(user.roles, "admin.manage");
   const vendors = await listVendors({
     includeInactive: isAdmin,
   });
-  const canWrite = roleHasPermission(user.role, "orders.send_to_vendor");
+  const canWrite = rolesHavePermission(user.roles, "orders.send_to_vendor");
 
   return (
     <PageFrame>
@@ -64,18 +64,50 @@ export default async function VendorsPage({
         />
       ) : (
         <ul className="flex flex-col gap-3">
-          {vendors.map((vendor) => (
-            <li
-              key={vendor.id}
-              className="rounded-lg border border-outline-variant bg-card p-4 shadow-card"
-            >
-              <p className="font-medium">{vendor.name}</p>
-              <p className="text-sm text-on-surface-variant">
-                {vendor.phone ?? vendor.email ?? "No contact"}
-                {vendor.is_active ? "" : " · inactive"}
-              </p>
-            </li>
-          ))}
+          {vendors.map((vendor) => {
+            const contacts = vendor.vendor_contacts ?? [];
+            return (
+              <li
+                key={vendor.id}
+                className="flex items-start justify-between gap-3 rounded-lg border border-outline-variant bg-card p-4 shadow-card"
+              >
+                <div className="min-w-0">
+                  <p className="font-medium">{vendor.name}</p>
+                  <p className="text-sm text-on-surface-variant">
+                    {vendor.phone ?? vendor.email ?? "No contact"}
+                    {vendor.is_active ? "" : " · inactive"}
+                  </p>
+                  {contacts.length > 0 ? (
+                    <p className="mt-1 text-sm text-on-surface-variant">
+                      {contacts
+                        .map(
+                          (contact) =>
+                            `${contact.name}${contact.phone ? ` ${contact.phone}` : ""}`,
+                        )
+                        .join(" · ")}
+                    </p>
+                  ) : null}
+                </div>
+                {canWrite ? (
+                  <VendorForm
+                    vendor={{
+                      id: vendor.id,
+                      name: vendor.name,
+                      phone: vendor.phone,
+                      email: vendor.email,
+                      notes: vendor.notes,
+                      is_active: vendor.is_active,
+                      contacts: contacts.map((contact) => ({
+                        name: contact.name,
+                        phone: contact.phone ?? "",
+                        email: contact.email ?? "",
+                      })),
+                    }}
+                  />
+                ) : null}
+              </li>
+            );
+          })}
         </ul>
       )}
     </PageFrame>

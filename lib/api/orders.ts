@@ -2,6 +2,9 @@ import { cache } from "react";
 import { getDb, throwQuery } from "@/lib/api/db";
 import type { WorkflowStatus } from "@/lib/workflow/types";
 
+const ORDER_LIST_SELECT =
+  "id, status, updated_at, created_at, customer_id, quote_id, assigned_sales_id, on_hold_reason, customers(name, phone), quotes(quote_number, quote_versions!quotes_current_version_fk(total, margin_amount)), vendor_orders(status, expected_delivery_at, received_at, sent_at, dispatched_at)";
+
 export function listOrders(filter?: WorkflowStatus | WorkflowStatus[]) {
   const key = !filter
     ? ""
@@ -15,9 +18,7 @@ const listOrdersCached = cache(async (key: string) => {
   const db = await getDb();
   let request = db
     .from("orders")
-    .select(
-      "id, status, updated_at, customer_id, quote_id, assigned_sales_id, on_hold_reason, customers(name, phone), quotes(quote_number, quote_versions!quotes_current_version_fk(total)), vendor_orders(status, expected_delivery_at)",
-    )
+    .select(ORDER_LIST_SELECT)
     .order("updated_at", { ascending: false });
 
   if (key.includes(",")) {
@@ -34,9 +35,7 @@ export const listOrdersForCustomer = cache(async (customerId: string) => {
   return throwQuery(
     db
       .from("orders")
-      .select(
-        "id, status, updated_at, customer_id, quote_id, assigned_sales_id, on_hold_reason, customers(name, phone), quotes(quote_number, quote_versions!quotes_current_version_fk(total)), vendor_orders(status, expected_delivery_at)",
-      )
+      .select(ORDER_LIST_SELECT)
       .eq("customer_id", customerId)
       .order("updated_at", { ascending: false }),
     "Failed to load orders",
@@ -76,13 +75,13 @@ export const getOrder = cache(async (id: string) => {
     await Promise.all([
       db
         .from("customers")
-        .select("id, name, phone, address, kind")
+        .select("id, name, phone, address, gstin, billing_address, site_address, kind")
         .eq("id", order.customer_id)
         .maybeSingle(),
       db
         .from("quotes")
         .select(
-          "id, quote_number, status, current_version_id, quote_versions!quotes_current_version_fk(total, version_number)",
+          "id, quote_number, status, current_version_id, quote_versions!quotes_current_version_fk(total, version_number, tax, subtotal, discount)",
         )
         .eq("id", order.quote_id)
         .maybeSingle(),

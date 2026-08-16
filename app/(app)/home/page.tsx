@@ -2,11 +2,11 @@ import { InboxList } from "@/components/app/inbox-list";
 import { OperationsPipeline } from "@/components/app/operations-pipeline";
 import { PageFrame } from "@/components/app/page-frame";
 import { AppLink } from "@/components/app/app-link";
-import { getHomeQueues, getOperationsSnapshot } from "@/lib/api/dashboard";
+import { getHomeQueuesForRoles, getOperationsSnapshot } from "@/lib/api/dashboard";
 import { getCatalogSnapshot } from "@/lib/api/catalog";
 import { requireUser } from "@/lib/auth/guards";
-import { roleLabel } from "@/lib/auth/nav";
-import { roleHasPermission } from "@/lib/auth/permissions";
+import { roleLabels } from "@/lib/auth/nav";
+import { rolesHavePermission } from "@/lib/auth/permissions";
 
 function greeting(now = new Date()) {
   const hour = Number(
@@ -76,7 +76,7 @@ export default async function HomePage() {
   const firstName = user.fullName.split(" ")[0] || user.fullName;
   const hello = greeting();
 
-  if (user.role === "admin") {
+  if (user.roles.includes("admin")) {
     const [snapshot, catalog] = await Promise.all([
       getOperationsSnapshot(),
       getCatalogSnapshot(),
@@ -167,13 +167,13 @@ export default async function HomePage() {
     );
   }
 
-  const queues = await getHomeQueues(user.role);
-  const canQuote = roleHasPermission(user.role, "quotes.create");
+  const queues = await getHomeQueuesForRoles(user.roles);
+  const canQuote = rolesHavePermission(user.roles, "quotes.create");
   const openCount = queues.reduce((sum, card) => sum + card.count, 0);
   const inverted =
-    user.role === "sales" ||
-    user.role === "procurement" ||
-    user.role === "store";
+    user.roles.includes("sales") ||
+    user.roles.includes("procurement") ||
+    user.roles.includes("store");
 
   return (
     <PageFrame>
@@ -182,8 +182,8 @@ export default async function HomePage() {
         firstName={firstName}
         subtitle={
           openCount > 0
-            ? `${roleLabel(user.role)} · ${openCount} waiting`
-            : `${roleLabel(user.role)} · you’re clear`
+            ? `${roleLabels(user.roles)} · ${openCount} waiting`
+            : `${roleLabels(user.roles)} · you’re clear`
         }
         inverted={inverted}
       />
@@ -197,7 +197,7 @@ export default async function HomePage() {
       ) : null}
       <InboxList
         items={
-          user.role === "accounts"
+          user.roles.includes("accounts")
             ? withCtas(queues)
             : queues.map((q) => ({
                 ...q,

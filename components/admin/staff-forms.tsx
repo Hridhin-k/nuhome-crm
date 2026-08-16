@@ -1,8 +1,9 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import {
   createStaffAction,
+  resetStaffPasswordAction,
   updateStaffAction,
   type AdminActionState,
 } from "@/app/actions/admin";
@@ -29,7 +30,7 @@ export function CreateStaffForm() {
   return (
     <FormSheet
       title="Add user"
-      description="Creates a login and assigns a role. Share the password with them directly."
+      description="Creates a login. Extra hats (Also cover) add Saturday permissions without changing the primary role. Share the password with them directly."
       trigger={
         <span className="inline-flex h-11 min-h-11 items-center rounded-lg bg-primary px-6 text-[15px] font-medium text-on-primary">
           Add user
@@ -75,6 +76,7 @@ export function EditStaffForm({
     email: string | null;
     phone: string | null;
     role: AppRole;
+    roles: AppRole[];
     is_active: boolean;
   };
 }) {
@@ -82,11 +84,16 @@ export function EditStaffForm({
     updateStaffAction,
     {},
   );
+  const [resetState, resetAction, resetPending] = useActionState<
+    AdminActionState,
+    FormData
+  >(resetStaffPasswordAction, {});
+  const extras = user.roles.filter((role) => role !== user.role);
 
   return (
     <FormSheet
       title="Edit user"
-      description={user.email ?? "Update name, role, or access."}
+      description={user.email ?? "Update name, roles, or access."}
       triggerClassName="w-auto"
       trigger={
         <span className="inline-flex h-9 items-center rounded-lg border border-outline-variant px-3 text-xs font-semibold tracking-[0.05em] text-primary uppercase">
@@ -102,6 +109,7 @@ export function EditStaffForm({
             defaultEmail={user.email ?? ""}
             defaultPhone={user.phone ?? ""}
             defaultRole={user.role}
+            extraRoles={extras}
             emailLocked
           />
           <div>
@@ -128,6 +136,29 @@ export function EditStaffForm({
           </Button>
         </FormSheetFooter>
       </form>
+      <form action={resetAction} className="border-t border-surface-variant px-5 py-4">
+        <input type="hidden" name="user_id" value={user.id} />
+        <input type="hidden" name="email" value={user.email ?? ""} />
+        {resetState.credentials?.[0] ? (
+          <p className="mb-3 rounded-lg bg-surface-container-low px-3 py-2 text-sm">
+            New password for {resetState.credentials[0].email}:{" "}
+            <span className="font-mono font-semibold">
+              {resetState.credentials[0].password}
+            </span>
+          </p>
+        ) : null}
+        {resetState.error ? (
+          <p className="mb-2 text-sm text-destructive">{resetState.error}</p>
+        ) : null}
+        <Button
+          type="submit"
+          variant="outline"
+          disabled={resetPending}
+          className="w-full"
+        >
+          {resetPending ? "Resetting…" : "Generate new password"}
+        </Button>
+      </form>
     </FormSheet>
   );
 }
@@ -137,14 +168,18 @@ function StaffFields({
   defaultEmail = "",
   defaultPhone = "",
   defaultRole = "sales",
+  extraRoles = [],
   emailLocked = false,
 }: {
   defaultName?: string;
   defaultEmail?: string;
   defaultPhone?: string;
   defaultRole?: AppRole;
+  extraRoles?: AppRole[];
   emailLocked?: boolean;
 }) {
+  const [primary, setPrimary] = useState<AppRole>(defaultRole);
+
   return (
     <>
       <div>
@@ -180,11 +215,12 @@ function StaffFields({
         />
       </div>
       <div>
-        <Label htmlFor="role">Role</Label>
+        <Label htmlFor="role">Primary role</Label>
         <select
           id="role"
           name="role"
-          defaultValue={defaultRole}
+          value={primary}
+          onChange={(e) => setPrimary(e.target.value as AppRole)}
           className={selectClass}
         >
           {APP_ROLES.map((role) => (
@@ -194,6 +230,25 @@ function StaffFields({
           ))}
         </select>
       </div>
+      <fieldset>
+        <legend className="text-sm font-medium">Also cover</legend>
+        <p className="mt-1 text-xs text-on-surface-variant">
+          Extra hats for Saturdays — permissions are combined.
+        </p>
+        <ul className="mt-2 flex flex-col gap-2">
+          {APP_ROLES.filter((role) => role !== primary).map((role) => (
+            <li key={role} className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                name="extra_roles"
+                value={role}
+                defaultChecked={extraRoles.includes(role)}
+              />
+              {roleLabel(role)}
+            </li>
+          ))}
+        </ul>
+      </fieldset>
     </>
   );
 }

@@ -1,5 +1,8 @@
 import { cache } from "react";
 import { getDb, throwQuery } from "@/lib/api/db";
+import { relList } from "@/lib/api/rel";
+import { parseAppRole } from "@/lib/auth/roles";
+import type { AppRole } from "@/lib/workflow/types";
 
 export type MaterialRow = {
   id: string;
@@ -8,6 +11,9 @@ export type MaterialRow = {
   unit: string;
   default_sell_price: number | string;
   default_cost: number | string;
+  hsn_code?: string | null;
+  gst_rate?: number | string | null;
+  warranty_months?: number | null;
   is_active?: boolean;
   category_id: string | null;
   material_categories?: { id: string; name: string } | null;
@@ -20,6 +26,13 @@ export type VendorRow = {
   email: string | null;
   notes?: string | null;
   is_active: boolean;
+  vendor_contacts?: {
+    id: string;
+    name: string;
+    phone: string | null;
+    email: string | null;
+    notes: string | null;
+  }[];
 };
 
 export type ProfileRow = {
@@ -29,6 +42,7 @@ export type ProfileRow = {
   is_active: boolean;
   phone: string | null;
   email: string | null;
+  profile_roles?: { role: string }[];
 };
 
 export const listCategories = cache(async () => {
@@ -48,7 +62,7 @@ const listMaterialsCached = cache(async (includeInactive: boolean) => {
   let request = db
     .from("materials")
     .select(
-      "id, name, sku, unit, default_sell_price, default_cost, is_active, category_id, material_categories(id, name)",
+      "id, name, sku, unit, default_sell_price, default_cost, hsn_code, gst_rate, warranty_months, is_active, category_id, material_categories(id, name)",
     )
     .order("name");
   if (!includeInactive) {
@@ -65,7 +79,7 @@ const listVendorsCached = cache(async (includeInactive: boolean) => {
   const db = await getDb();
   let request = db
     .from("vendors")
-    .select("id, name, phone, email, notes, is_active")
+    .select("id, name, phone, email, notes, is_active, vendor_contacts(id, name, phone, email, notes)")
     .order("name");
   if (!includeInactive) {
     request = request.eq("is_active", true);
@@ -92,11 +106,27 @@ export const listProfiles = cache(async () => {
   return throwQuery(
     db
       .from("profiles")
-      .select("id, full_name, role, is_active, phone, email")
+      .select("id, full_name, role, is_active, phone, email, profile_roles(role)")
       .order("full_name"),
     "Failed to load users",
   ) as Promise<ProfileRow[]>;
 });
+
+export function profileRoles(profile: ProfileRow): AppRole[] {
+  const extra = relList(profile.profile_roles)
+    .map((row) => parseAppRole(row.role))
+    .filter((role): role is AppRole => Boolean(role));
+  const primary = parseAppRole(profile.role) ?? "sales";
+  return extra.includes(primary) ? extra : [primary, ...extra];
+}
+
+export function listCoverSales(profiles: ProfileRow[]) {
+  return profiles.filter(
+    (profile) =>
+      profile.is_active &&
+      profileRoles(profile).some((role) => role === "sales" || role === "admin"),
+  );
+}
 
 export const getCatalogSnapshot = cache(async () => {
   const [users, vendors, materials] = await Promise.all([

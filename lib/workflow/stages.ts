@@ -57,5 +57,7 @@ export function flowStageIndex(status: WorkflowStatus, outstanding = 0): number 
       return 14;
     case "closed":
       return 15;
+    case "cancelled":
+      return -1;
   }
 }

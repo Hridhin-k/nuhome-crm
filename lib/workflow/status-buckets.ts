@@ -31,7 +31,7 @@ const HOLD_STATUSES = [
 
 const DELIVERY_STATUSES = ["delivery_unlocked"] as const satisfies readonly WorkflowStatus[];
 
-const CLOSED_STATUSES = ["delivered", "closed"] as const satisfies readonly WorkflowStatus[];
+const CLOSED_STATUSES = ["delivered", "closed", "cancelled"] as const satisfies readonly WorkflowStatus[];
 
 const OPEN_STATUSES = [
   ...PAYMENT_STATUSES,
@@ -68,6 +68,10 @@ export const ORDER_BUCKET_ACCENT: Record<OrderBucketId, Accent> = {
 };
 
 export function isClosedOrderStatus(status: WorkflowStatus) {
+  return status === "closed" || status === "delivered" || status === "cancelled";
+}
+
+export function isCompletedSaleStatus(status: WorkflowStatus) {
   return status === "closed" || status === "delivered";
 }
 

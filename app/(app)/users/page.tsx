@@ -1,13 +1,14 @@
 import { AdminCatalogNav } from "@/components/admin/admin-catalog-nav";
+import { CoverLeaveForm } from "@/components/admin/cover-leave-form";
 import { CsvImportSheet } from "@/components/admin/csv-import-sheet";
 import { CreateStaffForm, EditStaffForm } from "@/components/admin/staff-forms";
 import { Notice } from "@/components/app/notice";
 import { PageFrame } from "@/components/app/page-frame";
 import { PageHeader } from "@/components/app/page-header";
 import { importStaffCsvAction } from "@/app/actions/admin";
-import { listProfiles } from "@/lib/api/catalog";
+import { listCoverSales, listProfiles, profileRoles } from "@/lib/api/catalog";
 import { requirePermission } from "@/lib/auth/guards";
-import { roleLabel } from "@/lib/auth/nav";
+import { roleLabels } from "@/lib/auth/nav";
 import type { AppRole } from "@/lib/workflow/types";
 
 export default async function UsersPage({
@@ -20,15 +21,19 @@ export default async function UsersPage({
     searchParams,
     listProfiles(),
   ]);
+  const coverPeople = listCoverSales(profiles);
 
   return (
     <PageFrame>
       <PageHeader
         title="Users"
         hideTitleOnMobile
-        description="Add staff, assign roles, or import a CSV."
+        description="Add staff, extra hats, cover for leave, or import a CSV."
         action={
           <div className="flex flex-col items-end gap-2 sm:flex-row">
+            {coverPeople.length >= 2 ? (
+              <CoverLeaveForm people={coverPeople} />
+            ) : null}
             <CsvImportSheet
               title="Import users"
               description="Columns: email, full_name, role, phone, password. Role is sales, accounts, procurement, store, or admin. Password is optional — we generate one if blank."
@@ -49,34 +54,38 @@ export default async function UsersPage({
       {notice === "user-updated" ? <Notice>User updated.</Notice> : null}
 
       <ul className="flex flex-col gap-3">
-        {profiles.map((profile) => (
-          <li
-            key={profile.id}
-            className="flex items-start justify-between gap-3 rounded-lg border border-outline-variant bg-card p-4 shadow-card"
-          >
-            <div className="min-w-0">
-              <p className="font-medium">{profile.full_name || "Unnamed"}</p>
-              <p className="text-sm text-on-surface-variant">
-                {profile.email ?? "No email"}
-                {profile.phone ? ` · ${profile.phone}` : ""}
-              </p>
-              <p className="mt-1 text-sm text-on-surface-variant">
-                {roleLabel(profile.role as AppRole)}
-                {profile.is_active ? "" : " · inactive"}
-              </p>
-            </div>
-            <EditStaffForm
-              user={{
-                id: profile.id,
-                full_name: profile.full_name,
-                email: profile.email,
-                phone: profile.phone,
-                role: profile.role as AppRole,
-                is_active: profile.is_active,
-              }}
-            />
-          </li>
-        ))}
+        {profiles.map((profile) => {
+          const roles = profileRoles(profile);
+          return (
+            <li
+              key={profile.id}
+              className="flex items-start justify-between gap-3 rounded-lg border border-outline-variant bg-card p-4 shadow-card"
+            >
+              <div className="min-w-0">
+                <p className="font-medium">{profile.full_name || "Unnamed"}</p>
+                <p className="text-sm text-on-surface-variant">
+                  {profile.email ?? "No email"}
+                  {profile.phone ? ` · ${profile.phone}` : ""}
+                </p>
+                <p className="mt-1 text-sm text-on-surface-variant">
+                  {roleLabels(roles)}
+                  {profile.is_active ? "" : " · inactive"}
+                </p>
+              </div>
+              <EditStaffForm
+                user={{
+                  id: profile.id,
+                  full_name: profile.full_name,
+                  email: profile.email,
+                  phone: profile.phone,
+                  role: (profile.role as AppRole) ?? "sales",
+                  roles,
+                  is_active: profile.is_active,
+                }}
+              />
+            </li>
+          );
+        })}
       </ul>
     </PageFrame>
   );

@@ -29,6 +29,8 @@ describe("normalizeCsvHeader", () => {
   it("maps delivery-style labels", () => {
     expect(normalizeCsvHeader("Full Name")).toBe("full_name");
     expect(normalizeCsvHeader("selling price")).toBe("sell_price");
+    expect(normalizeCsvHeader("HSN")).toBe("hsn_code");
+    expect(normalizeCsvHeader("gst %")).toBe("gst_rate");
   });
 });
 

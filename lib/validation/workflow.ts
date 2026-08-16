@@ -12,6 +12,8 @@ export const quoteItemSchema = z.object({
   unit_cost: money.optional().default(0),
   discount: money.optional().default(0),
   tax: money.optional().default(0),
+  hsn_code: z.string().trim().max(8).optional(),
+  gst_rate: z.number().min(0).max(100).optional(),
 });
 
 export const createQuoteSchema = z.object({
@@ -109,11 +111,19 @@ export const completeDeliverySchema = z.object({
   notes: z.string().optional(),
 });
 
+export const cancelJobSchema = z.object({
+  quote_id: uuid,
+  reason: z.string().trim().min(1, "A reason is required to cancel"),
+});
+
 export const customerSchema = z.object({
   name: z.string().min(1),
   phone: z.string().optional(),
   email: z.string().email().optional().or(z.literal("")),
   address: z.string().optional(),
+  gstin: z.string().trim().max(15).optional(),
+  billing_address: z.string().optional(),
+  site_address: z.string().optional(),
   notes: z.string().optional(),
 });
 

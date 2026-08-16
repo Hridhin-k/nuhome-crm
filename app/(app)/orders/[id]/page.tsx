@@ -5,22 +5,36 @@ import { Notice } from "@/components/app/notice";
 import { NextActionCard } from "@/components/app/next-action-card";
 import { PageFrame, panelClass } from "@/components/app/page-frame";
 import { CompleteDeliveryForm } from "@/components/deliveries/complete-form";
+import { AttachmentPanel } from "@/components/documents/attachment-panel";
+import { InstallationForm } from "@/components/documents/installation-form";
+import { WarrantyPanel } from "@/components/documents/warranty-form";
 import { HoldCard } from "@/components/orders/hold-card";
 import { OrderHero } from "@/components/orders/order-hero";
+import { ReassignOrderForm } from "@/components/orders/reassign-order-form";
+import { CancelJobSheet } from "@/components/quotes/cancel-sheet";
 import { PaymentForm } from "@/components/payments/payment-form";
 import { PaymentReviewActions } from "@/components/payments/payment-review-actions";
 import { listOrderActivity } from "@/lib/api/audit";
+import { listCoverSales, listProfiles } from "@/lib/api/catalog";
+import {
+  getInstallationForOrder,
+  listAttachments,
+  listWarrantiesForOrder,
+} from "@/lib/api/documents";
 import { getOrder } from "@/lib/api/orders";
 import { rel } from "@/lib/api/rel";
 import { requireUser } from "@/lib/auth/guards";
-import { roleHasPermission } from "@/lib/auth/permissions";
+import { rolesHavePermission } from "@/lib/auth/permissions";
 import { formatInrExact } from "@/lib/format/money";
+import { canCancelJob } from "@/lib/workflow/cancel";
 import { nextRequiredAction } from "@/lib/workflow/next-action";
 import {
   canRecordPayment,
   pendingPaymentMessage,
 } from "@/lib/workflow/payment-recording";
 import { orderStatusExplanation } from "@/lib/workflow/status-explanation";
+import { cn } from "@/lib/utils";
+import { buttonVariants } from "@/components/ui/button";
 import type { WorkflowStatus } from "@/lib/workflow/types";
 
 export default async function OrderDetailPage({
@@ -33,10 +47,19 @@ export default async function OrderDetailPage({
   const user = await requireUser();
   const { id } = await params;
   const { notice, error } = await searchParams;
-  const [detail, activity] = await Promise.all([
-    getOrder(id),
-    listOrderActivity(id).catch(() => []),
-  ]);
+  const canReassign = rolesHavePermission(user.roles, "admin.manage");
+  const canAftercare =
+    rolesHavePermission(user.roles, "quotes.create") ||
+    rolesHavePermission(user.roles, "deliveries.complete");
+  const [detail, activity, profiles, files, installation, warranties] =
+    await Promise.all([
+      getOrder(id),
+      listOrderActivity(id).catch(() => []),
+      canReassign ? listProfiles() : Promise.resolve([]),
+      listAttachments("order", id).catch(() => []),
+      getInstallationForOrder(id).catch(() => null),
+      listWarrantiesForOrder(id).catch(() => []),
+    ]);
   if (!detail) {
     notFound();
   }
@@ -50,17 +73,24 @@ export default async function OrderDetailPage({
   const next = nextRequiredAction({
     status,
     role: user.role,
+    roles: user.roles,
     outstanding,
     orderId: order.id,
     quoteId: order.quote_id,
     activated: Boolean(order.activated_at),
     payments,
+    hasInstallation: Boolean(installation),
   });
   const showRecordPayment =
-    roleHasPermission(user.role, "payments.record") &&
+    rolesHavePermission(user.roles, "payments.record") &&
     canRecordPayment({ status, payments, outstanding });
   const paymentWaitingMessage = pendingPaymentMessage(payments);
   const version = rel(quote?.quote_versions);
+  const canCancel = canCancelJob({
+    quoteStatus: (quote?.status as WorkflowStatus) ?? status,
+    orderStatus: status,
+    roles: user.roles,
+  });
   const statusExplanation = orderStatusExplanation({
     status,
     outstanding,
@@ -69,8 +99,8 @@ export default async function OrderDetailPage({
 
   return (
     <PageFrame width="detail" className="flex flex-col gap-4">
-      {notice === "delivered" ? (
-        <Notice>Order delivered. This job is now closed.</Notice>
+      {notice === "reassigned" ? (
+        <Notice>Order moved to covering sales.</Notice>
       ) : null}
       {notice === "payment" ? (
         <Notice>Payment recorded. Waiting for Accounts to verify.</Notice>
@@ -85,6 +115,11 @@ export default async function OrderDetailPage({
       {notice === "sent" ? (
         <Notice>Approved quote sent. Record payment terms next.</Notice>
       ) : null}
+      {notice === "uploaded" ? <Notice>File uploaded.</Notice> : null}
+      {notice === "file-removed" ? <Notice>File removed.</Notice> : null}
+      {notice === "install" ? <Notice>Installation saved.</Notice> : null}
+      {notice === "warranty" ? <Notice>Warranty / AMC saved.</Notice> : null}
+      {notice === "cancelled" ? <Notice>This job was cancelled.</Notice> : null}
       {error ? (
         <p className="rounded-lg bg-destructive/10 px-4 py-3 text-sm text-destructive">
           {error}
@@ -102,6 +137,18 @@ export default async function OrderDetailPage({
       />
 
       <NextActionCard action={next} />
+
+      {canReassign &&
+      status !== "delivered" &&
+      status !== "closed" &&
+      status !== "cancelled" ? (
+        <ReassignOrderForm
+          orderId={order.id}
+          people={listCoverSales(profiles).filter(
+            (person) => person.id !== order.assigned_sales_id,
+          )}
+        />
+      ) : null}
 
       {status === "order_on_hold" ? (
         <HoldCard
@@ -129,7 +176,7 @@ export default async function OrderDetailPage({
               const canReview =
                 payment.status === "pending" &&
                 payment.recorded_by !== user.id &&
-                roleHasPermission(user.role, "payments.verify");
+                rolesHavePermission(user.roles, "payments.verify");
               return (
               <li
                 key={payment.id}
@@ -224,10 +271,87 @@ export default async function OrderDetailPage({
       ) : null}
 
       {status === "delivery_unlocked" &&
-      roleHasPermission(user.role, "deliveries.complete") ? (
+      rolesHavePermission(user.roles, "deliveries.complete") ? (
         <section>
           <CompleteDeliveryForm orderId={order.id} />
         </section>
+      ) : null}
+
+      <AppLink
+        href={`/orders/${order.id}/invoice`}
+        className={cn(
+          buttonVariants({ variant: "outline", size: "lg" }),
+          "w-full text-center",
+        )}
+      >
+        Tax invoice
+      </AppLink>
+
+      <AttachmentPanel
+        entityType="order"
+        entityId={order.id}
+        returnTo={`/orders/${order.id}`}
+        files={files}
+        canUpload={
+          rolesHavePermission(user.roles, "customers.write") ||
+          rolesHavePermission(user.roles, "deliveries.complete")
+        }
+      />
+
+      {status === "delivery_unlocked" ||
+      status === "delivered" ||
+      status === "closed"
+        ? canAftercare
+          ? (
+            <>
+              <InstallationForm orderId={order.id} installation={installation} />
+              <WarrantyPanel
+                orderId={order.id}
+                rows={warranties.map((row) => ({
+                  kind: row.kind,
+                  starts_on: row.starts_on,
+                  ends_on: row.ends_on,
+                  notes: row.notes,
+                }))}
+              />
+            </>
+          )
+          : installation || warranties.length > 0
+            ? (
+              <section className={panelClass}>
+                <h2 className="text-subheading text-on-surface">After handover</h2>
+                {installation ? (
+                  <p className="mt-2 text-sm">
+                    Installation {installation.status}
+                    {installation.scheduled_on
+                      ? ` · ${new Date(installation.scheduled_on).toLocaleDateString("en-IN")}`
+                      : ""}
+                  </p>
+                ) : null}
+                {warranties.map((row) => (
+                  <p key={row.id} className="mt-1 text-sm text-on-surface-variant">
+                    {row.kind === "amc" ? "AMC" : "Warranty"} {row.starts_on} → {row.ends_on}
+                  </p>
+                ))}
+              </section>
+            )
+            : null
+        : null}
+
+      {canCancel ? (
+        <CancelJobSheet
+          quoteId={order.quote_id}
+          returnTo={`/orders/${order.id}`}
+        />
+      ) : null}
+
+      {status === "cancelled" ? (
+        <p className="rounded-lg border border-surface-variant px-4 py-6 text-center">
+          <span className="block text-lg font-semibold">Job cancelled</span>
+          <span className="mt-1 block text-sm text-on-surface-variant">
+            {order.on_hold_reason ?? "This job will not continue."}
+          </span>
+        </p>
       ) : null}
 
       {status === "closed" || status === "delivered" ? (
@@ -246,7 +370,7 @@ export default async function OrderDetailPage({
         </p>
       ) : null}
 
-      {roleHasPermission(user.role, "fulfillment.update") ? (
+      {rolesHavePermission(user.roles, "fulfillment.update") ? (
         <AppLink
           href={`/fulfillment/${order.id}`}
           className="text-sm underline"

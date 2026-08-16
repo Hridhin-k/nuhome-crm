@@ -1,18 +1,36 @@
 import { cache } from "react";
 import { getDb, throwQuery } from "@/lib/api/db";
+import { sanitizeSearch } from "@/lib/search";
 
 export const listCustomers = cache(async (query?: string) => {
   const db = await getDb();
+  const q = sanitizeSearch(query);
+
   let request = db
     .from("customers")
-    .select("id, name, phone, email, address, created_at, updated_at")
+    .select("id, name, phone, email, address, gstin, billing_address, site_address, created_at, updated_at, created_by")
     .order("updated_at", { ascending: false });
 
-  if (query?.trim()) {
-    const q = query.trim().replace(/[%_,()]/g, "").replace(/,/g, " ").trim();
-    if (q) {
-      request = request.or(`name.ilike.%${q}%,phone.ilike.%${q}%`);
-    }
+  if (q) {
+    const quoted = await throwQuery(
+      db.from("quotes").select("customer_id").ilike("quote_number", `%${q}%`),
+      "Failed to search quotes",
+    );
+    const quoteCustomerIds = [
+      ...new Set(quoted.map((row) => row.customer_id).filter(Boolean)),
+    ];
+    request = request.or(
+      [
+        `name.ilike.%${q}%`,
+        `phone.ilike.%${q}%`,
+        `email.ilike.%${q}%`,
+        quoteCustomerIds.length > 0
+          ? `id.in.(${quoteCustomerIds.join(",")})`
+          : null,
+      ]
+        .filter(Boolean)
+        .join(","),
+    );
   }
 
   return throwQuery(request, "Failed to load customers");
@@ -22,7 +40,7 @@ export const getCustomer = cache(async (id: string) => {
   const db = await getDb();
   const { data, error } = await db
     .from("customers")
-    .select("id, name, phone, email, address, notes, created_at")
+    .select("id, name, phone, email, address, gstin, billing_address, site_address, notes, created_at")
     .eq("id", id)
     .maybeSingle();
 
@@ -37,10 +55,15 @@ export async function createCustomerRow(input: {
   phone?: string;
   email?: string;
   address?: string;
+  gstin?: string;
+  billing_address?: string;
+  site_address?: string;
   notes?: string;
   createdBy: string;
 }) {
   await assertPhoneAvailable(input.phone);
+  const billing = input.billing_address || input.address || null;
+  const site = input.site_address || billing;
   const db = await getDb();
   const { data, error } = await db
     .from("customers")
@@ -48,7 +71,10 @@ export async function createCustomerRow(input: {
       name: input.name,
       phone: input.phone || null,
       email: input.email || null,
-      address: input.address || null,
+      address: billing,
+      gstin: input.gstin || null,
+      billing_address: billing,
+      site_address: site,
       notes: input.notes || null,
       kind: "customer",
       created_by: input.createdBy,
@@ -69,9 +95,14 @@ export async function updateCustomerRow(input: {
   phone?: string;
   email?: string;
   address?: string;
+  gstin?: string;
+  billing_address?: string;
+  site_address?: string;
   notes?: string;
 }) {
   await assertPhoneAvailable(input.phone, input.id);
+  const billing = input.billing_address || input.address || null;
+  const site = input.site_address || billing;
   const db = await getDb();
   const { error } = await db
     .from("customers")
@@ -79,7 +110,10 @@ export async function updateCustomerRow(input: {
       name: input.name,
       phone: input.phone || null,
       email: input.email || null,
-      address: input.address || null,
+      address: billing,
+      gstin: input.gstin || null,
+      billing_address: billing,
+      site_address: site,
       notes: input.notes || null,
     })
     .eq("id", input.id);

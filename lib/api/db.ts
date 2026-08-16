@@ -8,7 +8,7 @@ export async function throwQuery<T>(
 ): Promise<NonNullable<T>> {
   const { data, error } = await result;
   if (error) {
-    throw new Error(message);
+    throw new Error(`${message}: ${error.message}`);
   }
   return data as NonNullable<T>;
 }

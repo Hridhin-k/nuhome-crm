@@ -37,10 +37,10 @@ export default async function MaterialsPage({
               title="Import materials"
               description="Columns: sku, name, category, unit, sell_price, cost. Existing SKUs are updated."
               templateName="nuhome-materials.csv"
-              templateHeaders={["sku", "name", "category", "unit", "sell_price", "cost"]}
+              templateHeaders={["sku", "name", "category", "unit", "sell_price", "cost", "hsn_code", "gst_rate", "warranty_months"]}
               templateRows={[
-                ["MK-BASE-600", "Base cabinet 600mm", "Modular Kitchen", "pcs", "8500", "5200"],
-                ["SV-INSTALL", "Installation labour", "Services", "day", "2500", "1500"],
+                ["MK-BASE-600", "Base cabinet 600mm", "Modular Kitchen", "pcs", "8500", "5200", "9403", "18", "12"],
+                ["SV-INSTALL", "Installation labour", "Services", "day", "2500", "1500", "9987", "18", "0"],
               ]}
               action={importMaterialsCsvAction}
             />
@@ -73,6 +73,8 @@ export default async function MaterialsPage({
                   {material.sku ?? "No SKU"}
                   {category ? ` · ${category.name}` : ""}
                   {` · ${material.unit}`}
+                  {material.hsn_code ? ` · HSN ${material.hsn_code}` : ""}
+                  {` · GST ${Number(material.gst_rate ?? 18)}%`}
                   {active ? "" : " · inactive"}
                 </p>
                 <p className="mt-1 text-sm text-on-surface-variant">
@@ -80,16 +82,34 @@ export default async function MaterialsPage({
                   {formatInr(Number(material.default_cost))}
                 </p>
               </div>
-              <form action={toggleMaterialAction}>
-                <input type="hidden" name="id" value={material.id} />
-                <input type="hidden" name="is_active" value={active ? "false" : "true"} />
-                <button
-                  type="submit"
-                  className="h-9 rounded-lg border border-border px-3 text-[13px] font-medium text-on-surface"
-                >
-                  {active ? "Hide" : "Restore"}
-                </button>
-              </form>
+              <div className="flex shrink-0 items-start gap-2">
+                <MaterialForm
+                  categories={categories}
+                  material={{
+                    id: material.id,
+                    name: material.name,
+                    sku: material.sku,
+                    unit: material.unit,
+                    categoryName: category?.name ?? "",
+                    sellPrice: Number(material.default_sell_price),
+                    cost: Number(material.default_cost),
+                    hsnCode: material.hsn_code,
+                    gstRate: Number(material.gst_rate ?? 18),
+                    warrantyMonths: material.warranty_months ?? 12,
+                    isActive: active,
+                  }}
+                />
+                <form action={toggleMaterialAction}>
+                  <input type="hidden" name="id" value={material.id} />
+                  <input type="hidden" name="is_active" value={active ? "false" : "true"} />
+                  <button
+                    type="submit"
+                    className="h-9 rounded-lg border border-border px-3 text-[13px] font-medium text-on-surface"
+                  >
+                    {active ? "Hide" : "Restore"}
+                  </button>
+                </form>
+              </div>
             </li>
           );
         })}

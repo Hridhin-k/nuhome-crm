@@ -16,11 +16,12 @@ export const STATUS_LABELS: Record<WorkflowStatus, string> = {
   delivery_unlocked: "Ready",
   delivered: "Delivered",
   closed: "Closed",
+  cancelled: "Cancelled",
 };
 
 export const STATUS_TONE: Record<
   WorkflowStatus,
-  "draft" | "waiting" | "rejected" | "approved" | "sent" | "verify" | "active" | "vendor" | "dispatch" | "received" | "gate" | "hold" | "ready" | "delivered" | "closed"
+  "draft" | "waiting" | "rejected" | "approved" | "sent" | "verify" | "active" | "vendor" | "dispatch" | "received" | "gate" | "hold"   | "ready" | "delivered" | "closed" | "cancelled"
 > = {
   quote_draft: "draft",
   quote_pending_accounts: "waiting",
@@ -37,6 +38,7 @@ export const STATUS_TONE: Record<
   delivery_unlocked: "ready",
   delivered: "delivered",
   closed: "closed",
+  cancelled: "cancelled",
 };
 
 const BADGE_DRAFT = "bg-surface-container-highest text-on-surface-variant";
@@ -62,6 +64,7 @@ export const STATUS_BADGE_CLASS: Record<WorkflowStatus, string> = {
   delivery_unlocked: BADGE_DONE,
   delivered: BADGE_DONE,
   closed: BADGE_DONE,
+  cancelled: BADGE_BLOCKED,
 };
 
 export const STATUS_DOT_CLASS: Record<WorkflowStatus, string> = {
@@ -80,6 +83,7 @@ export const STATUS_DOT_CLASS: Record<WorkflowStatus, string> = {
   delivery_unlocked: "bg-secondary",
   delivered: "bg-success",
   closed: "bg-success",
+  cancelled: "bg-error",
 };
 
 export const STATUS_NEXT_LINE: Record<WorkflowStatus, string> = {
@@ -98,6 +102,7 @@ export const STATUS_NEXT_LINE: Record<WorkflowStatus, string> = {
   delivery_unlocked: "Complete handover with the customer.",
   delivered: "Handover done — closing out.",
   closed: "This job is complete. No further action.",
+  cancelled: "This job was cancelled. No further action.",
 };
 
 export const TIMELINE_STEPS = [
@@ -119,6 +124,7 @@ export function timelineIndex(status: WorkflowStatus, activated = false) {
     case "quote_draft":
     case "quote_pending_accounts":
     case "quote_rejected":
+    case "cancelled":
       return -1;
     case "quote_approved":
       return 0;

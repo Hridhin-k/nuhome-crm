@@ -29,9 +29,15 @@ export async function updateSession(request: NextRequest) {
 
   const path = request.nextUrl.pathname;
   const isLogin = path === "/login";
-  const isPublic = isLogin || path === "/" || path.startsWith("/q/");
+  const isAuthPublic =
+    isLogin ||
+    path === "/" ||
+    path === "/forgot-password" ||
+    path === "/update-password" ||
+    path.startsWith("/auth/") ||
+    path.startsWith("/q/");
 
-  if (!signedIn && !isPublic) {
+  if (!signedIn && !isAuthPublic) {
     const redirect = request.nextUrl.clone();
     redirect.pathname = "/login";
     redirect.searchParams.set("next", path);

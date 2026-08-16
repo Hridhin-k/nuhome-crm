@@ -1,11 +1,18 @@
 import { StatusFilterNav } from "@/components/app/status-filter-nav";
+import { pathWithQuery } from "@/lib/search";
 import {
   ORDER_BUCKET_IDS,
   ORDER_BUCKET_LABELS,
   type OrderBucketId,
 } from "@/lib/workflow/status-buckets";
 
-export function OrderBucketNav({ active }: { active: OrderBucketId }) {
+export function OrderBucketNav({
+  active,
+  extra,
+}: {
+  active: OrderBucketId;
+  extra?: Record<string, string | undefined>;
+}) {
   return (
     <StatusFilterNav
       ariaLabel="Order status"
@@ -14,7 +21,11 @@ export function OrderBucketNav({ active }: { active: OrderBucketId }) {
         id,
         label: ORDER_BUCKET_LABELS[id],
       }))}
-      hrefFor={(id) => (id === "open" ? "/orders" : `/orders?bucket=${id}`)}
+      hrefFor={(id) =>
+        id === "open"
+          ? pathWithQuery("/orders", extra ?? {})
+          : pathWithQuery("/orders", { ...(extra ?? {}), bucket: id })
+      }
     />
   );
 }

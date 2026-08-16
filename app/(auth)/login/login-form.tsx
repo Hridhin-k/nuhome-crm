@@ -54,6 +54,12 @@ export function LoginForm({ next }: { next?: string }) {
       <Button type="submit" disabled={pending} className="w-full" size="lg">
         {pending ? "Signing in…" : "Sign in"}
       </Button>
+      <a
+        href="/forgot-password"
+        className="text-center text-sm text-on-surface-variant"
+      >
+        Forgot password?
+      </a>
     </form>
   );
 }

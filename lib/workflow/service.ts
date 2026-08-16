@@ -1,5 +1,6 @@
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import {
+  cancelJobSchema,
   completeDeliverySchema,
   createQuoteSchema,
   receiveItemsSchema,
@@ -165,6 +166,16 @@ export async function completeDelivery(input: unknown) {
   const { error } = await supabase.rpc("complete_delivery", {
     p_order_id: parsed.order_id,
     p_notes: parsed.notes,
+  });
+  throwIfError(error);
+}
+
+export async function cancelJob(input: unknown) {
+  const parsed = cancelJobSchema.parse(input);
+  const supabase = await createServerSupabaseClient();
+  const { error } = await supabase.rpc("cancel_job", {
+    p_quote_id: parsed.quote_id,
+    p_reason: parsed.reason,
   });
   throwIfError(error);
 }

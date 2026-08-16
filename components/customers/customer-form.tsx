@@ -31,6 +31,9 @@ export function CustomerForm({
     phone: string | null;
     email: string | null;
     address: string | null;
+    gstin?: string | null;
+    billing_address?: string | null;
+    site_address?: string | null;
     notes: string | null;
   };
 }) {
@@ -99,13 +102,34 @@ export function CustomerForm({
             />
           </div>
           <div>
-            <Label htmlFor="address">Address</Label>
+            <Label htmlFor="gstin">GSTIN</Label>
+            <Input
+              id="gstin"
+              name="gstin"
+              maxLength={15}
+              defaultValue={customer?.gstin ?? ""}
+              className="mt-2 h-11 min-h-11 uppercase"
+            />
+          </div>
+          <div>
+            <Label htmlFor="billing_address">Billing address</Label>
             <Textarea
-              id="address"
-              name="address"
+              id="billing_address"
+              name="billing_address"
               rows={2}
-              defaultValue={customer?.address ?? ""}
+              defaultValue={customer?.billing_address ?? customer?.address ?? ""}
               className="mt-2"
+            />
+          </div>
+          <div>
+            <Label htmlFor="site_address">Site address</Label>
+            <Textarea
+              id="site_address"
+              name="site_address"
+              rows={2}
+              defaultValue={customer?.site_address ?? ""}
+              className="mt-2"
+              placeholder="Leave blank if same as billing"
             />
           </div>
           <div>

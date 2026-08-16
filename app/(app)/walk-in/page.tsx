@@ -18,6 +18,8 @@ function mapMaterials(materials: MaterialRow[]) {
     default_cost: m.default_cost,
     category_id: m.category_id,
     category_name: m.material_categories?.name ?? null,
+    hsn_code: m.hsn_code,
+    gst_rate: m.gst_rate,
   }));
 }
 

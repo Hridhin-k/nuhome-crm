@@ -3,9 +3,11 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { humanizeError, rethrowNavigationError } from "@/lib/api/errors";
-import { requirePermission } from "@/lib/auth/guards";
+import { requirePermission, requireUser } from "@/lib/auth/guards";
+import { rolesHavePermission } from "@/lib/auth/permissions";
 import {
   approveQuote,
+  cancelJob,
   completeDelivery,
   createQuote,
   markVendorDispatched,
@@ -42,7 +44,10 @@ export async function createCustomerAction(
     name: formData.get("name"),
     phone: formData.get("phone") || undefined,
     email: formData.get("email") || undefined,
-    address: formData.get("address") || undefined,
+    address: formData.get("billing_address") || formData.get("address") || undefined,
+    gstin: formData.get("gstin") || undefined,
+    billing_address: formData.get("billing_address") || undefined,
+    site_address: formData.get("site_address") || undefined,
     notes: formData.get("notes") || undefined,
   });
   if (!parsed.success) {
@@ -368,6 +373,40 @@ export async function completeDeliveryAction(
       notes: formData.get("notes") || undefined,
     });
     redirect(`/orders/${orderId}?notice=delivered`);
+  } catch (error) {
+    rethrowNavigationError(error);
+    return { error: humanizeError(error) };
+  }
+}
+
+export async function cancelJobAction(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const user = await requireUser();
+  const canCancel =
+    rolesHavePermission(user.roles, "quotes.create") ||
+    rolesHavePermission(user.roles, "quotes.approve") ||
+    rolesHavePermission(user.roles, "orders.send_to_vendor");
+  if (!canCancel) {
+    return { error: "You don’t have permission to do that." };
+  }
+  const quoteId = String(formData.get("quote_id"));
+  const returnTo = String(formData.get("return_to") ?? "").trim();
+  try {
+    await cancelJob({
+      quote_id: quoteId,
+      reason: String(formData.get("reason") ?? ""),
+    });
+    revalidatePath("/quotes");
+    revalidatePath("/orders");
+    revalidatePath("/home");
+    revalidatePath("/fulfillment");
+    const dest =
+      returnTo.startsWith("/quotes/") || returnTo.startsWith("/orders/")
+        ? returnTo
+        : `/quotes/${quoteId}`;
+    redirect(`${dest}${dest.includes("?") ? "&" : "?"}notice=cancelled`);
   } catch (error) {
     rethrowNavigationError(error);
     return { error: humanizeError(error) };

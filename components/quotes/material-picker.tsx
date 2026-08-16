@@ -15,6 +15,8 @@ export type PickerMaterial = {
   default_cost: number | string;
   category_id: string | null;
   category_name?: string | null;
+  hsn_code?: string | null;
+  gst_rate?: number | string | null;
 };
 
 export function MaterialPicker({

@@ -7,6 +7,10 @@ export type PaymentSummary = {
 const RECORDABLE_STATUSES = new Set<WorkflowStatus>([
   "quote_sent_to_customer",
   "payment_pending_verification",
+  "order_active",
+  "sent_to_vendor",
+  "vendor_dispatched",
+  "items_received",
   "order_on_hold",
   "delivery_pending_payment",
 ]);
@@ -23,7 +27,7 @@ export function canRecordPayment(input: {
 }) {
   const { status, payments, outstanding } = input;
 
-  if (["delivered", "closed"].includes(status)) {
+  if (["delivered", "closed", "cancelled"].includes(status)) {
     return false;
   }
 

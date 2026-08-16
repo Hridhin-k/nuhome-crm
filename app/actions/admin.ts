@@ -2,12 +2,19 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { ensureCategoryId, insertVendor, upsertMaterial } from "@/lib/api/catalog-write";
+import {
+  ensureCategoryId,
+  insertVendor,
+  replaceVendorContacts,
+  updateVendor,
+  upsertMaterial,
+} from "@/lib/api/catalog-write";
 import { listVendors } from "@/lib/api/catalog";
 import { humanizeError, rethrowNavigationError } from "@/lib/api/errors";
 import { revalidateApp } from "@/lib/api/revalidate";
 import { parseAppRole, generateTempPassword } from "@/lib/auth/roles";
 import { requirePermission } from "@/lib/auth/guards";
+import type { AppRole } from "@/lib/workflow/types";
 import { parseCsv } from "@/lib/csv";
 import { createServiceRoleClient } from "@/lib/supabase/admin";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
@@ -67,6 +74,26 @@ function refreshCatalog() {
   revalidatePath("/home");
 }
 
+function extraRolesFromForm(formData: FormData, primary: AppRole): AppRole[] {
+  return formData
+    .getAll("extra_roles")
+    .map((value) => (typeof value === "string" ? parseAppRole(value) : null))
+    .filter((role): role is AppRole => Boolean(role) && role !== primary);
+}
+
+async function applyProfileRoles(
+  db: Awaited<ReturnType<typeof createServerSupabaseClient>>,
+  userId: string,
+  primary: AppRole,
+  extras: AppRole[],
+) {
+  const { error } = await db.rpc("admin_set_profile_roles", {
+    p_user_id: userId,
+    p_roles: [primary, ...extras],
+  });
+  if (error) throw error;
+}
+
 export async function createStaffAction(
   _prev: AdminActionState,
   formData: FormData,
@@ -110,6 +137,12 @@ export async function createStaffAction(
     if (updateError) {
       throw updateError;
     }
+    await applyProfileRoles(
+      db,
+      data.user.id,
+      parsed.data.role,
+      extraRolesFromForm(formData, parsed.data.role),
+    );
 
     refreshCatalog();
     redirect("/users?notice=user-created");
@@ -128,6 +161,7 @@ export async function updateStaffAction(
     user_id: formString(formData, "user_id"),
     full_name: formString(formData, "full_name"),
     role: formString(formData, "role"),
+    extra_roles: extraRolesFromForm(formData, parseAppRole(formString(formData, "role")) ?? "sales"),
     phone: formString(formData, "phone") || undefined,
     is_active: formData.get("is_active") === "true",
   });
@@ -150,6 +184,12 @@ export async function updateStaffAction(
     if (error) {
       throw error;
     }
+    await applyProfileRoles(
+      db,
+      parsed.data.user_id,
+      parsed.data.role,
+      parsed.data.extra_roles ?? [],
+    );
     refreshCatalog();
     redirect("/users?notice=user-updated");
   } catch (error) {
@@ -264,12 +304,17 @@ export async function createMaterialAction(
 ): Promise<AdminActionState> {
   await requirePermission("admin.manage");
   const parsed = materialInputSchema.safeParse({
+    id: formString(formData, "id") || undefined,
     name: formString(formData, "name"),
     sku: formString(formData, "sku"),
     category: formString(formData, "category"),
     unit: formString(formData, "unit") || "pcs",
     sell_price: parseMoney(formString(formData, "sell_price")),
     cost: parseMoney(formString(formData, "cost")),
+    hsn_code: formString(formData, "hsn_code") || undefined,
+    gst_rate: parseMoney(formString(formData, "gst_rate") || "18") ?? 18,
+    warranty_months: Number(formString(formData, "warranty_months") || "12") || 12,
+    is_active: formString(formData, "is_active") !== "false",
   });
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Check the form" };
@@ -283,9 +328,18 @@ export async function createMaterialAction(
       unit: parsed.data.unit,
       sellPrice: parsed.data.sell_price,
       cost: parsed.data.cost,
+      hsnCode: parsed.data.hsn_code,
+      gstRate: parsed.data.gst_rate,
+      warrantyMonths: parsed.data.warranty_months,
+      id: parsed.data.id,
+      isActive: parsed.data.is_active,
     });
     refreshCatalog();
-    redirect("/materials?notice=material-saved");
+    redirect(
+      parsed.data.id
+        ? "/materials?notice=material-updated"
+        : "/materials?notice=material-saved",
+    );
   } catch (error) {
     rethrowNavigationError(error);
     return { error: humanizeError(error) };
@@ -324,6 +378,11 @@ export async function importMaterialsCsvAction(
         unit: (row.unit ?? "").trim() || "pcs",
         sell_price: parseMoney(row.sell_price ?? ""),
         cost: parseMoney(row.cost ?? ""),
+        hsn_code: (row.hsn_code ?? "").trim() || undefined,
+        gst_rate: row.gst_rate ? parseMoney(row.gst_rate) : 18,
+        warranty_months: row.warranty_months
+          ? Number(row.warranty_months)
+          : 12,
       });
       if (!parsed.success) {
         rowErrors.push({
@@ -341,6 +400,9 @@ export async function importMaterialsCsvAction(
           unit: parsed.data.unit,
           sellPrice: parsed.data.sell_price,
           cost: parsed.data.cost,
+          hsnCode: parsed.data.hsn_code,
+          gstRate: parsed.data.gst_rate,
+          warrantyMonths: parsed.data.warranty_months,
         });
         created += 1;
       } catch (error) {
@@ -368,22 +430,48 @@ export async function createVendorAdminAction(
   formData: FormData,
 ): Promise<AdminActionState> {
   await requirePermission("orders.send_to_vendor");
+  let contacts: { name: string; phone?: string; email?: string; notes?: string }[] =
+    [];
+  try {
+    const raw = formString(formData, "contacts");
+    if (raw) {
+      contacts = JSON.parse(raw) as typeof contacts;
+    }
+  } catch {
+    return { error: "Contacts could not be read" };
+  }
   const parsed = vendorInputSchema.safeParse({
     name: formString(formData, "name"),
     phone: formString(formData, "phone") || undefined,
     email: formString(formData, "email") || undefined,
     notes: formString(formData, "notes") || undefined,
+    is_active: formString(formData, "is_active") !== "false",
+    contacts: contacts.filter((contact) => contact.name?.trim()),
   });
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Check the form" };
   }
   try {
-    await insertVendor({
-      name: parsed.data.name,
-      phone: parsed.data.phone,
-      email: parsed.data.email,
-      notes: parsed.data.notes,
-    });
+    const id = formString(formData, "id");
+    let vendorId = id;
+    if (id) {
+      await updateVendor({
+        id,
+        name: parsed.data.name,
+        phone: parsed.data.phone,
+        email: parsed.data.email,
+        notes: parsed.data.notes,
+        isActive: parsed.data.is_active,
+      });
+    } else {
+      vendorId = await insertVendor({
+        name: parsed.data.name,
+        phone: parsed.data.phone,
+        email: parsed.data.email,
+        notes: parsed.data.notes,
+      });
+    }
+    await replaceVendorContacts(vendorId, parsed.data.contacts ?? []);
     refreshCatalog();
     redirect("/vendors?notice=vendor-saved");
   } catch (error) {
@@ -453,6 +541,79 @@ export async function importVendorsCsvAction(
           : "No new vendors were created.",
     };
   } catch (error) {
+    return { error: humanizeError(error) };
+  }
+}
+
+export async function resetStaffPasswordAction(
+  _prev: AdminActionState,
+  formData: FormData,
+): Promise<AdminActionState> {
+  await requirePermission("admin.manage");
+  const userId = formString(formData, "user_id");
+  const email = formString(formData, "email");
+  if (!userId) {
+    return { error: "User is required" };
+  }
+  try {
+    const password = generateTempPassword();
+    const admin = createServiceRoleClient();
+    const { error } = await admin.auth.admin.updateUserById(userId, { password });
+    if (error) throw error;
+    return {
+      notice: "New password generated. Copy it now — it is not shown again.",
+      credentials: [{ email: email || "staff", password }],
+    };
+  } catch (error) {
+    return { error: humanizeError(error) };
+  }
+}
+
+export async function reassignSalesCoverAction(
+  _prev: AdminActionState,
+  formData: FormData,
+): Promise<AdminActionState> {
+  await requirePermission("admin.manage");
+  const fromId = formString(formData, "from_user_id");
+  const toId = formString(formData, "to_user_id");
+  try {
+    const db = await createServerSupabaseClient();
+    const { data, error } = await db.rpc("reassign_sales_cover", {
+      p_from_user_id: fromId,
+      p_to_user_id: toId,
+    });
+    if (error) throw error;
+    const moved = data as { customers?: number; quotes?: number; orders?: number } | null;
+    refreshCatalog();
+    revalidatePath("/orders");
+    revalidatePath("/quotes");
+    revalidatePath("/customers");
+    return {
+      notice: `Moved ${moved?.customers ?? 0} customers, ${moved?.quotes ?? 0} open quotes, ${moved?.orders ?? 0} open orders.`,
+    };
+  } catch (error) {
+    return { error: humanizeError(error) };
+  }
+}
+
+export async function reassignOrderSalesAction(
+  _prev: AdminActionState,
+  formData: FormData,
+): Promise<AdminActionState> {
+  await requirePermission("admin.manage");
+  const orderId = formString(formData, "order_id");
+  try {
+    const db = await createServerSupabaseClient();
+    const { error } = await db.rpc("reassign_order_sales", {
+      p_order_id: orderId,
+      p_to_user_id: formString(formData, "to_user_id"),
+    });
+    if (error) throw error;
+    refreshCatalog();
+    revalidatePath(`/orders/${orderId}`);
+    redirect(`/orders/${orderId}?notice=reassigned`);
+  } catch (error) {
+    rethrowNavigationError(error);
     return { error: humanizeError(error) };
   }
 }

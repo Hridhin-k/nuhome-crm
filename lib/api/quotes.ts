@@ -3,7 +3,7 @@ import { getDb, throwQuery } from "@/lib/api/db";
 import type { WorkflowStatus } from "@/lib/workflow/types";
 
 const QUOTE_LIST_SELECT =
-  "id, quote_number, status, created_at, updated_at, customer_id, created_by, current_version_id, customers(name, phone), quote_versions!quotes_current_version_fk(version_number, total, status, rejection_reason)";
+  "id, quote_number, status, created_at, updated_at, customer_id, created_by, current_version_id, customers(name, phone), quote_versions!quotes_current_version_fk(version_number, total, margin_amount, margin_percent, status, rejection_reason)";
 
 type OrderRef = { id: string; status: string; quote_id: string };
 
@@ -16,7 +16,7 @@ async function attachOrders<T extends { id: string }>(quotes: T[]) {
   const orders = await throwQuery(
     db
       .from("orders")
-      .select("id, status, quote_id")
+      .select("id, status, quote_id, assigned_sales_id")
       .in(
         "quote_id",
         quotes.map((quote) => quote.id),
@@ -87,7 +87,7 @@ export const getQuote = cache(async (id: string) => {
   const [customer, versions, order] = await Promise.all([
     db
       .from("customers")
-      .select("id, name, phone, address, kind")
+      .select("id, name, phone, address, gstin, billing_address, site_address, kind")
       .eq("id", quote.customer_id)
       .maybeSingle(),
     db
@@ -105,7 +105,7 @@ export const getQuote = cache(async (id: string) => {
     ? await db
         .from("quote_items")
         .select(
-          "id, version_id, material_id, description, quantity, unit_price, unit_cost, discount, tax, line_total",
+          "id, version_id, material_id, description, quantity, unit_price, unit_cost, discount, tax, line_total, hsn_code, gst_rate",
         )
         .in("version_id", versionIds)
         .order("sort_order")

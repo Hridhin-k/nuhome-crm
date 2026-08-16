@@ -1,7 +1,6 @@
 import { redirect } from "next/navigation";
 import { getSessionUser } from "@/lib/auth/session";
-import type { Permission } from "@/lib/auth/permissions";
-import { roleHasPermission } from "@/lib/auth/permissions";
+import { rolesHavePermission, type Permission } from "@/lib/auth/permissions";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 export async function requireUser() {
@@ -19,7 +18,7 @@ export async function requireUser() {
 
 export async function requirePermission(permission: Permission) {
   const user = await requireUser();
-  if (!roleHasPermission(user.role, permission)) {
+  if (!rolesHavePermission(user.roles, permission)) {
     redirect("/home");
   }
   return user;

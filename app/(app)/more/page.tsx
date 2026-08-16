@@ -1,16 +1,19 @@
 import { PageFrame, wellClass } from "@/components/app/page-frame";
 import { PageHeader } from "@/components/app/page-header";
 import { JobRow } from "@/components/app/job-row";
+import { ChangePasswordForm } from "@/components/app/change-password-form";
 import { logoutAction } from "@/app/(auth)/login/actions";
 import { Button } from "@/components/ui/button";
 import { requireUser } from "@/lib/auth/guards";
-import { roleLabel } from "@/lib/auth/nav";
+import { overflowNavForRoles, roleLabels } from "@/lib/auth/nav";
+import { rolesHavePermission } from "@/lib/auth/permissions";
 
 const ADMIN_LINKS = [
-  { href: "/users", label: "Users", subtitle: "Add staff and assign roles" },
-  { href: "/vendors", label: "Vendors", subtitle: "Suppliers for fulfillment" },
-  { href: "/materials", label: "Materials", subtitle: "Quote catalogue" },
-  { href: "/reports", label: "Reports", subtitle: "Pipeline snapshot" },
+  { href: "/users", label: "Users", subtitle: "Staff, extra hats, cover for leave" },
+  { href: "/vendors", label: "Vendors", subtitle: "Edit, contacts, deactivate" },
+  { href: "/materials", label: "Materials", subtitle: "HSN, GST, warranty term" },
+  { href: "/company", label: "Company", subtitle: "GSTIN on tax invoices" },
+  { href: "/reports", label: "Reports", subtitle: "Collections, aging, audit" },
 ] as const;
 
 export default async function MorePage() {
@@ -21,6 +24,12 @@ export default async function MorePage() {
     .slice(0, 2)
     .map((part) => part[0]?.toUpperCase())
     .join("");
+  const extras = overflowNavForRoles(user.roles, user.role);
+  const canAdmin = rolesHavePermission(user.roles, "admin.manage");
+  const extraLinks = extras.filter(
+    (item) =>
+      !ADMIN_LINKS.some((link) => link.href === item.href),
+  );
 
   return (
     <PageFrame width="detail">
@@ -39,11 +48,24 @@ export default async function MorePage() {
             </p>
           ) : null}
           <span className="mt-1 inline-flex rounded-full bg-surface-container-low px-2 py-0.5 text-label-caps text-secondary">
-            {roleLabel(user.role)}
+            {roleLabels(user.roles)}
           </span>
         </div>
       </div>
-      {user.role === "admin" ? (
+      {extraLinks.length > 0 ? (
+        <ul className={`${wellClass} mb-6`}>
+          {extraLinks.map((link) => (
+            <JobRow
+              key={link.href}
+              href={link.href}
+              title={link.label}
+              subtitle="From an extra role"
+              stacked
+            />
+          ))}
+        </ul>
+      ) : null}
+      {canAdmin ? (
         <ul className={`${wellClass} mb-6`}>
           {ADMIN_LINKS.map((link) => (
             <JobRow
@@ -56,6 +78,9 @@ export default async function MorePage() {
           ))}
         </ul>
       ) : null}
+      <div className="mb-3">
+        <ChangePasswordForm />
+      </div>
       <form action={logoutAction}>
         <Button type="submit" variant="bordered" className="w-full" size="lg">
           Sign out

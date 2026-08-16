@@ -1,793 +1,1029 @@
-NUHOME CRM — MANUAL TEST GUIDE
-================================
-For testers. Follow every numbered step. Tick the Expected result after each step.
-Do not skip steps. Use a fresh incognito window when switching roles unless told otherwise.
+NUHOME CRM — COMPLETE MANUAL TEST GUIDE
+=======================================
+For testers. Follow every numbered step in order inside each path.
+Tick Expected after each step. Do not skip steps or paths.
+Use a FRESH incognito window when switching people in the SAME browser,
+unless the path says to keep two windows open (Realtime).
 
 
-1. HOW TO START
----------------
-App URL (local):     http://localhost:3000
-Login URL:           http://localhost:3000/login
+0. HOW TO USE THIS GUIDE
+------------------------
+Work in this order:
 
-If you cannot log in, ask a developer to seed demo users:
+  PART 0   Setup, login, nav, role gates          (everyone)
+  PATH A   Happy path — full pay end to end       (required first)
+  PATH B   Reject quote + revise + advance + hold
+  PATH C   Nil (credit) then later real payment
+  PATH D   Installment while the job is with vendor
+  PATH E   Cancel a dead quote / order
+  PATH F   Split vendors, partial GRN, shortage, overdue
+  PATH G   Payment rejected, then re-recorded
+  PATH H   Customer GST / billing vs site / files
+  PATH I   Tax invoice + installation + warranty / AMC
+  PATH J   Public quotation + WhatsApp
+  PATH K   Vendors, materials, company
+  PATH L   Users, extra hats, cover, CSV, passwords
+  PATH M   Lists, search, floor book, reports, audit
+  PATH N   Each role's Home
+  PATH O   Live refresh + every bell type
+  PATH P   Negative / permission checks
+  LOG      Pass / fail sheet at the end
+
+If a step fails, stop that path, write the bug at the bottom
+(quote number, role, step, expected vs actual), then continue the next path.
+
+Status badges on screen (short). Cheat sheet at the end if you need the
+internal name.
+
+
+1. WHERE TO TEST
+----------------
+Local:       http://localhost:3000
+Production:  https://nuhome-crm.vercel.app
+
+If login fails on local, ask a developer to seed demo users:
   npx supabase db query --linked -f supabase/seed.sql
 
-Use TWO browsers (or one normal + one incognito) when a flow says "keep Sales logged in".
-That is required for live-update (Realtime) checks.
+Always start at /login unless a public quotation step says no login.
 
 
-2. DEMO CREDENTIALS (every role)
---------------------------------
-Password for EVERY account:  password123
+2. DEMO PEOPLE (every role)
+---------------------------
+Password for EVERY account unless you just changed it:  password123
 
-Email                      Role in system     Name shown in app     Bottom-nav label
--------------------------  -----------------  --------------------  -----------------
-sales@nuhome.demo          sales              Sales Demo            Sales
-accounts@nuhome.demo       accounts           Accounts Demo         Accounts
-procurement@nuhome.demo    procurement        Procurement Demo      Procurement
-store@nuhome.demo          store              Store Demo            Delivery
-admin@nuhome.demo          admin              Admin Demo            Admin
+Email                      Role            Name in app         Nav label
+-------------------------  --------------  ------------------  -----------
+sales@nuhome.demo          sales           Sales Demo          Sales
+accounts@nuhome.demo       accounts        Accounts Demo       Accounts
+procurement@nuhome.demo    procurement     Procurement Demo    Procurement
+store@nuhome.demo          store           Store Demo          Delivery
+admin@nuhome.demo          admin           Admin Demo          Admin
 
 IMPORTANT
-- The Store login appears in the app as "Delivery". That is expected.
-- Admin can do every action. Prefer the dedicated role for realistic testing.
-- Sales cannot approve quotes or verify payments.
-- Accounts cannot record payments or send quotes to customers.
-- The person who created a quote cannot approve that quote (even as Admin if they created it).
-- The person who recorded a payment cannot verify that payment.
+- Store appears as "Delivery". That is correct.
+- Prefer the dedicated role, not Admin, so the floor feels real.
+- Admin can do almost everything. Use Admin only in PATH L / M / N.
+- Sales cannot approve a quote or verify a payment.
+- The person who CREATED a quote cannot approve it (even with an extra hat).
+- The person who RECORDED a payment cannot verify it (even with an extra hat).
+- Recording a further payment after send is only for the assigned salesperson
+  (whoever sent the quote) or Admin. Delivery can record only at handover.
 
 
-3. HOW TO SIGN IN / SIGN OUT
-----------------------------
-Sign in
-  1. Open http://localhost:3000/login
-  2. Enter Email from the table above.
-  3. Enter Password: password123
+3. TWO BROWSERS
+---------------
+Browser A = keep Sales logged in (Home or the job open).
+Browser B = Accounts / Procurement / Delivery as the path says.
+
+Needed for live-update checks in PATH A and PATH O.
+
+
+================================================================
+PART 0 — SETUP, LOGIN, NAV, ROLE GATES
+Do this once before Path A.
+================================================================
+
+P0. Sign in
+  1. Open /login
+  2. Email: sales@nuhome.demo
+  3. Password: password123
   4. Tap Sign in.
-  Expected: You land on Home. Navbar shows your name and role.
+  Expected: You land on Home. Navbar shows Sales Demo / Sales.
 
-Sign out (required when switching users in the SAME browser)
-  1. Tap More (bottom nav or desktop nav).
-  2. Tap the Account card (name / email / role).
-  3. Tap Sign out.
-  Expected: You return to the login screen.
+P0b. Wrong password
+  1. Sign out first (More → Sign out) if you are in.
+  2. Email sales@nuhome.demo, password wrongpass. Sign in.
+  Expected: Error. You stay on login.
 
-Wrong password
-  1. On /login enter sales@nuhome.demo and password "wrongpass".
-  2. Tap Sign in.
-  Expected: Error message. You stay on login.
+P0c. Empty fields
+  1. Leave email or password blank. Tap Sign in.
+  Expected: Browser required-field. No login.
 
-Empty fields
-  1. Leave email or password blank and tap Sign in.
-  Expected: Browser required-field validation. No login.
+P0d. Logged-out URLs
+  1. Sign out. Open /home then /quotes then /orders.
+  Expected: Each redirects to /login.
+
+P0e. Sign out
+  1. Sign in as Sales. Tap More.
+  Expected: Account card shows name, sales@nuhome.demo, chip "Sales".
+            Change password is on this page. Sign out is at the bottom.
+  2. Tap Sign out.
+  Expected: Login screen.
 
 
-4. WHAT EACH ROLE SHOULD SEE IN THE NAV
----------------------------------------
-After login, confirm the nav items (desktop top + mobile bottom).
+P0-NAV. Nav for every role (desktop top + mobile bottom)
 
-Sales
-  Home | Customers | Quotes | Orders | More
-  Home also shows Quick Actions: "Customer walk-in" and "Find customer".
+  Sign in as EACH role. Tick what you see.
 
-Accounts
-  Home | Approvals | Payments | Orders | More
-  Home queues: Quotes awaiting approval, Payments awaiting verification, Orders requiring attention.
+  Sales
+    Home | Customers | Quotes | Orders | More
+  Accounts
+    Home | Approvals | Payments | Orders | More
+  Procurement
+    Home | Orders | Vendors | Fulfillment | More
+  Delivery (store)
+    Home | Ready | Orders | More
+  Admin
+    Home | Users | Orders | Reports | More
+    More also lists: Users, Vendors, Materials, Company, Reports
 
-Procurement
-  Home | Orders | Vendors | Fulfillment | More
-  Home queues: Awaiting vendor action, Vendor dispatches, Items expected.
+  Each role: More shows the matching name / email / role chip.
+  Delivery chip says "Delivery", not "Store".
 
-Store (shown as Delivery)
-  Home | Ready | Orders | More
-  Home queues: Ready for delivery, Blocked by payment.
 
-Admin
-  Home | Users | Orders | Reports | More
-  Home shows Overview metrics and a pipeline of all stages.
+P0-GATE. Type these URLs while logged in as the role. Do not skip a row.
 
-Role-gate check (do this once per role)
-  1. While logged in as Sales, type http://localhost:3000/approvals in the address bar.
-     Expected: Redirected to /home (Sales cannot approve).
-  2. Type http://localhost:3000/payments
-     Expected: Redirected to /home.
-  3. Type http://localhost:3000/fulfillment
-     Expected: Redirected to /home.
-  4. Type http://localhost:3000/ready
-     Expected: Redirected to /home.
-  5. Type http://localhost:3000/users
-     Expected: Redirected to /home.
-  6. Log in as Accounts. Type http://localhost:3000/walk-in
-     Expected: Redirected to /home (Accounts cannot create quotes).
-  7. Log in as Store. Type http://localhost:3000/vendors
-     Expected: Page may load as read-only or you stay in allowed nav. Store cannot Add vendor.
-  8. Log in as Admin. Open /users and /reports.
-     Expected: Both pages load.
+  As Sales
+    /approvals     → Home
+    /payments      → Home
+    /fulfillment   → Home
+    /ready         → Home
+    /users         → Home
+    /reports       → Home
+    /vendors       → Home
+    /materials     → Home
+    /company       → Home
+
+  As Accounts
+    /walk-in       → Home
+    /customers/new → Home
+    /fulfillment   → Home
+    /ready         → Home
+    /users         → Home
+    /vendors       → Home
+    /approvals     → loads
+    /payments      → loads
+
+  As Procurement
+    /walk-in       → Home
+    /approvals     → Home
+    /payments      → Home
+    /ready         → Home
+    /users         → Home
+    /fulfillment   → loads
+    /vendors       → loads  (can Add vendor)
+
+  As Delivery
+    /walk-in       → Home
+    /approvals     → Home
+    /payments      → Home
+    /users         → Home
+    /vendors       → Home
+    /ready         → loads
+    /fulfillment/{an order they can see} may load receive UI; they cannot Add vendor.
+
+  As Admin
+    /users /reports /vendors /materials /company /walk-in /approvals /payments /fulfillment /ready
+    Expected: all load.
+
+
+Write Path A worksheet now:
+  App URL:          ________________
+  Tester:           ________________
+  Date:             ________________
 
 
 ================================================================
-HAPPY PATH A — FULL PAYMENT FROM THE START
-(quote → approve → send → full pay → verify → vendor → dispatch
- → receive → delivery ready → deliver → closed)
-Use this first. Write down the quote number when it is created.
-================================================================
+PATH A — HAPPY PATH (FULL PAYMENT)
+Walk-in → quote → Accounts approve → send → full pay → verify
+→ vendor → dispatch → receive → ready → deliver → closed
+→ tax invoice glance + aftercare
+Use TWO browsers. Write numbers down as you go.
 
-You will need:
-  Browser A = Sales
-  Browser B = Accounts  (open later)
-  Then switch Browser A as needed for Procurement and Store.
-
-Write here as you go:
-  Customer name: ________________
+  Customer:      ________________
   Quote number:  ________________
   Order URL:     ________________
   Quote total:   ________________
-
+================================================================
 
 A0. Login as Sales (Browser A)
-  1. Sign in as sales@nuhome.demo / password123
-  Expected: Home greeting "Good morning, Sales." Queue cards. Quick Actions.
+  1. Sign in as sales@nuhome.demo
+  Expected: Home greeting (Good morning/afternoon/evening, Sales).
+            Queue cards. Quick actions include Customer walk-in.
 
 
-A1. Create a customer (walk-in)
-  1. On Home tap "Customer walk-in".
-  Expected: Page title "Customer walk-in". Stepper shows Draft.
+A1. Create a customer
+  1. On Home tap Customer walk-in (or More is not needed — it is on Home / Customers).
+  Expected: Title "Customer walk-in".
 
-  If the screen says "New customer walk-in" / no customers yet:
-  2. Tap the create-customer button.
-  3. Fill Name: Test Customer Full Pay
-  4. Fill Phone: 9876543210
-  5. Fill Email: test.fullpay@example.com (optional)
-  6. Fill Address: 12 Test Street, Kochi (optional)
-  7. Fill Notes: Manual test happy path A (optional)
-  8. Submit / Save.
-  Expected: Customer is created and you continue into the quote flow.
+  If the page says "New customer walk-in" (no customers yet):
+  2. The new-customer sheet should already be useful. Fill:
+       Name:              Test Customer Full Pay
+       Phone:             9876543210
+       Email:             test.fullpay@example.com
+       GSTIN:             32ABCDE1234F1Z5
+       Billing address:   12 Showroom Street, Kochi
+       Site address:      Plot 9, Site Road, Kochi
+       Notes:             Manual test Path A
+  3. Save.
+  Expected: You continue into the quote builder with this customer.
 
   If customers already exist:
-  2. On step "Customer / Profile check", tap Add (or New customer).
-  3. Fill the same fields as above and save.
-  4. Select "Test Customer Full Pay" in the customer picker.
-  5. Tap "Continue to materials".
-  Expected: Step 2 Materials is active. Customer stays selected.
+  2. Tap Add / new customer. Fill the same fields. Save.
+  3. Select "Test Customer Full Pay".
+  4. Continue to materials.
+  Expected: Materials step. Customer stays selected.
 
 
-A2. Build the quote (materials)
-  1. On Materials, pick a category, e.g. Modular Kitchen.
-  2. Add "Base cabinet 600mm" (SKU MK-BASE-600).
-  Expected: Line items list shows 1 item. Price is prefilled (8500).
+A2. Build and SUBMIT the quote (not draft)
+  1. Pick a category (example Modular Kitchen).
+  2. Add a catalogue item (example a cabinet). Note HSN and GST % if shown.
+  Expected: Line appears. Sell price is GST-exclusive. Tax line updates.
 
-  3. Increase Qty to 2 using the + button.
-  Expected: Qty shows 2. Line total updates.
+  3. Set Qty to 2 with +.
+  Expected: Line total and GST update.
 
-  4. Add a second catalogue item, e.g. "SS sink with drainboard".
-  5. Tap "+ Custom line".
-  6. Change description to "Site measurement visit".
-  7. Set Price to 500. Leave Qty 1.
-  8. Optionally set Discount 0 and Tax 0.
-  9. Tap "Review →" (or go to step 3 Review).
-  Expected: Review shows all lines, subtotal, discount, tax, total.
+  4. Add a second catalogue item.
+  5. Tap + Custom line. Description: Site measurement visit. Price: 500. Qty 1.
+  6. Review (go to Review).
+  Expected: All lines, subtotal, discount, tax (GST), total.
 
-  10. Add Notes: "Manual test — full payment path".
-  11. Tap "Submit to Accounts" (not "Save draft").
-  Expected: Redirect to quote detail with notice "Submitted to Accounts."
-            Status badge: "Awaiting approval".
-            Next action: "Waiting for Accounts to review".
-            Sales does NOT see Approve / Reject buttons.
+  7. Notes: Manual test — full payment path.
+  8. Tap "Submit to Accounts" (do NOT Save draft).
+  Expected: Quote detail. Notice submitted.
+            Badge: Pending
+            Next action: waiting for Accounts.
+            Sales does NOT see Approve or Return.
+            Write the quote number: ________________
 
-  12. Write down the quote number (e.g. Q-...).
-  13. Open the quote. Confirm items, totals, History shows Version 1 · current.
+  9. Confirm History: Version 1 · current.
 
 
-A3. Sales must NOT be able to approve their own quote
-  1. Still as Sales, stay on the quote page.
-  Expected: No "Approve quote" button. No "Reject & send back" button.
-  2. Try URL http://localhost:3000/approvals
-  Expected: Redirect to Home.
+A3. Sales cannot approve
+  1. Stay on the quote. Expected: no Approve / Return.
+  2. Open /approvals. Expected: Home.
 
 
-A4. Notification + live dashboard (keep Sales on Home)
-  1. In Browser A, go to Sales Home. Leave this tab open.
-  2. In Browser B, sign in as accounts@nuhome.demo / password123
-  Expected: Accounts Home. "Quotes awaiting approval" count is at least 1.
+A4. Accounts inbox + bell (Browser B)
+  1. Leave Browser A on Sales Home (do not refresh later in A5).
+  2. Browser B: accounts@nuhome.demo
+  Expected: Home card "awaiting approval" count >= 1.
+            Bell: unread "Quote submitted". Tap → that quote on Approvals.
 
 
-A5. Accounts reviews the quote
-  1. As Accounts, tap Approvals in the nav.
-  Expected: List includes your quote number, customer name, version, total.
-            Status "Awaiting approval".
+A5. Accounts approves
+  1. Approvals list includes quote number, customer, total.
+  2. Open the quote.
+  Expected: Accounts CAN see Margin / cost. Buttons Approve and Return.
 
-  2. Tap the quote card.
-  Expected: Quote detail. Accounts CAN see Margin. Sales could not.
-            Buttons: "Approve quote" and "Reject & send back".
+  3. Tap Approve. Confirm.
+  Expected: Badge Approved. Next action Send to customer.
 
-  3. Confirm items and total match what Sales entered.
-  4. Tap "Approve quote".
-  5. Confirm in the sheet ("Approve").
-  Expected: Notice "Quote approved. Sales can send it to the customer."
-            Status badge: "Approved".
-            Next action: "Send to customer".
-
-  6. Switch to Browser A (Sales still on Home, do NOT refresh yet).
-  Expected within about 1 second:
-            - Bell may show a notification "Quote approved".
-            - Home queue "Pending quotes" updates without a manual refresh.
-  7. As Sales, open the bell.
-  Expected: Unread item titled "Quote approved". Body says Sales can send it.
-  8. Tap the notification.
-  Expected: Opens the quote. Notification marks read (highlight goes away).
+  4. Watch Browser A (Sales Home) without refreshing.
+  Expected within ~1s: pending-quotes count can drop; bell "Quote approved".
+  5. Sales: open the bell, tap the item.
+  Expected: Quote page. Item marks read.
 
 
-A6. Sales sends quote to customer
-  1. As Sales, on the approved quote, confirm status is "Approved".
-  2. Tap "Send to customer".
-  3. Confirm "Send quote".
-  Expected: Status becomes "Sent to customer".
-            An order is created (you will use Orders next).
-            Buttons appear: Share on WhatsApp and/or "View customer quotation".
+A6. Sales sends
+  1. On the approved quote tap Send. Confirm Send quote.
+  Expected: Badge Sent. An order exists (you will open it from Orders).
+            Share on WhatsApp and/or View public link appear.
 
-  4. Tap "View customer quotation" (opens a new tab, no login).
-  Expected: Public quotation page with customer-facing document.
-            Totals match. No margin / cost shown.
-  5. Tap "Print / Save as PDF" if shown.
-  Expected: Browser print dialog. Cancel after confirming it opens.
+  2. Tap View public link (new tab, NO login).
+  Expected: Customer quotation. Company name. Bill-to / site if stored.
+            Totals match. NO cost, NO margin.
 
-  6. Back on the quote, tap WhatsApp share if shown.
-  Expected: Sheet with the message and public URL.
-            If the customer has a phone, it targets that number.
-            Opening WhatsApp is optional for this test — cancel if you do not want to send.
+  3. Optional: Print / Save as PDF in the browser, then cancel.
 
-  7. Go to Orders.
-  Expected: An order for this quote. Status "Sent to customer"
-            (or "Quote sent"). Next action: Record payment terms.
+  4. WhatsApp sheet: open it. Expected: message + public URL.
+     Customer phone prefilled if you entered one. You may cancel send.
+
+  5. Orders: this job. Badge Sent. Next: record payment terms.
+     Write Order URL: ________________
 
 
 A7. Sales records FULL payment
   1. Open the order.
-  Expected: Order hero, stepper, next action "Record payment terms".
-            "Record payment" button is visible.
+  Expected: Total / Paid / Due. Record payment is visible.
 
-  2. Tap "Record payment".
-  3. Payment type: Full
-  4. Amount: leave the prefilled remaining amount (must be > 0).
-  5. Method: UPI
-  6. Reference: UPI-TEST-FULL-001
-  7. Tap "Record payment".
-  Expected: Notice "Payment recorded. Waiting for Accounts to verify."
-            Status: "Payment verification".
-            Record payment button is GONE.
-            Message: a payment is pending Accounts verification.
-            You cannot record a second payment while one is pending.
+  2. Record payment → type Full → leave the remaining amount
+     → method UPI → reference UPI-TEST-FULL-001 → save.
+  Expected: Notice waiting for Accounts.
+            Badge: Verify pay
+            Record payment GONE.
+            Waiting message: a payment is pending.
+            Accounts bell: Payment recorded.
 
-  8. Try to record another payment anyway (button should not be there).
-  Expected: No second Record payment form.
+  3. Confirm there is no second Record payment control.
 
 
-A8. Accounts verifies the full payment (order activates)
-  1. As Accounts (Browser B), go to Home.
-  Expected: "Payments awaiting verification" count increased (live, without refresh).
+A8. Accounts verifies → order Active
+  1. Browser B Home: payments-awaiting count up (live).
+  2. Payments: card shows full + amount.
+  3. Verify. Also confirm Reject is present (do not use it).
+  Expected: Order badge Active.
+            Procurement bell: Order active.
 
-  2. Tap Payments.
-  Expected: Card with customer name, kind "full", amount matching the quote total.
-
-  3. Tap "Verify payment", then confirm "Verify".
-  Expected: Notice "Payment verified." Payment leaves the queue.
-            Order status becomes "Order active".
-            Also confirm the card has a "Reject payment" button (do not use it here).
-
-  4. As Sales, open the same order (should refresh live or after a moment).
-  Expected: Status "Order active". Next action "Waiting for vendor send".
-            Sales cannot send to vendor.
+  4. Sales opens the same order.
+  Expected: Active. Next: waiting for vendor. Sales cannot Send to vendor.
 
 
-A9. Procurement adds a vendor (first time only)
-  1. Sign out Sales in a window (or use a third window) and sign in as
-     procurement@nuhome.demo / password123
-  2. Tap Vendors.
-  3. If the list is empty, tap "Add vendor".
-  4. Name: Test Vendor Co
-  5. Phone: 9000000001
-  6. Tap "Save vendor".
-  Expected: Vendor appears in the list.
-
-  If a vendor already exists, skip create and use it in the next step.
+A9. First vendor (Procurement) — only if the list is empty
+  1. procurement@nuhome.demo
+  2. Vendors → Add vendor
+       Name:  Test Vendor Co
+       Phone: 9000000001
+  Expected: Vendor in the list.
 
 
-A10. Procurement sends the order to vendor
-  1. As Procurement, tap Home.
-  Expected: "Awaiting vendor action" includes this order (count >= 1).
-
-  2. Tap Fulfillment (or open the order and tap the Fulfillment link).
-  3. Open the order that is "Order active".
-  Expected: "Send to vendor" button.
-
-  4. Tap "Send to vendor".
-  5. Choose vendor: Test Vendor Co (or any existing vendor).
-  6. Expected delivery: pick a date a few days from today.
-  7. Tap "Send to vendor".
-  Expected: Notice "Sent to vendor." Status "Sent to vendor".
-            Next action "Waiting for vendor dispatch".
+A10. Send to vendor
+  1. Procurement Home: awaiting vendor action >= 1.
+  2. Fulfillment → this Active order → Send to vendor
+     Vendor: Test Vendor Co
+     Expected delivery: a few days from today
+     Send all remaining qty.
+  Expected: Badge With vendor.
+            Sales on this order: Record payment is HIDDEN
+            (outstanding is 0 after full pay). That is correct.
 
 
-A11. Procurement marks dispatched
-  1. On the same fulfillment page, tap "Mark dispatched".
-  2. Confirm "Confirm dispatch".
-  Expected: Notice "Marked as dispatched." Status "Vendor dispatched".
-            Next action "Waiting for goods receipt".
+A11. Dispatch
+  1. Mark dispatched. Confirm.
+  Expected: Badge Dispatched. Sales bell: Vendor dispatched.
 
 
-A12. Store (Delivery) records items received
-  1. Sign in as store@nuhome.demo / password123
-     (nav label is Delivery).
-  2. Go to Orders and open this order.
-     OR as Procurement stay on fulfillment and use "Record items received"
-     (Procurement and Store can both receive).
-  3. If using Fulfillment as Procurement/Store: tap "Record items received".
-  4. Confirm remaining quantities are listed (e.g. 2/2, 1/1).
-  5. Tap "Record items received".
-  Expected: Notice "Items received. Delivery gate applied."
-            Because payment was FULL, outstanding should be 0.
-            Status becomes "Delivery ready" (delivery_unlocked),
-            NOT "On hold".
+A12. Receive all qty
+  1. Delivery (store) or Procurement: Record items received for the full remaining qty.
+  Expected: Because outstanding is 0: Badge Ready (not On hold).
+            Delivery bell: Delivery unlocked.
 
 
-A13. Store completes delivery
-  1. As Store, tap Ready in the nav.
-  Expected: This order is listed. Title "Ready for delivery".
+A13. Deliver
+  1. As Delivery, Ready lists this order.
+  2. Open it. Complete delivery is shown. Hold card is not.
+  3. Complete delivery. Notes: Handover Path A. Confirm.
+  Expected: Delivered then Closed.
+            Complete delivery gone.
+            Sales bell: Order delivered.
 
-  2. Tap the order.
-  Expected: Status "Delivery ready". Button "Complete delivery".
-            Hold card is NOT shown.
-
-  3. Tap "Complete delivery".
-  4. Notes: "Handover completed — manual test A".
-  5. Tap "Confirm delivery".
-  Expected: Notice "Order delivered. This job is now closed."
-            Status "Delivered" then "Closed".
-            Message "This order is closed."
-            Complete delivery button is gone.
-
-  6. Open the original quote as Sales.
-  Expected: Quote shows the order is delivered/closed.
-            Send / WhatsApp actions are gone.
+  4. Sales: original quote.
+  Expected: Notice that the job is delivered/closed.
+            Send / WhatsApp gone. Open order still works.
 
 
-A14. Admin can see the closed work
-  1. Sign in as admin@nuhome.demo / password123
-  2. Open Home / Reports.
-  Expected: Pipeline includes delivered/closed counts.
-  3. Open Users.
-  Expected: List includes Sales Demo, Accounts Demo, Procurement Demo,
-            Store Demo, Admin Demo with roles Sales / Accounts /
-            Procurement / Delivery / Admin.
-  4. Open the closed order.
-  Expected: Status Closed. Activity timeline has events
-            (quote submitted, approved, sent, payment recorded,
-            verified, sent to vendor, dispatched, received, delivered).
+A14. Aftercare + invoice (stay on the closed order as Sales or Delivery)
+  1. Tax invoice
+  Expected: INV- number, company legal name / GSTIN, bill-to vs site,
+            HSN and GST % per line, totals. Print dialog optional.
+
+  2. Installation: pick a site date, save.
+  Expected: Notice installation saved. Status scheduled.
+
+  3. Warranty panel: a product warranty row should already exist from handover.
+     Add AMC if the form allows, save.
+  Expected: Warranty / AMC listed.
+
+  4. Admin: Users shows all five demo people with the right role labels.
+     Home / Reports counts include this delivered job.
+     Activity timeline on the order has submit, approve, send, pay, verify,
+     vendor, dispatch, receive, deliver.
 
 
 ================================================================
-PATH B — ADVANCE THEN HOLD, THEN CLEAR BALANCE
-(partial pay → activate → fulfill → receive → ON HOLD
- → remaining pay → verify → unlock → deliver)
-Run this AFTER Path A so you already know the screens.
+PATH B — REJECT, REVISE, ADVANCE, HOLD, THEN CLEAR
+Run after Path A.
+
+  Quote number:     ________________
+  Total:            ________________
+  Advance used:     ________________
+  Outstanding hold: ________________
 ================================================================
 
-Write here:
-  Quote number: ________________
-  Advance amount used: ________________
-  Remaining shown on hold: ________________
+B1. New quote on the same customer
+  1. Sales → Customers → search Test Customer Full Pay → open → Create quote
+     (or Walk-in with that customer).
+  2. Add one clear-priced item (example a wardrobe).
+  3. Submit to Accounts.
+  Expected: Badge Pending. Write quote number and total.
 
 
-B1. Sales creates a second quote (existing customer)
-  1. Sign in as Sales.
-  2. Tap Customers.
-  3. In Search, type "Test Customer Full Pay" (or create "Test Customer Advance").
-  4. Open the customer.
-  5. Tap "Create quote".
-  Expected: Walk-in materials step with this customer preselected.
-
-  6. Add at least one item with a clear total (example: Sliding wardrobe 8ft, qty 1, price 42000).
-  7. Review and submit to Accounts.
-  Expected: Status "Awaiting approval". Note the quote number and total.
+B2. Accounts returns it
+  1. Approvals → open quote → Return.
+  2. Submit with empty reason.
+  Expected: Cannot send (reason required).
+  3. Reason: Discount too high — please reduce selling price. Send back.
+  Expected: Badge Returned.
+  4. Sales bell: quote returned. Open the quote.
+  Expected: Red banner with that reason. Next: Revise.
 
 
-B2. Accounts rejects this quote (revision path)
-  1. Sign in as Accounts. Open Approvals. Open the quote.
-  2. Tap "Reject & send back".
-  3. Leave Reason empty and try to submit.
-  Expected: Cannot submit (reason required).
-
-  4. Enter Reason: "Discount too high — please reduce selling price."
-  5. Tap "Send back to Sales".
-  Expected: Notice "Sent back to Sales." Status "Returned to sales".
-
-  6. As Sales, open Home / bell.
-  Expected: Notification "Quote returned" with the rejection reason.
-  7. Open the quote.
-  Expected: Red banner "Returned by Accounts" with the reason.
-            Button / next action "Revise".
-
-
-B3. Sales revises and resubmits
-  1. Tap Revise (goes to /quotes/{id}/revise).
-  Expected: Rejection banner still visible. Previous lines loaded.
-            Customer step is skipped.
-
-  2. Change Price on the main item (e.g. reduce by 1000) OR add a note
-     "Revised after Accounts feedback".
-  3. Submit again.
-  Expected: Notice "New version submitted to Accounts."
-            Status "Awaiting approval".
-            History shows Version 1 (old) and Version 2 · current.
+B3. Sales revises
+  1. Revise. Lines from last version load. Customer is already set.
+  2. Change a price or note "Revised after Accounts feedback". Submit.
+  Expected: Pending again. History: Version 1 and Version 2 · current.
             You can expand Version 1 items.
-
-  4. As Accounts, approve Version 2 (same as A5, Approve quote).
-  Expected: Status "Approved". Sales notification "Quote approved".
-
-
-B4. Sales sends, then records ADVANCE (not full)
-  1. As Sales, Send to customer.
-  2. Open the new order. Tap Record payment.
-  3. Payment type: Advance
-  4. Amount: enter a number LESS than the total
-     Example: if total is 41000, enter 10000.
-  5. Method: Cash
-  6. Reference: CASH-ADV-001
-  7. Save.
-  Expected: Status "Payment verification". Cannot record another payment yet.
+  3. Accounts approves Version 2.
+  Expected: Approved. Sales notified.
 
 
-B5. Duplicate pending payment is blocked
-  1. Confirm Record payment is hidden and the waiting message is shown.
-  Expected: "A payment is pending Accounts verification..."
+B4. Send + ADVANCE (not full)
+  1. Sales Send.
+  2. Record payment → Advance → amount LESS than total
+     (example 10000 if total is 41000) → Cash → CASH-ADV-001.
+  Expected: Verify pay. Cannot record another yet.
+            Write advance: ________________
 
 
-B6. Accounts verifies the advance (order activates, balance remains)
-  1. As Accounts, Payments → Verify the advance.
-  Expected: Order status "Order active" (first activation).
-            Outstanding is still (total − 10000), not zero.
+B5. Duplicate pending blocked
+  Expected: Waiting message. No Record payment button.
 
 
-B7. Procurement: send to vendor → dispatch → receive
-  Repeat A10–A12 on THIS order (send, dispatch, record items received).
-  Expected after items received:
-            Status "On hold" (because outstanding > 0).
-            Hold card: "Delivery locked — ₹X outstanding".
-            Ready page for Store does NOT list this order.
-            Store cannot Complete delivery.
+B6. Accounts verifies advance
+  Expected: Badge Active. Due is still (total − advance), not 0.
 
 
-B8. Store sees blocked delivery
-  1. Sign in as Store. Open Home.
-  Expected: "Blocked by payment" count >= 1. "Ready for delivery" does not include this order.
-  2. Open Orders (optionally filter On hold if the UI offers status=order_on_hold).
-  3. Open the order.
-  Expected: Hold card. No Complete delivery button.
-  4. Type /ready
-  Expected: This order is not in the Ready list.
+B7. Vendor → dispatch → receive
+  Repeat A10–A12 on THIS order (send all qty, dispatch, receive all).
+  Expected AFTER receive: Badge On hold (outstanding > 0).
+            Hold card with the rupee amount.
+            Ready does NOT list it.
+            Delivery cannot Complete delivery.
+            Sales bell: on hold.
+            Write outstanding: ________________
 
 
-B9. Sales records the remaining balance
-  1. As Sales, open the on-hold order.
-  Expected: Record payment is available again (previous payment was verified).
-  2. Tap Record payment.
-  3. Type: Full (or Advance). Amount: the remaining outstanding (prefilled).
-  4. Method: Bank transfer. Reference: NEFT-BAL-001
-  5. Save.
-  Expected: Status back to "Payment verification".
-            Delivery stays locked until verify.
-            Record payment hidden again.
+B8. Delivery sees blocked
+  1. Delivery Home: Blocked by payment >= 1. Ready does not include this job.
+  2. Open the order from Orders → On hold.
+  Expected: Hold card. No Complete delivery.
+  3. /ready does not list it.
 
 
-B10. Accounts verifies remaining payment (unlocks delivery)
-  1. As Accounts, verify the second payment.
-  Expected: Status "Delivery ready". Outstanding 0.
-  2. As Store, Home / Ready should update live (no refresh).
-  Expected: Order appears under Ready for delivery. Hold card gone.
+B9. Sales records the rest
+  1. On-hold order: Record payment is back.
+  2. Full (or Advance) for the remaining due → Bank transfer → NEFT-BAL-001.
+  Expected: Verify pay again. Still locked until verify.
 
 
-B11. Store completes delivery
-  Same as A13. Confirm order Closed.
+B10. Accounts verifies remainder
+  Expected: Badge Ready. Due 0.
+            Delivery Home / Ready updates live. Hold card gone.
+
+
+B11. Delivery completes
+  Same as A13. Order Closed.
 
 
 ================================================================
-PATH C — NIL (CREDIT TERMS) PAYMENT
-Nil means amount 0. Order can still activate. Delivery still
-requires outstanding = 0 after goods are received, so this path
-should go ON HOLD after receive unless a later real payment is made.
+PATH C — NIL (CREDIT) THEN REAL MONEY
+Nil amount is 0. Order still activates. After goods arrive it MUST
+go on hold until a real payment is verified.
+
+  Quote number: ________________
 ================================================================
 
-C1. Sales: new small quote for a new customer "Test Customer Nil".
-    Submit → Accounts approve → Sales send to customer.
-
-C2. Sales Record payment:
-      Type: Nil (credit terms)
-      Amount: 0 (must stay 0)
-      Method: Other
-      Reference: NIL-TERMS
-    Expected: Saved. Status "Payment verification".
-
-C3. Try changing Nil amount to 100 before save on a NEW attempt later:
-    Expected: Error "Nil payment must be amount 0" if you force a non-zero amount.
-
-C4. Accounts verifies the nil payment.
-    Expected: Order becomes "Order active" (nil is a valid first activation).
-
-C5. Procurement send → dispatch → receive.
-    Expected: After receive, status "On hold" with full quote total outstanding
-              (nil did not reduce outstanding).
-
-C6. Sales records a real Full payment of the remaining amount.
-    Accounts verifies.
-    Expected: Delivery ready. Store can complete delivery.
+C1. Sales: new customer "Test Customer Nil", small quote, submit.
+C2. Accounts approve. Sales send.
+C3. Record payment → Nil (credit terms) → amount 0 → method Other
+    → reference NIL-TERMS.
+    Expected: Verify pay.
+C4. Accounts verifies.
+    Expected: Active. Due still equals the full quote total.
+C5. Procurement send → dispatch → receive all.
+    Expected: On hold. Outstanding = full total (nil did not pay it down).
+C6. Sales records Full for remaining. Accounts verifies.
+    Expected: Ready. Delivery can complete.
 
 
 ================================================================
-PATH D — INVALID / NEGATIVE CHECKS (do these on a spare quote/order)
+PATH D — INSTALLMENT WHILE THE JOB IS WITH THE VENDOR
+Need a job that is Active or With vendor AND still has Due > 0.
+Easiest: new quote, send, record a SMALL advance, verify, send to vendor,
+then collect more BEFORE goods arrive.
+
+  Quote number:     ________________
+  First advance:    ________________
+  Second installment: ________________
+  Status after 2nd verify (must still be With vendor / Dispatched): ________
 ================================================================
 
-D1. Quote must have at least one item
-  1. As Sales, start walk-in, pick a customer, go to Materials.
-  2. Do not add lines. Try to Review / Submit.
-  Expected: Review is blocked (need at least one line). Submit disabled or error.
-
-D2. Advance/full amount must be > 0
-  1. On a sent quote/order, Record payment type Advance, amount 0.
-  Expected: Error "Advance and full payments must be greater than 0".
-
-D3. Sales cannot verify
-  1. As Sales, open /payments
-  Expected: Redirect Home.
-
-D4. Accounts cannot record payment
-  1. As Accounts, open an order that is "Sent to customer".
-  Expected: No Record payment button.
-
-D5. Accounts cannot send quote to customer
-  1. As Accounts, open an Approved quote.
-  Expected: No "Send to customer" (unless you are Admin).
-
-D6. Procurement cannot act before order_active
-  1. As Procurement, open Fulfillment while the order is still
-     "Sent to customer" or "Payment verification".
-  Expected: Send to vendor is not offered. Order may be hidden from
-            procurement queues until activated.
-
-D7. Store cannot complete delivery while on hold
-  Already covered in B8. Repeat once to confirm.
-
-D8. Complete delivery only when unlocked, fully received, outstanding 0
-  If you ever see Complete delivery on another status, that is a FAIL.
-
-D9. Unauthenticated access
-  1. Sign out.
-  2. Open http://localhost:3000/home
-  Expected: Redirect to /login.
-
-D10. Notification mark all read
-  1. As Sales, after several approve/reject events, open the bell.
-  2. Tap "Mark all read".
-  Expected: Unread badge clears. Items lose unread highlight.
+D1. Sales new quote (or reuse Path C idea) with a large total. Submit.
+D2. Accounts approve. Sales send.
+D3. Record Advance 5000 (less than total). Accounts verify.
+    Expected: Active. Due > 0.
+D4. Procurement Send to vendor (do not receive yet).
+    Expected: With vendor.
+D5. As Sales, open the order.
+    Expected: Record payment IS visible (this is the installment hole).
+              Next action for Sales may still be vendor-related.
+              Procurement's Send/Dispatch is unchanged.
+D6. Record Advance (or Full remaining) 2000 → UPI → INST-VENDOR-001.
+    Expected: Status STAYS With vendor (not Verify pay).
+              Payment row Pending. Cannot record another until verify.
+D7. As Delivery, open the same order.
+    Expected: NO Record payment (Delivery is not at handover yet).
+D8. Accounts verifies the installment.
+    Expected: Status STILL With vendor (or Dispatched if you already dispatched).
+              Paid goes up. Due goes down. Job does not jump to Ready.
+D9. Procurement dispatch → receive.
+    If Due is still > 0: On hold.
+    If Due is 0: Ready.
+    Finish with remainder pay + verify + Complete delivery as needed.
 
 
 ================================================================
-PATH E — REALTIME ACROSS ROLES (dedicated check)
-Keep pages OPEN. Do not refresh. Watch for updates within ~1 second.
+PATH E — CANCEL A DEAD JOB
+Cancel requires a reason. Store/Delivery cannot cancel.
+Do NOT cancel the Path A/B orders you still need. Use fresh quotes.
+
+  Cancelled quote A (draft):   ________________
+  Cancelled quote B (pending): ________________
+  Cancelled order C:           ________________
 ================================================================
 
-E1. Sales Home open  +  Accounts Approvals open
-    Sales submits a new quote.
-    Expected: Accounts Approvals list gains the quote without refresh.
+E1. Cancel a draft (Sales)
+  1. Sales: walk-in, add one line, SAVE DRAFT (not submit).
+  2. Quote page: Cancel job.
+  3. Empty reason → submit. Expected: cannot (reason required).
+  4. Reason: Customer walked away. Cancel job.
+  Expected: Badge Cancelled. Cannot Edit / Submit.
+            Quotes → Closed shows it. Open does not.
 
-E2. Accounts Home open  +  Sales records a payment
-    Expected: Accounts "Payments awaiting verification" count increments.
+E2. Accounts cancels a pending quote
+  1. Sales submits a new quote. Do not approve.
+  2. As Accounts, open it from Approvals. Cancel job.
+     Reason: Duplicate enquiry.
+  Expected: Cancelled. Leaves Approvals. Accounts may get a bell if they
+            did not cancel it themselves; if THEY cancelled, they are not
+            notified of their own action.
 
-E3. Procurement Fulfillment / Home open  +  Accounts verifies first payment
-    Expected: Order appears as "Awaiting vendor action" / Order active.
+E3. Cancel an order that is with the vendor (Sales or Procurement)
+  1. Make a small job Active + With vendor (advance + verify + send).
+  2. If a payment is pending, note it.
+  3. Procurement or Sales: Cancel job. Reason: Customer cancelled after vendor.
+  Expected: Order and quote Cancelled.
+            Pending payment becomes Rejected (Accounts queue drops it).
+            Orders → Closed includes it. Open / Active does not.
+            If it was With vendor, Procurement is notified (unless they
+            were the actor). Assigned Sales notified if someone else cancelled.
+  4. Open the public quotation URL from before send, if you still have it.
+  Expected: Not found / hidden (cancelled jobs are not public).
 
-E4. Store Ready open  +  Accounts verifies the final balance on a hold order
-    Expected: Order appears on Ready without refresh.
+E4. Delivery cannot cancel
+  1. As store@nuhome.demo, open a live order that is not yet delivered.
+  Expected: No Cancel job.
 
-E5. Sales order detail open  +  Procurement marks dispatched
-    Expected: Order status on Sales screen updates to Vendor dispatched.
+E5. Cannot cancel delivered / closed
+  1. Open the Path A closed order as Sales or Admin.
+  Expected: No Cancel job. Still shows delivered/closed, not "job cancelled".
 
-E6. Bell only updates for quote approve/reject today
-    Recording a payment does NOT have to create a bell item.
-    That is current product behaviour. Dashboard still must refresh.
-
-
-================================================================
-PATH F — ROLE DASHBOARDS (spot-check each Home)
-================================================================
-
-F1. Sales Home
-    Cards: Pending quotes, Customers, Active orders, Orders on hold, Deliveries.
-    Quick Actions: Customer walk-in, Find customer.
-    Tap each card. Expected: Lands on the matching list.
-
-F2. Accounts Home
-    Cards: Quotes awaiting approval, Payments awaiting verification,
-           Orders requiring attention.
-    Tap each. Expected: /approvals, /payments, /orders.
-
-F3. Procurement Home
-    Cards: Awaiting vendor action, Vendor dispatches, Items expected.
-    Tap each. Expected: /fulfillment.
-
-F4. Store / Delivery Home
-    Cards: Ready for delivery, Blocked by payment.
-    Tap Ready card. Expected: /ready
-    Tap Blocked card. Expected: orders filtered on hold if linked.
-
-F5. Admin Home
-    Overview metrics, pipeline bars, queue cards.
-    Tap a pipeline stage. Expected: Opens that queue.
-
-F6. Admin Reports
-    Same pipeline + queue cards. Bars are clickable.
+E6. Quotes / Orders filters
+  1. Quotes → Closed includes cancelled jobs.
+  2. Orders → Closed includes cancelled jobs. Open does not.
 
 
 ================================================================
-PATH G — CUSTOMERS, SEARCH, MORE, PRINT
+PATH F — SPLIT VENDORS, PARTIAL GRN, SHORTAGE, OVERDUE
+Use a NEW Active order with qty at least 2 on one line (or qty 10).
+
+  Quote number: ________________
 ================================================================
 
-G1. Customer search
-  1. As Sales, Customers. Type a name or phone in "Search name or phone".
-  2. Submit (Enter).
-  Expected: List filters. Open a result. Quotes and Orders sections show.
-
-G2. Customer without orders
-  1. Create a customer and do not quote yet.
-  Expected: "No quotes yet". "No orders yet". Create quote is shown.
-            Record payment is NOT shown (needs an order).
-
-G3. More → Account
-  1. Every role: More → Account card shows correct name, email, role.
-  2. Sign out works.
-
-G4. Quotes list
-  1. As Sales, Quotes. Tap New quote (if customers exist).
-  Expected: Walk-in flow.
-  2. Empty quotes + no customers: prompt to add a customer first.
-
-G5. Save as draft
-  1. As Sales, walk-in → pick a customer → add one material.
-  2. Tap "Save draft" (from Materials or Review). Do not submit.
-  Expected: Quote detail. Notice "Draft saved…". Status "Draft".
-            Buttons: "Edit draft" and "Submit to Accounts".
-  3. Tap Edit draft, change a price, Save draft again.
-  Expected: Still one version in History. Totals match the new price.
-  4. Submit to Accounts from the quote page.
-  Expected: Status "Awaiting approval".
-
-G6. Correct an approved quote
-  1. After Accounts has approved (and before Send):
-     open the quote as Sales.
-  Expected: "Send to customer" and "Correct quote".
-  2. Tap Correct quote. Change a line. Submit revised quote.
-  Expected: Status back to "Awaiting approval". New version in History.
-            Public quotation link (if you still have it) should 404 until
-            Accounts approves again.
-  3. Accounts re-approves. Sales can send.
-
-G7. Edit customer + duplicate phone
-  1. As Sales, open a customer you created. Tap Edit.
-  2. Change name/phone/address/notes. Save.
-  Expected: Notice "Customer updated." Fields match.
-  3. Add a new customer with the same phone (try +91 vs 10-digit).
-  Expected: Error naming the existing customer. No second record.
-
-G8. Accounts rejects a payment
-  1. As Sales, send an approved quote and Record payment (UPI, a wrong amount is fine).
-  Expected: Status "Payment verification". Record payment is hidden.
-  2. As Accounts, Payments. Open the card.
-  Expected: "Verify payment" and "Reject payment".
-  3. Tap Reject payment. Leave reason blank and try submit.
-  Expected: Browser required-field, or "Rejection reason is required".
-  4. Enter reason: "Wrong UPI amount". Tap "Send back to Sales".
-  Expected: Redirect to the order. Notice "Payment sent back to Sales."
-            Payment row shows Rejected + the reason. Payments queue no longer
-            lists this entry.
-  5. As Sales, open the order.
-  Expected: Payment row "Rejected" with the reason.
-            Next action "Record a corrected payment".
-            Record payment is available again.
-  6. Record the correct amount. Accounts can now Verify.
-
-G9. Split vendor, partial GRN, shortage, Store collect
-  1. As Procurement, open an Active order in Fulfillment.
-  2. Send part of the qty to vendor A (set a line to less than remaining).
-     Set Expected delivery to yesterday.
-  Expected: Vendor card shows. Fulfillment list may show Overdue.
-  3. Send the remaining qty to vendor B (another vendor or the same).
-  Expected: Two vendor cards. Unsent 0 on those lines.
-  4. Mark A dispatched, then Record items received as 1 less than owed.
-  Expected: Receipt saved. Remainder still open. Close remainder is available.
-  5. Close remainder: reason Shortage, qty = leftover. Save.
-  Expected: Line shows received + closed. If everything is accounted and
-            paid, delivery unlocks; if balance remains, order goes on hold.
-  6. As Delivery (store@nuhome.demo), open an on-hold order.
-  Expected: Record payment is available. Collect cash/UPI.
-  7. As Accounts, verify that payment.
-  Expected: Delivery unlocked. Store can Complete delivery.
+F1. Active order, Fulfillment.
+F2. Send PART of a line to Vendor A.
+    Expected delivery: YESTERDAY (to force overdue).
+    Expected: Vendor card. Fulfillment / Home may show Overdue.
+F3. Send the remaining qty to Vendor B (second vendor, or same).
+    Expected: Two vendor cards. Unsent 0.
+F4. Dispatch A. Record received as ONE LESS than A owes.
+    Expected: Remainder still open. Close remainder / write-off is available.
+F5. Close remainder: reason Shortage, qty = leftover. Save.
+    Expected: Line shows received + closed qty.
+F6. Dispatch B, receive B fully.
+    Expected: If Due > 0 → On hold. If Due = 0 → Ready.
+F7. If On hold: Delivery can Record payment (cash/UPI). Accounts verify. Ready.
+    Delivery completes.
 
 
 ================================================================
-STATUS LABELS CHEAT SHEET (what you should see)
+PATH G — ACCOUNTS REJECTS A PAYMENT
+  Quote number: ________________
 ================================================================
-Draft                         quote_draft
-Awaiting approval             quote_pending_accounts
-Returned to sales             quote_rejected
-Approved                      quote_approved
-Sent to customer              quote_sent_to_customer
-Payment verification          payment_pending_verification
-Order active                  order_active
-Sent to vendor                sent_to_vendor
-Vendor dispatched             vendor_dispatched
-Items received                items_received
-Delivery check                delivery_pending_payment
-On hold                       order_on_hold
-Delivery ready                delivery_unlocked
-Delivered                     delivered
-Closed                        closed
+
+G1. Approved + sent quote. Sales records UPI with a WRONG amount (still > 0).
+    Expected: Verify pay. Record payment hidden.
+G2. Accounts → Payments: Verify AND Reject are shown.
+    Reject with empty reason → blocked.
+    Reason: Wrong UPI amount. Send back.
+    Expected: Order shows Rejected + reason. Payments queue drops it.
+G3. Sales: next action "Record a corrected payment". Record payment is back.
+    Record the right amount. Accounts Verify.
 
 
 ================================================================
-WHO DOES WHAT (quick reference)
+PATH H — CUSTOMER PROFILE, PHONE, GST, FILES
 ================================================================
-Create customer               Sales, Admin
-Create / revise / submit quote
-                              Sales, Admin
-Approve / reject quote        Accounts, Admin (not the quote creator)
-See margin                    Accounts, Admin
-Send quote / WhatsApp         Sales, Admin
-Record payment                Sales, Delivery (store), Admin
-Verify / reject payment        Accounts, Admin (not the person who recorded it)
-Add vendor / send to vendor   Procurement, Admin
-Mark dispatched               Procurement, Admin
-Record items received         Procurement, Store, Admin
-Complete delivery             Store, Admin (only when Delivery ready)
-Users + Reports               Admin only
-Notifications bell            All logged-in roles
-Live page refresh             All logged-in app pages
+
+H1. Edit customer
+  1. Open Test Customer Full Pay as Sales. Edit.
+  2. Change name slightly, billing address, site address, GSTIN, notes. Save.
+  Expected: Updated. Billing vs site both stored.
+
+H2. Duplicate phone
+  1. Add a new customer with the SAME 10 digits as 9876543210.
+  2. Also try +91 98765 43210.
+  Expected: Error that the phone already exists. No second record.
+
+H3. Search customers
+  1. Customers search: name, phone, email, AND a quote number from Path A.
+  Expected: The matching customer.
+
+H4. Files on a customer
+  1. On the customer, Files → kind Measurement → upload a small PDF or image.
+  Expected: File listed. You can open/download. Remove works (notice).
+  2. Repeat Drawing and Photo on a quote page and an order page.
+  Expected: Each entity keeps its own files.
 
 
 ================================================================
-PASS / FAIL LOG (testers fill this)
+PATH I — TAX INVOICE + AFTER HANDOVER (if you skipped A14)
 ================================================================
-Date: _______________   Tester: _______________   Build/URL: _______________
 
+I1. On any sent or paid order: Tax invoice.
+    Expected: INV- number stays the same if you open it twice (issued once).
+              Company GSTIN from Company settings. Customer GSTIN if set.
+              HSN / GST % / tax columns. Bill-to and site.
+I2. Only after Ready / Delivered / Closed: Installation site date.
+I3. Warranty auto-created on Complete delivery. Add AMC if offered.
+I4. Delivery or Sales can both do aftercare when they have permission.
+
+
+================================================================
+PATH J — PUBLIC QUOTATION (NO LOGIN)
+================================================================
+
+J1. After Send, copy the public link. Open it logged OUT (incognito).
+    Expected: Quotation document. No login. No margin.
+J2. After the job is Closed or Cancelled, open the same link again.
+    Expected: Not found / hidden.
+J3. WhatsApp sheet includes that URL. Sending the actual WhatsApp is optional.
+
+
+================================================================
+PATH K — VENDORS, MATERIALS, COMPANY
+Admin (or Procurement for vendors).
+
+K1. Vendors
+  1. Edit Test Vendor Co (name/phone). Save.
+  2. Add extra contact (name + phone). Save.
+  3. Set Inactive. Save.
+     Expected: Cannot pick this vendor on a NEW send (or it is hidden).
+  4. Set Active again so later tests work.
+
+K2. Materials (Admin → More → Materials)
+  1. Edit a row: name, sell price, HSN, GST %, warranty months. Save.
+  2. Hide/unhide if the UI offers Hide.
+  3. Start a new quote and add that material.
+     Expected: HSN and GST % snapshot onto the line. Sell is tax-exclusive.
+  4. CSV import if shown: download sample, import one extra material, confirm it lists.
+
+K3. Company (Admin → More → Company)
+  1. Legal name, GSTIN, address, phone. Save.
+  2. Open Tax invoice on Path A order.
+     Expected: Header uses the new legal name / GSTIN.
+  3. Put the legal name back to Nuhome (or whatever you use in prod) if needed.
+
+
+================================================================
+PATH L — USERS, HATS, COVER, CSV, PASSWORDS
+Admin. Use extra care: you will change passwords. Reset demo
+accounts back to password123 before you finish.
+
+L1. Users list
+  Expected: All demo people. Role chips. Edit on each row.
+            Cover for leave (if at least two sales/admin).
+            Import CSV. Create staff.
+
+L2. Create staff (optional)
+  Email a unique test address, name, role sales, password. Save.
+  Expected: They can sign in. If you cannot receive mail, skip forgot-password
+            for this person.
+
+L3. Extra hat
+  1. Edit Sales Demo. Also cover: Delivery (store). Save.
+  2. Sign in as sales@nuhome.demo.
+  Expected: Chip "Sales + Delivery". More may list Ready.
+            /ready loads. Home includes Delivery queues.
+  3. SOD still: they STILL cannot approve their own quote or verify a
+     payment they recorded.
+  4. Admin: remove the Delivery hat before other testers get confused
+     (or leave it if the next tester is running L3).
+
+L4. Cover for leave
+  1. Need two sales people (Sales Demo + another sales, or the user from L2).
+  2. Cover for leave: Away = Sales Demo, Covering = the other sales/admin.
+  Expected: Notice with customer / quote / order counts.
+            Open jobs move. Delivered / cancelled jobs stay put.
+            Covering sales sees those customers in the floor book.
+
+L5. Reassign one order
+  1. Admin opens a LIVE (not closed) order → Reassign → pick covering sales.
+  Expected: Notice order moved. Assigned sales name updates.
+
+L6. Generate password
+  1. Admin Edit user → Generate new password. COPY IT.
+  2. Sign in with that one-time password.
+  Expected: Works. Then set it back to password123 (Change password or generate again
+            and tell the team).
+
+L7. Deactivate
+  1. Admin sets a spare NON-admin user inactive. Save.
+  2. Try sign in as that user.
+  Expected: Cannot use the app (login fails or they get bounced).
+  3. Reactivate them.
+
+L8. CSV import users
+  1. Import users → download sample → import 1 row with a unique email.
+  Expected: User appears. Download generated logins if passwords were blank.
+
+L9. Forgot password (any role)
+  1. Sign out. Login → Forgot password. Email sales@nuhome.demo.
+  Expected: Success message like "If that email is on file, we sent a reset link."
+            (You may not receive email in demo. That is OK if the message shows.)
+
+L10. Change password
+  1. Sign in. More → Change password. Set a new password, sign out, sign in
+     with the new one, then change BACK to password123.
+
+
+================================================================
+PATH M — LISTS, SEARCH, FLOOR BOOK, REPORTS
+================================================================
+
+M1. Quotes filters
+  Tabs: Open | Quotes | Payment | In progress | On hold | Delivery | Closed
+  1. Open = jobs not delivered/closed/cancelled.
+  2. Quotes = drafts / pending / returned / approved (not yet an order stage).
+  3. Closed includes delivered, closed, AND cancelled.
+  Search quote number, customer phone, date From/To.
+
+M2. Orders filters
+  Tabs: Open | Payment | Active | On hold | Delivery | Closed
+  Search quote number, phone, salesperson name, dates.
+  Assigned salesperson name shows on the row.
+
+M3. Floor book
+  1. Sign in as a SECOND salesperson (L2 user, or extra sales hat).
+  2. Customers / Quotes show colleagues' walk-ins, not only their own.
+  3. They can open a colleague draft, edit, submit.
+  4. They still cannot Record payment on an order unless they are the
+     assigned salesperson (the one who sent it) or Admin.
+
+M4. Reports (Admin → Reports)
+  Views: Business | Queues | Audit
+  1. Business: Collections, Quoted, Margin, Delivered.
+     Vendor SLA line. Who is sitting on work.
+     Change From/To (Enter). Numbers follow the range.
+     Cancelled jobs must NOT inflate Delivered.
+  2. Queues: pipeline / open work. Cards click through.
+  3. Audit: filter PAYMENT_VERIFIED, ORDER_CANCELLED, WORK_REASSIGNED, ROLE_CHANGED.
+     Named actor + action. Search box for actor/action.
+
+
+================================================================
+PATH N — EACH HOME (spot-check)
+Tap every card. Confirm the landing page.
+
+N1. Sales Home
+    Cards include pending quotes, customers, active, hold, deliveries.
+    Quick actions: Customer walk-in, Find customer.
+
+N2. Accounts Home
+    Quotes awaiting approval → /approvals
+    Payments awaiting verification → /payments
+    Orders requiring attention → /orders
+
+N3. Procurement Home
+    Awaiting vendor / dispatches / overdue → /fulfillment
+
+N4. Delivery Home
+    Ready → /ready
+    Blocked by payment → hold orders
+
+N5. Admin Home
+    Overview + pipeline. Stage click opens that queue.
+
+
+================================================================
+PATH O — LIVE REFRESH + BELLS
+Keep pages OPEN. Do not refresh. Watch ~1 second.
+
+O1. Sales Home open + Accounts Approvals open
+    Sales submits a quote → Approvals list gains it.
+
+O2. Accounts Home open + Sales records a payment
+    Payments-awaiting count increments.
+
+O3. Procurement Fulfillment open + Accounts verifies first payment
+    Job appears as Active / awaiting vendor.
+
+O4. Delivery Ready open + Accounts verifies the last balance on a hold job
+    Job appears on Ready.
+
+O5. Sales order detail open + Procurement marks dispatched
+    Status on Sales screen becomes Dispatched.
+
+O6. Bell destinations (actor is NOT notified of their own work)
+    [ ] Quote submitted            → Accounts → /approvals/{id}
+    [ ] Quote approved / returned  → Sales → that quote
+    [ ] Payment recorded           → Accounts → /payments
+    [ ] Order active               → Procurement → /fulfillment/{id}
+    [ ] Vendor dispatched          → assigned Sales → /orders/{id}
+    [ ] Order on hold              → assigned Sales → /orders/{id}
+    [ ] Delivery unlocked          → Delivery → /orders/{id} or Ready
+    [ ] Order delivered            → assigned Sales → /orders/{id}
+    [ ] Order cancelled (vendor)   → Procurement + assigned Sales
+    [ ] Pending quote cancelled    → Accounts (if someone else cancelled)
+
+O7. Bell: Mark all read
+    Unread badge clears.
+
+
+================================================================
+PATH P — NEGATIVE CHECKS (spare quote/order)
+================================================================
+
+P1. Quote with zero lines: cannot Review / Submit.
+P2. Advance or Full with amount 0: error, must be > 0.
+P3. Nil with amount ≠ 0: error, must be 0.
+P4. Sales cannot open /payments or verify.
+P5. Accounts has no Record payment on an order, no Send on a quote.
+P6. Procurement cannot Send to vendor until Active.
+P7. Delivery cannot Complete delivery unless Ready, fully received/closed, Due 0.
+P8. Second payment while one is pending: blocked.
+P9. Colleague Sales cannot Record payment unless assigned (or Admin).
+P10. Delivery cannot Record payment while the job is only With vendor.
+P11. Logged-out /home → /login.
+P12. Inactive staff cannot use the app (L7).
+P13. Public quotation unchanged when approve is withdrawn (correct-before-send):
+     Sales "Correct before send" on an Approved quote → new version → Pending.
+     Old public link should not show the unapproved revision as sendable until
+     Accounts approves again (and Sales sends).
+
+
+================================================================
+STATUS BADGES (what the chip says)
+================================================================
+Draft            quote_draft
+Pending          quote_pending_accounts
+Returned         quote_rejected
+Approved         quote_approved
+Sent             quote_sent_to_customer
+Verify pay       payment_pending_verification
+Active           order_active
+With vendor      sent_to_vendor
+Dispatched       vendor_dispatched
+Received         items_received
+Locked           delivery_pending_payment
+On hold          order_on_hold
+Ready            delivery_unlocked
+Delivered        delivered
+Closed           closed
+Cancelled        cancelled
+
+
+================================================================
+WHO DOES WHAT
+================================================================
+Walk-in / customer / quote draft-submit-send     Sales, Admin
+Approve / return quote (not own quote)           Accounts, Admin
+See margin                                       Accounts, Admin
+Record payment after send                        Assigned Sales, Admin
+Record payment at handover                       Delivery, assigned Sales, Admin
+Verify / reject payment (not own recording)      Accounts, Admin
+Send to vendor / dispatch                        Procurement, Admin
+Receive goods                                    Procurement, Delivery, Admin
+Complete delivery when Ready                     Delivery, Admin
+Cancel draft / live job                          Sales, Procurement, Admin
+Cancel pending quote                             Accounts as well
+Cover / reassign / users / reports / company     Admin
+Edit vendor + contacts                           Procurement, Admin
+Edit material / GST company sheet                Admin
+Forgot / change password                         All
+Files on customer/quote                          Sales (and Admin)
+Files on order                                   Sales / Delivery as on screen
+Tax invoice                                      Anyone who can open the order
+Installation / AMC after handover                Sales or Delivery
+
+
+================================================================
+DO NOT FAIL THE BUILD FOR THESE (known gaps)
+================================================================
+- Customer cannot Accept/Reject on the public page (view-only).
+- No payment screenshot / refund / credit limit.
+- No proof-of-delivery photo or signature (notes only).
+- No email/SMS ping — only in-app bell + live screen.
+- Forgot-password email may not arrive in demo; the on-screen notice is enough.
+
+
+================================================================
+PASS / FAIL LOG
+================================================================
+Date: _______________   Tester: _______________   URL: _______________
+
+Part 0
 [ ] Login all 5 roles
-[ ] Nav items match each role
-[ ] Role-gate URLs redirect to Home
-[ ] Path A happy path (full pay) closed
-[ ] Path B reject + revise + advance + hold + balance + deliver
-[ ] Path C nil then later full pay
-[ ] Duplicate pending payment blocked
-[ ] Sales cannot approve / verify
-[ ] Store cannot deliver on hold
-[ ] Public quotation page (no login)
-[ ] WhatsApp sheet opens
-[ ] Notifications on approve and reject
-[ ] Realtime: other role dashboard updates without refresh
-[ ] Sign out / sign in switch works
-[ ] Admin Users list shows all demo people
-[ ] Save quote as draft and edit in place
-[ ] Correct approved quote before send (new version, re-approve)
-[ ] Edit customer profile
-[ ] Duplicate phone blocked (including +91 vs 10-digit)
-[ ] Accounts can reject a pending payment; Sales re-records
-[ ] Split vendor send + typed GRN + close shortage
-[ ] Overdue expected delivery shows on Fulfillment / Home
-[ ] Delivery (store) can record payment on hold
+[ ] Wrong password / empty fields
+[ ] Sign out
+[ ] Logged-out URLs go to login
+[ ] Nav matches each role (Delivery labelled Delivery)
+[ ] Role-gate URLs for Sales / Accounts / Procurement / Delivery / Admin
 
-Bugs found (quote number, role, steps, expected vs actual):
+Path A — full pay
+[ ] Customer created with GSTIN + billing + site
+[ ] Quote submitted (GST on lines)
+[ ] Sales cannot approve
+[ ] Accounts sees margin, approves
+[ ] Bell + live Home
+[ ] Send + public quotation + WhatsApp sheet
+[ ] Full pay, duplicate pending blocked
+[ ] Verify → Active
+[ ] Vendor send → dispatch → receive → Ready (not hold)
+[ ] Complete delivery → Closed
+[ ] Tax invoice
+[ ] Installation + auto warranty / AMC
+
+Path B
+[ ] Return requires reason
+[ ] Revise creates Version 2
+[ ] Advance then hold after GRN
+[ ] Delivery blocked; Sales pays remainder; Ready; deliver
+
+Path C
+[ ] Nil activates with full amount still due; hold after GRN; later full pay
+
+Path D
+[ ] Installment while With vendor; status does not jump; Delivery cannot collect then
+[ ] Accounts verify leaves job on the vendor path
+
+Path E
+[ ] Cancel draft (reason required)
+[ ] Accounts cancel pending quote
+[ ] Cancel vendor-stage order; pending pay dropped
+[ ] Delivery cannot cancel
+[ ] Cannot cancel delivered
+[ ] Cancelled sits in Closed, not Open
+
+Path F
+[ ] Split vendors
+[ ] Overdue expected date
+[ ] Partial GRN + shortage write-off
+[ ] Store collect on hold
+
+Path G
+[ ] Reject payment requires reason; Sales re-records; verify
+
+Path H
+[ ] Edit customer
+[ ] Duplicate phone (+91 vs 10-digit)
+[ ] Search by quote number
+[ ] Files on customer, quote, order
+
+Path I / J
+[ ] Invoice number stable on second open
+[ ] Public quote hidden after close/cancel
+
+Path K
+[ ] Edit vendor, extra contact, inactive/active
+[ ] Edit material HSN / GST; snapshot on new quote
+[ ] Company GSTIN prints on invoice
+
+Path L
+[ ] Extra hat Sales + Delivery
+[ ] SOD still holds with a second hat
+[ ] Cover for leave
+[ ] Reassign one order
+[ ] Generate password / change password / forgot-password notice
+[ ] Deactivate blocks login
+[ ] CSV import users
+
+Path M / N
+[ ] Quote groups + order buckets
+[ ] Floor book colleague jobs
+[ ] Record payment still assigned-sales-only
+[ ] Reports Business / Queues / Audit
+[ ] Cancelled not counted as Delivered
+[ ] Each Home cards land correctly
+
+Path O
+[ ] Live refresh checks O1–O5
+[ ] Bells O6 (every type you can trigger)
+[ ] Mark all read
+
+Path P
+[ ] Zero-line quote blocked
+[ ] Advance 0 / Nil ≠ 0 blocked
+[ ] Permission negatives P4–P11
+
+Bugs found (quote number, role, step, expected vs actual):
 1.
 2.
 3.
+4.
+5.
 
 
 ================================================================
 END OF GUIDE
 ================================================================
-)

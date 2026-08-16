@@ -120,6 +120,20 @@ const ACTION_COPY: Record<
     title: "Order closed",
     detail: () => "No further action required",
   },
+  QUOTE_CANCELLED: {
+    title: "Quote cancelled",
+    detail: (e) =>
+      e.metadata?.reason
+        ? `Reason: ${String(e.metadata.reason)}`
+        : "This quote will not continue",
+  },
+  ORDER_CANCELLED: {
+    title: "Order cancelled",
+    detail: (e) =>
+      e.metadata?.reason
+        ? `Reason: ${String(e.metadata.reason)}`
+        : "This order will not continue",
+  },
   ROLE_CHANGED: {
     title: "Role changed",
     detail: (e) =>
@@ -129,6 +143,10 @@ const ACTION_COPY: Record<
     title: "Staff profile updated",
     detail: (e) =>
       e.new_state ? `Status: ${e.new_state}` : "Profile updated",
+  },
+  WORK_REASSIGNED: {
+    title: "Work reassigned",
+    detail: () => "Jobs moved to covering sales",
   },
 };
 
