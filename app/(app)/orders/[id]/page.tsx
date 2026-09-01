@@ -137,7 +137,7 @@ export default async function OrderDetailPage({
         statusExplanation={statusExplanation}
       />
 
-      <NextActionCard action={next} />
+      <NextActionCard action={{ ...next, href: undefined, cta: undefined }} />
 
       {canReassign &&
       status !== "delivered" &&

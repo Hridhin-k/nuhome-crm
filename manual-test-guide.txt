@@ -198,12 +198,16 @@ Use TWO browsers. Write numbers down as you go.
 
 A0. Login as Sales (Browser A)
   1. Sign in as sales@nuhome.demo
-  Expected: Home greeting (Good morning/afternoon/evening, Sales).
-            Queue cards. Quick actions include Customer walk-in.
+  Expected: Greeting Good morning/afternoon/evening (wave). Role Sales.
+            Dark hero metrics: Quotes | Payment | Active.
+            Hero CTA: Customer walk-in.
+            Section "Your board": Open quotes, Awaiting payment, Active orders,
+            Vendor overdue, Orders on hold, Ready to deliver, Customers.
+            Walk-in also on the floating + button. There is no "Find customer".
 
 
 A1. Create a customer
-  1. On Home tap Customer walk-in (or More is not needed — it is on Home / Customers).
+  1. On Home tap Customer walk-in (hero CTA or the floating +).
   Expected: Title "Customer walk-in".
 
   If the page says "New customer walk-in" (no customers yet):
@@ -257,7 +261,7 @@ A3. Sales cannot approve
 A4. Accounts inbox + bell (Browser B)
   1. Leave Browser A on Sales Home (do not refresh later in A5).
   2. Browser B: accounts@nuhome.demo
-  Expected: Home card "awaiting approval" count >= 1.
+  Expected: Hero Approvals >= 1, and Your board "Quotes awaiting approval" >= 1.
             Bell: unread "Quote submitted". Tap → that quote on Approvals.
 
 
@@ -270,15 +274,17 @@ A5. Accounts approves
   Expected: Badge Approved. Next action Send to customer.
 
   4. Watch Browser A (Sales Home) without refreshing.
-  Expected within ~1s: pending-quotes count can drop; bell "Quote approved".
+  Expected within ~1s: Open quotes / Quotes hero count can drop; bell "Quote approved".
   5. Sales: open the bell, tap the item.
   Expected: Quote page. Item marks read.
 
 
 A6. Sales sends
-  1. On the approved quote tap Send. Confirm Send quote.
+  1. On the approved quote tap Send. Sheet title "Send to customer". Confirm Send quote.
   Expected: Badge Sent. An order exists (you will open it from Orders).
             Share on WhatsApp and/or View public link appear.
+            (Need to change lines after approve? Use Correct before send.
+            Navbar on that screen: Correct quote.)
 
   2. Tap View public link (new tab, NO login).
   Expected: Customer quotation. Company name. Bill-to / site if stored.
@@ -309,7 +315,7 @@ A7. Sales records FULL payment
 
 
 A8. Accounts verifies → order Active
-  1. Browser B Home: payments-awaiting count up (live).
+  1. Browser B Home: Verify / "Payments awaiting verification" up (live).
   2. Payments: card shows full + amount.
   3. Verify. Also confirm Reject is present (do not use it).
   Expected: Order badge Active.
@@ -328,7 +334,7 @@ A9. First vendor (Procurement) — only if the list is empty
 
 
 A10. Send to vendor
-  1. Procurement Home: awaiting vendor action >= 1.
+  1. Procurement Home: hero Send / Your board "Awaiting vendor" >= 1.
   2. Fulfillment → this Active order → Send to vendor
      Vendor: Test Vendor Co
      Expected delivery: a few days from today
@@ -350,7 +356,7 @@ A12. Receive all qty
 
 
 A13. Deliver
-  1. As Delivery, Ready lists this order.
+  1. As Delivery, Ready / "Ready for delivery" lists this order.
   2. Open it. Complete delivery is shown. Hold card is not.
   3. Complete delivery. Notes: Handover Path A. Confirm.
   Expected: Delivered then Closed.
@@ -405,11 +411,11 @@ B2. Accounts returns it
   3. Reason: Discount too high — please reduce selling price. Send back.
   Expected: Badge Returned.
   4. Sales bell: quote returned. Open the quote.
-  Expected: Red banner with that reason. Next: Revise.
+  Expected: Red banner with that reason. Next: Revise quote.
 
 
 B3. Sales revises
-  1. Revise. Lines from last version load. Customer is already set.
+  1. Tap Revise quote. Lines from last version load. Customer is already set.
   2. Change a price or note "Revised after Accounts feedback". Submit.
   Expected: Pending again. History: Version 1 and Version 2 · current.
             You can expand Version 1 items.
@@ -444,10 +450,11 @@ B7. Vendor → dispatch → receive
 
 
 B8. Delivery sees blocked
-  1. Delivery Home: Blocked by payment >= 1. Ready does not include this job.
-  2. Open the order from Orders → On hold.
+  1. Delivery Home: hero Hold / Your board "Collect at handover" >= 1.
+     Hero Ready / "Ready for delivery" does not include this job.
+  2. Open the order from Orders → On hold (or tap Collect at handover).
   Expected: Hold card. No Complete delivery.
-  3. /ready does not list it.
+  3. /ready (Ready for delivery) does not list it.
 
 
 B9. Sales records the rest
@@ -771,38 +778,59 @@ M3. Floor book
      assigned salesperson (the one who sent it) or Admin.
 
 M4. Reports (Admin → Reports)
-  Views: Business | Queues | Audit
-  1. Business: Collections, Quoted, Margin, Delivered.
+  Views: Floor | Business | Queues | Audit
+  Default is Floor (same live tiles as Admin Home).
+  1. Floor: "Every job on the floor" + status tiles. Tap a tile → that queue.
+  2. Business: Collections, Quoted, Margin, Delivered.
      Vendor SLA line. Who is sitting on work.
      Change From/To (Enter). Numbers follow the range.
      Cancelled jobs must NOT inflate Delivered.
-  2. Queues: pipeline / open work. Cards click through.
-  3. Audit: filter PAYMENT_VERIFIED, ORDER_CANCELLED, WORK_REASSIGNED, ROLE_CHANGED.
+  3. Queues: pipeline / open work. Cards click through.
+  4. Audit: filter PAYMENT_VERIFIED, ORDER_CANCELLED, WORK_REASSIGNED, ROLE_CHANGED.
      Named actor + action. Search box for actor/action.
 
 
 ================================================================
 PATH N — EACH HOME (spot-check)
-Tap every card. Confirm the landing page.
+Tap every hero metric and every Your board row. Confirm the landing page.
 
 N1. Sales Home
-    Cards include pending quotes, customers, active, hold, deliveries.
-    Quick actions: Customer walk-in, Find customer.
+    Hero: Quotes | Payment | Active. CTA: Customer walk-in (also floating +).
+    Your board:
+      Open quotes            → /quotes?group=quote
+      Awaiting payment       → /orders?bucket=payment
+      Active orders          → /orders?bucket=active
+      Vendor overdue         → /orders?bucket=active
+      Orders on hold         → /orders?bucket=hold
+      Ready to deliver       → /orders?bucket=delivery
+      Customers              → /customers
+    There is no "Find customer" action.
 
 N2. Accounts Home
-    Quotes awaiting approval → /approvals
-    Payments awaiting verification → /payments
-    Orders requiring attention → /orders
+    Hero: Approvals | Verify | Attention. CTA: Review quotes.
+    Your board:
+      Quotes awaiting approval        → /approvals
+      Payments awaiting verification  → /payments
+      Orders requiring attention      → /orders?bucket=attention
 
 N3. Procurement Home
-    Awaiting vendor / dispatches / overdue → /fulfillment
+    Hero: Send | Sent | Overdue. CTA: Open fulfillment.
+    Your board: Awaiting vendor / Awaiting dispatch / In transit / Received /
+                Vendor overdue → /fulfillment
 
 N4. Delivery Home
-    Ready → /ready
-    Blocked by payment → hold orders
+    Hero: Ready | Hold | Overdue. CTA: Ready to deliver.
+    Your board:
+      Ready for delivery     → /ready
+      Collect at handover    → /orders?bucket=hold
+      Vendor overdue         → /orders?bucket=active
 
 N5. Admin Home
-    Overview + pipeline. Stage click opens that queue.
+    Hero: In play | Overdue | Done. CTA: Reports and exports.
+    Floor: "Every job on the floor" (status tiles). Tap a tile → that queue.
+    Catalog: Users, Vendors, Materials.
+    Activity timeline.
+    Pipeline cards live under Reports → Queues, not on Home.
 
 
 ================================================================
@@ -813,13 +841,13 @@ O1. Sales Home open + Accounts Approvals open
     Sales submits a quote → Approvals list gains it.
 
 O2. Accounts Home open + Sales records a payment
-    Payments-awaiting count increments.
+    Hero Verify / Your board "Payments awaiting verification" increments.
 
 O3. Procurement Fulfillment open + Accounts verifies first payment
     Job appears as Active / awaiting vendor.
 
 O4. Delivery Ready open + Accounts verifies the last balance on a hold job
-    Job appears on Ready.
+    Job appears on Ready / "Ready for delivery". Collect at handover drops.
 
 O5. Sales order detail open + Procurement marks dispatched
     Status on Sales screen becomes Dispatched.
@@ -1002,7 +1030,7 @@ Path M / N
 [ ] Quote groups + order buckets
 [ ] Floor book colleague jobs
 [ ] Record payment still assigned-sales-only
-[ ] Reports Business / Queues / Audit
+[ ] Reports Floor / Business / Queues / Audit
 [ ] Cancelled not counted as Delivered
 [ ] Each Home cards land correctly
 

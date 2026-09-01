@@ -41,61 +41,61 @@ export function InstallationForm({
             ? ` · ${new Date(installation.scheduled_on).toLocaleDateString("en-IN")}`
             : ""}
         </p>
-      ) : null}
-      <form action={action} className="mt-4 flex flex-col gap-3">
-        <input type="hidden" name="order_id" value={orderId} />
-        <div>
-          <Label htmlFor="scheduled_on">Site date</Label>
-          <Input
-            id="scheduled_on"
-            name="scheduled_on"
-            type="date"
-            required
-            defaultValue={scheduledOn}
-            className="mt-2 h-11"
-          />
-        </div>
-        <div>
-          <Label htmlFor="install-notes">Notes</Label>
-          <Textarea
-            id="install-notes"
-            name="notes"
-            rows={2}
-            defaultValue={installation?.notes ?? ""}
-            className="mt-2"
-            placeholder="Floor, time window, team…"
-          />
-        </div>
-        {state.error ? (
-          <p className="text-sm text-destructive" role="alert">
-            {state.error}
-          </p>
-        ) : null}
-        <div className="flex flex-col gap-2 sm:flex-row">
-          <Button
-            type="submit"
-            name="status"
-            value="scheduled"
-            disabled={pending}
-            variant={done ? "bordered" : "default"}
-            className="flex-1"
-          >
-            {pending ? "Saving…" : installation ? "Update date" : "Schedule"}
-          </Button>
-          {installation && !done ? (
+      ) : (
+        <form action={action} className="mt-4 flex flex-col gap-3">
+          <input type="hidden" name="order_id" value={orderId} />
+          <div>
+            <Label htmlFor="scheduled_on">Site date</Label>
+            <Input
+              id="scheduled_on"
+              name="scheduled_on"
+              type="date"
+              required
+              defaultValue={scheduledOn}
+              className="mt-2 h-11"
+            />
+          </div>
+          <div>
+            <Label htmlFor="install-notes">Notes</Label>
+            <Textarea
+              id="install-notes"
+              name="notes"
+              rows={2}
+              defaultValue={installation?.notes ?? ""}
+              className="mt-2"
+              placeholder="Floor, time window, team…"
+            />
+          </div>
+          {state.error ? (
+            <p className="text-sm text-destructive" role="alert">
+              {state.error}
+            </p>
+          ) : null}
+          <div className="flex flex-col gap-2 sm:flex-row">
             <Button
               type="submit"
               name="status"
-              value="done"
+              value="scheduled"
               disabled={pending}
-              variant="bordered"
               className="flex-1"
             >
-              Mark done
+              {pending ? "Saving…" : installation ? "Update date" : "Schedule"}
             </Button>
-          ) : null}
-        </div>
-      </form>
+            {installation ? (
+              <Button
+                type="submit"
+                name="status"
+                value="done"
+                disabled={pending}
+                variant="bordered"
+                className="flex-1"
+              >
+                Mark done
+              </Button>
+            ) : null}
+          </div>
+        </form>
+      )}
     </section>
   );
 }

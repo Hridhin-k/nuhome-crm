@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { createCustomerAction, type ActionState } from "@/app/actions/workflow";
 import {
   FormSheet,
@@ -10,7 +10,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { LocalMobileInput } from "@/components/ui/local-mobile-input";
 import { Textarea } from "@/components/ui/textarea";
+import { sanitizeLocalMobileInput } from "@/lib/customers/phone";
 import { cn } from "@/lib/utils";
 import type { ReactNode } from "react";
 
@@ -40,6 +42,9 @@ export function CustomerForm({
   const [state, action, pending] = useActionState<ActionState, FormData>(
     createCustomerAction,
     {},
+  );
+  const [phone, setPhone] = useState(
+    sanitizeLocalMobileInput(customer?.phone ?? ""),
   );
   const editing = Boolean(customer);
 
@@ -83,11 +88,11 @@ export function CustomerForm({
           </div>
           <div>
             <Label htmlFor="phone">Phone</Label>
-            <Input
+            <LocalMobileInput
               id="phone"
               name="phone"
-              type="tel"
-              defaultValue={customer?.phone ?? ""}
+              value={phone}
+              onChange={setPhone}
               className="mt-2 h-11 min-h-11"
             />
           </div>

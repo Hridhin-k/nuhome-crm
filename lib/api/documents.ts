@@ -1,6 +1,7 @@
 import { cache } from "react";
 import { getDb, throwQuery } from "@/lib/api/db";
 import { isOrderNumber } from "@/lib/orders/ref";
+import { createServiceRoleClient } from "@/lib/supabase/admin";
 import type { AttachmentKind } from "@/lib/validation/documents";
 import type { Database } from "@/types/database";
 
@@ -200,6 +201,9 @@ export async function upsertInstallation(input: {
 }) {
   const db = await getDb();
   const existing = await getInstallationForOrder(input.orderId);
+  if (existing?.status === "done") {
+    throw new Error("Installation is already marked done");
+  }
   const status = input.status ?? existing?.status ?? "scheduled";
   const completedAt =
     status === "done" ? new Date().toISOString() : status === "scheduled" ? null : existing?.completed_at ?? null;
@@ -283,7 +287,7 @@ export const getTaxInvoice = cache(async (orderId: string) => {
     throw new Error("Order not found");
   }
 
-  const [company, customer, quote] = await Promise.all([
+  const [company, customer, quoteResult] = await Promise.all([
     getCompanySettings(),
     db
       .from("customers")
@@ -299,26 +303,64 @@ export const getTaxInvoice = cache(async (orderId: string) => {
       .maybeSingle(),
   ]);
 
-  const versionId = quote.data?.current_version_id;
-  const items = versionId
-    ? await throwQuery(
-        db
+  let quote = quoteResult.data;
+  let items: {
+    id: string;
+    description: string;
+    quantity: number | string;
+    unit_price: number | string;
+    discount: number | string;
+    tax: number | string;
+    line_total: number | string;
+    hsn_code: string | null;
+    gst_rate: number | string;
+  }[] = [];
+  const itemSelect =
+    "id, description, quantity, unit_price, discount, tax, line_total, hsn_code, gst_rate";
+
+  if (quote?.current_version_id) {
+    items = await throwQuery(
+      db
+        .from("quote_items")
+        .select(itemSelect)
+        .eq("version_id", quote.current_version_id)
+        .order("sort_order"),
+      "Failed to load invoice lines",
+    );
+  }
+
+  // Procurement / Store can read the order but not quote RLS, so fill lines as admin.
+  if (!quote?.current_version_id || items.length === 0) {
+    const admin = createServiceRoleClient();
+    const { data: adminQuote, error: adminQuoteError } = await admin
+      .from("quotes")
+      .select(
+        "id, quote_number, current_version_id, quote_versions!quotes_current_version_fk(version_number, subtotal, discount, tax, total, notes, created_at)",
+      )
+      .eq("id", order.quote_id)
+      .maybeSingle();
+    if (adminQuoteError) {
+      throw new Error("Failed to load invoice quote");
+    }
+    quote = adminQuote ?? quote;
+    if (quote?.current_version_id) {
+      items = await throwQuery(
+        admin
           .from("quote_items")
-          .select(
-            "id, description, quantity, unit_price, discount, tax, line_total, hsn_code, gst_rate",
-          )
-          .eq("version_id", versionId)
+          .select(itemSelect)
+          .eq("version_id", quote.current_version_id)
           .order("sort_order"),
         "Failed to load invoice lines",
-      )
-    : [];
+      );
+    }
+  }
 
   return {
     invoiceNumber: order.invoice_number ?? invoiceNumber,
     issuedAt: order.invoice_issued_at,
     company,
     customer: customer.data,
-    quote: quote.data,
+    quote,
     orderNumber: order.order_number,
     items,
   };

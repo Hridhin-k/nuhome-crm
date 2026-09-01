@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { lineFromMaterial, linesFromQuoteItems, withGst } from "@/lib/quotes/lines";
+import { addMaterialLine, clampGstRate, lineFromMaterial, linesFromQuoteItems, withGst } from "@/lib/quotes/lines";
 import { DEFAULT_GST_RATE, lineGstAmount, lineTaxable, lineTotalWithGst, roundMoney } from "@/lib/gst";
 import { publicQuotePath, publicQuoteUrl } from "@/lib/quotes/public-url";
 import { isOrderNumber, orderRef } from "@/lib/orders/ref";
@@ -33,6 +33,38 @@ describe("quote lines with GST", () => {
     });
     expect(line.gst_rate).toBe(DEFAULT_GST_RATE);
     expect(line.tax).toBe(18);
+  });
+
+  it("increments quantity when the same catalogue item is added again", () => {
+    const material = {
+      id: "m1",
+      name: "Cabinet",
+      default_sell_price: 1000,
+      default_cost: 400,
+      gst_rate: 18,
+    };
+    const once = addMaterialLine([], material);
+    const twice = addMaterialLine(once, material);
+    expect(once).toHaveLength(1);
+    expect(twice).toHaveLength(1);
+    expect(twice[0].quantity).toBe(2);
+    expect(twice[0].tax).toBe(360);
+  });
+
+  it("clamps GST below 0 or above 100", () => {
+    const line = withGst({
+      key: "1",
+      description: "Labour",
+      quantity: 1,
+      unit_price: 500,
+      unit_cost: 0,
+      discount: 0,
+      tax: 0,
+      gst_rate: -18,
+    });
+    expect(line.gst_rate).toBe(0);
+    expect(line.tax).toBe(0);
+    expect(clampGstRate(140)).toBe(100);
   });
 
   it("leaves tax alone when the line has no GST rate", () => {

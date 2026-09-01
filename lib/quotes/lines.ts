@@ -13,17 +13,21 @@ export type QuoteLine = {
   gst_rate: number;
 };
 
+export function clampGstRate(value: number) {
+  if (!Number.isFinite(value)) return 0;
+  return Math.min(100, Math.max(0, value));
+}
+
 export function withGst(line: QuoteLine): QuoteLine {
-  if (!line.gst_rate) {
-    return line;
-  }
+  const gst_rate = clampGstRate(line.gst_rate);
   return {
     ...line,
+    gst_rate,
     tax: lineGstAmount(
       line.quantity,
       line.unit_price,
       line.discount,
-      line.gst_rate,
+      gst_rate,
     ),
   };
 }
@@ -48,6 +52,31 @@ export function lineFromMaterial(material: {
     hsn_code: material.hsn_code ?? undefined,
     gst_rate: Number(material.gst_rate ?? DEFAULT_GST_RATE),
   });
+}
+
+export function addMaterialLine(
+  lines: QuoteLine[],
+  material: Parameters<typeof lineFromMaterial>[0],
+): QuoteLine[] {
+  const existing = lines.find((line) => line.material_id === material.id);
+  if (!existing) {
+    return [...lines, lineFromMaterial(material)];
+  }
+  return lines.map((line) =>
+    line.key === existing.key
+      ? withGst({ ...line, quantity: line.quantity + 1 })
+      : line,
+  );
+}
+
+export function addMaterialLines(
+  lines: QuoteLine[],
+  materials: Parameters<typeof lineFromMaterial>[0][],
+): QuoteLine[] {
+  return materials.reduce(
+    (current, material) => addMaterialLine(current, material),
+    lines,
+  );
 }
 
 export function linesFromQuoteItems(

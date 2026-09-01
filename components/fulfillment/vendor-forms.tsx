@@ -32,9 +32,6 @@ export function SendToVendorForm({
   items: { id: string; description: string; available: number }[];
 }) {
   const sendable = items.filter((item) => item.available > 0);
-  const [qty, setQty] = useState<Record<string, number>>(() =>
-    Object.fromEntries(sendable.map((item) => [item.id, item.available])),
-  );
   const [state, action, pending] = useActionState<ActionState, FormData>(
     sendToVendorAction,
     {},
@@ -42,7 +39,7 @@ export function SendToVendorForm({
   const payload = sendable
     .map((item) => ({
       order_item_id: item.id,
-      quantity: Number(qty[item.id] ?? 0),
+      quantity: item.available,
     }))
     .filter((row) => row.quantity > 0);
 
@@ -53,7 +50,7 @@ export function SendToVendorForm({
   return (
     <FormSheet
       title="Send to vendor"
-      description="Send all remaining, split quantities, or leave a line at 0 to hold it back for another supplier."
+      description="Send remaining quantities to this vendor. Quantities match the order and cannot be changed here."
       trigger={
         <span className="inline-flex h-11 min-h-11 w-full items-center justify-center rounded-lg bg-primary px-4 text-subheading text-on-primary">
           Send to vendor
@@ -96,21 +93,9 @@ export function SendToVendorForm({
                     Unsent {item.available}
                   </p>
                 </div>
-                <Input
-                  type="number"
-                  inputMode="decimal"
-                  min={0}
-                  max={item.available}
-                  step="0.001"
-                  className="h-10 w-20 shrink-0"
-                  value={qty[item.id] ?? 0}
-                  onChange={(e) =>
-                    setQty((current) => ({
-                      ...current,
-                      [item.id]: Number(e.target.value),
-                    }))
-                  }
-                />
+                <p className="shrink-0 text-sm tabular-nums text-on-surface">
+                  {item.available}
+                </p>
               </li>
             ))}
           </ul>
@@ -148,7 +133,9 @@ export function ReceiveItemsForm({
 }) {
   const open = items.filter((item) => item.remaining > 0);
   const [qty, setQty] = useState<Record<string, number>>(() =>
-    Object.fromEntries(open.map((item) => [item.order_item_id, item.remaining])),
+    Object.fromEntries(
+      open.map((item) => [item.order_item_id, Math.floor(item.remaining)]),
+    ),
   );
   const [state, action, pending] = useActionState<ActionState, FormData>(
     receiveAction,
@@ -157,7 +144,7 @@ export function ReceiveItemsForm({
   const payload = open
     .map((item) => ({
       order_item_id: item.order_item_id,
-      quantity: Number(qty[item.order_item_id] ?? 0),
+      quantity: Math.trunc(Number(qty[item.order_item_id] ?? 0)),
     }))
     .filter((row) => row.quantity > 0);
 
@@ -194,18 +181,24 @@ export function ReceiveItemsForm({
                 </div>
                 <Input
                   type="number"
-                  inputMode="decimal"
+                  inputMode="numeric"
                   min={0}
-                  max={item.remaining}
-                  step="0.001"
+                  max={Math.floor(item.remaining)}
+                  step={1}
                   className="h-10 w-20 shrink-0"
                   value={qty[item.order_item_id] ?? 0}
-                  onChange={(e) =>
+                  onChange={(e) => {
+                    const next = Math.trunc(Number(e.target.value));
                     setQty((current) => ({
                       ...current,
-                      [item.order_item_id]: Number(e.target.value),
-                    }))
-                  }
+                      [item.order_item_id]: Number.isFinite(next)
+                        ? Math.max(
+                            0,
+                            Math.min(Math.floor(item.remaining), next),
+                          )
+                        : 0,
+                    }));
+                  }}
                 />
               </li>
             ))}

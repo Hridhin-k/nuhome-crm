@@ -11,6 +11,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { LocalMobileInput } from "@/components/ui/local-mobile-input";
+import { sanitizeLocalMobileInput } from "@/lib/customers/phone";
 
 type ContactDraft = { name: string; phone: string; email: string };
 
@@ -33,9 +35,13 @@ export function VendorForm({
     createVendorAdminAction,
     {},
   );
+  const [phone, setPhone] = useState(sanitizeLocalMobileInput(vendor?.phone ?? ""));
   const [contacts, setContacts] = useState<ContactDraft[]>(
     vendor?.contacts?.length
-      ? vendor.contacts
+      ? vendor.contacts.map((contact) => ({
+          ...contact,
+          phone: sanitizeLocalMobileInput(contact.phone),
+        }))
       : [{ name: "", phone: "", email: "" }],
   );
   const editing = Boolean(vendor);
@@ -70,11 +76,11 @@ export function VendorForm({
             className="h-11 min-h-11"
           />
           <Label htmlFor={`phone-${vendor?.id ?? "new"}`}>Phone</Label>
-          <Input
+          <LocalMobileInput
             id={`phone-${vendor?.id ?? "new"}`}
             name="phone"
-            type="tel"
-            defaultValue={vendor?.phone ?? ""}
+            value={phone}
+            onChange={setPhone}
             className="h-11 min-h-11"
           />
           <Label htmlFor={`email-${vendor?.id ?? "new"}`}>Email</Label>
@@ -126,17 +132,17 @@ export function VendorForm({
                     }
                     className="h-10"
                   />
-                  <Input
-                    placeholder="Phone"
+                  <LocalMobileInput
+                    id={`contact-phone-${vendor?.id ?? "new"}-${index}`}
                     value={contact.phone}
-                    onChange={(e) =>
+                    onChange={(next) =>
                       setContacts((current) =>
                         current.map((row, i) =>
-                          i === index ? { ...row, phone: e.target.value } : row,
+                          i === index ? { ...row, phone: next } : row,
                         ),
                       )
                     }
-                    className="h-10"
+                    className="h-10 min-h-10"
                   />
                   <Input
                     placeholder="Email"

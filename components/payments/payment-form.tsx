@@ -10,6 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
 
 export function PaymentForm({
   quoteId,
@@ -21,10 +22,13 @@ export function PaymentForm({
   remaining: number;
 }) {
   const [kind, setKind] = useState<"advance" | "full" | "nil">("advance");
+  const [amount, setAmount] = useState(String(remaining));
   const [state, action, pending] = useActionState<ActionState, FormData>(
     recordPaymentAction,
     {},
   );
+  const amountLocked = kind === "full" || kind === "nil";
+  const displayAmount = kind === "nil" ? "0" : kind === "full" ? String(remaining) : amount;
 
   return (
     <FormSheet
@@ -46,7 +50,12 @@ export function PaymentForm({
               id="kind"
               name="kind"
               value={kind}
-              onChange={(e) => setKind(e.target.value as typeof kind)}
+              onChange={(e) => {
+                const next = e.target.value as typeof kind;
+                setKind(next);
+                if (next === "full") setAmount(String(remaining));
+                if (next === "nil") setAmount("0");
+              }}
               className="mt-2 h-11 min-h-11 w-full rounded-lg border border-outline-variant bg-surface px-3 text-on-surface"
             >
               <option value="advance">Advance</option>
@@ -62,9 +71,15 @@ export function PaymentForm({
               type="number"
               inputMode="decimal"
               step="0.01"
-              defaultValue={kind === "nil" ? 0 : remaining}
-              key={kind}
-              className="mt-2 h-11 min-h-11"
+              min={0}
+              readOnly={amountLocked}
+              value={displayAmount}
+              onChange={(e) => setAmount(e.target.value)}
+              className={cn(
+                "mt-2 h-11 min-h-11",
+                amountLocked && "cursor-not-allowed bg-surface-container-low",
+              )}
+              aria-readonly={amountLocked}
             />
           </div>
           <div>

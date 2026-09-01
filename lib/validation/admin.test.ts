@@ -98,6 +98,28 @@ describe("vendorInputSchema", () => {
       }),
     ).toThrow();
   });
+
+  it("accepts only a 10-digit mobile and rejects text in contact phone fields", () => {
+    expect(
+      vendorInputSchema.parse({
+        name: "Kerala Woods",
+        phone: "9876543210",
+        contacts: [{ name: "Anil", phone: "+91 98765 43210" }],
+      }).phone,
+    ).toBe("9876543210");
+    expect(() =>
+      vendorInputSchema.parse({ name: "A", phone: "contact" }),
+    ).toThrow();
+    expect(() =>
+      vendorInputSchema.parse({
+        name: "A",
+        contacts: [{ name: "B", phone: "not-a-number" }],
+      }),
+    ).toThrow();
+    expect(() =>
+      vendorInputSchema.parse({ name: "A", phone: "98765432101" }),
+    ).toThrow();
+  });
 });
 
 describe("materialInputSchema", () => {

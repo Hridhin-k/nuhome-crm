@@ -17,7 +17,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { DEFAULT_GST_RATE, lineTotalWithGst } from "@/lib/gst";
 import { formatInrExact } from "@/lib/format/money";
 import {
-  lineFromMaterial,
+  addMaterialLine,
+  addMaterialLines,
   withGst,
   type QuoteLine,
 } from "@/lib/quotes/lines";
@@ -79,14 +80,11 @@ export function QuoteBuilder({
   }, [lines]);
 
   function addMaterial(material: PickerMaterial) {
-    setLines((current) => [...current, lineFromMaterial(material)]);
+    setLines((current) => addMaterialLine(current, material));
   }
 
   function addManyMaterials(selected: PickerMaterial[]) {
-    setLines((current) => [
-      ...current,
-      ...selected.map((m) => lineFromMaterial(m)),
-    ]);
+    setLines((current) => addMaterialLines(current, selected));
   }
 
   function addCustom() {
@@ -385,6 +383,9 @@ export function QuoteBuilder({
                           <Input
                             type="number"
                             inputMode="decimal"
+                            min={0}
+                            max={100}
+                            step="1"
                             className="mt-1 h-10"
                             value={line.gst_rate}
                             onChange={(e) =>

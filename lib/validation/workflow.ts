@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { optionalIndianMobileSchema } from "@/lib/validation/phone";
 import { PAYMENT_KINDS } from "@/lib/workflow/types";
 
 const uuid = z.string().uuid();
@@ -86,7 +87,7 @@ export const receiveItemsSchema = z.object({
     .array(
       z.object({
         order_item_id: uuid,
-        quantity: z.number().nonnegative(),
+        quantity: z.number().int().nonnegative(),
       }),
     )
     .min(1),
@@ -118,7 +119,7 @@ export const cancelJobSchema = z.object({
 
 export const customerSchema = z.object({
   name: z.string().min(1),
-  phone: z.string().optional(),
+  phone: optionalIndianMobileSchema,
   email: z.string().email().optional().or(z.literal("")),
   address: z.string().optional(),
   gstin: z.string().trim().max(15).optional(),

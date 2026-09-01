@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { optionalIndianMobileSchema } from "@/lib/validation/phone";
 import { APP_ROLES } from "@/lib/workflow/types";
 
 export const createStaffSchema = z.object({
@@ -20,7 +21,7 @@ export const updateStaffSchema = z.object({
 
 export const vendorInputSchema = z.object({
   name: z.string().trim().min(1, "Vendor name is required"),
-  phone: z.string().trim().optional(),
+  phone: optionalIndianMobileSchema,
   email: z.string().trim().email("Enter a valid email").optional().or(z.literal("")),
   notes: z.string().trim().optional(),
   is_active: z.boolean().optional(),
@@ -28,7 +29,7 @@ export const vendorInputSchema = z.object({
     .array(
       z.object({
         name: z.string().trim().min(1),
-        phone: z.string().trim().optional(),
+        phone: optionalIndianMobileSchema,
         email: z
           .string()
           .trim()

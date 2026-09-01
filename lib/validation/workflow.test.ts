@@ -37,6 +37,7 @@ describe("quoteItemSchema", () => {
     expect(() => quoteItemSchema.parse({ ...validItem, quantity: 0 })).toThrow();
     expect(() => quoteItemSchema.parse({ ...validItem, unit_price: -1 })).toThrow();
     expect(() => quoteItemSchema.parse({ ...validItem, gst_rate: 101 })).toThrow();
+    expect(() => quoteItemSchema.parse({ ...validItem, gst_rate: -1 })).toThrow();
     expect(() => quoteItemSchema.parse({ ...validItem, hsn_code: "123456789" })).toThrow();
   });
 
@@ -149,6 +150,12 @@ describe("fulfillment schemas", () => {
       }).received[0].quantity,
     ).toBe(0);
     expect(() => receiveItemsSchema.parse({ vendor_order_id: UUID, received: [] })).toThrow();
+    expect(() =>
+      receiveItemsSchema.parse({
+        vendor_order_id: UUID,
+        received: [{ order_item_id: UUID, quantity: 1.5 }],
+      }),
+    ).toThrow();
   });
 
   it("accepts every write-off reason and rejects unknown ones", () => {
@@ -194,5 +201,7 @@ describe("customerSchema", () => {
   it("rejects a GSTIN longer than 15 characters and a bad email", () => {
     expect(() => customerSchema.parse({ name: "A", gstin: "1234567890123456" })).toThrow();
     expect(() => customerSchema.parse({ name: "A", email: "not-an-email" })).toThrow();
+    expect(() => customerSchema.parse({ name: "A", phone: "contact" })).toThrow();
+    expect(customerSchema.parse({ name: "A", phone: "9876543210" }).phone).toBe("9876543210");
   });
 });
