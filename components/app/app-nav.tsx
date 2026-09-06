@@ -5,8 +5,8 @@ import { usePathname } from "next/navigation";
 import { NavIcon } from "@/components/app/nav-icon";
 import { ChevronLeft } from "lucide-react";
 import { navChrome } from "@/lib/auth/nav-chrome";
+import { navItemIsActive, type NavItem } from "@/lib/auth/nav";
 import { cn } from "@/lib/utils";
-import type { NavItem } from "@/lib/auth/nav";
 import type { ReactNode } from "react";
 
 export function MobileBottomNav({ items }: { items: NavItem[] }) {
@@ -19,21 +19,23 @@ export function MobileBottomNav({ items }: { items: NavItem[] }) {
     >
       <div className="flex h-full items-stretch justify-around px-1">
         {items.map((item) => {
-          const active =
-            pathname === item.href || pathname.startsWith(`${item.href}/`);
+          const active = navItemIsActive(pathname, item.href);
           return (
             <AppLink
               key={item.href}
               href={item.href}
+              aria-current={active ? "page" : undefined}
               className={cn(
-                "flex min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-lg transition-transform active:scale-95",
-                active ? "text-primary" : "text-secondary",
+                "flex min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-lg px-1 transition-transform active:scale-95",
+                active
+                  ? "bg-primary/10 text-primary"
+                  : "text-secondary",
               )}
             >
               <NavIcon
                 icon={item.icon}
                 className="size-5"
-                filled={active && item.icon !== "more"}
+                filled={active && item.icon !== "more" && item.icon !== "home"}
               />
               <span
                 className={cn(
@@ -104,12 +106,12 @@ export function AppNavbar({
           className="hidden min-w-0 flex-1 items-center gap-1 overflow-x-auto md:flex"
         >
           {desktopItems.map((item) => {
-            const active =
-              pathname === item.href || pathname.startsWith(`${item.href}/`);
+            const active = navItemIsActive(pathname, item.href);
             return (
               <AppLink
                 key={item.href}
                 href={item.href}
+                aria-current={active ? "page" : undefined}
                 className={cn(
                   "inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                   active
@@ -117,7 +119,11 @@ export function AppNavbar({
                     : "text-on-primary/65 hover:bg-white/10 hover:text-on-primary",
                 )}
               >
-                <NavIcon icon={item.icon} className="size-4" filled={active} />
+                <NavIcon
+                  icon={item.icon}
+                  className="size-4"
+                  filled={active && item.icon !== "home"}
+                />
                 <span>{item.label}</span>
               </AppLink>
             );

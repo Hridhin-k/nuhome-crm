@@ -84,7 +84,7 @@ export function nextRequiredAction(input: {
       return {
         title: "Revise and resubmit",
         detail: "Accounts returned this quote. Create a new version.",
-        href: quoteId ? `/quotes/${quoteId}` : "/quotes",
+        href: quoteId ? `/quotes/${quoteId}/revise` : "/quotes",
         cta: can("sales") || can("admin") ? "Revise" : undefined,
       };
     case "quote_approved":

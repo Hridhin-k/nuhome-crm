@@ -187,6 +187,10 @@ describe("payment and activation", () => {
     expect(() => assertPaymentAmount("nil", 0)).not.toThrow();
     expect(() => assertPaymentAmount("nil", 10)).toThrow();
     expect(() => assertPaymentAmount("full", 0)).toThrow();
+    expect(() => assertPaymentAmount("advance", 400, 350)).toThrow(
+      /outstanding/,
+    );
+    expect(() => assertPaymentAmount("advance", 350, 350)).not.toThrow();
   });
 });
 

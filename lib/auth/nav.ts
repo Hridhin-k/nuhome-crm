@@ -43,6 +43,13 @@ const NAV: Record<AppRole, NavItem[]> = {
   ],
 };
 
+export function navItemIsActive(pathname: string, href: string) {
+  if (href === "/home") {
+    return pathname === "/home" || pathname === "/";
+  }
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
+
 export function navForRole(role: AppRole) {
   return NAV[role];
 }

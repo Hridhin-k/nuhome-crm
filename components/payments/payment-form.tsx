@@ -12,6 +12,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 
+const METHODS = [
+  { value: "upi", label: "UPI" },
+  { value: "bank_transfer", label: "Bank transfer" },
+  { value: "cash", label: "Cash" },
+  { value: "card", label: "Card" },
+  { value: "cheque", label: "Cheque" },
+  { value: "other", label: "Other" },
+] as const;
+
 export function PaymentForm({
   quoteId,
   orderId,
@@ -23,12 +32,18 @@ export function PaymentForm({
 }) {
   const [kind, setKind] = useState<"advance" | "full" | "nil">("advance");
   const [amount, setAmount] = useState(String(remaining));
+  const [method, setMethod] = useState<(typeof METHODS)[number]["value"]>("upi");
   const [state, action, pending] = useActionState<ActionState, FormData>(
     recordPaymentAction,
     {},
   );
   const amountLocked = kind === "full" || kind === "nil";
-  const displayAmount = kind === "nil" ? "0" : kind === "full" ? String(remaining) : amount;
+  const creditTerms = kind === "nil";
+  const displayAmount = creditTerms
+    ? "0"
+    : kind === "full"
+      ? String(remaining)
+      : amount;
 
   return (
     <FormSheet
@@ -54,7 +69,11 @@ export function PaymentForm({
                 const next = e.target.value as typeof kind;
                 setKind(next);
                 if (next === "full") setAmount(String(remaining));
-                if (next === "nil") setAmount("0");
+                if (next === "nil") {
+                  setAmount("0");
+                  setMethod("other");
+                }
+                if (next === "advance" && method === "other") setMethod("upi");
               }}
               className="mt-2 h-11 min-h-11 w-full rounded-lg border border-outline-variant bg-surface px-3 text-on-surface"
             >
@@ -71,10 +90,19 @@ export function PaymentForm({
               type="number"
               inputMode="decimal"
               step="0.01"
-              min={0}
+              min={creditTerms ? 0 : 0.01}
+              max={remaining}
               readOnly={amountLocked}
               value={displayAmount}
-              onChange={(e) => setAmount(e.target.value)}
+              onChange={(e) => {
+                const next = e.target.value;
+                const numeric = Number(next);
+                if (Number.isFinite(numeric) && numeric > remaining) {
+                  setAmount(String(remaining));
+                  return;
+                }
+                setAmount(next);
+              }}
               className={cn(
                 "mt-2 h-11 min-h-11",
                 amountLocked && "cursor-not-allowed bg-surface-container-low",
@@ -82,29 +110,38 @@ export function PaymentForm({
               aria-readonly={amountLocked}
             />
           </div>
-          <div>
-            <Label htmlFor="method">Method</Label>
-            <select
-              id="method"
-              name="method"
-              className="mt-2 h-11 min-h-11 w-full rounded-lg border border-outline-variant bg-surface px-3 text-on-surface"
-            >
-              <option value="upi">UPI</option>
-              <option value="bank_transfer">Bank transfer</option>
-              <option value="cash">Cash</option>
-              <option value="card">Card</option>
-              <option value="cheque">Cheque</option>
-              <option value="other">Other</option>
-            </select>
-          </div>
-          <div>
-            <Label htmlFor="reference">Reference</Label>
-            <Input
-              id="reference"
-              name="reference"
-              className="mt-2 h-11 min-h-11"
-            />
-          </div>
+          {creditTerms ? (
+            <input type="hidden" name="method" value="other" />
+          ) : (
+            <>
+              <div>
+                <Label htmlFor="method">Method</Label>
+                <select
+                  id="method"
+                  name="method"
+                  value={method}
+                  onChange={(e) =>
+                    setMethod(e.target.value as typeof method)
+                  }
+                  className="mt-2 h-11 min-h-11 w-full rounded-lg border border-outline-variant bg-surface px-3 text-on-surface"
+                >
+                  {METHODS.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <Label htmlFor="reference">Reference</Label>
+                <Input
+                  id="reference"
+                  name="reference"
+                  className="mt-2 h-11 min-h-11"
+                />
+              </div>
+            </>
+          )}
           {state.error ? (
             <p className="text-sm text-destructive" role="alert">
               {state.error}

@@ -3,6 +3,8 @@ import {
   daysSitting,
   defaultDateRange,
   formatIstDateTime,
+  formatIstDayLabel,
+  formatIstTime,
   inDateRange,
   kolkataDate,
   matchesSearch,
@@ -62,6 +64,8 @@ describe("search, dates, and CSV extras", () => {
     expect(inDateRange("2026-08-01", "2026-08-01", "2026-08-01")).toBe(true);
     expect(parseYmd(undefined)).toBeNull();
     expect(formatIstDateTime("2026-08-16T08:30:00.000Z")).toMatch(/2026/);
+    expect(formatIstTime("2026-08-16T08:30:00.000Z")).toMatch(/2:00/i);
+    expect(formatIstDayLabel("2026-08-16T20:00:00.000Z")).toMatch(/17/);
   });
 
   it("strips SQL metacharacters and builds list URLs", () => {

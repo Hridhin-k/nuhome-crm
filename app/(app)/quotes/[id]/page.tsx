@@ -93,10 +93,7 @@ export default async function QuoteDetailPage({
   const publicUrl = quote.public_access_token
     ? publicQuoteUrl(siteUrl, quote.public_access_token)
     : null;
-  const nextForView =
-    accountsReview || salesSend
-      ? { ...next, href: undefined, cta: undefined }
-      : next;
+  const nextForView = { ...next, href: undefined, cta: undefined };
   const costTotal = currentItems.reduce(
     (sum, item) => sum + Number(item.quantity) * Number(item.unit_cost),
     0,
@@ -163,21 +160,7 @@ export default async function QuoteDetailPage({
         </p>
       ) : null}
 
-      <NextActionCard
-        action={nextForView}
-        actionSlot={
-          salesSend ? (
-            <ConfirmActionSheet
-              title="Send to customer"
-              description="This marks the quote as sent. Capture the customer’s decision next."
-              triggerLabel="Send"
-              confirmLabel="Send quote"
-              action={sendQuoteAction.bind(null, quote.id)}
-              triggerClassName="inline-flex h-11 min-h-11 w-full items-center justify-center rounded-lg bg-primary px-6 text-subheading text-on-primary sm:w-auto"
-            />
-          ) : undefined
-        }
-      />
+      <NextActionCard action={nextForView} />
 
       {cancelled ? (
         <Notice>This job was cancelled.</Notice>
@@ -367,7 +350,7 @@ export default async function QuoteDetailPage({
       ) : null}
 
       {salesSend ? (
-        <div className="flex flex-col gap-2 sm:flex-row">
+        <div className="flex flex-col gap-2">
           {canWhatsApp && current && publicUrl ? (
             <WhatsAppShareSheet
               quoteId={quote.id}
@@ -386,7 +369,7 @@ export default async function QuoteDetailPage({
               rel="noopener noreferrer"
               className={cn(
                 buttonVariants({ variant: "outline", size: "lg" }),
-                "w-full text-center sm:flex-1",
+                "w-full text-center",
               )}
             >
               View public link
@@ -397,12 +380,19 @@ export default async function QuoteDetailPage({
               href={`/quotes/${quote.id}/revise`}
               className={cn(
                 buttonVariants({ variant: "outline", size: "lg" }),
-                "w-full text-center sm:flex-1",
+                "w-full text-center",
               )}
             >
               Correct before send
             </AppLink>
           ) : null}
+          <ConfirmActionSheet
+            title="Send to customer"
+            description="This marks the quote as sent. Capture the customer’s decision next."
+            triggerLabel="Send"
+            confirmLabel="Send quote"
+            action={sendQuoteAction.bind(null, quote.id)}
+          />
         </div>
       ) : null}
 

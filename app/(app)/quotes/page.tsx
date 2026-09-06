@@ -140,9 +140,10 @@ export default async function QuotesPage({
                   quote.status as WorkflowStatus,
                   quote.order?.status as WorkflowStatus | undefined,
                 );
-                const href = quote.order
-                  ? `/orders/${quote.order.id}`
-                  : `/quotes/${quote.id}`;
+                const href =
+                  status === "cancelled" || !quote.order
+                    ? `/quotes/${quote.id}`
+                    : `/orders/${quote.order.id}`;
                 return (
                   <JobRow
                     key={quote.id}

@@ -3,23 +3,8 @@ import {
   groupAuditByDay,
   type AuditEvent,
 } from "@/lib/workflow/audit-labels";
+import { formatIstTime } from "@/lib/search";
 import { cn } from "@/lib/utils";
-
-function formatTime(iso: string) {
-  return new Date(iso).toLocaleTimeString("en-IN", {
-    hour: "numeric",
-    minute: "2-digit",
-  });
-}
-
-function isToday(label: string) {
-  const today = new Date().toLocaleDateString("en-IN", {
-    weekday: "long",
-    day: "numeric",
-    month: "short",
-  });
-  return label === today;
-}
 
 export function ActivityTimeline({
   events,
@@ -46,12 +31,12 @@ export function ActivityTimeline({
         {groups.map((group) => (
           <div key={group.label}>
             <p className="text-[12px] font-medium text-on-surface-variant">
-              {isToday(group.label) ? "Today" : group.label}
+              {group.isToday ? "Today" : group.label}
             </p>
             <ol className="mt-3 space-y-4">
               {group.items.map((event, index) => {
                 const formatted = formatAuditEvent(event);
-                const isFirst = index === 0 && isToday(group.label);
+                const isFirst = index === 0 && group.isToday;
                 return (
                   <li key={event.id} className="flex gap-3">
                     <div className="flex flex-col items-center pt-1">
@@ -79,7 +64,7 @@ export function ActivityTimeline({
                           className="text-xs text-on-surface-variant"
                           dateTime={event.created_at}
                         >
-                          {formatTime(event.created_at)}
+                          {formatIstTime(event.created_at)}
                         </time>
                       </div>
                       {formatted.detail ? (

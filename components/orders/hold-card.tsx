@@ -1,17 +1,13 @@
+import type { ReactNode } from "react";
 import { Lock } from "lucide-react";
-import { AppLink } from "@/components/app/app-link";
-import { buttonVariants } from "@/components/ui/button";
 import { formatInr } from "@/lib/format/money";
-import { cn } from "@/lib/utils";
 
 export function HoldCard({
   outstanding,
-  orderId,
-  canRecord,
+  children,
 }: {
   outstanding: number;
-  orderId: string;
-  canRecord: boolean;
+  children?: ReactNode;
 }) {
   return (
     <section className="flex flex-col gap-3">
@@ -32,14 +28,7 @@ export function HoldCard({
           {formatInr(outstanding)}
         </span>
       </div>
-      {canRecord ? (
-        <AppLink
-          href={`/orders/${orderId}#payment`}
-          className={cn(buttonVariants({ size: "lg" }), "inline-flex")}
-        >
-          Record payment
-        </AppLink>
-      ) : null}
+      {children}
     </section>
   );
 }

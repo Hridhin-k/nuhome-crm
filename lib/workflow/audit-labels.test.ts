@@ -80,6 +80,16 @@ describe("groupAuditByDay", () => {
     expect(groups[0].items).toHaveLength(2);
     expect(groups[1].items).toHaveLength(1);
   });
+
+  it("buckets late-evening UTC events on the IST calendar day", () => {
+    const groups = groupAuditByDay(
+      [event("QUOTE_APPROVED", { created_at: "2026-08-16T20:00:00.000Z" })],
+      new Date("2026-08-17T06:00:00.000Z"),
+    );
+    expect(groups).toHaveLength(1);
+    expect(groups[0].isToday).toBe(true);
+    expect(groups[0].label).toMatch(/17/);
+  });
 });
 
 describe("buildAuditRow", () => {

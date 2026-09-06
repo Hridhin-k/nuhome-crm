@@ -11,6 +11,7 @@ import {
   sendToVendorSchema,
   writeOffItemsSchema,
 } from "@/lib/validation/workflow";
+import { assertPaymentAmount } from "@/lib/workflow/engine";
 import type { Database } from "@/types/database";
 
 type WorkflowStatus = Database["public"]["Enums"]["workflow_status"];
@@ -79,6 +80,21 @@ export async function sendQuoteToCustomer(quoteId: string) {
 export async function recordPayment(input: unknown) {
   const parsed = recordPaymentSchema.parse(input);
   const supabase = await createServerSupabaseClient();
+  if (parsed.kind === "advance" || parsed.kind === "full") {
+    const { data: order, error: orderError } = await supabase
+      .from("orders")
+      .select("id")
+      .eq("quote_id", parsed.quote_id)
+      .maybeSingle();
+    throwIfError(orderError);
+    if (order?.id) {
+      const balance = await getOrderBalance(order.id);
+      const outstanding = Number(
+        (balance as { outstanding?: number } | null)?.outstanding ?? 0,
+      );
+      assertPaymentAmount(parsed.kind, parsed.amount, outstanding);
+    }
+  }
   const { data, error } = await supabase.rpc("record_payment", {
     p_quote_id: parsed.quote_id,
     p_kind: parsed.kind,

@@ -163,11 +163,25 @@ export function assertCanDeliver(input: {
   }
 }
 
-export function assertPaymentAmount(kind: PaymentKind, amount: number) {
+export function assertPaymentAmount(
+  kind: PaymentKind,
+  amount: number,
+  outstanding?: number,
+) {
   if (kind === "nil" && amount !== 0) {
     throw new WorkflowError("Nil payment must be amount 0", "VALIDATION");
   }
   if ((kind === "advance" || kind === "full") && amount <= 0) {
     throw new WorkflowError("Advance and full payments must be greater than 0", "VALIDATION");
+  }
+  if (
+    (kind === "advance" || kind === "full") &&
+    outstanding != null &&
+    amount > outstanding
+  ) {
+    throw new WorkflowError(
+      "Amount cannot be more than the outstanding balance",
+      "VALIDATION",
+    );
   }
 }

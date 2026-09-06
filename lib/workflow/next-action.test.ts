@@ -36,6 +36,7 @@ describe("nextRequiredAction for every status and role", () => {
     expect(action("quote_draft", "sales").cta).toBe("Edit draft");
     expect(action("quote_draft", "accounts").cta).toBeUndefined();
     expect(action("quote_rejected", "sales").cta).toBe("Revise");
+    expect(action("quote_rejected", "sales").href).toBe(`/quotes/${Q}/revise`);
     expect(action("quote_approved", "sales").cta).toBe("Send");
     expect(action("quote_approved", "accounts").cta).toBeUndefined();
     expect(
@@ -106,6 +107,7 @@ describe("nextRequiredAction for every status and role", () => {
     expect(action("closed", "sales", { hasInstallation: false }).cta).toBe("Schedule");
     expect(action("closed", "accounts", { hasInstallation: false }).cta).toBe("View order");
     expect(action("cancelled", "sales").title).toBe("Cancelled");
+    expect(action("cancelled", "sales").cta).toBe("View");
   });
 
   it("lets Admin act at every desk that a specialist would", () => {

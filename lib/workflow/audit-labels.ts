@@ -1,6 +1,7 @@
 import type { AppRole, AuditAction } from "@/lib/workflow/types";
 import { formatInrExact } from "@/lib/format/money";
 import { roleLabel } from "@/lib/auth/nav";
+import { formatIstDayLabel } from "@/lib/search";
 
 export type AuditEvent = {
   id: string;
@@ -173,19 +174,18 @@ export function formatAuditEvent(event: AuditEvent) {
   };
 }
 
-export function groupAuditByDay(events: AuditEvent[]) {
+export function groupAuditByDay(events: AuditEvent[], now = new Date()) {
   const groups = new Map<string, AuditEvent[]>();
   for (const event of events) {
-    const date = new Date(event.created_at);
-    const key = date.toLocaleDateString("en-IN", {
-      weekday: "long",
-      day: "numeric",
-      month: "short",
-      year: date.getFullYear() !== new Date().getFullYear() ? "numeric" : undefined,
-    });
+    const key = formatIstDayLabel(event.created_at, now);
     const bucket = groups.get(key) ?? [];
     bucket.push(event);
     groups.set(key, bucket);
   }
-  return [...groups.entries()].map(([label, items]) => ({ label, items }));
+  const todayLabel = formatIstDayLabel(now, now);
+  return [...groups.entries()].map(([label, items]) => ({
+    label,
+    items,
+    isToday: label === todayLabel,
+  }));
 }

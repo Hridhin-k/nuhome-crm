@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { navForRoles, overflowNavForRoles, roleLabels } from "@/lib/auth/nav";
+import { navForRoles, overflowNavForRoles, roleLabels, navItemIsActive } from "@/lib/auth/nav";
 
 describe("navForRoles", () => {
   it("keeps the primary bar when there is only one hat", () => {
@@ -30,5 +30,13 @@ describe("navForRoles", () => {
 
   it("joins role labels", () => {
     expect(roleLabels(["sales", "store"])).toBe("Sales + Delivery");
+  });
+
+  it("highlights Home only on the home route", () => {
+    expect(navItemIsActive("/home", "/home")).toBe(true);
+    expect(navItemIsActive("/", "/home")).toBe(true);
+    expect(navItemIsActive("/quotes", "/home")).toBe(false);
+    expect(navItemIsActive("/quotes/abc", "/quotes")).toBe(true);
+    expect(navItemIsActive("/quotes", "/quotes")).toBe(true);
   });
 });

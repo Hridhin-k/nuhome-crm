@@ -152,11 +152,17 @@ export default async function OrderDetailPage({
       ) : null}
 
       {status === "order_on_hold" ? (
-        <HoldCard
-          outstanding={outstanding}
-          orderId={order.id}
-          canRecord={showRecordPayment}
-        />
+        <HoldCard outstanding={outstanding}>
+          {showRecordPayment ? (
+            <div id="payment" className="scroll-mt-24">
+              <PaymentForm
+                quoteId={order.quote_id}
+                orderId={order.id}
+                remaining={outstanding}
+              />
+            </div>
+          ) : null}
+        </HoldCard>
       ) : null}
 
       {payments.length > 0 ? (
@@ -257,7 +263,7 @@ export default async function OrderDetailPage({
         </ul>
       </section>
 
-      {showRecordPayment ? (
+      {showRecordPayment && status !== "order_on_hold" ? (
         <section id="payment" className="scroll-mt-24">
           <PaymentForm
             quoteId={order.quote_id}
