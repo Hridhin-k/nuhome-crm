@@ -31,7 +31,7 @@ export function PaymentForm({
   remaining: number;
 }) {
   const [kind, setKind] = useState<"advance" | "full" | "nil">("advance");
-  const [amount, setAmount] = useState(String(remaining));
+  const [amount, setAmount] = useState(String(Math.round((remaining / 2) * 100) / 100));
   const [method, setMethod] = useState<(typeof METHODS)[number]["value"]>("upi");
   const [state, action, pending] = useActionState<ActionState, FormData>(
     recordPaymentAction,
@@ -73,7 +73,10 @@ export function PaymentForm({
                   setAmount("0");
                   setMethod("other");
                 }
-                if (next === "advance" && method === "other") setMethod("upi");
+                if (next === "advance") {
+                  setAmount(String(Math.round((remaining / 2) * 100) / 100));
+                  if (method === "other") setMethod("upi");
+                }
               }}
               className="mt-2 h-11 min-h-11 w-full rounded-lg border border-outline-variant bg-surface px-3 text-on-surface"
             >
