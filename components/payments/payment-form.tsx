@@ -25,13 +25,20 @@ export function PaymentForm({
   quoteId,
   orderId,
   remaining,
+  hasAdvancePaid = false,
 }: {
   quoteId: string;
   orderId: string;
   remaining: number;
+  hasAdvancePaid?: boolean;
 }) {
-  const [kind, setKind] = useState<"advance" | "full" | "nil">("advance");
-  const [amount, setAmount] = useState(String(Math.round((remaining / 2) * 100) / 100));
+  const defaultKind = hasAdvancePaid ? "full" : "advance";
+  const [kind, setKind] = useState<"advance" | "full" | "nil">(defaultKind);
+  const [amount, setAmount] = useState(
+    hasAdvancePaid
+      ? String(remaining)
+      : String(Math.round((remaining / 2) * 100) / 100),
+  );
   const [method, setMethod] = useState<(typeof METHODS)[number]["value"]>("upi");
   const [state, action, pending] = useActionState<ActionState, FormData>(
     recordPaymentAction,
@@ -80,7 +87,7 @@ export function PaymentForm({
               }}
               className="mt-2 h-11 min-h-11 w-full rounded-lg border border-outline-variant bg-surface px-3 text-on-surface"
             >
-              <option value="advance">Advance</option>
+              {!hasAdvancePaid && <option value="advance">Advance</option>}
               <option value="full">Full</option>
               <option value="nil">Nil (credit terms)</option>
             </select>

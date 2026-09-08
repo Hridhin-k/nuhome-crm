@@ -159,6 +159,7 @@ export default async function OrderDetailPage({
                 quoteId={order.quote_id}
                 orderId={order.id}
                 remaining={outstanding}
+                hasAdvancePaid={paid > 0}
               />
             </div>
           ) : null}
@@ -269,6 +270,7 @@ export default async function OrderDetailPage({
             quoteId={order.quote_id}
             orderId={order.id}
             remaining={outstanding}
+            hasAdvancePaid={paid > 0}
           />
         </section>
       ) : paymentWaitingMessage ? (
