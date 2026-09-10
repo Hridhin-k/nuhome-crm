@@ -18,7 +18,7 @@ const NAV: Record<AppRole, NavItem[]> = {
     { href: "/home", label: "Home", icon: "home" },
     { href: "/approvals", label: "Approvals", icon: "check" },
     { href: "/payments", label: "Payments", icon: "pay" },
-    { href: "/orders", label: "Orders", icon: "orders" },
+    { href: "/fulfillment", label: "Fulfillment", icon: "box" },
     { href: "/more", label: "More", icon: "more" },
   ],
   procurement: [
@@ -32,6 +32,13 @@ const NAV: Record<AppRole, NavItem[]> = {
     { href: "/home", label: "Home", icon: "home" },
     { href: "/ready", label: "Ready", icon: "box" },
     { href: "/orders", label: "Orders", icon: "orders" },
+    { href: "/more", label: "More", icon: "more" },
+  ],
+  super_accounts: [
+    { href: "/home", label: "Home", icon: "home" },
+    { href: "/leads", label: "Leads", icon: "people" },
+    { href: "/orders", label: "Orders", icon: "orders" },
+    { href: "/reports", label: "Reports", icon: "chart" },
     { href: "/more", label: "More", icon: "more" },
   ],
   admin: [
@@ -106,6 +113,8 @@ export function roleLabel(role: AppRole) {
       return "Procurement";
     case "store":
       return "Delivery";
+    case "super_accounts":
+      return "Super Accounts";
     case "admin":
       return "Admin";
   }

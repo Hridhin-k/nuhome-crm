@@ -32,9 +32,18 @@ export function withGst(line: QuoteLine): QuoteLine {
   };
 }
 
+export function lineDescription(
+  name: string,
+  detail?: string | null,
+) {
+  const extra = detail?.trim();
+  return extra ? `${name} — ${extra}` : name;
+}
+
 export function lineFromMaterial(material: {
   id: string;
   name: string;
+  description?: string | null;
   default_sell_price: number | string;
   default_cost: number | string;
   hsn_code?: string | null;
@@ -43,7 +52,7 @@ export function lineFromMaterial(material: {
   return withGst({
     key: crypto.randomUUID(),
     material_id: material.id,
-    description: material.name,
+    description: lineDescription(material.name, material.description),
     quantity: 1,
     unit_price: Number(material.default_sell_price),
     unit_cost: Number(material.default_cost),
@@ -98,7 +107,7 @@ export function linesFromQuoteItems(
       key: item.id ?? `line-${index}`,
       material_id: item.material_id ?? undefined,
       description: item.description,
-      quantity: Number(item.quantity),
+      quantity: Math.max(1, Math.round(Number(item.quantity))),
       unit_price: Number(item.unit_price),
       unit_cost: Number(item.unit_cost),
       discount: Number(item.discount),

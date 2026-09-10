@@ -10,7 +10,7 @@ export const ATTACHMENT_KINDS = [
 export const attachmentKindSchema = z.enum(ATTACHMENT_KINDS);
 
 export const uploadAttachmentSchema = z.object({
-  entity_type: z.enum(["customer", "quote", "order"]),
+  entity_type: z.enum(["customer", "quote", "order", "vendor_order"]),
   entity_id: z.string().uuid(),
   kind: attachmentKindSchema,
   return_to: z.string().startsWith("/").optional(),

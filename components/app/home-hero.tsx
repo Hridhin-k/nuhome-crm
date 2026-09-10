@@ -62,6 +62,7 @@ const ROLE_MOTIF: Record<AppRole, LucideIcon[]> = {
   accounts: [CheckSquare, Wallet, FileText],
   procurement: [Truck, Boxes, Activity],
   store: [Truck, Boxes, Users],
+  super_accounts: [BarChart3, Users, Boxes],
   admin: [BarChart3, Users, FileText],
 };
 

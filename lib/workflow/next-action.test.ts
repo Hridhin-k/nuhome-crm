@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { nextRequiredAction } from "@/lib/workflow/next-action";
 import { WORKFLOW_STATUSES, type AppRole, type WorkflowStatus } from "@/lib/workflow/types";
 
-const ROLES: AppRole[] = ["sales", "accounts", "procurement", "store", "admin"];
+const ROLES: AppRole[] = ["sales", "accounts", "procurement", "store", "super_accounts", "admin"];
 const Q = "quote-1";
 const O = "order-1";
 
@@ -72,14 +72,18 @@ describe("nextRequiredAction for every status and role", () => {
     expect(result.cta).toBe("Record payment");
   });
 
-  it("gives Procurement vendor CTAs and Delivery the handover CTA", () => {
-    expect(action("order_active", "procurement").cta).toBe("Send to vendor");
+  it("gives Accounts vendor CTAs and Delivery the handover CTA", () => {
+    expect(action("order_active", "accounts").cta).toBe("Allocate to vendor");
+    expect(action("order_active", "procurement").cta).toBe("Allocate to vendor");
     expect(action("order_active", "sales").cta).toBeUndefined();
     expect(action("sent_to_vendor", "procurement").cta).toBe("Mark dispatched");
+    expect(
+      action("sent_to_vendor", "accounts", { hasUnsent: true }).cta,
+    ).toBe("Allocate to vendor");
     expect(action("vendor_dispatched", "store").cta).toBe("Record receipt");
     expect(action("vendor_dispatched", "sales").cta).toBeUndefined();
     expect(action("delivery_unlocked", "store").cta).toBe("Complete delivery");
-    expect(action("delivery_unlocked", "sales").cta).toBeUndefined();
+    expect(action("delivery_unlocked", "sales").cta).toBe("Complete delivery");
     expect(action("delivery_unlocked", "admin").cta).toBe("Complete delivery");
   });
 
@@ -99,7 +103,7 @@ describe("nextRequiredAction for every status and role", () => {
     const result = action("quote_sent_to_customer", "procurement", {
       orderStatus: "order_active",
     });
-    expect(result.cta).toBe("Send to vendor");
+    expect(result.cta).toBe("Allocate to vendor");
   });
 
   it("asks for installation after close when none is booked", () => {
@@ -112,7 +116,7 @@ describe("nextRequiredAction for every status and role", () => {
 
   it("lets Admin act at every desk that a specialist would", () => {
     expect(action("quote_pending_accounts", "admin").cta).toBe("Review");
-    expect(action("order_active", "admin").cta).toBe("Send to vendor");
+    expect(action("order_active", "admin").cta).toBe("Allocate to vendor");
     expect(action("delivery_unlocked", "admin").cta).toBe("Complete delivery");
     expect(action("quote_approved", "admin").cta).toBe("Send");
   });

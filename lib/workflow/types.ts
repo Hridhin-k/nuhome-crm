@@ -3,6 +3,7 @@ export const APP_ROLES = [
   "accounts",
   "procurement",
   "store",
+  "super_accounts",
   "admin",
 ] as const;
 

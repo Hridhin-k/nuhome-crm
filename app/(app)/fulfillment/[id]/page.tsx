@@ -4,12 +4,15 @@ import { ConfirmActionSheet } from "@/components/app/confirm-action-sheet";
 import { Notice } from "@/components/app/notice";
 import { PageFrame } from "@/components/app/page-frame";
 import { PageHeader } from "@/components/app/page-header";
+import { AttachmentPanel } from "@/components/documents/attachment-panel";
+import { VendorCommercialForm } from "@/components/fulfillment/vendor-commercial-form";
 import {
   ReceiveItemsForm,
   SendToVendorForm,
   WriteOffItemsForm,
 } from "@/components/fulfillment/vendor-forms";
 import { listVendors } from "@/lib/api/catalog";
+import { listAttachments } from "@/lib/api/documents";
 import { getOrder } from "@/lib/api/orders";
 import { rel } from "@/lib/api/rel";
 import { requirePermission } from "@/lib/auth/guards";
@@ -19,14 +22,8 @@ import {
   formatExpectedDate,
   isVendorOrderOverdue,
   unaccountedQty,
+  vendorBatchStepperLabel,
 } from "@/lib/workflow/fulfillment";
-
-function vendorStatusLabel(status: string) {
-  if (status === "sent") return "Sent";
-  if (status === "dispatched") return "Dispatched";
-  if (status === "received") return "Received";
-  return status;
-}
 
 export default async function FulfillmentDetailPage({
   params,
@@ -42,6 +39,17 @@ export default async function FulfillmentDetailPage({
   if (!detail) {
     notFound();
   }
+  const vendorFiles = await Promise.all(
+    detail.vendorOrders.map((vendorOrder) =>
+      listAttachments("vendor_order", vendorOrder.id).catch(() => []),
+    ),
+  );
+  const filesByVendor = new Map(
+    detail.vendorOrders.map((vendorOrder, index) => [
+      vendorOrder.id,
+      vendorFiles[index] ?? [],
+    ]),
+  );
 
   const descriptions = new Map(
     detail.items.map((item) => [item.id, item.description]),
@@ -70,6 +78,7 @@ export default async function FulfillmentDetailPage({
       allocated: allocatedByItem.get(item.id) ?? 0,
       quantity_written_off: Number(item.quantity_written_off ?? 0),
     }),
+    unit_cost: Number(rel(item.quote_items)?.unit_cost ?? 0),
   }));
   const closeItems = detail.items.map((item) => ({
     id: item.id,
@@ -81,6 +90,7 @@ export default async function FulfillmentDetailPage({
     }),
   }));
   const canSend = rolesHavePermission(user.roles, "orders.send_to_vendor");
+  const canApproveQuote = rolesHavePermission(user.roles, "vendors.quote_approve");
   const canClose =
     detail.vendorOrders.length > 0 &&
     closeItems.some((item) => item.remaining > 0);
@@ -93,9 +103,15 @@ export default async function FulfillmentDetailPage({
           .filter(Boolean)
           .join(" · ")}
       />
+      {notice === "allocated" ? (
+        <Notice>Vendor split saved. Accounts must verify each vendor quote before send.</Notice>
+      ) : null}
+      {notice === "quoted" ? <Notice>Vendor quote logged. Waiting for approval.</Notice> : null}
+      {notice === "quote-decided" ? <Notice>Vendor quote decision saved.</Notice> : null}
       {notice === "sent-vendor" ? <Notice>Sent to vendor.</Notice> : null}
       {notice === "dispatched" ? <Notice>Marked as dispatched.</Notice> : null}
-      {notice === "received" ? <Notice>Receipt recorded.</Notice> : null}
+      {notice === "uploaded" ? <Notice>File uploaded.</Notice> : null}
+      {notice === "file-removed" ? <Notice>File removed.</Notice> : null}
       {notice === "written-off" ? (
         <Notice>Remainder closed. Delivery can proceed if nothing is left open.</Notice>
       ) : null}
@@ -132,6 +148,7 @@ export default async function FulfillmentDetailPage({
       {canSend ? (
         <SendToVendorForm
           orderId={detail.order.id}
+          orderNumber={detail.order.order_number}
           vendors={vendors}
           items={sendItems}
         />
@@ -149,6 +166,10 @@ export default async function FulfillmentDetailPage({
             ? [vendorOrder.vendor_order_items]
             : [];
         const expected = formatExpectedDate(vendorOrder.expected_delivery_at);
+        const stepper = vendorBatchStepperLabel({
+          status: vendorOrder.status,
+          commercial_status: vendorOrder.commercial_status,
+        });
         return (
           <section
             key={vendorOrder.id}
@@ -158,7 +179,7 @@ export default async function FulfillmentDetailPage({
               <div>
                 <h2 className="text-[16px] font-semibold text-on-surface">{vendorName}</h2>
                 <p className="mt-1 text-sm text-on-surface-variant">
-                  {vendorStatusLabel(vendorOrder.status)}
+                  {stepper}
                   {expected ? ` · expected ${expected}` : ""}
                 </p>
               </div>
@@ -186,6 +207,31 @@ export default async function FulfillmentDetailPage({
                 </li>
               ))}
             </ul>
+            <VendorCommercialForm
+              orderId={detail.order.id}
+              vendorOrderId={vendorOrder.id}
+              quoteRef={vendorOrder.quote_ref}
+              quoteAmount={vendorOrder.quote_amount}
+              billRef={vendorOrder.bill_ref}
+              billAmount={vendorOrder.bill_amount}
+              commercialStatus={vendorOrder.commercial_status}
+              physicalStatus={vendorOrder.status}
+              quoteRejectionReason={vendorOrder.quote_rejection_reason}
+              canSend={canSend}
+              canApproveQuote={canApproveQuote}
+            />
+            <div className="mt-3">
+              <AttachmentPanel
+                entityType="vendor_order"
+                entityId={vendorOrder.id}
+                returnTo={`/fulfillment/${detail.order.id}`}
+                files={filesByVendor.get(vendorOrder.id) ?? []}
+                canUpload={canSend || canApproveQuote}
+                title="Vendor files"
+                description="Upload the vendor quotation PDF or photos. Accounts can open them when verifying."
+                defaultKind="file"
+              />
+            </div>
             <div className="mt-4 flex flex-col gap-2">
               {vendorOrder.status === "sent" ? (
                 <ConfirmActionSheet

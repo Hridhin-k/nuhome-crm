@@ -15,6 +15,7 @@ import { StickyActionBar } from "@/components/app/sticky-action-bar";
 import { RejectQuoteSheet } from "@/components/quotes/reject-sheet";
 import { CancelJobSheet } from "@/components/quotes/cancel-sheet";
 import { WhatsAppShareSheet } from "@/components/quotes/whatsapp-share-sheet";
+import { EmailShareSheet } from "@/components/quotes/email-share-sheet";
 import { AttachmentPanel } from "@/components/documents/attachment-panel";
 import { listQuoteActivity } from "@/lib/api/audit";
 import { listAttachments } from "@/lib/api/documents";
@@ -362,6 +363,17 @@ export default async function QuoteDetailPage({
               quoteUrl={publicUrl}
             />
           ) : null}
+          {canWhatsApp && current && publicUrl ? (
+            <EmailShareSheet
+              quoteId={quote.id}
+              customerName={customer?.name ?? "Customer"}
+              customerEmail={customer?.email}
+              quoteNumber={quote.quote_number}
+              versionNumber={current.version_number}
+              total={Number(current.total)}
+              quoteUrl={publicUrl}
+            />
+          ) : null}
           {publicUrl ? (
             <AppLink
               href={publicQuotePath(quote.public_access_token!)}
@@ -433,6 +445,31 @@ export default async function QuoteDetailPage({
               total={Number(current.total)}
               quoteUrl={publicUrl}
             />
+          ) : null}
+          {status === "quote_sent_to_customer" &&
+          !orderClosed &&
+          canWhatsApp &&
+          current &&
+          publicUrl ? (
+            <EmailShareSheet
+              quoteId={quote.id}
+              customerName={customer?.name ?? "Customer"}
+              customerEmail={customer?.email}
+              quoteNumber={quote.quote_number}
+              versionNumber={current.version_number}
+              total={Number(current.total)}
+              quoteUrl={publicUrl}
+            />
+          ) : null}
+          {(status === "quote_sent_to_customer" || Boolean(order)) &&
+          canRevise &&
+          !orderClosed ? (
+            <AppLink
+              href={`/quotes/${quote.id}/revise`}
+              className={cn(buttonVariants({ variant: "outline", size: "lg" }), "w-full text-center")}
+            >
+              Revise after approval
+            </AppLink>
           ) : null}
           {status === "quote_rejected" && canRevise ? (
             <AppLink

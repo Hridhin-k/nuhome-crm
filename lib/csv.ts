@@ -28,6 +28,8 @@ const HEADER_ALIASES: Record<string, string> = {
   gst_percent: "gst_rate",
   warranty: "warranty_months",
   warranty_months: "warranty_months",
+  description: "description",
+  details: "description",
 };
 
 export function normalizeCsvHeader(header: string) {

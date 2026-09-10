@@ -6,7 +6,7 @@ export const WORKFLOW_TRANSITIONS: Record<WorkflowStatus, WorkflowStatus[]> = {
   quote_pending_accounts: ["quote_approved", "quote_rejected", "cancelled"],
   quote_rejected: ["quote_draft", "cancelled"],
   quote_approved: ["quote_sent_to_customer", "quote_draft", "cancelled"],
-  quote_sent_to_customer: ["payment_pending_verification", "cancelled"],
+  quote_sent_to_customer: ["payment_pending_verification", "quote_draft", "cancelled"],
   payment_pending_verification: [
     "order_active",
     "delivery_unlocked",

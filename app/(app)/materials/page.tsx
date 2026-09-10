@@ -10,7 +10,7 @@ import { PageFrame } from "@/components/app/page-frame";
 import { PageHeader } from "@/components/app/page-header";
 import { listCategories, listMaterials } from "@/lib/api/catalog";
 import { rel } from "@/lib/api/rel";
-import { requirePermission } from "@/lib/auth/guards";
+import { requireAnyPermission } from "@/lib/auth/guards";
 import { formatInr } from "@/lib/format/money";
 
 export default async function MaterialsPage({
@@ -19,7 +19,7 @@ export default async function MaterialsPage({
   searchParams: Promise<{ notice?: string; error?: string }>;
 }) {
   const [, { notice, error }, materials, categories] = await Promise.all([
-    requirePermission("admin.manage"),
+    requireAnyPermission("admin.manage", "catalog.manage"),
     searchParams,
     listMaterials({ includeInactive: true }),
     listCategories(),
@@ -96,6 +96,7 @@ export default async function MaterialsPage({
                     hsnCode: material.hsn_code,
                     gstRate: Number(material.gst_rate ?? 18),
                     warrantyMonths: material.warranty_months ?? 12,
+                    description: material.description,
                     isActive: active,
                   }}
                 />

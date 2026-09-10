@@ -47,6 +47,7 @@ export async function upsertMaterial(input: {
   hsnCode?: string | null;
   gstRate?: number;
   warrantyMonths?: number;
+  description?: string | null;
   isActive?: boolean;
 }) {
   const db = await getDb();
@@ -54,6 +55,7 @@ export async function upsertMaterial(input: {
     hsn_code: input.hsnCode || null,
     gst_rate: input.gstRate ?? 18,
     warranty_months: input.warrantyMonths ?? 12,
+    description: input.description || null,
   };
   if (input.id) {
     const { error } = await db

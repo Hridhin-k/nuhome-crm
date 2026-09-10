@@ -15,7 +15,7 @@ describe("canCancelJob", () => {
     ).toBe(true);
   });
 
-  it("lets Accounts cancel only a pending quote, not an order", () => {
+  it("lets combined Accounts cancel a pending quote and an active order", () => {
     expect(
       canCancelJob({
         quoteStatus: "quote_pending_accounts",
@@ -31,7 +31,7 @@ describe("canCancelJob", () => {
         orderStatus: "order_active",
         roles: ["accounts"],
       }),
-    ).toBe(false);
+    ).toBe(true);
   });
 
   it("lets Procurement cancel an order but blocks Store", () => {

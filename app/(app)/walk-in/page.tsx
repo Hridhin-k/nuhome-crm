@@ -20,6 +20,7 @@ function mapMaterials(materials: MaterialRow[]) {
     category_name: m.material_categories?.name ?? null,
     hsn_code: m.hsn_code,
     gst_rate: m.gst_rate,
+    description: m.description,
   }));
 }
 

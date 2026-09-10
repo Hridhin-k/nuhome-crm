@@ -84,12 +84,12 @@ function roleMetrics(role: AppRole, queues: QueueCard[]): HeroMetric[] {
         empty: "No receipts waiting",
         filled: "Receipts to confirm",
       }),
-      metric(cardById(queues, "attention"), {
-        label: "Attention",
-        href: "/orders?bucket=attention",
+      metric(cardById(queues, "awaiting-vendor"), {
+        label: "Send",
+        href: "/fulfillment",
         tone: "amber",
-        empty: "No orders waiting",
-        filled: "Jobs need a look",
+        empty: "Nothing to send",
+        filled: "Not sent yet",
       }),
     ];
   }
@@ -178,9 +178,10 @@ function filledHint(value: number, empty: string, filled: string) {
 function deskLine(primary: AppRole, roles: AppRole[], openCount: number) {
   const lines: Record<AppRole, string> = {
     sales: "Quotes, customers, and cash on the floor.",
-    accounts: "Price, discount, and receipts — nothing moves without you.",
+    accounts: "Approve, verify, and send jobs to vendors.",
     procurement: "Send, chase, and receive vendor batches.",
     store: "Handover only when the gate is unlocked.",
+    super_accounts: "Items, members, leads, and stuck jobs.",
     admin: "Every job, every status, in one view.",
   };
   if (openCount === 0) {
@@ -193,8 +194,8 @@ function deskLine(primary: AppRole, roles: AppRole[], openCount: number) {
 }
 
 function heroAction(roles: AppRole[]) {
-  if (roles.includes("admin")) {
-    return { href: "/reports?view=floor", label: "Reports and exports" };
+  if (roles.includes("admin") || roles.includes("super_accounts")) {
+    return { href: "/reports?view=floor&stuck=1", label: "Stuck jobs first" };
   }
   if (rolesHavePermission(roles, "quotes.create")) {
     return { href: "/walk-in", label: "Customer walk-in" };
@@ -217,7 +218,7 @@ export default async function HomePage() {
   const today = dateLabel();
   const badge = roleLabels(user.roles);
 
-  if (user.roles.includes("admin")) {
+  if (user.roles.includes("admin") || user.roles.includes("super_accounts")) {
     const [snapshot, catalog, recent] = await Promise.all([
       getOperationsSnapshot(),
       getCatalogSnapshot(),

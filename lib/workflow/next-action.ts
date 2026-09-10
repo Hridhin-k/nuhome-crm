@@ -23,6 +23,7 @@ export function nextRequiredAction(input: {
   orderStatus?: WorkflowStatus;
     payments?: { status: string }[];
     hasInstallation?: boolean;
+    hasUnsent?: boolean;
 }): NextAction {
   const {
     status,
@@ -34,10 +35,19 @@ export function nextRequiredAction(input: {
     orderStatus,
     payments = [],
     hasInstallation = true,
+    hasUnsent = false,
   } = input;
   const hats = input.roles?.length ? input.roles : [role];
   const can = (check: AppRole) => hats.includes(check);
 
+    const canFulfill =
+      can("procurement") ||
+      can("accounts") ||
+      can("admin") ||
+      can("super_accounts");
+    const canAccountsDesk =
+      can("accounts") || can("admin") || can("super_accounts");
+    const canDeliver = can("store") || can("sales") || can("admin");
     const salesCanRecord =
     (can("sales") || can("admin") || can("store")) &&
     canRecordPayment({ status, payments, outstanding });
@@ -57,6 +67,7 @@ export function nextRequiredAction(input: {
       activated,
       orderStatus,
       payments,
+      hasUnsent,
     });
   }
 
@@ -69,7 +80,7 @@ export function nextRequiredAction(input: {
         cta: can("sales") || can("admin") ? "Edit draft" : undefined,
       };
     case "quote_pending_accounts":
-      return can("accounts") || can("admin")
+      return canAccountsDesk
         ? {
             title: "Approve quote",
             detail: "Review margins and discounts before approving for Sales.",
@@ -121,24 +132,30 @@ export function nextRequiredAction(input: {
           ? "Delivery stays locked until this payment is verified."
           : "The order cannot activate until verification succeeds. Accounts can verify or send it back.",
         href: "/payments",
-        cta: can("accounts") || can("admin") ? "Review" : undefined,
+        cta: canAccountsDesk ? "Review" : undefined,
       };
     }
     case "order_active":
       return {
         title: "Waiting for vendor send",
-        detail: "Procurement can place this with a vendor.",
+        detail: "Accounts can place this with a vendor.",
         href: orderId ? `/fulfillment/${orderId}` : "/fulfillment",
-        cta:
-          can("procurement") || can("admin") ? "Send to vendor" : undefined,
+        cta: canFulfill ? "Allocate to vendor" : undefined,
       };
     case "sent_to_vendor":
+      if (hasUnsent && canFulfill) {
+        return {
+          title: "Split remaining lines",
+          detail: "Some quantity is still unsent. Allocate it to another vendor.",
+          href: orderId ? `/fulfillment/${orderId}` : "/fulfillment",
+          cta: "Allocate to vendor",
+        };
+      }
       return {
         title: "Waiting for vendor dispatch",
         detail: "Mark dispatch when the vendor ships.",
         href: orderId ? `/fulfillment/${orderId}` : "/fulfillment",
-        cta:
-          can("procurement") || can("admin") ? "Mark dispatched" : undefined,
+        cta: canFulfill ? "Mark dispatched" : undefined,
       };
     case "vendor_dispatched":
       return {
@@ -146,7 +163,7 @@ export function nextRequiredAction(input: {
         detail: "Record received quantities when stock arrives.",
         href: orderId ? `/fulfillment/${orderId}` : "/fulfillment",
         cta:
-          can("procurement") || can("store") || can("admin")
+          canFulfill || can("store")
             ? "Record receipt"
             : undefined,
       };
@@ -166,7 +183,7 @@ export function nextRequiredAction(input: {
         cta:
           salesCanRecord
             ? "Record payment"
-            : can("store") || can("admin")
+            : canDeliver
               ? "Open delivery"
               : undefined,
       };
@@ -175,7 +192,7 @@ export function nextRequiredAction(input: {
         title: "Ready for delivery",
         detail: "Balance is cleared. Complete delivery with the customer.",
         href: orderId ? `/orders/${orderId}` : "/ready",
-        cta: can("store") || can("admin") ? "Complete delivery" : undefined,
+        cta: canDeliver ? "Complete delivery" : undefined,
       };
     case "delivered":
       return { title: "Delivered", detail: "This order is closing." };

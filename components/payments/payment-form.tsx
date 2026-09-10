@@ -10,6 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { defaultAdvanceAmount } from "@/lib/payments/advance";
 import { cn } from "@/lib/utils";
 
 const METHODS = [
@@ -31,7 +32,7 @@ export function PaymentForm({
   remaining: number;
 }) {
   const [kind, setKind] = useState<"advance" | "full" | "nil">("advance");
-  const [amount, setAmount] = useState(String(remaining));
+  const [amount, setAmount] = useState(String(defaultAdvanceAmount(remaining)));
   const [method, setMethod] = useState<(typeof METHODS)[number]["value"]>("upi");
   const [state, action, pending] = useActionState<ActionState, FormData>(
     recordPaymentAction,
@@ -73,7 +74,10 @@ export function PaymentForm({
                   setAmount("0");
                   setMethod("other");
                 }
-                if (next === "advance" && method === "other") setMethod("upi");
+                if (next === "advance") {
+                  setAmount(String(defaultAdvanceAmount(remaining)));
+                  if (method === "other") setMethod("upi");
+                }
               }}
               className="mt-2 h-11 min-h-11 w-full rounded-lg border border-outline-variant bg-surface px-3 text-on-surface"
             >

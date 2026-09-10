@@ -8,9 +8,13 @@ import {
   rejectPaymentSchema,
   rejectQuoteSchema,
   reviseQuoteSchema,
+  decideVendorQuoteSchema,
+  saveVendorQuoteSchema,
+  allocateVendorsSchema,
   sendToVendorSchema,
   writeOffItemsSchema,
 } from "@/lib/validation/workflow";
+import { groupLinesByVendor, suggestedVendorQuoteRef } from "@/lib/workflow/vendor-split";
 import { assertPaymentAmount } from "@/lib/workflow/engine";
 import type { Database } from "@/types/database";
 
@@ -29,9 +33,12 @@ export async function createQuote(input: unknown) {
     p_customer_id: parsed.customer_id,
     p_items: parsed.items,
     p_notes: parsed.notes,
+    p_warranty_months: parsed.warranty_months ?? 12,
+    p_include_amc: parsed.include_amc ?? false,
+    p_amc_months: parsed.amc_months ?? 12,
   });
   throwIfError(error);
-  return data;
+  return data as string;
 }
 
 export async function submitQuote(quoteId: string) {
@@ -63,6 +70,9 @@ export async function reviseQuote(input: unknown) {
     p_quote_id: parsed.quote_id,
     p_items: parsed.items,
     p_notes: parsed.notes,
+    p_warranty_months: parsed.warranty_months ?? 12,
+    p_include_amc: parsed.include_amc ?? false,
+    p_amc_months: parsed.amc_months ?? 12,
   });
   throwIfError(error);
   return data;
@@ -131,7 +141,7 @@ export async function rejectPayment(input: unknown) {
 export async function sendOrderToVendor(input: unknown) {
   const parsed = sendToVendorSchema.parse(input);
   const supabase = await createServerSupabaseClient();
-  const { data, error } = await supabase.rpc("send_order_to_vendor", {
+  const { data, error } = await supabase.rpc("allocate_vendor_order", {
     p_order_id: parsed.order_id,
     p_vendor_id: parsed.vendor_id,
     p_items: parsed.items,
@@ -139,6 +149,71 @@ export async function sendOrderToVendor(input: unknown) {
   });
   throwIfError(error);
   return data;
+}
+
+export async function allocateVendors(input: unknown) {
+  const parsed = allocateVendorsSchema.parse(input);
+  const batches = groupLinesByVendor(parsed.items);
+  if (batches.length === 0) {
+    throw new Error("Select at least one item to send");
+  }
+  const names = new Map(
+    parsed.items.map((item) => [item.vendor_id, item.vendor_name ?? "VENDOR"]),
+  );
+  const ids: string[] = [];
+  for (const batch of batches) {
+    const supabase = await createServerSupabaseClient();
+    const { data, error } = await supabase.rpc("allocate_vendor_order", {
+      p_order_id: parsed.order_id,
+      p_vendor_id: batch.vendor_id,
+      p_items: batch.items,
+      p_expected_delivery: parsed.expected_delivery,
+    });
+    throwIfError(error);
+    const vendorOrderId = data as string;
+    ids.push(vendorOrderId);
+    if (batch.quote_amount > 0) {
+      await saveVendorQuote({
+        vendor_order_id: vendorOrderId,
+        quote_ref: suggestedVendorQuoteRef(
+          parsed.order_number,
+          names.get(batch.vendor_id) ?? "VENDOR",
+        ),
+        quote_amount: batch.quote_amount,
+      });
+    }
+  }
+  return ids;
+}
+
+export async function saveVendorQuote(input: unknown) {
+  const parsed = saveVendorQuoteSchema.parse(input);
+  const supabase = await createServerSupabaseClient();
+  const { error } = await supabase.rpc("save_vendor_quote", {
+    p_vendor_order_id: parsed.vendor_order_id,
+    p_quote_ref: parsed.quote_ref,
+    p_quote_amount: parsed.quote_amount,
+  });
+  throwIfError(error);
+}
+
+export async function decideVendorQuote(input: unknown) {
+  const parsed = decideVendorQuoteSchema.parse(input);
+  const supabase = await createServerSupabaseClient();
+  const { error } = await supabase.rpc("decide_vendor_quote", {
+    p_vendor_order_id: parsed.vendor_order_id,
+    p_approve: parsed.approve,
+    p_reason: parsed.reason,
+  });
+  throwIfError(error);
+}
+
+export async function confirmVendorSend(vendorOrderId: string) {
+  const supabase = await createServerSupabaseClient();
+  const { error } = await supabase.rpc("confirm_vendor_send", {
+    p_vendor_order_id: vendorOrderId,
+  });
+  throwIfError(error);
 }
 
 export async function markVendorDispatched(vendorOrderId: string) {
@@ -203,4 +278,56 @@ export async function getOrderBalance(orderId: string) {
   });
   throwIfError(error);
   return data;
+}
+
+export async function requestCreditDelivery(orderId: string, notes?: string) {
+  const supabase = await createServerSupabaseClient();
+  const { error } = await supabase.rpc("request_credit_delivery", {
+    p_order_id: orderId,
+    p_notes: notes,
+  });
+  throwIfError(error);
+}
+
+export async function decideCreditDelivery(orderId: string, approve: boolean) {
+  const supabase = await createServerSupabaseClient();
+  const { error } = await supabase.rpc("decide_credit_delivery", {
+    p_order_id: orderId,
+    p_approve: approve,
+  });
+  throwIfError(error);
+}
+
+export async function saveVendorCommercial(input: {
+  vendor_order_id: string;
+  quote_ref?: string;
+  quote_amount?: number;
+  bill_ref?: string;
+  bill_amount?: number;
+}) {
+  const supabase = await createServerSupabaseClient();
+  const { error } = await supabase.rpc("save_vendor_commercial", {
+    p_vendor_order_id: input.vendor_order_id,
+    p_quote_ref: input.quote_ref,
+    p_quote_amount: input.quote_amount,
+    p_bill_ref: input.bill_ref,
+    p_bill_amount: input.bill_amount,
+  });
+  throwIfError(error);
+}
+
+export async function recordVendorPayment(input: {
+  vendor_order_id: string;
+  amount: number;
+  method?: string;
+  reference?: string;
+}) {
+  const supabase = await createServerSupabaseClient();
+  const { error } = await supabase.rpc("record_vendor_payment", {
+    p_vendor_order_id: input.vendor_order_id,
+    p_amount: input.amount,
+    p_method: input.method,
+    p_reference: input.reference,
+  });
+  throwIfError(error);
 }

@@ -23,3 +23,11 @@ export async function requirePermission(permission: Permission) {
   }
   return user;
 }
+
+export async function requireAnyPermission(...permissions: Permission[]) {
+  const user = await requireUser();
+  if (!permissions.some((permission) => rolesHavePermission(user.roles, permission))) {
+    redirect("/home");
+  }
+  return user;
+}

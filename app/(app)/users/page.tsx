@@ -7,7 +7,7 @@ import { PageFrame } from "@/components/app/page-frame";
 import { PageHeader } from "@/components/app/page-header";
 import { importStaffCsvAction } from "@/app/actions/admin";
 import { listCoverSales, listProfiles, profileRoles } from "@/lib/api/catalog";
-import { requirePermission } from "@/lib/auth/guards";
+import { requireAnyPermission } from "@/lib/auth/guards";
 import { roleLabels } from "@/lib/auth/nav";
 import type { AppRole } from "@/lib/workflow/types";
 
@@ -17,7 +17,7 @@ export default async function UsersPage({
   searchParams: Promise<{ notice?: string }>;
 }) {
   const [, { notice }, profiles] = await Promise.all([
-    requirePermission("admin.manage"),
+    requireAnyPermission("admin.manage", "staff.manage"),
     searchParams,
     listProfiles(),
   ]);

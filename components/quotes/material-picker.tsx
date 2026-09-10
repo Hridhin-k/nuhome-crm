@@ -17,6 +17,7 @@ export type PickerMaterial = {
   category_name?: string | null;
   hsn_code?: string | null;
   gst_rate?: number | string | null;
+  description?: string | null;
 };
 
 export function MaterialPicker({
@@ -108,6 +109,11 @@ export function MaterialPicker({
                     <p className="truncate text-body-md font-semibold text-on-surface">
                       {m.name}
                     </p>
+                    {m.description ? (
+                      <p className="mt-0.5 line-clamp-2 text-body-sm text-on-surface-variant">
+                        {m.description}
+                      </p>
+                    ) : null}
                     <p className="mt-0.5 truncate text-data-tabular text-secondary">
                       {[m.sku, formatInr(Number(m.default_sell_price))]
                         .filter(Boolean)

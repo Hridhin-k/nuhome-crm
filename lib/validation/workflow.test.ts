@@ -10,6 +10,9 @@ import {
   rejectPaymentSchema,
   rejectQuoteSchema,
   reviseQuoteSchema,
+  allocateVendorsSchema,
+  saveVendorQuoteSchema,
+  decideVendorQuoteSchema,
   sendToVendorSchema,
   verifyPaymentSchema,
   writeOffItemsSchema,
@@ -35,6 +38,8 @@ describe("quoteItemSchema", () => {
   it("rejects empty description, zero quantity, and GST over 100", () => {
     expect(() => quoteItemSchema.parse({ ...validItem, description: "" })).toThrow();
     expect(() => quoteItemSchema.parse({ ...validItem, quantity: 0 })).toThrow();
+    expect(() => quoteItemSchema.parse({ ...validItem, quantity: 1.5 })).toThrow();
+    expect(quoteItemSchema.parse({ ...validItem, unit_price: 99.99, unit_cost: 40.25 }).unit_price).toBe(99.99);
     expect(() => quoteItemSchema.parse({ ...validItem, unit_price: -1 })).toThrow();
     expect(() => quoteItemSchema.parse({ ...validItem, gst_rate: 101 })).toThrow();
     expect(() => quoteItemSchema.parse({ ...validItem, gst_rate: -1 })).toThrow();
@@ -140,6 +145,65 @@ describe("fulfillment schemas", () => {
         items: [{ order_item_id: UUID, quantity: 2 }],
       }).items[0].quantity,
     ).toBe(2);
+    expect(() =>
+      sendToVendorSchema.parse({
+        order_id: UUID,
+        vendor_id: UUID_B,
+        items: [{ order_item_id: UUID, quantity: 1.5 }],
+      }),
+    ).toThrow();
+    expect(
+      sendToVendorSchema.parse({
+        order_id: UUID,
+        vendor_id: UUID_B,
+        items: [{ order_item_id: UUID, quantity: 8 }],
+      }).items,
+    ).toHaveLength(1);
+  });
+
+  it("requires a vendor quote ref and amount before approval", () => {
+    expect(() =>
+      saveVendorQuoteSchema.parse({
+        vendor_order_id: UUID,
+        quote_ref: " ",
+        quote_amount: 100,
+      }),
+    ).toThrow();
+    expect(() =>
+      saveVendorQuoteSchema.parse({
+        vendor_order_id: UUID,
+        quote_ref: "VQ-1",
+        quote_amount: 0,
+      }),
+    ).toThrow();
+    expect(
+      saveVendorQuoteSchema.parse({
+        vendor_order_id: UUID,
+        quote_ref: "VQ-1",
+        quote_amount: 12000.55,
+      }).quote_amount,
+    ).toBe(12000.55);
+    expect(
+      allocateVendorsSchema.parse({
+        order_id: UUID,
+        order_number: "ORD-1029",
+        items: [
+          { order_item_id: UUID, vendor_id: UUID_B, quantity: 8, unit_cost: 1000 },
+        ],
+      }).items[0].quantity,
+    ).toBe(8);
+    expect(() =>
+      decideVendorQuoteSchema.parse({
+        vendor_order_id: UUID,
+        approve: false,
+      }),
+    ).toThrow();
+    expect(
+      decideVendorQuoteSchema.parse({
+        vendor_order_id: UUID,
+        approve: true,
+      }).approve,
+    ).toBe(true);
   });
 
   it("allows a zero received qty (partial GRN of nothing this trip) but not empty lists", () => {
@@ -193,8 +257,13 @@ describe("customerSchema", () => {
       gstin: "32AAAAA0000A1Z5",
       billing_address: "Showroom bill-to",
       site_address: "Site at Kakkanad",
+      firm: "Home Art",
+      profession: ["Architect"],
+      interests: ["Laminates"],
+      follow_up_action: "Call",
     });
     expect(parsed.gstin).toBe("32AAAAA0000A1Z5");
+    expect(parsed.firm).toBe("Home Art");
     expect(parsed.billing_address).not.toBe(parsed.site_address);
   });
 

@@ -24,12 +24,18 @@ export function AttachmentPanel({
   returnTo,
   files,
   canUpload,
+  title = "Files",
+  description = "Measurement sheets, drawings, and photos that used to live on WhatsApp.",
+  defaultKind = "measurement",
 }: {
-  entityType: "customer" | "quote" | "order";
+  entityType: "customer" | "quote" | "order" | "vendor_order";
   entityId: string;
   returnTo: string;
   files: AttachmentRow[];
   canUpload: boolean;
+  title?: string;
+  description?: string;
+  defaultKind?: AttachmentKind;
 }) {
   const [state, action, pending] = useActionState<DocumentActionState, FormData>(
     uploadAttachmentAction,
@@ -38,9 +44,9 @@ export function AttachmentPanel({
 
   return (
     <section className="rounded-2xl border border-outline-variant bg-card p-4 shadow-card">
-      <h2 className="text-subheading text-on-surface">Files</h2>
+      <h2 className="text-subheading text-on-surface">{title}</h2>
       <p className="mt-1 text-body-sm text-on-surface-variant">
-        Measurement sheets, drawings, and photos that used to live on WhatsApp.
+        {description}
       </p>
 
       {files.length === 0 ? (
@@ -102,7 +108,7 @@ export function AttachmentPanel({
             <select
               id={`kind-${entityId}`}
               name="kind"
-              defaultValue="measurement"
+              defaultValue={defaultKind}
               className="mt-2 h-11 w-full rounded-lg border border-outline-variant bg-surface px-3"
             >
               <option value="measurement">Measurement sheet</option>

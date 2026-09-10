@@ -116,7 +116,7 @@ export const STATUS_NEXT_LINE: Record<WorkflowStatus, string> = {
   quote_approved: "Send the approved quote to the customer.",
   quote_sent_to_customer: "Record advance, full, or nil payment.",
   payment_pending_verification: "Accounts must verify or reject the payment before the order activates.",
-  order_active: "Procurement can send this to a vendor.",
+  order_active: "Accounts can send this to a vendor.",
   sent_to_vendor: "Waiting for the vendor to dispatch.",
   vendor_dispatched: "Record goods when they arrive at store.",
   items_received: "Delivery gate — check outstanding payment.",

@@ -103,6 +103,27 @@ export function earliestOpenExpectedDate(
   return dates[0] ?? null;
 }
 
+export function vendorBatchStep(input: {
+  status: string;
+  commercial_status?: string | null;
+}) {
+  if (input.status === "received") return "Received";
+  if (input.status === "dispatched") return "Dispatched";
+  if (input.status === "sent") return "Sent";
+  const commercial = input.commercial_status ?? "pending_quote";
+  if (commercial === "quote_approved") return "Approved";
+  if (commercial === "quoted" || commercial === "quote_rejected") return "Quoted";
+  return "Allocated";
+}
+
+export function vendorBatchStepperLabel(input: {
+  status: string;
+  commercial_status?: string | null;
+}) {
+  const step = vendorBatchStep(input);
+  return `Allocated → Quoted → Approved → Sent → Dispatched → Received · now ${step}`;
+}
+
 export function formatExpectedDate(value: string | null | undefined) {
   if (!value) return null;
   const date = value.slice(0, 10);

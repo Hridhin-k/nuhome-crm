@@ -5,7 +5,7 @@ describe("role permission matrix", () => {
   it("enforces separation of duties", () => {
     expect(roleHasPermission("sales", "quotes.approve")).toBe(false);
     expect(roleHasPermission("sales", "payments.verify")).toBe(false);
-    expect(roleHasPermission("sales", "deliveries.complete")).toBe(false);
+    expect(roleHasPermission("sales", "deliveries.complete")).toBe(true);
     expect(roleHasPermission("accounts", "quotes.create")).toBe(false);
     expect(roleHasPermission("store", "quotes.approve")).toBe(false);
     expect(roleHasPermission("store", "payments.record")).toBe(true);
@@ -23,6 +23,6 @@ describe("role permission matrix", () => {
     );
     expect(rolesHavePermission(["sales", "store"], "quotes.create")).toBe(true);
     expect(rolesHavePermission(["sales", "store"], "quotes.approve")).toBe(false);
-    expect(rolesHavePermission("sales", "deliveries.complete")).toBe(false);
+    expect(rolesHavePermission("sales", "deliveries.complete")).toBe(true);
   });
 });

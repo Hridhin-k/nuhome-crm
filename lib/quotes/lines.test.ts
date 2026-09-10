@@ -22,6 +22,19 @@ describe("quote lines with GST", () => {
     expect(line.tax).toBe(180);
     expect(line.hsn_code).toBe("9403");
     expect(line.material_id).toBe("m1");
+    expect(line.description).toBe("Cabinet");
+  });
+
+  it("appends catalogue description when picking an item", () => {
+    const line = lineFromMaterial({
+      id: "m1",
+      name: "Cabinet",
+      description: "600mm base with soft-close",
+      default_sell_price: 1000,
+      default_cost: 400,
+      gst_rate: 18,
+    });
+    expect(line.description).toBe("Cabinet — 600mm base with soft-close");
   });
 
   it("defaults GST to 18% when the material has no rate", () => {
@@ -33,6 +46,24 @@ describe("quote lines with GST", () => {
     });
     expect(line.gst_rate).toBe(DEFAULT_GST_RATE);
     expect(line.tax).toBe(18);
+  });
+
+  it("rounds imported quantities to whole items", () => {
+    const [line] = linesFromQuoteItems([
+      {
+        material_id: null,
+        description: "Panel",
+        quantity: "1.6",
+        unit_price: "100.5",
+        unit_cost: "40.25",
+        discount: 0,
+        tax: 0,
+        gst_rate: 18,
+      },
+    ]);
+    expect(line.quantity).toBe(2);
+    expect(line.unit_price).toBe(100.5);
+    expect(line.unit_cost).toBe(40.25);
   });
 
   it("increments quantity when the same catalogue item is added again", () => {

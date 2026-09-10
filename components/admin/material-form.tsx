@@ -27,6 +27,7 @@ export function MaterialForm({
     hsnCode?: string | null;
     gstRate?: number;
     warrantyMonths?: number;
+    description?: string | null;
     isActive: boolean;
   };
 }) {
@@ -152,6 +153,16 @@ export function MaterialForm({
                 className="mt-2 h-11 min-h-11"
               />
             </div>
+          </div>
+          <div>
+            <Label htmlFor={`description-${suffix}`}>Description</Label>
+            <Input
+              id={`description-${suffix}`}
+              name="description"
+              defaultValue={material?.description ?? ""}
+              className="mt-2 h-11 min-h-11"
+              placeholder="Shown when Sales picks this item"
+            />
           </div>
           <div>
             <Label htmlFor={`warranty-${suffix}`}>Warranty (months)</Label>

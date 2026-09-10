@@ -143,7 +143,16 @@ export function CustomerQuoteDocument({ quote }: { quote: PublicQuote }) {
       ) : null}
 
       <footer className="mt-10 border-t border-outline-variant pt-5 text-sm text-on-surface-variant">
-        <p>This quotation is for review. Contact the showroom to confirm.</p>
+        <p>50% advance on booking unless otherwise agreed. Nil / credit booking is allowed when Accounts agrees.</p>
+        {quote.warranty_months ? (
+          <p className="mt-2">Warranty: {quote.warranty_months} months from delivery.</p>
+        ) : null}
+        {quote.include_amc ? (
+          <p className="mt-2">
+            Optional AMC: {quote.amc_months ?? 12} months from delivery.
+          </p>
+        ) : null}
+        <p className="mt-2">This quotation is for review. Contact the showroom to confirm.</p>
         <p className="mt-2">Valid subject to stock availability and site conditions.</p>
       </footer>
 

@@ -38,7 +38,7 @@ describe("quote workflow", () => {
     ).not.toThrow();
     expect(() =>
       assertTransition("quote_sent_to_customer", "quote_draft"),
-    ).toThrow();
+    ).not.toThrow();
   });
 
   it("never sends a rejected quote to the customer", () => {
@@ -256,7 +256,7 @@ describe("vendor and delivery gate", () => {
         outstanding: 0,
         itemsFullyReceived: true,
       }),
-    ).toThrow(/permission/);
+    ).not.toThrow();
 
     expect(() =>
       assertCanDeliver({

@@ -15,7 +15,7 @@ export function orderStatusExplanation(input: {
         ? "Accounts must verify the latest payment before delivery can proceed."
         : "Accounts must verify payment before the order can activate.";
     case "order_active":
-      return "Procurement can send this order to a vendor.";
+      return "Accounts can send this order to a vendor.";
     case "sent_to_vendor":
       return "Waiting for the vendor to dispatch goods.";
     case "vendor_dispatched":

@@ -3,7 +3,7 @@ import { getDb, throwQuery } from "@/lib/api/db";
 import type { WorkflowStatus } from "@/lib/workflow/types";
 
 const QUOTE_LIST_SELECT =
-  "id, quote_number, status, created_at, updated_at, customer_id, created_by, current_version_id, customers(name, phone), quote_versions!quotes_current_version_fk(version_number, total, margin_amount, margin_percent, status, rejection_reason)";
+  "id, quote_number, status, created_at, updated_at, customer_id, created_by, current_version_id, revision_pending, customers(name, phone), quote_versions!quotes_current_version_fk(version_number, total, margin_amount, margin_percent, status, rejection_reason)";
 
 type OrderRef = { id: string; status: string; quote_id: string; order_number: string };
 
@@ -72,7 +72,7 @@ export const getQuote = cache(async (id: string) => {
   const { data: quote, error } = await db
     .from("quotes")
     .select(
-      "id, quote_number, status, created_at, created_by, customer_id, current_version_id, public_access_token",
+      "id, quote_number, status, created_at, created_by, customer_id, current_version_id, public_access_token, revision_pending",
     )
     .eq("id", id)
     .maybeSingle();
@@ -87,17 +87,17 @@ export const getQuote = cache(async (id: string) => {
   const [customer, versions, order] = await Promise.all([
     db
       .from("customers")
-      .select("id, name, phone, address, gstin, billing_address, site_address, kind")
+      .select("id, name, phone, email, address, gstin, billing_address, site_address, kind")
       .eq("id", quote.customer_id)
       .maybeSingle(),
     db
       .from("quote_versions")
       .select(
-        "id, version_number, status, subtotal, discount, tax, total, margin_amount, margin_percent, notes, rejection_reason, rejected_at, created_at, created_by",
+        "id, version_number, status, subtotal, discount, tax, total, margin_amount, margin_percent, notes, rejection_reason, rejected_at, created_at, created_by, warranty_months, include_amc, amc_months",
       )
       .eq("quote_id", id)
       .order("version_number", { ascending: false }),
-    db.from("orders").select("id, status, order_number").eq("quote_id", id).maybeSingle(),
+      db.from("orders").select("id, status, order_number, assigned_sales_id").eq("quote_id", id).maybeSingle(),
   ]);
 
   const versionIds = (versions.data ?? []).map((v) => v.id);

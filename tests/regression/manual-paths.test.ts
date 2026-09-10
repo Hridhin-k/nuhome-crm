@@ -433,7 +433,7 @@ describe("PATH N — each role's Home", () => {
       expect(action.title.length).toBeGreaterThan(0);
     }
     expect(nextRequiredAction({ status: "order_active", role: "procurement" }).cta).toBe(
-      "Send to vendor",
+      "Allocate to vendor",
     );
     expect(nextRequiredAction({ status: "delivery_unlocked", role: "store" }).cta).toBe(
       "Complete delivery",
@@ -532,7 +532,7 @@ describe("PATH P — negative / permission checks", () => {
         outstanding: 0,
         itemsFullyReceived: true,
       }),
-    ).toThrow(/permission/);
+    ).not.toThrow();
     expect(() =>
       createQuoteSchema.parse({ customer_id: UUID, items: [] }),
     ).toThrow();

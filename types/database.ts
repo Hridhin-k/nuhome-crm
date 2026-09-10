@@ -180,6 +180,18 @@ export type Database = {
           gstin: string | null
           billing_address: string | null
           site_address: string | null
+          firm: string | null
+          whatsapp: string | null
+          profession: string[]
+          profession_other: string | null
+          property_type: string | null
+          property_other: string | null
+          project_status: string | null
+          interests: string[]
+          source: string | null
+          source_other: string | null
+          follow_up_on: string | null
+          follow_up_action: string | null
           updated_at: string
         }
         Insert: {
@@ -195,6 +207,18 @@ export type Database = {
           gstin?: string | null
           billing_address?: string | null
           site_address?: string | null
+          firm?: string | null
+          whatsapp?: string | null
+          profession?: string[]
+          profession_other?: string | null
+          property_type?: string | null
+          property_other?: string | null
+          project_status?: string | null
+          interests?: string[]
+          source?: string | null
+          source_other?: string | null
+          follow_up_on?: string | null
+          follow_up_action?: string | null
           updated_at?: string
         }
         Update: {
@@ -210,6 +234,18 @@ export type Database = {
           gstin?: string | null
           billing_address?: string | null
           site_address?: string | null
+          firm?: string | null
+          whatsapp?: string | null
+          profession?: string[]
+          profession_other?: string | null
+          property_type?: string | null
+          property_other?: string | null
+          project_status?: string | null
+          interests?: string[]
+          source?: string | null
+          source_other?: string | null
+          follow_up_on?: string | null
+          follow_up_action?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -359,27 +395,45 @@ export type Database = {
           assigned_to: string | null
           converted_at: string | null
           created_at: string
-          customer_id: string
+          customer_id: string | null
           id: string
           source: string | null
+          name: string | null
+          phone: string | null
+          firm: string | null
+          place: string | null
+          remarks: string | null
+          follow_up_on: string | null
           updated_at: string
         }
         Insert: {
           assigned_to?: string | null
           converted_at?: string | null
           created_at?: string
-          customer_id: string
+          customer_id?: string | null
           id?: string
           source?: string | null
+          name?: string | null
+          phone?: string | null
+          firm?: string | null
+          place?: string | null
+          remarks?: string | null
+          follow_up_on?: string | null
           updated_at?: string
         }
         Update: {
           assigned_to?: string | null
           converted_at?: string | null
           created_at?: string
-          customer_id?: string
+          customer_id?: string | null
           id?: string
           source?: string | null
+          name?: string | null
+          phone?: string | null
+          firm?: string | null
+          place?: string | null
+          remarks?: string | null
+          follow_up_on?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -431,6 +485,7 @@ export type Database = {
           hsn_code: string | null
           gst_rate: number
           warranty_months: number
+          description: string | null
           updated_at: string
         }
         Insert: {
@@ -446,6 +501,7 @@ export type Database = {
           hsn_code?: string | null
           gst_rate?: number
           warranty_months?: number
+          description?: string | null
           updated_at?: string
         }
         Update: {
@@ -461,6 +517,7 @@ export type Database = {
           hsn_code?: string | null
           gst_rate?: number
           warranty_months?: number
+          description?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -582,6 +639,7 @@ export type Database = {
         Row: {
           activated_at: string | null
           assigned_sales_id: string | null
+          credit_delivery_status: string
           created_at: string
           customer_id: string
           id: string
@@ -596,6 +654,7 @@ export type Database = {
         Insert: {
           activated_at?: string | null
           assigned_sales_id?: string | null
+          credit_delivery_status?: string
           created_at?: string
           customer_id: string
           id?: string
@@ -610,6 +669,7 @@ export type Database = {
         Update: {
           activated_at?: string | null
           assigned_sales_id?: string | null
+          credit_delivery_status?: string
           created_at?: string
           customer_id?: string
           id?: string
@@ -961,6 +1021,9 @@ export type Database = {
           tax: number
           total: number
           version_number: number
+          warranty_months: number
+          include_amc: boolean
+          amc_months: number
         }
         Insert: {
           created_at?: string
@@ -997,6 +1060,9 @@ export type Database = {
           tax?: number
           total?: number
           version_number?: number
+          warranty_months?: number
+          include_amc?: boolean
+          amc_months?: number
         }
         Relationships: [
           {
@@ -1032,6 +1098,7 @@ export type Database = {
           public_access_token: string | null
           quote_number: string
           sent_at: string | null
+          revision_pending: boolean
           status: Database["public"]["Enums"]["workflow_status"]
           submitted_at: string | null
           updated_at: string
@@ -1045,6 +1112,7 @@ export type Database = {
           public_access_token?: string | null
           quote_number: string
           sent_at?: string | null
+          revision_pending?: boolean
           status?: Database["public"]["Enums"]["workflow_status"]
           submitted_at?: string | null
           updated_at?: string
@@ -1058,6 +1126,7 @@ export type Database = {
           public_access_token?: string | null
           quote_number?: string
           sent_at?: string | null
+          revision_pending?: boolean
           status?: Database["public"]["Enums"]["workflow_status"]
           submitted_at?: string | null
           updated_at?: string
@@ -1231,6 +1300,16 @@ export type Database = {
           status: string
           updated_at: string
           vendor_id: string
+          quote_ref: string | null
+          quote_amount: number | null
+          bill_ref: string | null
+          bill_amount: number | null
+          payable_amount: number | null
+          commercial_status: string
+          quoted_by: string | null
+          quote_approved_by: string | null
+          quote_approved_at: string | null
+          quote_rejection_reason: string | null
         }
         Insert: {
           created_at?: string
@@ -1245,6 +1324,16 @@ export type Database = {
           status?: string
           updated_at?: string
           vendor_id: string
+          quote_ref?: string | null
+          quote_amount?: number | null
+          bill_ref?: string | null
+          bill_amount?: number | null
+          payable_amount?: number | null
+          commercial_status?: string
+          quoted_by?: string | null
+          quote_approved_by?: string | null
+          quote_approved_at?: string | null
+          quote_rejection_reason?: string | null
         }
         Update: {
           created_at?: string
@@ -1259,6 +1348,16 @@ export type Database = {
           status?: string
           updated_at?: string
           vendor_id?: string
+          quote_ref?: string | null
+          quote_amount?: number | null
+          bill_ref?: string | null
+          bill_amount?: number | null
+          payable_amount?: number | null
+          commercial_status?: string
+          quoted_by?: string | null
+          quote_approved_by?: string | null
+          quote_approved_at?: string | null
+          quote_rejection_reason?: string | null
         }
         Relationships: [
           {
@@ -1283,6 +1382,38 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      vendor_payments: {
+        Row: {
+          id: string
+          vendor_order_id: string
+          amount: number
+          status: string
+          method: string | null
+          reference_number: string | null
+          notes: string | null
+          recorded_by: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          vendor_order_id: string
+          amount: number
+          status?: string
+          method?: string | null
+          reference_number?: string | null
+          notes?: string | null
+          recorded_by?: string | null
+          created_at?: string
+        }
+        Update: {
+          amount?: number
+          status?: string
+          method?: string | null
+          reference_number?: string | null
+          notes?: string | null
+        }
+        Relationships: []
       }
       vendors: {
         Row: {
@@ -1411,6 +1542,62 @@ export type Database = {
       }
       allow_status: { Args: never; Returns: undefined }
       approve_quote: { Args: { p_quote_id: string }; Returns: undefined }
+      request_credit_delivery: {
+        Args: { p_order_id: string; p_notes?: string }
+        Returns: undefined
+      }
+      decide_credit_delivery: {
+        Args: { p_order_id: string; p_approve: boolean }
+        Returns: undefined
+      }
+      save_vendor_commercial: {
+        Args: {
+          p_vendor_order_id: string
+          p_quote_ref?: string
+          p_quote_amount?: number
+          p_bill_ref?: string
+          p_bill_amount?: number
+        }
+        Returns: undefined
+      }
+      allocate_vendor_order: {
+        Args: {
+          p_order_id: string
+          p_vendor_id: string
+          p_items: Json
+          p_expected_delivery?: string
+        }
+        Returns: string
+      }
+      save_vendor_quote: {
+        Args: {
+          p_vendor_order_id: string
+          p_quote_ref: string
+          p_quote_amount: number
+        }
+        Returns: undefined
+      }
+      decide_vendor_quote: {
+        Args: {
+          p_vendor_order_id: string
+          p_approve: boolean
+          p_reason?: string
+        }
+        Returns: undefined
+      }
+      confirm_vendor_send: {
+        Args: { p_vendor_order_id: string }
+        Returns: string
+      }
+      record_vendor_payment: {
+        Args: {
+          p_vendor_order_id: string
+          p_amount: number
+          p_method?: string
+          p_reference?: string
+        }
+        Returns: string
+      }
       assert_transition: {
         Args: {
           p_from: Database["public"]["Enums"]["workflow_status"]
@@ -1424,7 +1611,14 @@ export type Database = {
         Returns: undefined
       }
       create_quote: {
-        Args: { p_customer_id: string; p_items: Json; p_notes?: string }
+        Args: {
+          p_customer_id: string
+          p_items: Json
+          p_notes?: string
+          p_warranty_months?: number
+          p_include_amc?: boolean
+          p_amc_months?: number
+        }
         Returns: string
       }
       find_customer_by_phone: {
@@ -1574,7 +1768,14 @@ export type Database = {
         }
       }
       revise_quote: {
-        Args: { p_items: Json; p_notes?: string; p_quote_id: string }
+        Args: {
+          p_items: Json
+          p_notes?: string
+          p_quote_id: string
+          p_warranty_months?: number
+          p_include_amc?: boolean
+          p_amc_months?: number
+        }
         Returns: string
       }
       send_order_to_vendor: {
@@ -1615,7 +1816,7 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "sales" | "accounts" | "procurement" | "store" | "admin"
+      app_role: "sales" | "accounts" | "procurement" | "store" | "super_accounts" | "admin"
       approval_decision: "approved" | "rejected"
       attachment_kind: "file" | "measurement" | "drawing" | "photo"
       coverage_kind: "warranty" | "amc"

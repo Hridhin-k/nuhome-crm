@@ -15,7 +15,7 @@ import {
   getBusinessReport,
   listAdminAudit,
 } from "@/lib/api/reports";
-import { requirePermission } from "@/lib/auth/guards";
+import { requireAnyPermission } from "@/lib/auth/guards";
 import { formatInr } from "@/lib/format/money";
 import {
   defaultDateRange,
@@ -79,7 +79,7 @@ export default async function ReportsPage({
   const action = AUDIT_ACTIONS.find((item) => item === params.action);
 
   const [, snapshot, business, audit] = await Promise.all([
-    requirePermission("admin.manage"),
+    requireAnyPermission("admin.manage", "reports.read"),
     view === "pipeline" || view === "floor"
       ? getOperationsSnapshot()
       : Promise.resolve(null),
@@ -129,7 +129,17 @@ export default async function ReportsPage({
       />
 
       {view === "floor" && snapshot ? (
-        <FloorBoard
+        <>
+          <div className="mb-4 rounded-2xl border border-error/30 bg-error-container p-4">
+            <p className="text-label-caps text-on-error-container">Stuck first</p>
+            <p className="mt-1 text-headline-md text-on-error-container">
+              {snapshot.stuck} blocked
+            </p>
+            <p className="mt-1 text-xs text-on-error-container">
+              Approvals, payment verify, hold, overdue vendor, revision, credit delivery.
+            </p>
+          </div>
+          <FloorBoard
           census={snapshot.census}
           asOf={snapshot.asOf}
           overdue={snapshot.overdue}
@@ -139,6 +149,7 @@ export default async function ReportsPage({
           customers={snapshot.customers}
           delivered={snapshot.delivered}
         />
+        </>
       ) : null}
 
       {view === "business" && business ? (

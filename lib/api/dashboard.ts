@@ -47,6 +47,7 @@ export type OperationsSnapshot = {
   pendingApprovals: number;
   pendingPayments: number;
   overdue: number;
+  stuck: number;
   asOf: string;
   census: StatusCensus[];
   stages: PipelineStage[];
@@ -93,6 +94,17 @@ export const getOperationsSnapshot = cache(async (): Promise<OperationsSnapshot>
   const deliveries = ordersInBucket(orders, "delivery");
   const overdue = overdueVendorCount(orders);
   const delivered = completedOrderCount(orders);
+  const revisionPending = quotes.filter((quote) => quote.revision_pending).length;
+  const creditRequested = orders.filter(
+    (order) => order.credit_delivery_status === "requested",
+  ).length;
+  const stuck =
+    approvals.length +
+    payments.length +
+    hold +
+    overdue +
+    revisionPending +
+    creditRequested;
 
   const censusCounts = Object.fromEntries(
     WORKFLOW_STATUSES.map((status) => [status, 0]),
@@ -245,6 +257,7 @@ export const getOperationsSnapshot = cache(async (): Promise<OperationsSnapshot>
     pendingApprovals: approvals.length,
     pendingPayments: payments.length,
     overdue,
+    stuck,
     asOf: new Date().toISOString(),
     census,
     stages,
@@ -253,7 +266,7 @@ export const getOperationsSnapshot = cache(async (): Promise<OperationsSnapshot>
 });
 
 export const getHomeQueues = cache(async (role: AppRole): Promise<QueueCard[]> => {
-  if (role === "admin") {
+  if (role === "admin" || role === "super_accounts") {
     const snapshot = await getOperationsSnapshot();
     return snapshot.queues;
   }
@@ -334,15 +347,13 @@ export const getHomeQueues = cache(async (role: AppRole): Promise<QueueCard[]> =
   }
 
   if (role === "accounts") {
-    const [approvals, payments, orders] = await Promise.all([
+    const [approvals, payments, activeOrders] = await Promise.all([
       listPendingApprovals(),
       listPendingPayments(),
-      listOrders([
-        ...ORDER_BUCKET_STATUSES.payment,
-        ...ORDER_BUCKET_STATUSES.hold,
-      ]),
+      listOrders([...ORDER_BUCKET_STATUSES.active]),
     ]);
-    const max = Math.max(approvals.length, payments.length, orders.length, 1);
+    const awaiting = ordersWithStatus(activeOrders, "order_active");
+    const max = Math.max(approvals.length, payments.length, awaiting, 1);
     return withAccents([
       {
         id: "approvals",
@@ -361,12 +372,12 @@ export const getHomeQueues = cache(async (role: AppRole): Promise<QueueCard[]> =
         progress: scale(payments.length, max),
       },
       {
-        id: "attention",
-        title: "Orders requiring attention",
-        count: orders.length,
-        href: "/orders?bucket=attention",
-        detail: "Sent, verify-pay, or on-hold balances",
-        progress: scale(orders.length, max),
+        id: "awaiting-vendor",
+        title: "Awaiting vendor",
+        count: awaiting,
+        href: "/fulfillment",
+        detail: "Active — send this to a vendor",
+        progress: scale(awaiting, max),
       },
     ]);
   }

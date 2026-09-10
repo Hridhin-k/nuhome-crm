@@ -87,7 +87,11 @@ export async function uploadAttachmentAction(
       file,
       uploadedBy: user.id,
     });
-    const dest = parsed.data.return_to ?? `/${parsed.data.entity_type}s/${parsed.data.entity_id}`;
+    const dest =
+      parsed.data.return_to ??
+      (parsed.data.entity_type === "vendor_order"
+        ? "/fulfillment"
+        : `/${parsed.data.entity_type}s/${parsed.data.entity_id}`);
     revalidatePath(dest.split("?")[0]);
     redirect(`${dest}${dest.includes("?") ? "&" : "?"}notice=uploaded`);
   } catch (error) {

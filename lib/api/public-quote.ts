@@ -16,6 +16,9 @@ export type PublicQuote = {
     billing_address?: string | null;
     site_address?: string | null;
   } | null;
+  warranty_months?: number | null;
+  include_amc?: boolean | null;
+  amc_months?: number | null;
   version: {
     version_number: number;
     subtotal: number;

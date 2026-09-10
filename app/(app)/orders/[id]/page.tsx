@@ -8,6 +8,7 @@ import { CompleteDeliveryForm } from "@/components/deliveries/complete-form";
 import { AttachmentPanel } from "@/components/documents/attachment-panel";
 import { InstallationForm } from "@/components/documents/installation-form";
 import { WarrantyPanel } from "@/components/documents/warranty-form";
+import { CreditDeliveryDecide, CreditDeliveryRequest } from "@/components/orders/credit-delivery-forms";
 import { HoldCard } from "@/components/orders/hold-card";
 import { OrderHero } from "@/components/orders/order-hero";
 import { ReassignOrderForm } from "@/components/orders/reassign-order-form";
@@ -27,6 +28,7 @@ import { requireUser } from "@/lib/auth/guards";
 import { rolesHavePermission } from "@/lib/auth/permissions";
 import { formatInrExact } from "@/lib/format/money";
 import { canCancelJob } from "@/lib/workflow/cancel";
+import { availableToSend } from "@/lib/workflow/fulfillment";
 import { nextRequiredAction } from "@/lib/workflow/next-action";
 import {
   canRecordPayment,
@@ -64,12 +66,34 @@ export default async function OrderDetailPage({
     notFound();
   }
 
-  const { order, customer, quote, items, vendorOrders, delivery, balance, payments } =
+  const { order, customer, quote, items, vendorOrders, delivery, balance, payments, salesperson } =
     detail;
   const status = order.status as WorkflowStatus;
   const outstanding = Number(balance?.outstanding ?? 0);
   const total = Number(balance?.order_total ?? 0);
   const paid = Number(balance?.verified_payments ?? 0);
+  const allocatedByItem = new Map<string, number>();
+  for (const vendorOrder of vendorOrders) {
+    const lines = Array.isArray(vendorOrder.vendor_order_items)
+      ? vendorOrder.vendor_order_items
+      : vendorOrder.vendor_order_items
+        ? [vendorOrder.vendor_order_items]
+        : [];
+    for (const line of lines) {
+      if (!line.order_item_id) continue;
+      allocatedByItem.set(
+        line.order_item_id,
+        (allocatedByItem.get(line.order_item_id) ?? 0) + Number(line.quantity),
+      );
+    }
+  }
+  const hasUnsent = items.some((item) =>
+    availableToSend({
+      quantity: Number(item.quantity),
+      allocated: allocatedByItem.get(item.id) ?? 0,
+      quantity_written_off: Number(item.quantity_written_off ?? 0),
+    }) > 0,
+  );
   const next = nextRequiredAction({
     status,
     role: user.role,
@@ -80,6 +104,7 @@ export default async function OrderDetailPage({
     activated: Boolean(order.activated_at),
     payments,
     hasInstallation: Boolean(installation),
+    hasUnsent,
   });
   const showRecordPayment =
     rolesHavePermission(user.roles, "payments.record") &&
@@ -136,6 +161,11 @@ export default async function OrderDetailPage({
         outstanding={outstanding}
         statusExplanation={statusExplanation}
       />
+      {salesperson?.full_name ? (
+        <p className="rounded-lg border border-outline-variant bg-card px-4 py-3 text-sm">
+          Sales · <span className="font-semibold">{salesperson.full_name}</span>
+        </p>
+      ) : null}
 
       <NextActionCard action={{ ...next, href: undefined, cta: undefined }} />
 
@@ -277,6 +307,17 @@ export default async function OrderDetailPage({
         </section>
       ) : null}
 
+      {outstanding > 0 &&
+      rolesHavePermission(user.roles, "payments.record") &&
+      order.credit_delivery_status !== "approved" &&
+      order.credit_delivery_status !== "requested" ? (
+        <CreditDeliveryRequest orderId={order.id} />
+      ) : null}
+      {order.credit_delivery_status === "requested" &&
+      rolesHavePermission(user.roles, "deliveries.credit_approve") ? (
+        <CreditDeliveryDecide orderId={order.id} />
+      ) : null}
+
       {status === "delivery_unlocked" &&
       rolesHavePermission(user.roles, "deliveries.complete") ? (
         <section>
@@ -314,6 +355,7 @@ export default async function OrderDetailPage({
               <InstallationForm orderId={order.id} installation={installation} />
               <WarrantyPanel
                 orderId={order.id}
+                canEdit={false}
                 rows={warranties.map((row) => ({
                   kind: row.kind,
                   starts_on: row.starts_on,

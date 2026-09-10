@@ -16,6 +16,7 @@ begin
         ('accounts@nuhome.demo', 'accounts', 'Accounts Demo'),
         ('procurement@nuhome.demo', 'procurement', 'Procurement Demo'),
         ('store@nuhome.demo', 'store', 'Store Demo'),
+        ('super@nuhome.demo', 'super_accounts', 'Super Accounts Demo'),
         ('admin@nuhome.demo', 'admin', 'Admin Demo')
     ) as t(email, role, full_name)
   loop

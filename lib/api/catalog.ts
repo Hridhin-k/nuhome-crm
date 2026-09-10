@@ -14,6 +14,7 @@ export type MaterialRow = {
   hsn_code?: string | null;
   gst_rate?: number | string | null;
   warranty_months?: number | null;
+  description?: string | null;
   is_active?: boolean;
   category_id: string | null;
   material_categories?: { id: string; name: string } | null;
@@ -62,7 +63,7 @@ const listMaterialsCached = cache(async (includeInactive: boolean) => {
   let request = db
     .from("materials")
     .select(
-      "id, name, sku, unit, default_sell_price, default_cost, hsn_code, gst_rate, warranty_months, is_active, category_id, material_categories(id, name)",
+      "id, name, sku, unit, default_sell_price, default_cost, hsn_code, gst_rate, warranty_months, description, is_active, category_id, material_categories(id, name)",
     )
     .order("name");
   if (!includeInactive) {
@@ -93,7 +94,7 @@ export const listPendingPayments = cache(async () => {
     db
       .from("payments")
       .select(
-        "id, amount, kind, method, reference_number, status, created_at, quote_id, order_id, recorded_by, quotes(quote_number, customers(name)), orders(order_number)",
+        "id, amount, kind, method, reference_number, status, created_at, quote_id, order_id, recorded_by, quotes(quote_number, customers(name)), orders(order_number, assigned_sales_id, assigned_sales:profiles!orders_assigned_sales_id_fkey(full_name))",
       )
       .eq("status", "pending")
       .order("created_at", { ascending: false }),

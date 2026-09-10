@@ -93,11 +93,11 @@ const ACTION_COPY: Record<
   },
   ORDER_ACTIVATED: {
     title: "Order activated",
-    detail: () => "Fulfillment can begin",
+    detail: () => "Accounts can send this to a vendor",
   },
   ORDER_SENT_TO_VENDOR: {
     title: "Sent to vendor",
-    detail: () => "Procurement placed the order with a vendor",
+    detail: () => "Accounts placed the order with a vendor",
   },
   VENDOR_DISPATCHED: {
     title: "Vendor dispatched",

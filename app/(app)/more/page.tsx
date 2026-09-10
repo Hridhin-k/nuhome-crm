@@ -27,6 +27,10 @@ export default async function MorePage() {
     .join("");
   const extras = overflowNavForRoles(user.roles, user.role);
   const canAdmin = rolesHavePermission(user.roles, "admin.manage");
+  const canCatalog = rolesHavePermission(user.roles, "catalog.manage");
+  const canStaff = rolesHavePermission(user.roles, "staff.manage");
+  const canReports = rolesHavePermission(user.roles, "reports.read");
+  const canLeads = rolesHavePermission(user.roles, "leads.manage");
   const extraLinks = extras.filter(
     (item) =>
       !ADMIN_LINKS.some((link) => link.href === item.href),
@@ -67,9 +71,18 @@ export default async function MorePage() {
           ))}
         </ul>
       ) : null}
-      {canAdmin ? (
+      {canAdmin || canCatalog || canStaff || canReports || canLeads ? (
         <ul className={`${wellClass} mb-6`}>
-          {ADMIN_LINKS.map((link) => (
+          {(canLeads
+            ? [{ href: "/leads", label: "Leads", subtitle: "Follow-up book" }]
+            : []
+          )
+            .concat(canStaff || canAdmin ? [ADMIN_LINKS[0]] : [])
+            .concat(canAdmin ? [ADMIN_LINKS[1]] : [])
+            .concat(canCatalog || canAdmin ? [ADMIN_LINKS[2]] : [])
+            .concat(canAdmin ? [ADMIN_LINKS[3]] : [])
+            .concat(canReports || canAdmin ? [ADMIN_LINKS[4]] : [])
+            .map((link) => (
             <JobRow
               key={link.href}
               href={link.href}

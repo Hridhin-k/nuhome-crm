@@ -31,7 +31,7 @@ export function navChrome(pathname: string): {
   }
 
   const listTitles: Record<string, string> = {
-    "/home": "Nuhome",
+    "/leads": "Leads",
     "/customers": "Customers",
     "/quotes": "Nuhome",
     "/orders": "Orders",

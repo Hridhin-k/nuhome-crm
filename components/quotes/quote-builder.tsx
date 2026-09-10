@@ -36,6 +36,9 @@ export function QuoteBuilder({
   reviseQuoteId,
   initialLines = [],
   initialNotes = "",
+  initialWarrantyMonths = 12,
+  initialIncludeAmc = false,
+  initialAmcMonths = 12,
   rejectionReason,
   returnTo = "/walk-in",
   step = 2,
@@ -49,11 +52,14 @@ export function QuoteBuilder({
   reviseQuoteId?: string;
   initialLines?: QuoteLine[];
   initialNotes?: string;
+  initialWarrantyMonths?: number;
+  initialIncludeAmc?: boolean;
+  initialAmcMonths?: number;
   rejectionReason?: string;
   returnTo?: string;
   step?: 1 | 2 | 3;
   showCustomerStep?: boolean;
-  quoteStatus?: "quote_draft" | "quote_rejected" | "quote_approved";
+  quoteStatus?: "quote_draft" | "quote_rejected" | "quote_approved" | "quote_sent_to_customer";
 }) {
   const [activeStep, setActiveStep] = useState<1 | 2 | 3>(step);
   const [customerId, setCustomerId] = useState(
@@ -61,6 +67,9 @@ export function QuoteBuilder({
   );
   const [lines, setLines] = useState<QuoteLine[]>(initialLines);
   const [notes, setNotes] = useState(initialNotes);
+  const [warrantyMonths, setWarrantyMonths] = useState(String(initialWarrantyMonths));
+  const [includeAmc, setIncludeAmc] = useState(initialIncludeAmc);
+  const [amcMonths, setAmcMonths] = useState(String(initialAmcMonths));
   const [openLine, setOpenLine] = useState<string | null>(null);
   const [state, action, pending] = useActionState<ActionState, FormData>(
     saveQuoteAction,
@@ -125,12 +134,18 @@ export function QuoteBuilder({
     gst_rate: line.gst_rate,
   }));
 
+  const extras = {
+    warranty_months: Number(warrantyMonths) || 0,
+    include_amc: includeAmc,
+    amc_months: includeAmc ? Number(amcMonths) || 0 : 0,
+  };
   const payload = reviseQuoteId
-    ? { quote_id: reviseQuoteId, items: itemPayload, notes: notes || undefined }
+    ? { quote_id: reviseQuoteId, items: itemPayload, notes: notes || undefined, ...extras }
     : {
         customer_id: customerId,
         items: itemPayload,
         notes: notes || undefined,
+        ...extras,
       };
 
   const steps = [
@@ -343,6 +358,8 @@ export function QuoteBuilder({
                           <Input
                             type="number"
                             inputMode="decimal"
+                            step="0.01"
+                            min={0}
                             className="mt-1 h-10"
                             value={line.unit_price}
                             onChange={(e) =>
@@ -353,10 +370,28 @@ export function QuoteBuilder({
                           />
                         </div>
                         <div>
+                          <Label className="text-xs">Cost</Label>
+                          <Input
+                            type="number"
+                            inputMode="decimal"
+                            step="0.01"
+                            min={0}
+                            className="mt-1 h-10"
+                            value={line.unit_cost}
+                            onChange={(e) =>
+                              updateLine(line.key, {
+                                unit_cost: Number(e.target.value),
+                              })
+                            }
+                          />
+                        </div>
+                        <div>
                           <Label className="text-xs">Discount</Label>
                           <Input
                             type="number"
                             inputMode="decimal"
+                            step="0.01"
+                            min={0}
                             className="mt-1 h-10"
                             value={line.discount}
                             onChange={(e) =>
@@ -385,7 +420,7 @@ export function QuoteBuilder({
                             inputMode="decimal"
                             min={0}
                             max={100}
-                            step="1"
+                            step="0.01"
                             className="mt-1 h-10"
                             value={line.gst_rate}
                             onChange={(e) =>
@@ -477,9 +512,50 @@ export function QuoteBuilder({
                 onChange={(e) => setNotes(e.target.value)}
                 rows={3}
                 className="mt-2"
-                placeholder="Add any special instructions or customer requests..."
               />
             </div>
+
+            <section className="rounded-lg border border-surface-variant bg-card p-4">
+              <h2 className="text-subheading text-on-surface">Warranty and AMC</h2>
+              <p className="mt-1 text-body-sm text-on-surface-variant">
+                Optional on the quotation. Delivery still stamps the start date.
+              </p>
+              <div className="mt-3">
+                <Label htmlFor="warranty_months">Warranty (months)</Label>
+                <Input
+                  id="warranty_months"
+                  type="number"
+                  min={0}
+                  max={120}
+                  value={warrantyMonths}
+                  onChange={(e) => setWarrantyMonths(e.target.value)}
+                  className="mt-2 h-11 min-h-11"
+                />
+              </div>
+              <label className="mt-3 flex min-h-11 items-center gap-3 text-sm">
+                <input
+                  type="checkbox"
+                  checked={includeAmc}
+                  onChange={(e) => setIncludeAmc(e.target.checked)}
+                  className="size-5 accent-primary"
+                />
+                Include AMC
+              </label>
+              {includeAmc ? (
+                <div className="mt-3">
+                  <Label htmlFor="amc_months">AMC (months)</Label>
+                  <Input
+                    id="amc_months"
+                    type="number"
+                    min={0}
+                    max={120}
+                    value={amcMonths}
+                    onChange={(e) => setAmcMonths(e.target.value)}
+                    className="mt-2 h-11 min-h-11"
+                  />
+                </div>
+              ) : null}
+            </section>
 
             {quoteStatus === "quote_approved" ? (
               <p className="text-body-sm text-on-surface-variant">

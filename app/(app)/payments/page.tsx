@@ -79,6 +79,9 @@ export default async function PaymentsPage({
                     {[
                       customer?.name,
                       quote?.quote_number,
+                      rel(order)?.assigned_sales?.full_name
+                        ? `Sales ${rel(order)?.assigned_sales?.full_name}`
+                        : null,
                       payment.method,
                       payment.reference_number,
                     ]

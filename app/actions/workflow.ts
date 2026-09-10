@@ -6,17 +6,24 @@ import { humanizeError, rethrowNavigationError } from "@/lib/api/errors";
 import { requirePermission, requireUser } from "@/lib/auth/guards";
 import { rolesHavePermission } from "@/lib/auth/permissions";
 import {
+  allocateVendors,
   approveQuote,
   cancelJob,
   completeDelivery,
+  confirmVendorSend,
   createQuote,
+  decideCreditDelivery,
+  decideVendorQuote,
   markVendorDispatched,
   recordItemsReceived,
   recordPayment,
+  recordVendorPayment,
   rejectPayment,
   rejectQuote,
+  requestCreditDelivery,
   reviseQuote,
-  sendOrderToVendor,
+  saveVendorCommercial,
+  saveVendorQuote,
   sendQuoteToCustomer,
   submitQuote,
   verifyPayment,
@@ -24,6 +31,7 @@ import {
 } from "@/lib/workflow/service";
 import { createCustomerRow, updateCustomerRow } from "@/lib/api/customers";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { listFromForm } from "@/lib/customers/walk-in";
 import { customerSchema, rejectPaymentSchema } from "@/lib/validation/workflow";
 
 export type ActionState = { error?: string; notice?: string };
@@ -49,6 +57,18 @@ export async function createCustomerAction(
     billing_address: formData.get("billing_address") || undefined,
     site_address: formData.get("site_address") || undefined,
     notes: formData.get("notes") || undefined,
+    firm: formData.get("firm") || undefined,
+    whatsapp: formData.get("whatsapp") || undefined,
+    profession: listFromForm(formData.getAll("profession")),
+    profession_other: formData.get("profession_other") || undefined,
+    property_type: formData.get("property_type") || undefined,
+    property_other: formData.get("property_other") || undefined,
+    project_status: formData.get("project_status") || undefined,
+    interests: listFromForm(formData.getAll("interests")),
+    source: formData.get("source") || undefined,
+    source_other: formData.get("source_other") || undefined,
+    follow_up_on: formData.get("follow_up_on") || undefined,
+    follow_up_action: formData.get("follow_up_action") || undefined,
   });
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Check the form" };
@@ -260,16 +280,16 @@ export async function sendToVendorAction(
     const items = JSON.parse(String(formData.get("items") ?? "[]")).filter(
       (row: { quantity?: number }) => Number(row.quantity) > 0,
     );
-    await sendOrderToVendor({
+    await allocateVendors({
       order_id: orderId,
-      vendor_id: String(formData.get("vendor_id")),
+      order_number: String(formData.get("order_number") ?? "ORD"),
       expected_delivery: formData.get("expected_delivery") || undefined,
       items,
     });
     revalidatePath("/fulfillment");
     revalidatePath("/orders");
     revalidatePath("/home");
-    redirect(`/fulfillment/${orderId}?notice=sent-vendor`);
+    redirect(`/fulfillment/${orderId}?notice=allocated`);
   } catch (error) {
     rethrowNavigationError(error);
     return { error: humanizeError(error) };
@@ -428,6 +448,175 @@ export async function logWhatsAppShareAction(
     }
     revalidatePath(`/quotes/${quoteId}`);
     return {};
+  } catch (error) {
+    return { error: humanizeError(error) };
+  }
+}
+
+export async function sendQuoteEmailAction(formData: FormData): Promise<ActionState> {
+  await requirePermission("quotes.send_to_customer");
+  const email = String(formData.get("email") ?? "").trim();
+  const message = String(formData.get("message") ?? "").trim();
+  if (!email) return { error: "Customer email is required" };
+  const key = process.env.RESEND_API_KEY;
+  if (!key) {
+    return { error: "Email is not configured. Set RESEND_API_KEY." };
+  }
+  try {
+    const response = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${key}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from: process.env.RESEND_FROM_EMAIL ?? "Nuhome <quotes@nuhome.in>",
+        to: [email],
+        subject: "Your Nuhome quotation",
+        text: message,
+      }),
+    });
+    if (!response.ok) {
+      throw new Error("The email provider rejected the message");
+    }
+    return {};
+  } catch (error) {
+    return { error: humanizeError(error) };
+  }
+}
+
+export async function requestCreditDeliveryAction(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  await requirePermission("payments.record");
+  try {
+    const orderId = String(formData.get("order_id"));
+    await requestCreditDelivery(
+      orderId,
+      String(formData.get("notes") ?? "") || undefined,
+    );
+    revalidatePath(`/orders/${orderId}`);
+    redirect(`/orders/${orderId}?notice=credit-requested`);
+  } catch (error) {
+    rethrowNavigationError(error);
+    return { error: humanizeError(error) };
+  }
+}
+
+export async function decideCreditDeliveryAction(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  await requirePermission("deliveries.credit_approve");
+  try {
+    const orderId = String(formData.get("order_id"));
+    await decideCreditDelivery(
+      orderId,
+      String(formData.get("decision")) === "approve",
+    );
+    revalidatePath(`/orders/${orderId}`);
+    redirect(`/orders/${orderId}?notice=credit-decided`);
+  } catch (error) {
+    rethrowNavigationError(error);
+    return { error: humanizeError(error) };
+  }
+}
+
+export async function saveVendorQuoteAction(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  await requirePermission("orders.send_to_vendor");
+  const orderId = String(formData.get("order_id"));
+  try {
+    await saveVendorQuote({
+      vendor_order_id: String(formData.get("vendor_order_id")),
+      quote_ref: String(formData.get("quote_ref") ?? ""),
+      quote_amount: Number(formData.get("quote_amount")),
+    });
+    revalidatePath(`/fulfillment/${orderId}`);
+    redirect(`/fulfillment/${orderId}?notice=quoted`);
+  } catch (error) {
+    rethrowNavigationError(error);
+    return { error: humanizeError(error) };
+  }
+}
+
+export async function decideVendorQuoteAction(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  await requirePermission("vendors.quote_approve");
+  const orderId = String(formData.get("order_id"));
+  try {
+    await decideVendorQuote({
+      vendor_order_id: String(formData.get("vendor_order_id")),
+      approve: String(formData.get("decision")) === "approve",
+      reason: String(formData.get("reason") ?? "") || undefined,
+    });
+    revalidatePath(`/fulfillment/${orderId}`);
+    redirect(`/fulfillment/${orderId}?notice=quote-decided`);
+  } catch (error) {
+    rethrowNavigationError(error);
+    return { error: humanizeError(error) };
+  }
+}
+
+export async function confirmVendorSendAction(
+  vendorOrderId: string,
+  orderId: string,
+) {
+  await requirePermission("orders.send_to_vendor");
+  try {
+    await confirmVendorSend(vendorOrderId);
+    revalidatePath("/fulfillment");
+    revalidatePath("/orders");
+    revalidatePath("/home");
+    redirect(`/fulfillment/${orderId}?notice=sent-vendor`);
+  } catch (error) {
+    rethrowNavigationError(error);
+    redirect(
+      `/fulfillment/${orderId}?error=${encodeURIComponent(humanizeError(error))}`,
+    );
+  }
+}
+
+export async function saveVendorCommercialAction(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  await requirePermission("fulfillment.update");
+  try {
+    const amount = Number(formData.get("quote_amount") || "");
+    const bill = Number(formData.get("bill_amount") || "");
+    await saveVendorCommercial({
+      vendor_order_id: String(formData.get("vendor_order_id")),
+      quote_ref: String(formData.get("quote_ref") ?? "") || undefined,
+      quote_amount: Number.isFinite(amount) && amount > 0 ? amount : undefined,
+      bill_ref: String(formData.get("bill_ref") ?? "") || undefined,
+      bill_amount: Number.isFinite(bill) && bill > 0 ? bill : undefined,
+    });
+    revalidatePath("/fulfillment");
+    return { notice: "saved" };
+  } catch (error) {
+    return { error: humanizeError(error) };
+  }
+}
+
+export async function recordVendorPaymentAction(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  await requirePermission("payments.verify");
+  try {
+    await recordVendorPayment({
+      vendor_order_id: String(formData.get("vendor_order_id")),
+      amount: Number(formData.get("amount")),
+      reference: String(formData.get("reference") ?? "") || undefined,
+    });
+    revalidatePath("/fulfillment");
+    return { notice: "paid" };
   } catch (error) {
     return { error: humanizeError(error) };
   }

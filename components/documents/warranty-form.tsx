@@ -91,9 +91,11 @@ function CoverageCard({
 export function WarrantyPanel({
   orderId,
   rows,
+  canEdit = false,
 }: {
   orderId: string;
   rows: Coverage[];
+  canEdit?: boolean;
 }) {
   const warranty = rows.find((row) => row.kind === "warranty");
   const amc = rows.find((row) => row.kind === "amc");
@@ -102,24 +104,35 @@ export function WarrantyPanel({
     <section className="rounded-lg border border-outline-variant bg-card p-4 shadow-card">
       <h2 className="text-subheading text-on-surface">Warranty / AMC</h2>
       <p className="mt-1 text-body-sm text-on-surface-variant">
-        Product warranty is issued on delivery. Add an AMC if the customer buys cover.
+        Quoted on the quotation and started on delivery.
       </p>
-      <div className="mt-4 flex flex-col gap-6">
-        <CoverageCard
-          orderId={orderId}
-          kind="warranty"
-          coverage={warranty}
-          title="Warranty"
-          description="Default term comes from the catalogue when goods are handed over."
-        />
-        <CoverageCard
-          orderId={orderId}
-          kind="amc"
-          coverage={amc}
-          title="AMC"
-          description="Annual maintenance, if sold."
-        />
-      </div>
+      {canEdit ? (
+        <div className="mt-4 flex flex-col gap-6">
+          <CoverageCard
+            orderId={orderId}
+            kind="warranty"
+            coverage={warranty}
+            title="Warranty"
+            description="Default term comes from the catalogue when goods are handed over."
+          />
+          <CoverageCard
+            orderId={orderId}
+            kind="amc"
+            coverage={amc}
+            title="AMC"
+            description="Annual maintenance, if sold."
+          />
+        </div>
+      ) : (
+        <div className="mt-3 space-y-2 text-sm">
+          {warranty ? (
+            <p>Warranty {warranty.starts_on} → {warranty.ends_on}</p>
+          ) : (
+            <p className="text-on-surface-variant">Warranty starts on delivery.</p>
+          )}
+          {amc ? <p>AMC {amc.starts_on} → {amc.ends_on}</p> : <p className="text-on-surface-variant">No AMC on this quote.</p>}
+        </div>
+      )}
     </section>
   );
 }

@@ -19,7 +19,7 @@ export const listCustomers = cache(async (query?: string) => {
 
   let request = db
     .from("customers")
-    .select("id, name, phone, email, address, gstin, billing_address, site_address, created_at, updated_at, created_by")
+    .select("id, name, phone, email, address, gstin, billing_address, site_address, firm, created_at, updated_at, created_by")
     .order("updated_at", { ascending: false });
 
   if (q) {
@@ -57,7 +57,7 @@ export const getCustomer = cache(async (id: string) => {
   const db = await getDb();
   const { data, error } = await db
     .from("customers")
-    .select("id, name, phone, email, address, gstin, billing_address, site_address, notes, created_at")
+    .select("id, name, phone, whatsapp, email, address, gstin, billing_address, site_address, notes, firm, profession, profession_other, property_type, property_other, project_status, interests, source, source_other, follow_up_on, follow_up_action, created_at")
     .eq("id", id)
     .maybeSingle();
 
@@ -76,11 +76,24 @@ export async function createCustomerRow(input: {
   billing_address?: string;
   site_address?: string;
   notes?: string;
+  firm?: string;
+  whatsapp?: string;
+  profession?: string[];
+  profession_other?: string;
+  property_type?: string;
+  property_other?: string;
+  project_status?: string;
+  interests?: string[];
+  source?: string;
+  source_other?: string;
+  follow_up_on?: string;
+  follow_up_action?: string;
   createdBy: string;
 }) {
   await assertPhoneAvailable(input.phone);
   const billing = input.billing_address || input.address || null;
   const site = input.site_address || billing;
+  const walkIn = walkInFields(input);
   const db = await getDb();
   const { data, error } = await db
     .from("customers")
@@ -95,6 +108,7 @@ export async function createCustomerRow(input: {
       notes: input.notes || null,
       kind: "customer",
       created_by: input.createdBy,
+      ...walkIn,
     })
     .select("id")
     .single();
@@ -116,6 +130,18 @@ export async function updateCustomerRow(input: {
   billing_address?: string;
   site_address?: string;
   notes?: string;
+  firm?: string;
+  whatsapp?: string;
+  profession?: string[];
+  profession_other?: string;
+  property_type?: string;
+  property_other?: string;
+  project_status?: string;
+  interests?: string[];
+  source?: string;
+  source_other?: string;
+  follow_up_on?: string;
+  follow_up_action?: string;
 }) {
   await assertPhoneAvailable(input.phone, input.id);
   const billing = input.billing_address || input.address || null;
@@ -132,12 +158,43 @@ export async function updateCustomerRow(input: {
       billing_address: billing,
       site_address: site,
       notes: input.notes || null,
+      ...walkInFields(input),
     })
     .eq("id", input.id);
 
   if (error) {
     throw phoneConflictError(error) ?? new Error("Failed to update customer");
   }
+}
+
+function walkInFields(input: {
+  firm?: string;
+  whatsapp?: string;
+  profession?: string[];
+  profession_other?: string;
+  property_type?: string;
+  property_other?: string;
+  project_status?: string;
+  interests?: string[];
+  source?: string;
+  source_other?: string;
+  follow_up_on?: string;
+  follow_up_action?: string;
+}) {
+  return {
+    firm: input.firm || null,
+    whatsapp: input.whatsapp || null,
+    profession: input.profession?.length ? input.profession : [],
+    profession_other: input.profession_other || null,
+    property_type: input.property_type || null,
+    property_other: input.property_other || null,
+    project_status: input.project_status || null,
+    interests: input.interests?.length ? input.interests : [],
+    source: input.source || null,
+    source_other: input.source_other || null,
+    follow_up_on: input.follow_up_on || null,
+    follow_up_action: input.follow_up_action || null,
+  };
 }
 
 async function assertPhoneAvailable(phone?: string, excludeId?: string) {

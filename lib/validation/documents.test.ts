@@ -10,8 +10,8 @@ import {
 const UUID = "550e8400-e29b-41d4-a716-446655440000";
 
 describe("uploadAttachmentSchema", () => {
-  it("accepts every attachment kind on customer, quote, and order", () => {
-    for (const entity_type of ["customer", "quote", "order"] as const) {
+  it("accepts every attachment kind on customer, quote, order, and vendor_order", () => {
+    for (const entity_type of ["customer", "quote", "order", "vendor_order"] as const) {
       for (const kind of ATTACHMENT_KINDS) {
         expect(
           uploadAttachmentSchema.parse({

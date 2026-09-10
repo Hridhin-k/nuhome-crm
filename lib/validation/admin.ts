@@ -53,6 +53,7 @@ export const materialInputSchema = z.object({
   hsn_code: z.string().trim().max(8).optional(),
   gst_rate: z.number().min(0).max(100).optional(),
   warranty_months: z.number().int().min(0).max(120).optional(),
+  description: z.string().trim().optional(),
   is_active: z.boolean().optional(),
 });
 

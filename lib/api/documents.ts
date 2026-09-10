@@ -109,7 +109,7 @@ export const listAttachments = cache(async (entityType: string, entityId: string
 });
 
 export async function uploadAttachment(input: {
-  entityType: "customer" | "quote" | "order";
+  entityType: "customer" | "quote" | "order" | "vendor_order";
   entityId: string;
   kind: AttachmentKind;
   file: File;

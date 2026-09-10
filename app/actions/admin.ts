@@ -13,7 +13,7 @@ import { listVendors } from "@/lib/api/catalog";
 import { humanizeError, rethrowNavigationError } from "@/lib/api/errors";
 import { revalidateApp } from "@/lib/api/revalidate";
 import { parseAppRole, generateTempPassword } from "@/lib/auth/roles";
-import { requirePermission } from "@/lib/auth/guards";
+import { requireAnyPermission, requirePermission } from "@/lib/auth/guards";
 import type { AppRole } from "@/lib/workflow/types";
 import { parseCsv } from "@/lib/csv";
 import { createServiceRoleClient } from "@/lib/supabase/admin";
@@ -98,7 +98,7 @@ export async function createStaffAction(
   _prev: AdminActionState,
   formData: FormData,
 ): Promise<AdminActionState> {
-  await requirePermission("admin.manage");
+  await requireAnyPermission("admin.manage", "staff.manage");
   const parsed = createStaffSchema.safeParse({
     email: formString(formData, "email"),
     full_name: formString(formData, "full_name"),
@@ -202,7 +202,7 @@ export async function importStaffCsvAction(
   _prev: AdminActionState,
   formData: FormData,
 ): Promise<AdminActionState> {
-  await requirePermission("admin.manage");
+  await requireAnyPermission("admin.manage", "staff.manage");
   try {
     const rows = await readCsvFile(formData);
     const admin = createServiceRoleClient();
@@ -302,7 +302,7 @@ export async function createMaterialAction(
   _prev: AdminActionState,
   formData: FormData,
 ): Promise<AdminActionState> {
-  await requirePermission("admin.manage");
+  await requireAnyPermission("admin.manage", "catalog.manage");
   const parsed = materialInputSchema.safeParse({
     id: formString(formData, "id") || undefined,
     name: formString(formData, "name"),
@@ -314,6 +314,7 @@ export async function createMaterialAction(
     hsn_code: formString(formData, "hsn_code") || undefined,
     gst_rate: parseMoney(formString(formData, "gst_rate") || "18") ?? 18,
     warranty_months: Number(formString(formData, "warranty_months") || "12") || 12,
+    description: formString(formData, "description") || undefined,
     is_active: formString(formData, "is_active") !== "false",
   });
   if (!parsed.success) {
@@ -331,6 +332,7 @@ export async function createMaterialAction(
       hsnCode: parsed.data.hsn_code,
       gstRate: parsed.data.gst_rate,
       warrantyMonths: parsed.data.warranty_months,
+      description: parsed.data.description,
       id: parsed.data.id,
       isActive: parsed.data.is_active,
     });
@@ -347,7 +349,7 @@ export async function createMaterialAction(
 }
 
 export async function toggleMaterialAction(formData: FormData) {
-  await requirePermission("admin.manage");
+  await requireAnyPermission("admin.manage", "catalog.manage");
   const id = formString(formData, "id");
   const next = formString(formData, "is_active") === "true";
   const db = await createServerSupabaseClient();
@@ -363,7 +365,7 @@ export async function importMaterialsCsvAction(
   _prev: AdminActionState,
   formData: FormData,
 ): Promise<AdminActionState> {
-  await requirePermission("admin.manage");
+  await requireAnyPermission("admin.manage", "catalog.manage");
   try {
     const rows = await readCsvFile(formData);
     const rowErrors: { row: number; message: string }[] = [];
@@ -383,6 +385,7 @@ export async function importMaterialsCsvAction(
         warranty_months: row.warranty_months
           ? Number(row.warranty_months)
           : 12,
+        description: (row.description ?? "").trim() || undefined,
       });
       if (!parsed.success) {
         rowErrors.push({
@@ -403,6 +406,7 @@ export async function importMaterialsCsvAction(
           hsnCode: parsed.data.hsn_code,
           gstRate: parsed.data.gst_rate,
           warrantyMonths: parsed.data.warranty_months,
+          description: parsed.data.description,
         });
         created += 1;
       } catch (error) {
@@ -549,7 +553,7 @@ export async function resetStaffPasswordAction(
   _prev: AdminActionState,
   formData: FormData,
 ): Promise<AdminActionState> {
-  await requirePermission("admin.manage");
+  await requireAnyPermission("admin.manage", "staff.manage");
   const userId = formString(formData, "user_id");
   const email = formString(formData, "email");
   if (!userId) {
@@ -573,7 +577,7 @@ export async function reassignSalesCoverAction(
   _prev: AdminActionState,
   formData: FormData,
 ): Promise<AdminActionState> {
-  await requirePermission("admin.manage");
+  await requireAnyPermission("admin.manage", "staff.manage");
   const fromId = formString(formData, "from_user_id");
   const toId = formString(formData, "to_user_id");
   try {
