@@ -110,7 +110,10 @@ export function SendToVendorForm({
           <ul className="divide-y divide-surface-variant rounded-lg border border-surface-variant">
             {sendable.map((item) => {
               const itemRows = byItem.get(item.id) ?? [];
-              const leftover = remainingToAllocate(item.available, itemRows);
+              const leftover = remainingToAllocate(
+                item.available,
+                itemRows.map((row) => ({ quantity: row.qty })),
+              );
               const assigned = itemRows.reduce((sum, row) => sum + row.qty, 0);
               const canSplit = Boolean(
                 nextSplitRow({
@@ -217,7 +220,9 @@ export function SendToVendorForm({
                         setRows((current) => {
                           const leftoverNow = remainingToAllocate(
                             item.available,
-                            current.filter((entry) => entry.itemId === item.id),
+                            current
+                              .filter((entry) => entry.itemId === item.id)
+                              .map((entry) => ({ quantity: entry.qty })),
                           );
                           let next = current;
                           if (leftoverNow <= 0) {
