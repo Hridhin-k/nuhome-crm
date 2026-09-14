@@ -37,6 +37,10 @@ export function notificationHref(notification: AppNotification): string | null {
     case "ORDER_DELIVERED":
     case "ORDER_CANCELLED":
       return orderId ? `/orders/${orderId}` : "/orders";
+    case "VENDOR_QUOTE_SUBMITTED":
+      return orderId ? `/fulfillment/${orderId}` : "/fulfillment";
+    case "CREDIT_DELIVERY_REQUESTED":
+      return orderId ? `/orders/${orderId}` : "/orders?credit=1";
     case "QUOTE_CANCELLED":
       return quoteId ? `/quotes/${quoteId}` : "/quotes";
     default:

@@ -116,7 +116,7 @@ describe("quote → pay → vendor → deliver pipeline", () => {
       }),
     ).toBe(true);
     assertPaymentAmount("full", total);
-    recordPaymentSchema.parse({ quote_id: UUID, kind: "full", amount: total, method: "upi" });
+    recordPaymentSchema.parse({ quote_id: UUID, kind: "full", amount: total, method: "upi", reference: "UTR-1" });
     job.payments.push({ status: "pending", recordedBy: SALES, amount: total });
     assertTransition(job.status, "payment_pending_verification");
     job.status = "payment_pending_verification";

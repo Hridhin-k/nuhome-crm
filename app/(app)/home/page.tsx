@@ -181,7 +181,7 @@ function deskLine(primary: AppRole, roles: AppRole[], openCount: number) {
     accounts: "Approve, verify, and send jobs to vendors.",
     procurement: "Send, chase, and receive vendor batches.",
     store: "Handover only when the gate is unlocked.",
-    super_accounts: "Items, members, leads, and stuck jobs.",
+    operations: "Items, members, leads, and stuck jobs.",
     admin: "Every job, every status, in one view.",
   };
   if (openCount === 0) {
@@ -194,7 +194,7 @@ function deskLine(primary: AppRole, roles: AppRole[], openCount: number) {
 }
 
 function heroAction(roles: AppRole[]) {
-  if (roles.includes("admin") || roles.includes("super_accounts")) {
+  if (roles.includes("admin") || roles.includes("operations")) {
     return { href: "/reports?view=floor&stuck=1", label: "Stuck jobs first" };
   }
   if (rolesHavePermission(roles, "quotes.create")) {
@@ -218,7 +218,7 @@ export default async function HomePage() {
   const today = dateLabel();
   const badge = roleLabels(user.roles);
 
-  if (user.roles.includes("admin") || user.roles.includes("super_accounts")) {
+  if (user.roles.includes("admin") || user.roles.includes("operations")) {
     const [snapshot, catalog, recent] = await Promise.all([
       getOperationsSnapshot(),
       getCatalogSnapshot(),
@@ -230,6 +230,7 @@ export default async function HomePage() {
       <PageFrame>
         <HomeHero
           hello={hello}
+          name={user.fullName}
           role="admin"
           badge={badge}
           line={deskLine("admin", user.roles, waiting)}
@@ -270,6 +271,7 @@ export default async function HomePage() {
             overdue={snapshot.overdue}
             pendingPayments={snapshot.pendingPayments}
             pendingApprovals={snapshot.pendingApprovals}
+            creditRequested={snapshot.creditRequested}
             open={snapshot.open}
             customers={snapshot.customers}
             delivered={snapshot.delivered}
@@ -324,6 +326,7 @@ export default async function HomePage() {
     <PageFrame>
       <HomeHero
         hello={hello}
+        name={user.fullName}
         role={user.role}
         badge={badge}
         line={deskLine(user.role, user.roles, openCount)}

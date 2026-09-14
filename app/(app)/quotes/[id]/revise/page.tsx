@@ -7,6 +7,7 @@ import type { MaterialRow } from "@/lib/api/catalog";
 import { listCustomers } from "@/lib/api/customers";
 import { getQuote } from "@/lib/api/quotes";
 import { requirePermission } from "@/lib/auth/guards";
+import { rolesHavePermission } from "@/lib/auth/permissions";
 import { notFound, redirect } from "next/navigation";
 import type { WorkflowStatus } from "@/lib/workflow/types";
 
@@ -38,7 +39,7 @@ export default async function ReviseQuotePage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  await requirePermission("quotes.revise");
+  const user = await requirePermission("quotes.revise");
   const { id } = await params;
   const [detail, customers, materials, categories] = await Promise.all([
     getQuote(id),
@@ -88,6 +89,7 @@ export default async function ReviseQuotePage({
         initialNotes={current?.notes ?? ""}
         rejectionReason={current?.rejection_reason ?? undefined}
         showCustomerStep={false}
+        showCost={rolesHavePermission(user.roles, "quotes.read_margin")}
         step={2}
         quoteStatus={
           status as "quote_draft" | "quote_rejected" | "quote_approved"

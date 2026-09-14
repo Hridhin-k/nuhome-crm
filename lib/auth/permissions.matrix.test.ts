@@ -43,7 +43,7 @@ const GRANTED: Record<AppRole, readonly Permission[]> = {
     "payments.record",
     "deliveries.complete",
   ],
-  super_accounts: [
+  operations: [
     "customers.read",
     "customers.write",
     "quotes.approve",

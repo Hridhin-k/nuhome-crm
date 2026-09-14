@@ -24,9 +24,10 @@ export default async function OrdersPage({
     q?: string;
     from?: string;
     to?: string;
+    credit?: string;
   }>;
 }) {
-  const { status, bucket, q, from: fromRaw, to: toRaw } = await searchParams;
+  const { status, bucket, q, from: fromRaw, to: toRaw, credit } = await searchParams;
   const from = parseYmd(fromRaw) ?? undefined;
   const to = parseYmd(toRaw) ?? undefined;
   const query = statusesForOrderQuery({ bucket, status });
@@ -50,14 +51,16 @@ export default async function OrdersPage({
           names.get(order.assigned_sales_id ?? ""),
         ],
         q,
-      ) && inDateRange(order.updated_at, from, to)
+      ) &&
+      inDateRange(order.updated_at, from, to) &&
+      (credit !== "1" || order.credit_delivery_status === "requested")
     );
   });
 
   return (
     <PageFrame>
       <PageHeader
-        title="Orders"
+        title={credit === "1" ? "Credit delivery requests" : "Orders"}
         hideTitleOnMobile
         description="Search by quote number, phone, or date. Floor book is shared across sales."
       />

@@ -63,7 +63,7 @@ const ROLE_PERMISSIONS: Record<AppRole, Permission[]> = {
     "payments.record",
     "deliveries.complete",
   ],
-  super_accounts: [
+  operations: [
     "customers.read",
     "customers.write",
     "quotes.approve",

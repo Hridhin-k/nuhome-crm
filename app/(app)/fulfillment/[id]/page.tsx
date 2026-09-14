@@ -110,6 +110,8 @@ export default async function FulfillmentDetailPage({
       {notice === "quote-decided" ? <Notice>Vendor quote decision saved.</Notice> : null}
       {notice === "sent-vendor" ? <Notice>Sent to vendor.</Notice> : null}
       {notice === "dispatched" ? <Notice>Marked as dispatched.</Notice> : null}
+      {notice === "vendor-bill" ? <Notice>Vendor bill saved.</Notice> : null}
+      {notice === "vendor-paid" ? <Notice>Vendor marked as paid.</Notice> : null}
       {notice === "uploaded" ? <Notice>File uploaded.</Notice> : null}
       {notice === "file-removed" ? <Notice>File removed.</Notice> : null}
       {notice === "written-off" ? (
@@ -170,6 +172,12 @@ export default async function FulfillmentDetailPage({
           status: vendorOrder.status,
           commercial_status: vendorOrder.commercial_status,
         });
+        const vendorPays = Array.isArray(vendorOrder.vendor_payments)
+          ? vendorOrder.vendor_payments
+          : vendorOrder.vendor_payments
+            ? [vendorOrder.vendor_payments]
+            : [];
+        const lastPay = vendorPays[0];
         return (
           <section
             key={vendorOrder.id}
@@ -219,6 +227,9 @@ export default async function FulfillmentDetailPage({
               quoteRejectionReason={vendorOrder.quote_rejection_reason}
               canSend={canSend}
               canApproveQuote={canApproveQuote}
+              paidAmount={lastPay?.amount}
+              paidReference={lastPay?.reference_number}
+              paidMethod={lastPay?.method}
             />
             <div className="mt-3">
               <AttachmentPanel
@@ -233,7 +244,8 @@ export default async function FulfillmentDetailPage({
               />
             </div>
             <div className="mt-4 flex flex-col gap-2">
-              {vendorOrder.status === "sent" ? (
+              {vendorOrder.status === "sent" &&
+              vendorOrder.commercial_status === "vendor_paid" ? (
                 <ConfirmActionSheet
                   title="Mark dispatched"
                   description={`${vendorName} is sending this batch.`}
@@ -245,6 +257,10 @@ export default async function FulfillmentDetailPage({
                     detail.order.id,
                   )}
                 />
+              ) : vendorOrder.status === "sent" ? (
+                <p className="text-sm text-on-surface-variant">
+                  Mark the vendor paid before dispatch.
+                </p>
               ) : null}
               {vendorOrder.status === "dispatched" ? (
                 <ReceiveItemsForm

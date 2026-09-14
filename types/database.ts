@@ -1816,7 +1816,7 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "sales" | "accounts" | "procurement" | "store" | "super_accounts" | "admin"
+      app_role: "sales" | "accounts" | "procurement" | "store" | "super_accounts" | "operations" | "admin"
       approval_decision: "approved" | "rejected"
       attachment_kind: "file" | "measurement" | "drawing" | "photo"
       coverage_kind: "warranty" | "amc"

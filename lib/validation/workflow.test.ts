@@ -7,6 +7,7 @@ import {
   quoteItemSchema,
   receiveItemsSchema,
   recordPaymentSchema,
+  recordVendorPaymentSchema,
   rejectPaymentSchema,
   rejectQuoteSchema,
   reviseQuoteSchema,
@@ -87,6 +88,7 @@ describe("recordPaymentSchema", () => {
           kind: "advance",
           amount: 1000,
           method,
+          reference: "UTR123",
         }).method,
       ).toBe(method);
     }
@@ -103,15 +105,50 @@ describe("recordPaymentSchema", () => {
       recordPaymentSchema.parse({ quote_id: UUID, kind: "full", amount: 0 }),
     ).toThrow(/greater than 0/);
     expect(recordPaymentSchema.parse({ quote_id: UUID, kind: "nil", amount: 0 }).amount).toBe(0);
-    expect(recordPaymentSchema.parse({ quote_id: UUID, kind: "full", amount: 500 }).kind).toBe(
-      "full",
-    );
+    expect(
+      recordPaymentSchema.parse({
+        quote_id: UUID,
+        kind: "full",
+        amount: 500,
+        reference: "CHQ-9",
+      }).kind,
+    ).toBe("full");
+    expect(() =>
+      recordPaymentSchema.parse({ quote_id: UUID, kind: "advance", amount: 1000, method: "upi" }),
+    ).toThrow(/reference/i);
   });
 
   it("rejects unknown payment kinds", () => {
     expect(() =>
       recordPaymentSchema.parse({ quote_id: UUID, kind: "installment", amount: 100 }),
     ).toThrow();
+  });
+});
+
+describe("recordVendorPaymentSchema", () => {
+  it("requires a reference for non-cash vendor payments", () => {
+    expect(
+      recordVendorPaymentSchema.parse({
+        vendor_order_id: UUID,
+        amount: 12000.5,
+        method: "cash",
+      }).amount,
+    ).toBe(12000.5);
+    expect(() =>
+      recordVendorPaymentSchema.parse({
+        vendor_order_id: UUID,
+        amount: 12000,
+        method: "upi",
+      }),
+    ).toThrow(/reference/i);
+    expect(
+      recordVendorPaymentSchema.parse({
+        vendor_order_id: UUID,
+        amount: 12000,
+        method: "upi",
+        reference: "UTR9",
+      }).reference,
+    ).toBe("UTR9");
   });
 });
 

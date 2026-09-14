@@ -311,6 +311,9 @@ begin
 
   perform set_config('request.jwt.claim.sub', procurement_id::text, true);
   perform set_config('request.jwt.claims', json_build_object('sub', procurement_id, 'role', 'authenticated')::text, true);
+  update public.vendor_orders
+    set commercial_status = 'vendor_paid'
+    where id in (v_vo_a, v_vo_b);
   perform public.mark_vendor_dispatched(v_vo_a);
   perform public.mark_vendor_dispatched(v_vo_b);
 

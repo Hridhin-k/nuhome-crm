@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import {
   deleteAttachmentAction,
   uploadAttachmentAction,
@@ -41,6 +41,7 @@ export function AttachmentPanel({
     uploadAttachmentAction,
     {},
   );
+  const [fileName, setFileName] = useState("");
 
   return (
     <section className="rounded-2xl border border-outline-variant bg-card p-4 shadow-card">
@@ -119,13 +120,25 @@ export function AttachmentPanel({
           </div>
           <div>
             <Label htmlFor={`file-${entityId}`}>PDF or image</Label>
+            <label
+              htmlFor={`file-${entityId}`}
+              className="mt-2 flex min-h-11 cursor-pointer items-center justify-between gap-3 rounded-lg border border-outline-variant bg-surface px-3 py-2 text-sm text-on-surface"
+            >
+              <span className={fileName ? "truncate text-on-surface" : "text-on-surface-variant"}>
+                {fileName || "Choose a PDF or image"}
+              </span>
+              <span className="shrink-0 font-medium text-primary">Browse</span>
+            </label>
             <input
               id={`file-${entityId}`}
               name="file"
               type="file"
               required
               accept="image/jpeg,image/png,image/webp,image/heic,application/pdf"
-              className="mt-2 w-full text-sm"
+              className="sr-only"
+              onChange={(event) => {
+                setFileName(event.target.files?.[0]?.name ?? "");
+              }}
             />
           </div>
           {state.error ? (

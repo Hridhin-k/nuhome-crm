@@ -114,7 +114,7 @@ export const getOrder = cache(async (id: string) => {
       db
         .from("vendor_orders")
         .select(
-          "id, vendor_id, status, sent_at, dispatched_at, received_at, expected_delivery_at, quote_ref, quote_amount, bill_ref, bill_amount, payable_amount, commercial_status, quoted_by, quote_rejection_reason, vendors(name), vendor_order_items(id, order_item_id, quantity, quantity_received, quantity_written_off), vendor_payments(id, amount, status, created_at)",
+          "id, vendor_id, status, sent_at, dispatched_at, received_at, expected_delivery_at, quote_ref, quote_amount, bill_ref, bill_amount, payable_amount, commercial_status, quoted_by, quote_rejection_reason, vendors(name), vendor_order_items(id, order_item_id, quantity, quantity_received, quantity_written_off), vendor_payments(id, amount, status, method, reference_number, created_at)",
         )
         .eq("order_id", orderId)
         .order("created_at", { ascending: false }),

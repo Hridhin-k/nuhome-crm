@@ -57,8 +57,16 @@ export function isVendorOrderOverdue(
 
 export function vendorOrderList(
   value:
-    | { status: string; expected_delivery_at?: string | null }
-    | { status: string; expected_delivery_at?: string | null }[]
+    | {
+        status: string;
+        expected_delivery_at?: string | null;
+        commercial_status?: string | null;
+      }
+    | {
+        status: string;
+        expected_delivery_at?: string | null;
+        commercial_status?: string | null;
+      }[]
     | null
     | undefined,
 ) {

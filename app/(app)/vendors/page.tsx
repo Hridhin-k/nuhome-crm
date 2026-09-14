@@ -20,8 +20,9 @@ export default async function VendorsPage({
     searchParams,
   ]);
   const isAdmin = rolesHavePermission(user.roles, "admin.manage");
+  const canCatalog = isAdmin || rolesHavePermission(user.roles, "catalog.manage");
   const vendors = await listVendors({
-    includeInactive: isAdmin,
+    includeInactive: canCatalog,
   });
   const canWrite = rolesHavePermission(user.roles, "orders.send_to_vendor");
 
@@ -34,7 +35,7 @@ export default async function VendorsPage({
         action={
           canWrite ? (
             <div className="flex flex-col items-end gap-2 sm:flex-row">
-              {isAdmin ? (
+              {canCatalog ? (
                 <CsvImportSheet
                   title="Import vendors"
                   description="Columns: name, phone, email, notes. Rows that match an existing name + phone are skipped."
@@ -52,7 +53,7 @@ export default async function VendorsPage({
           ) : null
         }
       />
-      {isAdmin ? <AdminCatalogNav current="/vendors" /> : null}
+      {canCatalog ? <AdminCatalogNav current="/vendors" /> : null}
       {notice === "vendor-saved" ? <Notice>Vendor saved.</Notice> : null}
       {vendors.length === 0 ? (
         <EmptyState

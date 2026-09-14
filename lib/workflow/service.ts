@@ -5,6 +5,7 @@ import {
   createQuoteSchema,
   receiveItemsSchema,
   recordPaymentSchema,
+  recordVendorPaymentSchema,
   rejectPaymentSchema,
   rejectQuoteSchema,
   reviseQuoteSchema,
@@ -322,12 +323,13 @@ export async function recordVendorPayment(input: {
   method?: string;
   reference?: string;
 }) {
+  const parsed = recordVendorPaymentSchema.parse(input);
   const supabase = await createServerSupabaseClient();
   const { error } = await supabase.rpc("record_vendor_payment", {
-    p_vendor_order_id: input.vendor_order_id,
-    p_amount: input.amount,
-    p_method: input.method,
-    p_reference: input.reference,
+    p_vendor_order_id: parsed.vendor_order_id,
+    p_amount: parsed.amount,
+    p_method: parsed.method,
+    p_reference: parsed.reference,
   });
   throwIfError(error);
 }

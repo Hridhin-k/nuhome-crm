@@ -62,12 +62,13 @@ const ROLE_MOTIF: Record<AppRole, LucideIcon[]> = {
   accounts: [CheckSquare, Wallet, FileText],
   procurement: [Truck, Boxes, Activity],
   store: [Truck, Boxes, Users],
-  super_accounts: [BarChart3, Users, Boxes],
+  operations: [BarChart3, Users, Boxes],
   admin: [BarChart3, Users, FileText],
 };
 
 export function HomeHero({
   hello,
+  name,
   role,
   badge,
   line,
@@ -76,6 +77,7 @@ export function HomeHero({
   action,
 }: {
   hello: string;
+  name: string;
   role: AppRole;
   badge: string;
   line: string;
@@ -83,7 +85,7 @@ export function HomeHero({
   metrics: HeroMetric[];
   action?: { href: string; label: string };
 }) {
-  const title = roleLabel(role);
+  const title = name.trim() || roleLabel(role);
   const values = metrics.map((metric) => metric.value);
 
   return (

@@ -18,6 +18,8 @@ import { Label } from "@/components/ui/label";
 import { roleLabel } from "@/lib/auth/nav";
 import { APP_ROLES, type AppRole } from "@/lib/workflow/types";
 
+const STAFF_ROLES: AppRole[] = ["sales", "accounts", "operations", "admin"];
+
 const selectClass =
   "mt-2 h-11 min-h-11 w-full rounded-lg border border-outline-variant bg-surface px-3 text-on-surface";
 
@@ -179,6 +181,7 @@ function StaffFields({
   emailLocked?: boolean;
 }) {
   const [primary, setPrimary] = useState<AppRole>(defaultRole);
+  const roleOptions = Array.from(new Set<AppRole>([...STAFF_ROLES, defaultRole]));
 
   return (
     <>
@@ -223,7 +226,7 @@ function StaffFields({
           onChange={(e) => setPrimary(e.target.value as AppRole)}
           className={selectClass}
         >
-          {APP_ROLES.map((role) => (
+          {roleOptions.map((role) => (
             <option key={role} value={role}>
               {roleLabel(role)}
             </option>

@@ -26,9 +26,11 @@ npx supabase db query --linked -f supabase/seed.sql
 | --- | --- | --- |
 | sales@nuhome.demo | sales | password123 |
 | accounts@nuhome.demo | accounts | password123 |
+| operations@nuhome.demo | operations | password123 |
+| admin@nuhome.demo | admin | password123 |
+| super@nuhome.demo | operations | password123 |
 | procurement@nuhome.demo | procurement | password123 |
 | store@nuhome.demo | store | password123 |
-| admin@nuhome.demo | admin | password123 |
 
 ## Architecture
 

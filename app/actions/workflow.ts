@@ -587,6 +587,7 @@ export async function saveVendorCommercialAction(
   formData: FormData,
 ): Promise<ActionState> {
   await requirePermission("fulfillment.update");
+  const orderId = String(formData.get("order_id") ?? "");
   try {
     const amount = Number(formData.get("quote_amount") || "");
     const bill = Number(formData.get("bill_amount") || "");
@@ -598,8 +599,10 @@ export async function saveVendorCommercialAction(
       bill_amount: Number.isFinite(bill) && bill > 0 ? bill : undefined,
     });
     revalidatePath("/fulfillment");
-    return { notice: "saved" };
+    if (orderId) revalidatePath(`/fulfillment/${orderId}`);
+    redirect(`/fulfillment/${orderId}?notice=vendor-bill`);
   } catch (error) {
+    rethrowNavigationError(error);
     return { error: humanizeError(error) };
   }
 }
@@ -609,15 +612,19 @@ export async function recordVendorPaymentAction(
   formData: FormData,
 ): Promise<ActionState> {
   await requirePermission("payments.verify");
+  const orderId = String(formData.get("order_id") ?? "");
   try {
     await recordVendorPayment({
       vendor_order_id: String(formData.get("vendor_order_id")),
       amount: Number(formData.get("amount")),
+      method: String(formData.get("method") || "") || undefined,
       reference: String(formData.get("reference") ?? "") || undefined,
     });
     revalidatePath("/fulfillment");
-    return { notice: "paid" };
+    if (orderId) revalidatePath(`/fulfillment/${orderId}`);
+    redirect(`/fulfillment/${orderId || ""}?notice=vendor-paid`);
   } catch (error) {
+    rethrowNavigationError(error);
     return { error: humanizeError(error) };
   }
 }

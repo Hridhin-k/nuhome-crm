@@ -4,6 +4,14 @@ export function parseAppRole(value: string | null | undefined): AppRole | null {
   const normalized = value?.trim().toLowerCase();
   if (!normalized) return null;
   if (normalized === "delivery") return "store";
+  if (
+    normalized === "super_accounts" ||
+    normalized === "superuser" ||
+    normalized === "super user" ||
+    normalized === "super"
+  ) {
+    return "operations";
+  }
   if ((APP_ROLES as readonly string[]).includes(normalized)) {
     return normalized as AppRole;
   }

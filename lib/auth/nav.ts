@@ -34,7 +34,7 @@ const NAV: Record<AppRole, NavItem[]> = {
     { href: "/orders", label: "Orders", icon: "orders" },
     { href: "/more", label: "More", icon: "more" },
   ],
-  super_accounts: [
+  operations: [
     { href: "/home", label: "Home", icon: "home" },
     { href: "/leads", label: "Leads", icon: "people" },
     { href: "/orders", label: "Orders", icon: "orders" },
@@ -113,8 +113,8 @@ export function roleLabel(role: AppRole) {
       return "Procurement";
     case "store":
       return "Delivery";
-    case "super_accounts":
-      return "Super Accounts";
+    case "operations":
+      return "Operations";
     case "admin":
       return "Admin";
   }

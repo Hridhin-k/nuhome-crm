@@ -19,11 +19,11 @@ export function CreditDeliveryRequest({ orderId }: { orderId: string }) {
       <input type="hidden" name="order_id" value={orderId} />
       <p className="text-subheading">Deliver without full payment</p>
       <p className="mt-1 text-body-sm text-on-surface-variant">
-        Super Accounts must approve before handover.
+        Operations must approve before handover.
       </p>
       <Textarea name="notes" rows={2} className="mt-3" placeholder="Why this job needs credit delivery" />
       <Button type="submit" className="mt-3 w-full min-h-11" disabled={pending}>
-        {pending ? "Requesting…" : "Request Super Accounts"}
+        {pending ? "Requesting…" : "Request Operations"}
       </Button>
       {state.error ? <p className="mt-2 text-sm text-destructive">{state.error}</p> : null}
     </form>

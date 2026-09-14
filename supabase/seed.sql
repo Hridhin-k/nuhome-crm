@@ -12,12 +12,13 @@ begin
     select *
     from (
       values
-        ('sales@nuhome.demo'::text, 'sales'::public.app_role, 'Sales Demo'),
-        ('accounts@nuhome.demo', 'accounts', 'Accounts Demo'),
-        ('procurement@nuhome.demo', 'procurement', 'Procurement Demo'),
-        ('store@nuhome.demo', 'store', 'Store Demo'),
-        ('super@nuhome.demo', 'super_accounts', 'Super Accounts Demo'),
-        ('admin@nuhome.demo', 'admin', 'Admin Demo')
+        ('sales@nuhome.demo'::text, 'sales'::public.app_role, 'Ravi Kumar'),
+        ('accounts@nuhome.demo', 'accounts', 'Priya Nair'),
+        ('operations@nuhome.demo', 'operations', 'Meera Iyer'),
+        ('super@nuhome.demo', 'operations', 'Meera Iyer'),
+        ('admin@nuhome.demo', 'admin', 'Admin Demo'),
+        ('procurement@nuhome.demo', 'procurement', 'Arun Das'),
+        ('store@nuhome.demo', 'store', 'Suresh Babu')
     ) as t(email, role, full_name)
   loop
     select u.id into uid from auth.users u where u.email = demo.email;

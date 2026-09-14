@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { nextRequiredAction } from "@/lib/workflow/next-action";
 import { WORKFLOW_STATUSES, type AppRole, type WorkflowStatus } from "@/lib/workflow/types";
 
-const ROLES: AppRole[] = ["sales", "accounts", "procurement", "store", "super_accounts", "admin"];
+const ROLES: AppRole[] = ["sales", "accounts", "procurement", "store", "operations", "admin"];
 const Q = "quote-1";
 const O = "order-1";
 

@@ -41,6 +41,12 @@ describe("notificationHref", () => {
       notificationHref(notice("ORDER_CANCELLED", { order_id: "o1" })),
     ).toBe("/orders/o1");
     expect(
+      notificationHref(notice("VENDOR_QUOTE_SUBMITTED", { order_id: "o1" })),
+    ).toBe("/fulfillment/o1");
+    expect(
+      notificationHref(notice("CREDIT_DELIVERY_REQUESTED", { order_id: "o1" })),
+    ).toBe("/orders/o1");
+    expect(
       notificationHref(notice("QUOTE_CANCELLED", { quote_id: "q1" })),
     ).toBe("/quotes/q1");
   });

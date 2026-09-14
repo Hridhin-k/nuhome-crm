@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { defaultAdvanceAmount } from "@/lib/payments/advance";
+import { remainingPaymentKinds } from "@/lib/payments/reference";
 import { cn } from "@/lib/utils";
 
 const METHODS = [
@@ -26,13 +27,18 @@ export function PaymentForm({
   quoteId,
   orderId,
   remaining,
+  payments = [],
 }: {
   quoteId: string;
   orderId: string;
   remaining: number;
+  payments?: { kind?: string | null; status?: string | null }[];
 }) {
-  const [kind, setKind] = useState<"advance" | "full" | "nil">("advance");
-  const [amount, setAmount] = useState(String(defaultAdvanceAmount(remaining)));
+  const kinds = remainingPaymentKinds(payments);
+  const [kind, setKind] = useState<"advance" | "full" | "nil">(kinds[0]);
+  const [amount, setAmount] = useState(
+    String(kinds[0] === "full" ? remaining : defaultAdvanceAmount(remaining)),
+  );
   const [method, setMethod] = useState<(typeof METHODS)[number]["value"]>("upi");
   const [state, action, pending] = useActionState<ActionState, FormData>(
     recordPaymentAction,
@@ -81,7 +87,9 @@ export function PaymentForm({
               }}
               className="mt-2 h-11 min-h-11 w-full rounded-lg border border-outline-variant bg-surface px-3 text-on-surface"
             >
-              <option value="advance">Advance</option>
+              {kinds.includes("advance") ? (
+                <option value="advance">Advance</option>
+              ) : null}
               <option value="full">Full</option>
               <option value="nil">Nil (credit terms)</option>
             </select>
@@ -141,6 +149,8 @@ export function PaymentForm({
                 <Input
                   id="reference"
                   name="reference"
+                  required
+                  placeholder="UTR / cheque / receipt no."
                   className="mt-2 h-11 min-h-11"
                 />
               </div>

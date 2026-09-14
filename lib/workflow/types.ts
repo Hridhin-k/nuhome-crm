@@ -3,7 +3,7 @@ export const APP_ROLES = [
   "accounts",
   "procurement",
   "store",
-  "super_accounts",
+  "operations",
   "admin",
 ] as const;
 
@@ -95,6 +95,8 @@ export const AUDIT_ACTIONS = [
   "ORDER_CLOSED",
   "QUOTE_CANCELLED",
   "ORDER_CANCELLED",
+  "VENDOR_QUOTE_SUBMITTED",
+  "CREDIT_DELIVERY_REQUESTED",
   "ROLE_CHANGED",
   "PROFILE_UPDATED",
   "WORK_REASSIGNED",

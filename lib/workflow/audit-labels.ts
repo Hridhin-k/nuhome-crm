@@ -141,6 +141,14 @@ const ACTION_COPY: Record<
         ? `Reason: ${String(e.metadata.reason)}`
         : "This order will not continue",
   },
+  VENDOR_QUOTE_SUBMITTED: {
+    title: "Vendor quote submitted",
+    detail: () => "Waiting for Accounts to verify",
+  },
+  CREDIT_DELIVERY_REQUESTED: {
+    title: "Credit delivery requested",
+    detail: () => "Waiting for Operations to review",
+  },
   ROLE_CHANGED: {
     title: "Role changed",
     detail: (e) =>

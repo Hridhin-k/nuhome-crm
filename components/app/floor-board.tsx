@@ -15,6 +15,7 @@ export function FloorBoard({
   overdue,
   pendingPayments,
   pendingApprovals,
+  creditRequested = 0,
   open,
   customers,
   delivered,
@@ -24,6 +25,7 @@ export function FloorBoard({
   overdue: number;
   pendingPayments: number;
   pendingApprovals: number;
+  creditRequested?: number;
   open: number;
   customers: number;
   delivered: number;
@@ -90,6 +92,12 @@ export function FloorBoard({
           href="/approvals"
           label="Approvals"
           count={pendingApprovals}
+        />
+        <AttentionChip
+          href="/orders?credit=1"
+          label="Credit delivery"
+          count={creditRequested}
+          alert
         />
       </div>
     </section>

@@ -44,9 +44,9 @@ export function nextRequiredAction(input: {
       can("procurement") ||
       can("accounts") ||
       can("admin") ||
-      can("super_accounts");
+      can("operations");
     const canAccountsDesk =
-      can("accounts") || can("admin") || can("super_accounts");
+      can("accounts") || can("admin") || can("operations");
     const canDeliver = can("store") || can("sales") || can("admin");
     const salesCanRecord =
     (can("sales") || can("admin") || can("store")) &&

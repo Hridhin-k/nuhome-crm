@@ -44,6 +44,7 @@ export function QuoteBuilder({
   step = 2,
   showCustomerStep = true,
   quoteStatus,
+  showCost = false,
 }: {
   customers: Customer[];
   materials: PickerMaterial[];
@@ -60,6 +61,7 @@ export function QuoteBuilder({
   step?: 1 | 2 | 3;
   showCustomerStep?: boolean;
   quoteStatus?: "quote_draft" | "quote_rejected" | "quote_approved" | "quote_sent_to_customer";
+  showCost?: boolean;
 }) {
   const [activeStep, setActiveStep] = useState<1 | 2 | 3>(step);
   const [customerId, setCustomerId] = useState(
@@ -369,6 +371,7 @@ export function QuoteBuilder({
                             }
                           />
                         </div>
+                        {showCost ? (
                         <div>
                           <Label className="text-xs">Cost</Label>
                           <Input
@@ -385,6 +388,7 @@ export function QuoteBuilder({
                             }
                           />
                         </div>
+                        ) : null}
                         <div>
                           <Label className="text-xs">Discount</Label>
                           <Input

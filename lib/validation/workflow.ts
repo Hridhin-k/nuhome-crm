@@ -61,6 +61,30 @@ export const recordPaymentSchema = z.object({
       path: ["amount"],
     });
   }
+  if (value.kind !== "nil" && !value.reference?.trim()) {
+    ctx.addIssue({
+      code: "custom",
+      message: "Payment reference is required",
+      path: ["reference"],
+    });
+  }
+});
+
+export const recordVendorPaymentSchema = z.object({
+  vendor_order_id: uuid,
+  amount: money,
+  method: z
+    .enum(["cash", "upi", "bank_transfer", "cheque", "card", "other"])
+    .optional(),
+  reference: z.string().optional(),
+}).superRefine((value, ctx) => {
+  if (value.amount > 0 && value.method !== "cash" && !value.reference?.trim()) {
+    ctx.addIssue({
+      code: "custom",
+      message: "UTR / cheque reference is required for non-cash vendor payments",
+      path: ["reference"],
+    });
+  }
 });
 
 export const verifyPaymentSchema = z.object({

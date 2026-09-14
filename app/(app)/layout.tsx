@@ -20,10 +20,14 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
   const items = navForRoles(user.roles, user.role);
   const canQuote = rolesHavePermission(user.roles, "quotes.create");
   const canAdmin = rolesHavePermission(user.roles, "admin.manage");
+  const canOpsDesk =
+    canAdmin ||
+    rolesHavePermission(user.roles, "staff.manage") ||
+    rolesHavePermission(user.roles, "catalog.manage");
   const warm = [
     ...items.map((item) => item.href),
     ...(canQuote ? ["/walk-in"] : []),
-    ...(canAdmin ? ["/users", "/vendors", "/materials", "/company", "/reports"] : []),
+    ...(canOpsDesk ? ["/users", "/vendors", "/materials", "/company", "/reports"] : []),
   ];
 
   return (
@@ -31,7 +35,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
       <Suspense fallback={null}>
         <RouteProgress />
       </Suspense>
-      <div className="print:hidden">
+      <div className="sticky top-0 z-50 print:hidden">
         <AppNavbar
           items={items}
           name={user.fullName}

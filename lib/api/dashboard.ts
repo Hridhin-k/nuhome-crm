@@ -14,7 +14,7 @@ import {
   ordersWithStatus,
 } from "@/lib/workflow/home-counts";
 import { floorHref, ORDER_BUCKET_STATUSES } from "@/lib/workflow/status-buckets";
-import { orderHasOverdueVendor } from "@/lib/workflow/fulfillment";
+import { orderHasOverdueVendor, vendorOrderList } from "@/lib/workflow/fulfillment";
 
 export type QueueCard = {
   id: string;
@@ -48,6 +48,7 @@ export type OperationsSnapshot = {
   pendingPayments: number;
   overdue: number;
   stuck: number;
+  creditRequested: number;
   asOf: string;
   census: StatusCensus[];
   stages: PipelineStage[];
@@ -240,6 +241,16 @@ export const getOperationsSnapshot = cache(async (): Promise<OperationsSnapshot>
       progress: scale(overdue, workMax),
     },
     {
+      id: "credit-delivery",
+      title: "Credit delivery requests",
+      kind: "flag",
+      count: creditRequested,
+      href: "/orders?credit=1",
+      detail: "Operations must approve handover without full payment",
+      accent: "violet",
+      progress: scale(creditRequested, workMax),
+    },
+    {
       id: "deliveries",
       title: "Ready to deliver",
       count: deliveries,
@@ -258,6 +269,7 @@ export const getOperationsSnapshot = cache(async (): Promise<OperationsSnapshot>
     pendingPayments: payments.length,
     overdue,
     stuck,
+    creditRequested,
     asOf: new Date().toISOString(),
     census,
     stages,
@@ -266,7 +278,7 @@ export const getOperationsSnapshot = cache(async (): Promise<OperationsSnapshot>
 });
 
 export const getHomeQueues = cache(async (role: AppRole): Promise<QueueCard[]> => {
-  if (role === "admin" || role === "super_accounts") {
+  if (role === "admin" || role === "operations") {
     const snapshot = await getOperationsSnapshot();
     return snapshot.queues;
   }
@@ -353,7 +365,12 @@ export const getHomeQueues = cache(async (role: AppRole): Promise<QueueCard[]> =
       listOrders([...ORDER_BUCKET_STATUSES.active]),
     ]);
     const awaiting = ordersWithStatus(activeOrders, "order_active");
-    const max = Math.max(approvals.length, payments.length, awaiting, 1);
+    const vendorQuotes = activeOrders.filter((order) =>
+      vendorOrderList(order.vendor_orders).some(
+        (batch) => batch.commercial_status === "quoted",
+      ),
+    ).length;
+    const max = Math.max(approvals.length, payments.length, awaiting, vendorQuotes, 1);
     return withAccents([
       {
         id: "approvals",
@@ -362,6 +379,14 @@ export const getHomeQueues = cache(async (role: AppRole): Promise<QueueCard[]> =
         href: "/approvals",
         detail: "Review selling price, discount, and margin",
         progress: scale(approvals.length, max),
+      },
+      {
+        id: "vendor-quotes",
+        title: "Vendor quotes to verify",
+        count: vendorQuotes,
+        href: "/fulfillment",
+        detail: "Vendor quote waiting for Accounts",
+        progress: scale(vendorQuotes, max),
       },
       {
         id: "payments",

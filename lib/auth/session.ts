@@ -33,7 +33,7 @@ export const getSessionUser = cache(async (): Promise<SessionUser | null> => {
     throw new Error("Failed to fetch profile");
   }
 
-  const primary = (profile?.role as AppRole | undefined) ?? "sales";
+  const primary = parseAppRole(profile?.role) ?? "sales";
   const extra = relList(profile?.profile_roles)
     .map((row) => parseAppRole(row.role))
     .filter((role): role is AppRole => Boolean(role));
