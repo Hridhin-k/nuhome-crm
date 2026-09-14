@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useMemo, useState } from "react";
 import {
   receiveAction,
   sendToVendorAction,
@@ -21,6 +21,10 @@ import {
   WRITE_OFF_REASONS,
   type WriteOffReason,
 } from "@/lib/workflow/fulfillment";
+import {
+  nextSplitRow,
+  remainingToAllocate,
+} from "@/lib/workflow/vendor-split";
 
 export function SendToVendorForm({
   orderId,
@@ -40,26 +44,35 @@ export function SendToVendorForm({
 }) {
   const sendable = items.filter((item) => item.available > 0);
   const defaultVendor = vendors[0]?.id ?? "";
-  const [vendorByItem, setVendorByItem] = useState<Record<string, string>>(() =>
-    Object.fromEntries(sendable.map((item) => [item.id, defaultVendor])),
-  );
-  const [qty, setQty] = useState<Record<string, number>>(() =>
-    Object.fromEntries(sendable.map((item) => [item.id, Math.floor(item.available)])),
+  const [rows, setRows] = useState(() =>
+    sendable.map((item) => ({
+      key: item.id,
+      itemId: item.id,
+      vendorId: defaultVendor,
+      qty: Math.floor(item.available),
+    })),
   );
   const [state, action, pending] = useActionState<ActionState, FormData>(
     sendToVendorAction,
     {},
   );
-  const payload = sendable
-    .map((item) => {
-      const vendorId = vendorByItem[item.id] ?? defaultVendor;
-      const vendor = vendors.find((row) => row.id === vendorId);
+  const byItem = useMemo(() => {
+    const map = new Map<string, typeof rows>();
+    for (const row of rows) {
+      map.set(row.itemId, [...(map.get(row.itemId) ?? []), row]);
+    }
+    return map;
+  }, [rows]);
+  const payload = rows
+    .map((row) => {
+      const item = sendable.find((line) => line.id === row.itemId);
+      const vendor = vendors.find((entry) => entry.id === row.vendorId);
       return {
-        order_item_id: item.id,
-        vendor_id: vendorId,
+        order_item_id: row.itemId,
+        vendor_id: row.vendorId,
         vendor_name: vendor?.name,
-        quantity: Number(qty[item.id] ?? 0),
-        unit_cost: item.unit_cost ?? 0,
+        quantity: Number(row.qty ?? 0),
+        unit_cost: item?.unit_cost ?? 0,
       };
     })
     .filter((row) => row.quantity > 0 && row.vendor_id);
@@ -72,7 +85,7 @@ export function SendToVendorForm({
   return (
     <FormSheet
       title="Send to vendors"
-      description="Qty is filled. Change the vendor on a line to split the job. Accounts verifies each vendor quote before send."
+      description="Need 10 from two factories? Put 5 on one vendor row and tap Add vendor — the other 5 go on the next row. Accounts verifies each vendor quote before send."
       trigger={
         <span className="inline-flex h-11 min-h-11 w-full items-center justify-center rounded-lg bg-primary px-4 text-subheading text-on-primary">
           Allocate to vendor
@@ -95,57 +108,152 @@ export function SendToVendorForm({
             Used for overdue flags. Same date is applied to every vendor batch.
           </p>
           <ul className="divide-y divide-surface-variant rounded-lg border border-surface-variant">
-            {sendable.map((item) => (
-              <li key={item.id} className="flex min-w-0 flex-col gap-2 px-3 py-2.5">
-                <div className="flex min-w-0 items-center gap-2">
-                  <div className="min-w-0 flex-1">
+            {sendable.map((item) => {
+              const itemRows = byItem.get(item.id) ?? [];
+              const leftover = remainingToAllocate(item.available, itemRows);
+              const assigned = itemRows.reduce((sum, row) => sum + row.qty, 0);
+              const canSplit = Boolean(
+                nextSplitRow({
+                  available: item.available,
+                  rows: itemRows.map((row) => ({
+                    quantity: row.qty,
+                    vendor_id: row.vendorId,
+                  })),
+                  vendors,
+                }),
+              );
+              return (
+                <li key={item.id} className="flex min-w-0 flex-col gap-2 px-3 py-2.5">
+                  <div>
                     <p className="text-sm font-medium">{item.description}</p>
                     <p className="text-xs text-on-surface-variant">
-                      Unsent {item.available}
+                      Need {item.available}
+                      {assigned > 0 ? ` · Assigned ${assigned}` : ""}
+                      {leftover > 0 ? ` · Left ${leftover}` : ""}
                     </p>
                   </div>
-                  <Input
-                    type="number"
-                    inputMode="numeric"
-                    min={0}
-                    max={Math.floor(item.available)}
-                    step={1}
-                    className="h-10 w-20 shrink-0"
-                    value={qty[item.id] ?? 0}
-                    onChange={(e) => {
-                      const next = Math.trunc(Number(e.target.value));
-                      setQty((current) => ({
-                        ...current,
-                        [item.id]: Number.isFinite(next)
-                          ? Math.max(0, Math.min(Math.floor(item.available), next))
-                          : 0,
-                      }));
-                    }}
-                  />
-                </div>
-                <select
-                  value={vendorByItem[item.id] ?? defaultVendor}
-                  onChange={(e) =>
-                    setVendorByItem((current) => ({
-                      ...current,
-                      [item.id]: e.target.value,
-                    }))
-                  }
-                  className="h-11 min-h-11 rounded-lg border border-outline-variant bg-surface px-3 text-on-surface"
-                >
-                  {vendors.map((vendor) => (
-                    <option key={vendor.id} value={vendor.id}>
-                      {vendor.name}
-                    </option>
-                  ))}
-                </select>
-              </li>
-            ))}
+                  {itemRows.map((row) => {
+                    const others = assigned - row.qty;
+                    const maxQty = Math.max(0, Math.floor(item.available) - others);
+                    return (
+                      <div key={row.key} className="flex min-w-0 flex-col gap-2">
+                        <div className="flex items-center gap-2">
+                          <Input
+                            type="number"
+                            inputMode="numeric"
+                            min={0}
+                            max={maxQty}
+                            step={1}
+                            className="h-10 w-20 shrink-0"
+                            value={row.qty}
+                            onChange={(e) => {
+                              const next = Math.trunc(Number(e.target.value));
+                              setRows((current) =>
+                                current.map((entry) =>
+                                  entry.key === row.key
+                                    ? {
+                                        ...entry,
+                                        qty: Number.isFinite(next)
+                                          ? Math.max(0, Math.min(maxQty, next))
+                                          : 0,
+                                      }
+                                    : entry,
+                                ),
+                              );
+                            }}
+                          />
+                          {itemRows.length > 1 ? (
+                            <button
+                              type="button"
+                              className="text-xs font-semibold text-on-surface-variant"
+                              onClick={() =>
+                                setRows((current) =>
+                                  current.filter((entry) => entry.key !== row.key),
+                                )
+                              }
+                            >
+                              Remove
+                            </button>
+                          ) : null}
+                        </div>
+                        <select
+                          value={row.vendorId}
+                          onChange={(e) =>
+                            setRows((current) =>
+                              current.map((entry) =>
+                                entry.key === row.key
+                                  ? { ...entry, vendorId: e.target.value }
+                                  : entry,
+                              ),
+                            )
+                          }
+                          className="h-11 min-h-11 rounded-lg border border-outline-variant bg-surface px-3 text-on-surface"
+                        >
+                          {vendors.map((vendor) => (
+                            <option key={vendor.id} value={vendor.id}>
+                              {vendor.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    );
+                  })}
+                  {canSplit ? (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="w-full"
+                      onClick={() => {
+                        const added = nextSplitRow({
+                          available: item.available,
+                          rows: itemRows.map((row) => ({
+                            quantity: row.qty,
+                            vendor_id: row.vendorId,
+                          })),
+                          vendors,
+                        });
+                        if (!added) return;
+                        setRows((current) => {
+                          const leftoverNow = remainingToAllocate(
+                            item.available,
+                            current.filter((entry) => entry.itemId === item.id),
+                          );
+                          let next = current;
+                          if (leftoverNow <= 0) {
+                            const last = [...current]
+                              .reverse()
+                              .find((entry) => entry.itemId === item.id);
+                            if (!last) return current;
+                            next = current.map((entry) =>
+                              entry.key === last.key
+                                ? { ...entry, qty: entry.qty - added.quantity }
+                                : entry,
+                            );
+                          }
+                          return [
+                            ...next,
+                            {
+                              key: crypto.randomUUID(),
+                              itemId: item.id,
+                              vendorId: added.vendor_id,
+                              qty: added.quantity,
+                            },
+                          ];
+                        });
+                      }}
+                    >
+                      Add vendor
+                    </Button>
+                  ) : null}
+                </li>
+              );
+            })}
           </ul>
           <p className="text-sm text-on-surface-variant">
             {vendorCount <= 1
               ? "One vendor quote will be created for Accounts to verify."
-              : `${vendorCount} vendor quotes will be created and split automatically.`}
+              : `${vendorCount} vendor quotes will be created. Same item can sit on more than one quote.`}
           </p>
           {state.error ? (
             <p className="text-sm text-destructive">{state.error}</p>

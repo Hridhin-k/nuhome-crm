@@ -111,7 +111,7 @@ export const STATUS_DOT_CLASS: Record<WorkflowStatus, string> = {
 
 export const STATUS_NEXT_LINE: Record<WorkflowStatus, string> = {
   quote_draft: "Finish the quote and submit to Accounts.",
-  quote_pending_accounts: "Accounts is reviewing price, discount, and margin.",
+  quote_pending_accounts: "Accounts must review price, discount, and margin.",
   quote_rejected: "Revise this version and resubmit.",
   quote_approved: "Send the approved quote to the customer.",
   quote_sent_to_customer: "Record advance, full, or nil payment.",

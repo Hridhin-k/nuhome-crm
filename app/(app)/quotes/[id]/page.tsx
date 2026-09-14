@@ -17,6 +17,7 @@ import { CancelJobSheet } from "@/components/quotes/cancel-sheet";
 import { WhatsAppShareSheet } from "@/components/quotes/whatsapp-share-sheet";
 import { EmailShareSheet } from "@/components/quotes/email-share-sheet";
 import { AttachmentPanel } from "@/components/documents/attachment-panel";
+import { JobTracks } from "@/components/jobs/job-tracks";
 import { listQuoteActivity } from "@/lib/api/audit";
 import { listAttachments } from "@/lib/api/documents";
 import { listPaymentsForOrder } from "@/lib/api/orders";
@@ -142,6 +143,10 @@ export default async function QuoteDetailPage({
         </div>
         <StatusBadge status={displayStatus} />
       </header>
+      <JobTracks
+        status={displayStatus}
+        hasPendingPayment={payments.some((p) => p.status === "pending")}
+      />
       {notice === "submitted" ? <Notice>Submitted to Accounts.</Notice> : null}
       {notice === "approved" ? (
         <Notice>Quote approved. Sales can send it to the customer.</Notice>
@@ -425,7 +430,7 @@ export default async function QuoteDetailPage({
           rolesHavePermission(user.roles, "quotes.submit") ? (
             <ConfirmActionSheet
               title="Submit to Accounts"
-              description="The customer will not see this quote until it is approved and sent."
+              description="Accounts must review this quote before you can send it to the customer."
               triggerLabel="Submit to Accounts"
               confirmLabel="Submit quote"
               action={submitQuoteAction.bind(null, quote.id)}

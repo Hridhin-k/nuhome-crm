@@ -10,6 +10,7 @@ import { InstallationForm } from "@/components/documents/installation-form";
 import { WarrantyPanel } from "@/components/documents/warranty-form";
 import { CreditDeliveryDecide, CreditDeliveryRequest } from "@/components/orders/credit-delivery-forms";
 import { HoldCard } from "@/components/orders/hold-card";
+import { JobTracks } from "@/components/jobs/job-tracks";
 import { OrderHero } from "@/components/orders/order-hero";
 import { ReassignOrderForm } from "@/components/orders/reassign-order-form";
 import { CancelJobSheet } from "@/components/quotes/cancel-sheet";
@@ -160,6 +161,13 @@ export default async function OrderDetailPage({
         paid={paid}
         outstanding={outstanding}
         statusExplanation={statusExplanation}
+      />
+      <JobTracks
+        status={status}
+        outstanding={outstanding}
+        paid={paid}
+        hasPendingPayment={payments.some((payment) => payment.status === "pending")}
+        hasUnsent={hasUnsent}
       />
       {salesperson?.full_name ? (
         <p className="rounded-lg border border-outline-variant bg-card px-4 py-3 text-sm">

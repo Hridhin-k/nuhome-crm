@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
   groupLinesByVendor,
+  nextSplitRow,
+  remainingToAllocate,
   suggestedVendorQuoteAmount,
   suggestedVendorQuoteRef,
 } from "@/lib/workflow/vendor-split";
@@ -33,5 +35,43 @@ describe("vendor quotation split", () => {
   it("auto-fills a quote reference from the order and vendor name", () => {
     expect(suggestedVendorQuoteRef("ORD-1029", "Kolo Kitchen")).toBe("ORD-1029-KOLO-KITCHEN");
     expect(suggestedVendorQuoteAmount([{ quantity: 2, unit_cost: 99.999 }])).toBe(200);
+  });
+
+  it("splits one order line across two vendors", () => {
+    const batches = groupLinesByVendor([
+      { order_item_id: KITCHEN, vendor_id: VENDOR_A, quantity: 5, unit_cost: 100 },
+      { order_item_id: KITCHEN, vendor_id: VENDOR_B, quantity: 5, unit_cost: 100 },
+    ]);
+    expect(batches).toHaveLength(2);
+    expect(batches.find((batch) => batch.vendor_id === VENDOR_A)?.items[0].quantity).toBe(5);
+    expect(batches.find((batch) => batch.vendor_id === VENDOR_B)?.items[0].quantity).toBe(5);
+  });
+
+  it("merges qty when the same vendor is chosen twice on one line", () => {
+    const batches = groupLinesByVendor([
+      { order_item_id: KITCHEN, vendor_id: VENDOR_A, quantity: 4, unit_cost: 100 },
+      { order_item_id: KITCHEN, vendor_id: VENDOR_A, quantity: 6, unit_cost: 100 },
+    ]);
+    expect(batches).toHaveLength(1);
+    expect(batches[0].items[0].quantity).toBe(10);
+    expect(batches[0].quote_amount).toBe(1000);
+  });
+
+  it("adds leftover qty, or splits 10 into 5+5 when the line is already full", () => {
+    expect(
+      nextSplitRow({
+        available: 10,
+        rows: [{ quantity: 6, vendor_id: VENDOR_A }],
+        vendors: [{ id: VENDOR_A }, { id: VENDOR_B }],
+      }),
+    ).toEqual({ quantity: 4, vendor_id: VENDOR_B });
+    expect(
+      nextSplitRow({
+        available: 10,
+        rows: [{ quantity: 10, vendor_id: VENDOR_A }],
+        vendors: [{ id: VENDOR_A }, { id: VENDOR_B }],
+      }),
+    ).toEqual({ quantity: 5, vendor_id: VENDOR_B });
+    expect(remainingToAllocate(10, [{ quantity: 5 }, { quantity: 5 }])).toBe(0);
   });
 });

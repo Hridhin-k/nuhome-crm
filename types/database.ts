@@ -138,6 +138,7 @@ export type Database = {
           gstin: string | null
           id: number
           legal_name: string
+          min_quote_margin_percent: number
           phone: string | null
           state_code: string | null
           updated_at: string
@@ -149,6 +150,7 @@ export type Database = {
           gstin?: string | null
           id?: number
           legal_name?: string
+          min_quote_margin_percent?: number
           phone?: string | null
           state_code?: string | null
           updated_at?: string
@@ -160,6 +162,7 @@ export type Database = {
           gstin?: string | null
           id?: number
           legal_name?: string
+          min_quote_margin_percent?: number
           phone?: string | null
           state_code?: string | null
           updated_at?: string
