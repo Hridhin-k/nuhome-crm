@@ -21,6 +21,11 @@ export function CompanyForm({
     email: string | null;
     state_code: string | null;
     default_gst_rate: number;
+    bank_name?: string | null;
+    bank_account?: string | null;
+    bank_ifsc?: string | null;
+    bank_branch?: string | null;
+    upi_id?: string | null;
   };
 }) {
   const [state, action, pending] = useActionState<DocumentActionState, FormData>(
@@ -105,6 +110,53 @@ export function CompanyForm({
             className="mt-2 h-11"
           />
         </div>
+      </div>
+      <div>
+        <Label htmlFor="bank_name">Bank name</Label>
+        <Input
+          id="bank_name"
+          name="bank_name"
+          defaultValue={company.bank_name ?? ""}
+          className="mt-2 h-11"
+        />
+      </div>
+      <div className="grid gap-3 sm:grid-cols-2">
+        <div>
+          <Label htmlFor="bank_account">Account number</Label>
+          <Input
+            id="bank_account"
+            name="bank_account"
+            defaultValue={company.bank_account ?? ""}
+            className="mt-2 h-11"
+          />
+        </div>
+        <div>
+          <Label htmlFor="bank_ifsc">IFSC</Label>
+          <Input
+            id="bank_ifsc"
+            name="bank_ifsc"
+            defaultValue={company.bank_ifsc ?? ""}
+            className="mt-2 h-11 uppercase"
+          />
+        </div>
+      </div>
+      <div>
+        <Label htmlFor="bank_branch">Bank branch</Label>
+        <Input
+          id="bank_branch"
+          name="bank_branch"
+          defaultValue={company.bank_branch ?? ""}
+          className="mt-2 h-11"
+        />
+      </div>
+      <div>
+        <Label htmlFor="upi_id">UPI ID</Label>
+        <Input
+          id="upi_id"
+          name="upi_id"
+          defaultValue={company.upi_id ?? ""}
+          className="mt-2 h-11"
+        />
       </div>
       {state.error ? (
         <p className="text-sm text-destructive" role="alert">

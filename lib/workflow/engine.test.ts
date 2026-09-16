@@ -39,6 +39,9 @@ describe("quote workflow", () => {
     expect(() =>
       assertTransition("quote_sent_to_customer", "quote_draft"),
     ).not.toThrow();
+    expect(() =>
+      assertTransition("quote_sent_to_customer", "order_active"),
+    ).not.toThrow();
   });
 
   it("never sends a rejected quote to the customer", () => {

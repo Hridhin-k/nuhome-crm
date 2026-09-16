@@ -322,6 +322,7 @@ export async function recordVendorPayment(input: {
   amount: number;
   method?: string;
   reference?: string;
+  bill_ref?: string;
 }) {
   const parsed = recordVendorPaymentSchema.parse(input);
   const supabase = await createServerSupabaseClient();
@@ -330,6 +331,7 @@ export async function recordVendorPayment(input: {
     p_amount: parsed.amount,
     p_method: parsed.method,
     p_reference: parsed.reference,
+    p_bill_ref: parsed.bill_ref,
   });
   throwIfError(error);
 }

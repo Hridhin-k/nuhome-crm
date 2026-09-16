@@ -2,16 +2,24 @@ import { getDb } from "@/lib/api/db";
 
 export type PublicQuote = {
   quote_number: string;
+  salesman?: string | null;
   company?: {
     legal_name: string;
     gstin: string | null;
     address: string | null;
     phone: string | null;
+    email?: string | null;
+    bank_name?: string | null;
+    bank_account?: string | null;
+    bank_ifsc?: string | null;
+    bank_branch?: string | null;
+    upi_id?: string | null;
   } | null;
   customer: {
     name: string;
     phone: string | null;
     address: string | null;
+    firm?: string | null;
     gstin?: string | null;
     billing_address?: string | null;
     site_address?: string | null;
@@ -36,6 +44,9 @@ export type PublicQuote = {
     gst_rate?: number | null;
     tax?: number | null;
     unit_price?: number | null;
+    specification?: string | null;
+    item_code?: string | null;
+    discount?: number | null;
   }[];
 };
 

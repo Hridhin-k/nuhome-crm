@@ -5,8 +5,17 @@ export function orderStatusExplanation(input: {
   status: WorkflowStatus;
   outstanding: number;
   activated?: boolean;
+  creditDelivery?: string | null;
 }): string {
-  const { status, outstanding, activated } = input;
+  const { status, outstanding, activated, creditDelivery } = input;
+  if (creditDelivery === "approved") {
+    if (status === "payment_pending_verification" || status === "quote_sent_to_customer") {
+      return "Credit delivery is approved. This job is not waiting on advance payment.";
+    }
+    if (status === "order_active") {
+      return "Credit delivery approved. Accounts can send this order to a vendor.";
+    }
+  }
   switch (status) {
     case "quote_sent_to_customer":
       return "Waiting for Sales to record payment terms.";

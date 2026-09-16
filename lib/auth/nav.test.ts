@@ -39,4 +39,14 @@ describe("navForRoles", () => {
     expect(navItemIsActive("/quotes/abc", "/quotes")).toBe(true);
     expect(navItemIsActive("/quotes", "/quotes")).toBe(true);
   });
+
+  it("gives Operations customers plus reports", () => {
+    expect(navForRoles(["operations"], "operations").map((item) => item.href)).toEqual([
+      "/home",
+      "/customers",
+      "/orders",
+      "/reports",
+      "/more",
+    ]);
+  });
 });

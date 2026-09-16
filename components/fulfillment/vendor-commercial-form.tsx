@@ -5,7 +5,6 @@ import {
   confirmVendorSendAction,
   decideVendorQuoteAction,
   recordVendorPaymentAction,
-  saveVendorCommercialAction,
   saveVendorQuoteAction,
   type ActionState,
 } from "@/app/actions/workflow";
@@ -13,6 +12,7 @@ import { ConfirmActionSheet } from "@/components/app/confirm-action-sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { QuoteLinesTable } from "@/components/quotes/quote-lines-table";
 import { formatInrExact } from "@/lib/format/money";
 import { vendorPaymentReferenceRequired } from "@/lib/payments/reference";
 
@@ -40,6 +40,8 @@ export function VendorCommercialForm({
   paidAmount,
   paidReference,
   paidMethod,
+  lines,
+  quoteNotes,
 }: {
   orderId: string;
   vendorOrderId: string;
@@ -55,6 +57,13 @@ export function VendorCommercialForm({
   paidAmount?: number | string | null;
   paidReference?: string | null;
   paidMethod?: string | null;
+  lines: {
+    description: string;
+    item_code?: string | null;
+    specification?: string | null;
+    quantity: number;
+  }[];
+  quoteNotes?: string | null;
 }) {
   const [quoteState, quoteAction, quoting] = useActionState<ActionState, FormData>(
     saveVendorQuoteAction,
@@ -64,10 +73,6 @@ export function VendorCommercialForm({
     ActionState,
     FormData
   >(decideVendorQuoteAction, {});
-  const [state, action, pending] = useActionState<ActionState, FormData>(
-    saveVendorCommercialAction,
-    {},
-  );
   const [payState, payAction, paying] = useActionState<ActionState, FormData>(
     recordVendorPaymentAction,
     {},
@@ -80,7 +85,6 @@ export function VendorCommercialForm({
   const canConfirm = draft && commercial === "quote_approved" && canSend;
   const sent = physicalStatus !== "draft";
   const vendorPaid = commercial === "vendor_paid" || paidAmount != null;
-  const billSaved = Boolean(billAmount) || commercial === "payable" || vendorPaid;
   const needsReference = vendorPaymentReferenceRequired(method, 1);
 
   return (
@@ -90,6 +94,17 @@ export function VendorCommercialForm({
       </p>
       {quoteRejectionReason ? (
         <p className="text-sm text-destructive">{quoteRejectionReason}</p>
+      ) : null}
+
+      {lines.length > 0 ? (
+        <div className="overflow-x-auto">
+          <QuoteLinesTable items={lines} showAmount={false} />
+        </div>
+      ) : null}
+      {quoteNotes ? (
+        <p className="text-sm text-on-surface-variant">
+          <span className="font-medium text-on-surface">Quote notes.</span> {quoteNotes}
+        </p>
       ) : null}
 
       {needsQuote && canSend ? (
@@ -163,46 +178,26 @@ export function VendorCommercialForm({
 
       {sent ? (
         <>
-          {billSaved ? (
-            <p className="rounded-lg bg-surface-container-low px-3 py-2 text-sm text-on-surface">
-              Vendor bill saved
-              {billRef ? ` · ${billRef}` : ""}
-              {billAmount ? ` · ${formatInrExact(Number(billAmount))}` : ""}
-            </p>
-          ) : null}
-          {!vendorPaid ? (
-            <form action={action} className="grid gap-2">
-              <input type="hidden" name="order_id" value={orderId} />
-              <input type="hidden" name="vendor_order_id" value={vendorOrderId} />
-              <Label>Vendor bill ref</Label>
-              <Input name="bill_ref" defaultValue={billRef ?? ""} className="h-11 min-h-11" />
-              <Label>Amount payable</Label>
-              <Input
-                name="bill_amount"
-                type="number"
-                step="0.01"
-                inputMode="decimal"
-                min="0.01"
-                defaultValue={billAmount ? String(billAmount) : quoteAmount ? String(quoteAmount) : ""}
-                className="h-11 min-h-11"
-              />
-              <Button type="submit" disabled={pending} className="min-h-11">
-                {pending ? "Saving…" : billSaved ? "Update vendor bill" : "Save vendor bill"}
-              </Button>
-              {state.error ? <p className="text-sm text-destructive">{state.error}</p> : null}
-            </form>
-          ) : null}
           {vendorPaid ? (
             <p className="rounded-lg border border-emerald-700/30 bg-emerald-950/40 px-3 py-2 text-sm font-medium text-emerald-300">
               Vendor paid
               {paidAmount != null ? ` · ${formatInrExact(Number(paidAmount))}` : ""}
               {paidMethod ? ` · ${paidMethod}` : ""}
               {paidReference ? ` · ${paidReference}` : ""}
+              {billRef ? ` · bill ${billRef}` : ""}
             </p>
           ) : (
             <form action={payAction} className="grid gap-2">
               <input type="hidden" name="order_id" value={orderId} />
               <input type="hidden" name="vendor_order_id" value={vendorOrderId} />
+              <Label>Vendor bill ref</Label>
+              <Input
+                name="bill_ref"
+                defaultValue={billRef ?? ""}
+                required
+                placeholder="Vendor invoice / bill number"
+                className="h-11 min-h-11"
+              />
               <Label>Pay vendor</Label>
               <Input
                 name="amount"

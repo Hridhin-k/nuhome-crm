@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { sendResendEmail } from "@/lib/email/resend";
 import { humanizeError, rethrowNavigationError } from "@/lib/api/errors";
 import { requirePermission, requireUser } from "@/lib/auth/guards";
 import { rolesHavePermission } from "@/lib/auth/permissions";
@@ -303,11 +304,11 @@ export async function dispatchAction(vendorOrderId: string, orderId: string) {
     revalidatePath("/fulfillment");
     revalidatePath("/orders");
     revalidatePath("/home");
-    redirect(`/fulfillment/${orderId}?notice=dispatched`);
+    redirect(fulfillmentHref(orderId, "dispatched", vendorOrderId));
   } catch (error) {
     rethrowNavigationError(error);
     redirect(
-      `/fulfillment/${orderId}?error=${encodeURIComponent(humanizeError(error))}`,
+      `/fulfillment/${orderId}?error=${encodeURIComponent(humanizeError(error))}&focus=${vendorOrderId}`,
     );
   }
 }
@@ -318,15 +319,16 @@ export async function receiveAction(
 ): Promise<ActionState> {
   await requirePermission("fulfillment.update");
   const orderId = String(formData.get("order_id"));
+  const vendorOrderId = String(formData.get("vendor_order_id"));
   try {
     await recordItemsReceived({
-      vendor_order_id: String(formData.get("vendor_order_id")),
+      vendor_order_id: vendorOrderId,
       received: JSON.parse(String(formData.get("received") ?? "[]")),
     });
     revalidatePath("/fulfillment");
     revalidatePath("/orders");
     revalidatePath("/home");
-    redirect(`/fulfillment/${orderId}?notice=received`);
+    redirect(fulfillmentHref(orderId, "received", vendorOrderId));
   } catch (error) {
     rethrowNavigationError(error);
     return { error: humanizeError(error) };
@@ -458,27 +460,13 @@ export async function sendQuoteEmailAction(formData: FormData): Promise<ActionSt
   const email = String(formData.get("email") ?? "").trim();
   const message = String(formData.get("message") ?? "").trim();
   if (!email) return { error: "Customer email is required" };
-  const key = process.env.RESEND_API_KEY;
-  if (!key) {
-    return { error: "Email is not configured. Set RESEND_API_KEY." };
-  }
   try {
-    const response = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${key}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        from: process.env.RESEND_FROM_EMAIL ?? "Nuhome <quotes@nuhome.in>",
-        to: [email],
-        subject: "Your Nuhome quotation",
-        text: message,
-      }),
+    await sendResendEmail({
+      to: email,
+      subject: "Your Nuhome quotation",
+      text: message,
+      html: `<p>${message.replace(/\n/g, "<br/>")}</p>`,
     });
-    if (!response.ok) {
-      throw new Error("The email provider rejected the message");
-    }
     return {};
   } catch (error) {
     return { error: humanizeError(error) };
@@ -523,20 +511,30 @@ export async function decideCreditDeliveryAction(
   }
 }
 
+function fulfillmentHref(
+  orderId: string,
+  notice: string,
+  vendorOrderId?: string,
+) {
+  const focus = vendorOrderId ? `&focus=${vendorOrderId}` : "";
+  return `/fulfillment/${orderId}?notice=${notice}${focus}`;
+}
+
 export async function saveVendorQuoteAction(
   _prev: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
   await requirePermission("orders.send_to_vendor");
   const orderId = String(formData.get("order_id"));
+  const vendorOrderId = String(formData.get("vendor_order_id"));
   try {
     await saveVendorQuote({
-      vendor_order_id: String(formData.get("vendor_order_id")),
+      vendor_order_id: vendorOrderId,
       quote_ref: String(formData.get("quote_ref") ?? ""),
       quote_amount: Number(formData.get("quote_amount")),
     });
     revalidatePath(`/fulfillment/${orderId}`);
-    redirect(`/fulfillment/${orderId}?notice=quoted`);
+    redirect(fulfillmentHref(orderId, "quoted", vendorOrderId));
   } catch (error) {
     rethrowNavigationError(error);
     return { error: humanizeError(error) };
@@ -549,14 +547,15 @@ export async function decideVendorQuoteAction(
 ): Promise<ActionState> {
   await requirePermission("vendors.quote_approve");
   const orderId = String(formData.get("order_id"));
+  const vendorOrderId = String(formData.get("vendor_order_id"));
   try {
     await decideVendorQuote({
-      vendor_order_id: String(formData.get("vendor_order_id")),
+      vendor_order_id: vendorOrderId,
       approve: String(formData.get("decision")) === "approve",
       reason: String(formData.get("reason") ?? "") || undefined,
     });
     revalidatePath(`/fulfillment/${orderId}`);
-    redirect(`/fulfillment/${orderId}?notice=quote-decided`);
+    redirect(fulfillmentHref(orderId, "quote-decided", vendorOrderId));
   } catch (error) {
     rethrowNavigationError(error);
     return { error: humanizeError(error) };
@@ -573,11 +572,11 @@ export async function confirmVendorSendAction(
     revalidatePath("/fulfillment");
     revalidatePath("/orders");
     revalidatePath("/home");
-    redirect(`/fulfillment/${orderId}?notice=sent-vendor`);
+    redirect(fulfillmentHref(orderId, "sent-vendor", vendorOrderId));
   } catch (error) {
     rethrowNavigationError(error);
     redirect(
-      `/fulfillment/${orderId}?error=${encodeURIComponent(humanizeError(error))}`,
+      `/fulfillment/${orderId}?error=${encodeURIComponent(humanizeError(error))}&focus=${vendorOrderId}`,
     );
   }
 }
@@ -588,19 +587,17 @@ export async function saveVendorCommercialAction(
 ): Promise<ActionState> {
   await requirePermission("fulfillment.update");
   const orderId = String(formData.get("order_id") ?? "");
+  const vendorOrderId = String(formData.get("vendor_order_id"));
   try {
     const amount = Number(formData.get("quote_amount") || "");
-    const bill = Number(formData.get("bill_amount") || "");
     await saveVendorCommercial({
-      vendor_order_id: String(formData.get("vendor_order_id")),
+      vendor_order_id: vendorOrderId,
       quote_ref: String(formData.get("quote_ref") ?? "") || undefined,
       quote_amount: Number.isFinite(amount) && amount > 0 ? amount : undefined,
-      bill_ref: String(formData.get("bill_ref") ?? "") || undefined,
-      bill_amount: Number.isFinite(bill) && bill > 0 ? bill : undefined,
     });
     revalidatePath("/fulfillment");
     if (orderId) revalidatePath(`/fulfillment/${orderId}`);
-    redirect(`/fulfillment/${orderId}?notice=vendor-bill`);
+    redirect(fulfillmentHref(orderId, "vendor-quoted", vendorOrderId));
   } catch (error) {
     rethrowNavigationError(error);
     return { error: humanizeError(error) };
@@ -613,16 +610,18 @@ export async function recordVendorPaymentAction(
 ): Promise<ActionState> {
   await requirePermission("payments.verify");
   const orderId = String(formData.get("order_id") ?? "");
+  const vendorOrderId = String(formData.get("vendor_order_id"));
   try {
     await recordVendorPayment({
-      vendor_order_id: String(formData.get("vendor_order_id")),
+      vendor_order_id: vendorOrderId,
       amount: Number(formData.get("amount")),
       method: String(formData.get("method") || "") || undefined,
       reference: String(formData.get("reference") ?? "") || undefined,
+      bill_ref: String(formData.get("bill_ref") ?? "") || undefined,
     });
     revalidatePath("/fulfillment");
     if (orderId) revalidatePath(`/fulfillment/${orderId}`);
-    redirect(`/fulfillment/${orderId || ""}?notice=vendor-paid`);
+    redirect(fulfillmentHref(orderId, "vendor-paid", vendorOrderId));
   } catch (error) {
     rethrowNavigationError(error);
     return { error: humanizeError(error) };

@@ -282,7 +282,18 @@
       border: none !important;
       max-width: none !important;
       margin: 0 !important;
-      padding: 0 !important;
+      padding: 12mm !important;
+    }
+
+    .nuhome-sheet table,
+    .nuhome-sheet th,
+    .nuhome-sheet td {
+      border: none !important;
+    }
+
+    .nuhome-sheet {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
     }
   }
 

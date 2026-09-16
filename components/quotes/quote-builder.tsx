@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { DEFAULT_GST_RATE, lineTotalWithGst } from "@/lib/gst";
+import { lineTotalWithGst } from "@/lib/gst";
 import { formatInrExact } from "@/lib/format/money";
 import {
   addMaterialLine,
@@ -109,7 +109,7 @@ export function QuoteBuilder({
         unit_cost: 0,
         discount: 0,
         tax: 0,
-        gst_rate: DEFAULT_GST_RATE,
+        gst_rate: 0,
       },
     ]);
   }
@@ -132,6 +132,8 @@ export function QuoteBuilder({
     unit_cost: line.unit_cost,
     discount: line.discount,
     tax: line.tax,
+    specification: line.specification,
+    item_code: line.item_code,
     hsn_code: line.hsn_code,
     gst_rate: line.gst_rate,
   }));
@@ -406,34 +408,28 @@ export function QuoteBuilder({
                           />
                         </div>
                         <div>
-                          <Label className="text-xs">HSN</Label>
-                          <Input
-                            className="mt-1 h-10"
-                            value={line.hsn_code ?? ""}
-                            onChange={(e) =>
-                              updateLine(line.key, {
-                                hsn_code: e.target.value,
-                              })
-                            }
-                          />
+                          <Label className="text-xs">HSN / GST</Label>
+                          <p className="mt-2 text-sm text-on-surface-variant">
+                            {line.hsn_code ? `HSN ${line.hsn_code}` : "No HSN"}
+                            {` · GST ${line.gst_rate}%`}
+                            {line.material_id
+                              ? " (from catalog)"
+                              : " (custom — catalog GST only)"}
+                          </p>
                         </div>
-                        <div>
-                          <Label className="text-xs">GST %</Label>
-                          <Input
-                            type="number"
-                            inputMode="decimal"
-                            min={0}
-                            max={100}
-                            step="0.01"
-                            className="mt-1 h-10"
-                            value={line.gst_rate}
-                            onChange={(e) =>
-                              updateLine(line.key, {
-                                gst_rate: Number(e.target.value),
-                              })
-                            }
-                          />
-                        </div>
+                      </div>
+                      <div className="mt-2">
+                        <Label className="text-xs">Specification</Label>
+                        <Input
+                          className="mt-1 h-10"
+                          value={line.specification ?? ""}
+                          placeholder="Size, finish, site notes"
+                          onChange={(e) =>
+                            updateLine(line.key, {
+                              specification: e.target.value,
+                            })
+                          }
+                        />
                       </div>
                       <p className="mt-1 text-body-sm text-on-surface-variant">
                         GST {formatInrExact(line.tax)}
@@ -489,9 +485,15 @@ export function QuoteBuilder({
                       </p>
                       <p className="mt-1 text-body-sm text-on-surface-variant">
                         Qty: {line.quantity}
+                        {line.item_code ? ` · ${line.item_code}` : ""}
                         {line.hsn_code ? ` · HSN ${line.hsn_code}` : ""}
                         {line.gst_rate ? ` · GST ${line.gst_rate}%` : ""}
                       </p>
+                      {line.specification ? (
+                        <p className="mt-1 text-body-sm text-on-surface-variant">
+                          {line.specification}
+                        </p>
+                      ) : null}
                     </div>
                     <p className="shrink-0 text-data-tabular">
                       {formatInrExact(

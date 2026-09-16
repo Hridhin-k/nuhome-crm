@@ -38,6 +38,11 @@ export async function saveCompanySettingsAction(
     email: formData.get("email") || undefined,
     state_code: formData.get("state_code") || undefined,
     default_gst_rate: Number(formData.get("default_gst_rate") ?? 18),
+    bank_name: formData.get("bank_name") || undefined,
+    bank_account: formData.get("bank_account") || undefined,
+    bank_ifsc: formData.get("bank_ifsc") || undefined,
+    bank_branch: formData.get("bank_branch") || undefined,
+    upi_id: formData.get("upi_id") || undefined,
   });
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Check the form" };
@@ -51,6 +56,11 @@ export async function saveCompanySettingsAction(
       email: parsed.data.email,
       stateCode: parsed.data.state_code,
       defaultGstRate: parsed.data.default_gst_rate,
+      bankName: parsed.data.bank_name,
+      bankAccount: parsed.data.bank_account,
+      bankIfsc: parsed.data.bank_ifsc,
+      bankBranch: parsed.data.bank_branch,
+      upiId: parsed.data.upi_id,
     });
     revalidatePath("/company");
     revalidatePath("/", "layout");

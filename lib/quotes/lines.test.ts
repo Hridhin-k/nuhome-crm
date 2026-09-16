@@ -34,7 +34,8 @@ describe("quote lines with GST", () => {
       default_cost: 400,
       gst_rate: 18,
     });
-    expect(line.description).toBe("Cabinet — 600mm base with soft-close");
+    expect(line.description).toBe("Cabinet");
+    expect(line.specification).toBe("600mm base with soft-close");
   });
 
   it("defaults GST to 18% when the material has no rate", () => {

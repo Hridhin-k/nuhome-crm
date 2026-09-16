@@ -27,6 +27,7 @@ export default async function TaxInvoicePage({
         issuedAt={cargo.issuedAt}
         company={cargo.company}
         customer={cargo.customer}
+        salesman={cargo.salesman}
         quoteNumber={cargo.quote?.quote_number ?? "Quote"}
         orderNumber={cargo.orderNumber}
         version={version}

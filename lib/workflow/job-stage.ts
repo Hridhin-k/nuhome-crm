@@ -95,6 +95,7 @@ export function jobTracks(input: {
   paid?: number;
   hasPendingPayment?: boolean;
   hasUnsent?: boolean;
+  creditApproved?: boolean;
 }): JobTrack[] {
   const status = input.status;
   const outstanding = input.outstanding ?? 0;
@@ -117,9 +118,11 @@ export function jobTracks(input: {
   }
 
   const moneyIdle = !quoteDone;
-  const moneyPending = status === "payment_pending_verification" || Boolean(input.hasPendingPayment);
+  const moneyPending =
+    !input.creditApproved &&
+    (status === "payment_pending_verification" || Boolean(input.hasPendingPayment));
   const moneyClear = quoteDone && outstanding <= 0 && paid > 0 && !moneyPending;
-  const moneyDue = quoteDone && outstanding > 0;
+  const moneyDue = quoteDone && outstanding > 0 && !input.creditApproved;
   let moneyState: JobTrackState = "idle";
   let moneyDetail = "Starts after the quote is sent.";
   if (cancelled) {
@@ -127,6 +130,9 @@ export function jobTracks(input: {
     moneyDetail = "Job cancelled.";
   } else if (moneyIdle) {
     moneyState = "idle";
+  } else if (input.creditApproved && quoteDone) {
+    moneyState = "done";
+    moneyDetail = "Credit delivery approved. Balance can be collected later.";
   } else if (moneyPending) {
     moneyState = "current";
     moneyDetail = "Accounts is verifying a payment.";

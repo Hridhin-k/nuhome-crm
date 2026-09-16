@@ -8,7 +8,7 @@ import { listProfiles } from "@/lib/api/catalog";
 import { listCustomers } from "@/lib/api/customers";
 import { listOrderFooters } from "@/lib/api/orders";
 import { rel } from "@/lib/api/rel";
-import { requireUser } from "@/lib/auth/guards";
+import { requirePermission } from "@/lib/auth/guards";
 import { rolesHavePermission } from "@/lib/auth/permissions";
 import { latestOpenOrder } from "@/lib/workflow/status-buckets";
 import { orderRef } from "@/lib/orders/ref";
@@ -21,7 +21,7 @@ export default async function CustomersPage({
 }) {
   const { q } = await searchParams;
   const [user, customers, orders, profiles] = await Promise.all([
-    requireUser(),
+    requirePermission("customers.read"),
     listCustomers(q),
     listOrderFooters(),
     listProfiles(),

@@ -149,6 +149,14 @@ describe("recordVendorPaymentSchema", () => {
         reference: "UTR9",
       }).reference,
     ).toBe("UTR9");
+    expect(
+      recordVendorPaymentSchema.parse({
+        vendor_order_id: UUID,
+        amount: 12000,
+        method: "cash",
+        bill_ref: "VB-12",
+      }).bill_ref,
+    ).toBe("VB-12");
   });
 });
 

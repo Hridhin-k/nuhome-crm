@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { dispatchAction } from "@/app/actions/workflow";
 import { ConfirmActionSheet } from "@/components/app/confirm-action-sheet";
 import { Notice } from "@/components/app/notice";
+import { ScrollToFocus } from "@/components/app/scroll-to-focus";
 import { PageFrame } from "@/components/app/page-frame";
 import { PageHeader } from "@/components/app/page-header";
 import { AttachmentPanel } from "@/components/documents/attachment-panel";
@@ -15,6 +16,7 @@ import { listVendors } from "@/lib/api/catalog";
 import { listAttachments } from "@/lib/api/documents";
 import { getOrder } from "@/lib/api/orders";
 import { rel } from "@/lib/api/rel";
+import { displaySpecification } from "@/lib/quotes/spec";
 import { requirePermission } from "@/lib/auth/guards";
 import { rolesHavePermission } from "@/lib/auth/permissions";
 import {
@@ -30,11 +32,11 @@ export default async function FulfillmentDetailPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ notice?: string; error?: string }>;
+  searchParams: Promise<{ notice?: string; error?: string; focus?: string }>;
 }) {
   const user = await requirePermission("fulfillment.update");
   const { id } = await params;
-  const { notice, error } = await searchParams;
+  const { notice, error, focus } = await searchParams;
   const [detail, vendors] = await Promise.all([getOrder(id), listVendors()]);
   if (!detail) {
     notFound();
@@ -54,6 +56,23 @@ export default async function FulfillmentDetailPage({
   const descriptions = new Map(
     detail.items.map((item) => [item.id, item.description]),
   );
+  const quoteLineByOrderItem = new Map(
+    detail.items.map((item) => {
+      const qi = rel(item.quote_items);
+      return [
+        item.id,
+        {
+          description: qi?.description ?? item.description,
+          item_code: qi?.item_code ?? null,
+          specification: displaySpecification(
+            qi?.specification,
+            qi?.description ?? item.description,
+          ),
+        },
+      ] as const;
+    }),
+  );
+  const quoteNotes = rel(detail.quote?.quote_versions)?.notes ?? null;
   const allocatedByItem = new Map<string, number>();
   for (const vendorOrder of detail.vendorOrders) {
     const lines = Array.isArray(vendorOrder.vendor_order_items)
@@ -110,6 +129,7 @@ export default async function FulfillmentDetailPage({
       {notice === "quote-decided" ? <Notice>Vendor quote decision saved.</Notice> : null}
       {notice === "sent-vendor" ? <Notice>Sent to vendor.</Notice> : null}
       {notice === "dispatched" ? <Notice>Marked as dispatched.</Notice> : null}
+      {notice === "vendor-quoted" ? <Notice>Vendor quote saved.</Notice> : null}
       {notice === "vendor-bill" ? <Notice>Vendor bill saved.</Notice> : null}
       {notice === "vendor-paid" ? <Notice>Vendor marked as paid.</Notice> : null}
       {notice === "uploaded" ? <Notice>File uploaded.</Notice> : null}
@@ -118,6 +138,7 @@ export default async function FulfillmentDetailPage({
         <Notice>Remainder closed. Delivery can proceed if nothing is left open.</Notice>
       ) : null}
       {error ? <p className="text-sm text-destructive">{error}</p> : null}
+      <ScrollToFocus focus={focus} />
 
       <section className="rounded-lg border border-border bg-card p-5">
         <h2 className="text-[16px] font-semibold text-on-surface">Lines</h2>
@@ -181,7 +202,8 @@ export default async function FulfillmentDetailPage({
         return (
           <section
             key={vendorOrder.id}
-            className="rounded-lg border border-border bg-card p-5"
+            id={`vendor-${vendorOrder.id}`}
+            className="scroll-mt-24 rounded-lg border border-border bg-card p-5"
           >
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
@@ -204,7 +226,12 @@ export default async function FulfillmentDetailPage({
                   className="flex justify-between py-2 text-on-surface-variant"
                 >
                   <span>
-                    {descriptions.get(line.order_item_id ?? "") ?? "Item"}
+                    {quoteLineByOrderItem.get(line.order_item_id ?? "")?.description ??
+                      descriptions.get(line.order_item_id ?? "") ??
+                      "Item"}
+                    {quoteLineByOrderItem.get(line.order_item_id ?? "")?.item_code
+                      ? ` · ${quoteLineByOrderItem.get(line.order_item_id ?? "")?.item_code}`
+                      : ""}
                   </span>
                   <span>
                     {Number(line.quantity_received)}/{Number(line.quantity)}
@@ -230,6 +257,16 @@ export default async function FulfillmentDetailPage({
               paidAmount={lastPay?.amount}
               paidReference={lastPay?.reference_number}
               paidMethod={lastPay?.method}
+              quoteNotes={quoteNotes}
+              lines={lines.map((line) => {
+                const meta = quoteLineByOrderItem.get(line.order_item_id ?? "");
+                return {
+                  description: meta?.description ?? descriptions.get(line.order_item_id ?? "") ?? "Item",
+                  item_code: meta?.item_code,
+                  specification: meta?.specification,
+                  quantity: Number(line.quantity),
+                };
+              })}
             />
             <div className="mt-3">
               <AttachmentPanel

@@ -16,12 +16,14 @@ export function JobTracks({
   paid = 0,
   hasPendingPayment = false,
   hasUnsent = false,
+  creditApproved = false,
 }: {
   status: WorkflowStatus;
   outstanding?: number;
   paid?: number;
   hasPendingPayment?: boolean;
   hasUnsent?: boolean;
+  creditApproved?: boolean;
 }) {
   const tracks = jobTracks({
     status,
@@ -29,6 +31,7 @@ export function JobTracks({
     paid,
     hasPendingPayment,
     hasUnsent,
+    creditApproved,
   });
   const stage = jobStageLabel(status);
 

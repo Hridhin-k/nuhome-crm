@@ -15,6 +15,8 @@ export const quoteItemSchema = z.object({
   tax: money.optional().default(0),
   hsn_code: z.string().trim().max(8).optional(),
   gst_rate: z.number().min(0).max(100).optional(),
+  specification: z.string().trim().max(500).optional(),
+  item_code: z.string().trim().max(40).optional(),
 });
 
 export const createQuoteSchema = z.object({
@@ -77,6 +79,7 @@ export const recordVendorPaymentSchema = z.object({
     .enum(["cash", "upi", "bank_transfer", "cheque", "card", "other"])
     .optional(),
   reference: z.string().optional(),
+  bill_ref: z.string().optional(),
 }).superRefine((value, ctx) => {
   if (value.amount > 0 && value.method !== "cash" && !value.reference?.trim()) {
     ctx.addIssue({

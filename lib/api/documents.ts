@@ -38,7 +38,7 @@ export const getCompanySettings = cache(async () => {
   const { data, error } = await db
     .from("company_settings")
     .select(
-      "id, legal_name, gstin, address, phone, email, state_code, default_gst_rate",
+      "id, legal_name, gstin, address, phone, email, state_code, default_gst_rate, bank_name, bank_account, bank_ifsc, bank_branch, upi_id",
     )
     .eq("id", 1)
     .maybeSingle();
@@ -55,6 +55,11 @@ export const getCompanySettings = cache(async () => {
       email: null,
       state_code: null,
       default_gst_rate: 18,
+      bank_name: null,
+      bank_account: null,
+      bank_ifsc: null,
+      bank_branch: null,
+      upi_id: null,
     }
   );
 });
@@ -67,6 +72,11 @@ export async function updateCompanySettings(input: {
   email?: string | null;
   stateCode?: string | null;
   defaultGstRate: number;
+  bankName?: string | null;
+  bankAccount?: string | null;
+  bankIfsc?: string | null;
+  bankBranch?: string | null;
+  upiId?: string | null;
 }) {
   const db = await getDb();
   const { error } = await db
@@ -79,6 +89,11 @@ export async function updateCompanySettings(input: {
       email: input.email || null,
       state_code: input.stateCode || null,
       default_gst_rate: input.defaultGstRate,
+      bank_name: input.bankName || null,
+      bank_account: input.bankAccount || null,
+      bank_ifsc: input.bankIfsc || null,
+      bank_branch: input.bankBranch || null,
+      upi_id: input.upiId || null,
     })
     .eq("id", 1);
   if (error) throw error;
@@ -280,7 +295,7 @@ export const getTaxInvoice = cache(async (orderId: string) => {
 
   const { data: order, error: orderError } = await db
     .from("orders")
-    .select("id, quote_id, customer_id, status, invoice_number, invoice_issued_at, order_number")
+    .select("id, quote_id, customer_id, status, invoice_number, invoice_issued_at, order_number, assigned_sales_id")
     .eq("id", resolvedId)
     .maybeSingle();
   if (orderError || !order) {
@@ -291,7 +306,7 @@ export const getTaxInvoice = cache(async (orderId: string) => {
     getCompanySettings(),
     db
       .from("customers")
-      .select("id, name, phone, email, gstin, address, billing_address, site_address")
+      .select("id, name, phone, email, gstin, address, billing_address, site_address, firm")
       .eq("id", order.customer_id)
       .maybeSingle(),
     db
@@ -314,9 +329,11 @@ export const getTaxInvoice = cache(async (orderId: string) => {
     line_total: number | string;
     hsn_code: string | null;
     gst_rate: number | string;
+    item_code?: string | null;
+    specification?: string | null;
   }[] = [];
   const itemSelect =
-    "id, description, quantity, unit_price, discount, tax, line_total, hsn_code, gst_rate";
+    "id, description, quantity, unit_price, discount, tax, line_total, hsn_code, gst_rate, item_code, specification";
 
   if (quote?.current_version_id) {
     items = await throwQuery(
@@ -355,6 +372,11 @@ export const getTaxInvoice = cache(async (orderId: string) => {
     }
   }
 
+  const salesmanId = order.assigned_sales_id;
+  const salesmanResult = salesmanId
+    ? await db.from("profiles").select("full_name").eq("id", salesmanId).maybeSingle()
+    : { data: null };
+
   return {
     invoiceNumber: order.invoice_number ?? invoiceNumber,
     issuedAt: order.invoice_issued_at,
@@ -362,6 +384,7 @@ export const getTaxInvoice = cache(async (orderId: string) => {
     customer: customer.data,
     quote,
     orderNumber: order.order_number,
+    salesman: salesmanResult.data?.full_name ?? null,
     items,
   };
 });

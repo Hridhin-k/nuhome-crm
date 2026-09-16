@@ -143,6 +143,9 @@ export function MaterialForm({
             </div>
             <div>
               <Label htmlFor={`gst-${suffix}`}>GST %</Label>
+              <p className="mt-1 text-xs text-on-surface-variant">
+                Sales cannot change this on a quote.
+              </p>
               <Input
                 id={`gst-${suffix}`}
                 name="gst_rate"

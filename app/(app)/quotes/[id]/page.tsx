@@ -228,7 +228,7 @@ export default async function QuoteDetailPage({
             <table className="w-full min-w-[520px] border-collapse text-left">
               <thead className="border-b border-outline-variant bg-surface-container-low">
                 <tr>
-                  {["Item", "HSN", "Qty", "Sell", "Cost", "Disc", "Line Total"].map(
+                  {["Item", "Code", "Spec", "HSN", "Qty", "Sell", "Cost", "Disc", "Line Total"].map(
                     (col) => (
                       <th
                         key={col}
@@ -252,6 +252,12 @@ export default async function QuoteDetailPage({
                     <tr key={item.id}>
                       <td className="max-w-[150px] truncate p-3 text-data-tabular">
                         {item.description}
+                      </td>
+                      <td className="p-3 text-right font-mono text-xs text-secondary">
+                        {item.item_code ?? "—"}
+                      </td>
+                      <td className="max-w-[140px] truncate p-3 text-data-tabular text-secondary">
+                        {item.specification ?? "—"}
                       </td>
                       <td className="p-3 text-right text-data-tabular text-secondary">
                         {item.hsn_code ?? "—"}
@@ -304,11 +310,17 @@ export default async function QuoteDetailPage({
                   </span>
                   <span className="text-body-sm text-on-surface-variant">
                     Qty {item.quantity}
+                    {item.item_code ? ` · ${item.item_code}` : ""}
                     {item.hsn_code ? ` · HSN ${item.hsn_code}` : ""}
                     {Number(item.gst_rate) > 0
                       ? ` · GST ${item.gst_rate}%`
                       : ""}
                   </span>
+                  {item.specification ? (
+                    <span className="mt-0.5 block text-body-sm text-on-surface-variant">
+                      {item.specification}
+                    </span>
+                  ) : null}
                 </span>
                 <span className="shrink-0 text-data-tabular">
                   {formatInrExact(Number(item.line_total))}

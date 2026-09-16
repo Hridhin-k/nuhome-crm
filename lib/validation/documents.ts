@@ -29,6 +29,11 @@ export const companySettingsSchema = z.object({
   email: z.string().trim().email("Enter a valid email").optional().or(z.literal("")),
   state_code: z.string().trim().max(2).optional(),
   default_gst_rate: z.number().min(0).max(100),
+  bank_name: z.string().trim().optional(),
+  bank_account: z.string().trim().optional(),
+  bank_ifsc: z.string().trim().optional(),
+  bank_branch: z.string().trim().optional(),
+  upi_id: z.string().trim().optional(),
 });
 
 export const installationSchema = z.object({

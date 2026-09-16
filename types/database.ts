@@ -142,6 +142,11 @@ export type Database = {
           phone: string | null
           state_code: string | null
           updated_at: string
+          bank_name: string | null
+          bank_account: string | null
+          bank_ifsc: string | null
+          bank_branch: string | null
+          upi_id: string | null
         }
         Insert: {
           address?: string | null
@@ -154,6 +159,11 @@ export type Database = {
           phone?: string | null
           state_code?: string | null
           updated_at?: string
+          bank_name?: string | null
+          bank_account?: string | null
+          bank_ifsc?: string | null
+          bank_branch?: string | null
+          upi_id?: string | null
         }
         Update: {
           address?: string | null
@@ -166,6 +176,11 @@ export type Database = {
           phone?: string | null
           state_code?: string | null
           updated_at?: string
+          bank_name?: string | null
+          bank_account?: string | null
+          bank_ifsc?: string | null
+          bank_branch?: string | null
+          upi_id?: string | null
         }
         Relationships: []
       }
@@ -958,6 +973,8 @@ export type Database = {
           version_id: string
           hsn_code: string | null
           gst_rate: number
+          specification: string | null
+          item_code: string | null
         }
         Insert: {
           description: string
@@ -973,6 +990,8 @@ export type Database = {
           version_id: string
           hsn_code?: string | null
           gst_rate?: number
+          specification?: string | null
+          item_code?: string | null
         }
         Update: {
           description?: string
@@ -988,6 +1007,8 @@ export type Database = {
           version_id?: string
           hsn_code?: string | null
           gst_rate?: number
+          specification?: string | null
+          item_code?: string | null
         }
         Relationships: [
           {
@@ -1598,6 +1619,7 @@ export type Database = {
           p_amount: number
           p_method?: string
           p_reference?: string
+          p_bill_ref?: string
         }
         Returns: string
       }

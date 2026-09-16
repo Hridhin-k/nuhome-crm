@@ -12,7 +12,7 @@ import { listAttachments } from "@/lib/api/documents";
 import { listOrdersForCustomer } from "@/lib/api/orders";
 import { listQuotesForCustomer } from "@/lib/api/quotes";
 import { rel } from "@/lib/api/rel";
-import { requireUser } from "@/lib/auth/guards";
+import { requirePermission } from "@/lib/auth/guards";
 import { rolesHavePermission } from "@/lib/auth/permissions";
 import { formatInr } from "@/lib/format/money";
 import { orderRef } from "@/lib/orders/ref";
@@ -28,7 +28,7 @@ export default async function CustomerDetailPage({
   params: Promise<{ id: string }>;
   searchParams: Promise<{ notice?: string }>;
 }) {
-  const user = await requireUser();
+  const user = await requirePermission("customers.read");
   const { id } = await params;
   const { notice } = await searchParams;
   const [customer, theirs, theirOrders, files] = await Promise.all([

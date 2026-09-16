@@ -52,10 +52,12 @@ function CheckRow({
   name,
   value,
   defaultChecked,
+  onCheckedChange,
 }: {
   name: string;
   value: string;
   defaultChecked?: boolean;
+  onCheckedChange?: (checked: boolean) => void;
 }) {
   return (
     <label className="flex min-h-11 items-center gap-3 rounded-lg border border-outline-variant bg-surface px-3 py-2 text-sm">
@@ -64,6 +66,7 @@ function CheckRow({
         name={name}
         value={value}
         defaultChecked={defaultChecked}
+        onChange={(event) => onCheckedChange?.(event.target.checked)}
         className="size-5 accent-primary"
       />
       <span>{value}</span>
@@ -97,6 +100,11 @@ export function CustomerForm({
   const editing = Boolean(customer);
   const professions = customer?.profession ?? [];
   const interests = customer?.interests ?? [];
+  const [showProfessionOther, setShowProfessionOther] = useState(
+    professions.includes("Others") || Boolean(customer?.profession_other),
+  );
+  const [propertyType, setPropertyType] = useState(customer?.property_type ?? "");
+  const [hearSource, setHearSource] = useState(customer?.source ?? "");
 
   return (
     <FormSheet
@@ -194,16 +202,6 @@ export function CustomerForm({
                 placeholder="Leave blank if same as address"
               />
             </div>
-            <div>
-              <Label htmlFor="gstin">GSTIN</Label>
-              <Input
-                id="gstin"
-                name="gstin"
-                maxLength={15}
-                defaultValue={customer?.gstin ?? ""}
-                className="mt-2 h-11 min-h-11 uppercase"
-              />
-            </div>
           </fieldset>
 
           <fieldset className="flex flex-col gap-2">
@@ -217,15 +215,21 @@ export function CustomerForm({
                   name="profession"
                   value={item}
                   defaultChecked={professions.includes(item)}
+                  onCheckedChange={
+                    item === "Others" ? setShowProfessionOther : undefined
+                  }
                 />
               ))}
             </div>
-            <Input
-              name="profession_other"
-              placeholder="Other profession"
-              defaultValue={customer?.profession_other ?? ""}
-              className="h-11 min-h-11"
-            />
+            {showProfessionOther ? (
+              <Input
+                name="profession_other"
+                placeholder="Enter profession"
+                required
+                defaultValue={customer?.profession_other ?? ""}
+                className="h-11 min-h-11"
+              />
+            ) : null}
           </fieldset>
 
           <fieldset className="flex flex-col gap-2">
@@ -241,18 +245,22 @@ export function CustomerForm({
                   type="radio"
                   name="property_type"
                   value={item}
-                  defaultChecked={customer?.property_type === item}
+                  checked={propertyType === item}
+                  onChange={() => setPropertyType(item)}
                   className="size-5 accent-primary"
                 />
                 {item}
               </label>
             ))}
-            <Input
-              name="property_other"
-              placeholder="Other property type"
-              defaultValue={customer?.property_other ?? ""}
-              className="h-11 min-h-11"
-            />
+            {propertyType === "Other" ? (
+              <Input
+                name="property_other"
+                placeholder="Enter property type"
+                required
+                defaultValue={customer?.property_other ?? ""}
+                className="h-11 min-h-11"
+              />
+            ) : null}
           </fieldset>
 
           <fieldset className="flex flex-col gap-2">
@@ -305,18 +313,22 @@ export function CustomerForm({
                   type="radio"
                   name="source"
                   value={item}
-                  defaultChecked={customer?.source === item}
+                  checked={hearSource === item}
+                  onChange={() => setHearSource(item)}
                   className="size-5 accent-primary"
                 />
                 {item}
               </label>
             ))}
-            <Input
-              name="source_other"
-              placeholder="Other source"
-              defaultValue={customer?.source_other ?? ""}
-              className="h-11 min-h-11"
-            />
+            {hearSource === "Others" ? (
+              <Input
+                name="source_other"
+                placeholder="Enter source"
+                required
+                defaultValue={customer?.source_other ?? ""}
+                className="h-11 min-h-11"
+              />
+            ) : null}
           </fieldset>
 
           <fieldset className="flex flex-col gap-4">

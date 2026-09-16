@@ -36,7 +36,7 @@ const NAV: Record<AppRole, NavItem[]> = {
   ],
   operations: [
     { href: "/home", label: "Home", icon: "home" },
-    { href: "/leads", label: "Leads", icon: "people" },
+    { href: "/customers", label: "Customers", icon: "people" },
     { href: "/orders", label: "Orders", icon: "orders" },
     { href: "/reports", label: "Reports", icon: "chart" },
     { href: "/more", label: "More", icon: "more" },

@@ -121,6 +121,7 @@ export default async function OrderDetailPage({
     status,
     outstanding,
     activated: Boolean(order.activated_at),
+    creditDelivery: order.credit_delivery_status,
   });
 
   return (
@@ -146,6 +147,12 @@ export default async function OrderDetailPage({
       {notice === "install" ? <Notice>Installation saved.</Notice> : null}
       {notice === "warranty" ? <Notice>Warranty / AMC saved.</Notice> : null}
       {notice === "cancelled" ? <Notice>This job was cancelled.</Notice> : null}
+      {notice === "credit-requested" ? (
+        <Notice>Credit delivery requested. Operations will review.</Notice>
+      ) : null}
+      {notice === "credit-decided" ? (
+        <Notice>Credit delivery decision saved. Approved jobs move off payment pending.</Notice>
+      ) : null}
       {error ? (
         <p className="rounded-lg bg-destructive/10 px-4 py-3 text-sm text-destructive">
           {error}
@@ -168,6 +175,7 @@ export default async function OrderDetailPage({
         paid={paid}
         hasPendingPayment={payments.some((payment) => payment.status === "pending")}
         hasUnsent={hasUnsent}
+        creditApproved={order.credit_delivery_status === "approved"}
       />
       {salesperson?.full_name ? (
         <p className="rounded-lg border border-outline-variant bg-card px-4 py-3 text-sm">

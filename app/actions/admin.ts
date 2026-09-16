@@ -156,7 +156,7 @@ export async function updateStaffAction(
   _prev: AdminActionState,
   formData: FormData,
 ): Promise<AdminActionState> {
-  const actor = await requirePermission("admin.manage");
+  const actor = await requireAnyPermission("admin.manage", "staff.manage");
   const parsed = updateStaffSchema.safeParse({
     user_id: formString(formData, "user_id"),
     full_name: formString(formData, "full_name"),

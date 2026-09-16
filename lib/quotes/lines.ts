@@ -4,6 +4,8 @@ export type QuoteLine = {
   key: string;
   material_id?: string;
   description: string;
+  specification?: string;
+  item_code?: string;
   quantity: number;
   unit_price: number;
   unit_cost: number;
@@ -43,6 +45,7 @@ export function lineDescription(
 export function lineFromMaterial(material: {
   id: string;
   name: string;
+  sku?: string | null;
   description?: string | null;
   default_sell_price: number | string;
   default_cost: number | string;
@@ -52,7 +55,9 @@ export function lineFromMaterial(material: {
   return withGst({
     key: crypto.randomUUID(),
     material_id: material.id,
-    description: lineDescription(material.name, material.description),
+    description: material.name,
+    specification: material.description?.trim() || undefined,
+    item_code: material.sku ?? undefined,
     quantity: 1,
     unit_price: Number(material.default_sell_price),
     unit_cost: Number(material.default_cost),
@@ -100,6 +105,8 @@ export function linesFromQuoteItems(
     tax: number | string;
     hsn_code?: string | null;
     gst_rate?: number | string | null;
+    specification?: string | null;
+    item_code?: string | null;
   }[],
 ): QuoteLine[] {
   return items.map((item, index) =>
@@ -107,6 +114,8 @@ export function linesFromQuoteItems(
       key: item.id ?? `line-${index}`,
       material_id: item.material_id ?? undefined,
       description: item.description,
+      specification: item.specification ?? undefined,
+      item_code: item.item_code ?? undefined,
       quantity: Math.max(1, Math.round(Number(item.quantity))),
       unit_price: Number(item.unit_price),
       unit_cost: Number(item.unit_cost),
