@@ -245,22 +245,22 @@ export default async function HomePage() {
               hint: filledHint(snapshot.open, "Floor is quiet", "Open jobs"),
             },
             {
+              label: "Credit",
+              value: snapshot.creditRequested,
+              href: "/orders?credit=1",
+              tone: "rose",
+              hint: filledHint(
+                snapshot.creditRequested,
+                "No credit requests",
+                "Approve handover without full payment",
+              ),
+            },
+            {
               label: "Overdue",
               value: snapshot.overdue,
               href: "/fulfillment",
               tone: "rose",
               hint: filledHint(snapshot.overdue, "Vendors on time", "Past expected date"),
-            },
-            {
-              label: "Done",
-              value: snapshot.delivered,
-              href: "/orders?bucket=closed",
-              tone: "green",
-              hint: filledHint(
-                snapshot.delivered,
-                "None delivered yet",
-                "Delivered or closed",
-              ),
             },
           ]}
         />

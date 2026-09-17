@@ -53,6 +53,7 @@ const METRIC_ICON: Record<string, LucideIcon> = {
   Overdue: Activity,
   Attention: FileText,
   "In play": BarChart3,
+  Credit: Wallet,
   Done: CheckSquare,
   Catalog: Boxes,
 };
