@@ -1537,7 +1537,26 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      floor_jobs: {
+        Row: {
+          id: string
+          quote_number: string
+          quote_status: Database["public"]["Enums"]["workflow_status"]
+          updated_at: string
+          created_at: string
+          created_by: string | null
+          revision_pending: boolean | null
+          customer_name: string | null
+          customer_phone: string | null
+          created_by_name: string | null
+          order_id: string | null
+          order_number: string | null
+          order_status: Database["public"]["Enums"]["workflow_status"] | null
+          live_status: Database["public"]["Enums"]["workflow_status"]
+          version_total: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       admin_set_profile_roles: {
@@ -1563,6 +1582,16 @@ export type Database = {
           p_user_id: string
         }
         Returns: undefined
+      }
+      floor_counts: { Args: Record<string, never>; Returns: Json }
+      customer_latest_orders: {
+        Args: { p_ids: string[] }
+        Returns: {
+          customer_id: string
+          order_id: string
+          order_number: string
+          status: Database["public"]["Enums"]["workflow_status"]
+        }[]
       }
       allow_status: { Args: never; Returns: undefined }
       approve_quote: { Args: { p_quote_id: string }; Returns: undefined }

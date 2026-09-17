@@ -32,7 +32,7 @@ import {
 } from "@/lib/workflow/service";
 import { createCustomerRow, updateCustomerRow } from "@/lib/api/customers";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
-import { listFromForm } from "@/lib/customers/walk-in";
+import { listFromForm, withOtherValue } from "@/lib/customers/walk-in";
 import { customerSchema, rejectPaymentSchema } from "@/lib/validation/workflow";
 
 export type ActionState = { error?: string; notice?: string };
@@ -49,6 +49,11 @@ export async function createCustomerAction(
   formData: FormData,
 ): Promise<ActionState> {
   const user = await requirePermission("customers.write");
+  const interests = withOtherValue(
+    listFromForm(formData.getAll("interests")),
+    "Others",
+    String(formData.get("interest_other") ?? ""),
+  );
   const parsed = customerSchema.safeParse({
     name: formData.get("name"),
     phone: formData.get("phone") || undefined,
@@ -65,7 +70,7 @@ export async function createCustomerAction(
     property_type: formData.get("property_type") || undefined,
     property_other: formData.get("property_other") || undefined,
     project_status: formData.get("project_status") || undefined,
-    interests: listFromForm(formData.getAll("interests")),
+    interests,
     source: formData.get("source") || undefined,
     source_other: formData.get("source_other") || undefined,
     follow_up_on: formData.get("follow_up_on") || undefined,

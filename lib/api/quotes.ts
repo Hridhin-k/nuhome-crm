@@ -1,5 +1,7 @@
 import { cache } from "react";
 import { getDb, throwQuery } from "@/lib/api/db";
+import { pageRange, type ListPage } from "@/lib/api/paging";
+import { rangeToIso, sanitizeSearch } from "@/lib/search";
 import type { WorkflowStatus } from "@/lib/workflow/types";
 
 const QUOTE_LIST_SELECT =
@@ -38,6 +40,91 @@ export const listQuotes = cache(async () => {
     "Failed to load quotes",
   );
   return attachOrders(quotes);
+});
+
+export type FloorJobRow = {
+  id: string;
+  quote_number: string;
+  quote_status: string;
+  updated_at: string;
+  created_at: string;
+  created_by: string | null;
+  revision_pending: boolean | null;
+  customer_name: string | null;
+  customer_phone: string | null;
+  created_by_name: string | null;
+  order_id: string | null;
+  order_number: string | null;
+  order_status: string | null;
+  live_status: WorkflowStatus;
+  version_total: number | string | null;
+};
+
+export function listFloorJobs(input: {
+  statuses: readonly WorkflowStatus[];
+  exactStatus?: WorkflowStatus;
+  q?: string;
+  from?: string;
+  to?: string;
+  page?: number;
+}) {
+  return listFloorJobsCached(JSON.stringify(input));
+}
+
+const listFloorJobsCached = cache(async (raw: string): Promise<ListPage<FloorJobRow>> => {
+  const input = JSON.parse(raw) as {
+    statuses: WorkflowStatus[];
+    exactStatus?: WorkflowStatus;
+    q?: string;
+    from?: string;
+    to?: string;
+    page?: number;
+  };
+  const { page, pageSize, from, to } = pageRange(input.page ?? 1);
+  const db = await getDb();
+  const q = sanitizeSearch(input.q);
+
+  let request = db
+    .from("floor_jobs")
+    .select("*", { count: "exact" })
+    .order("updated_at", { ascending: false })
+    .range(from, to);
+
+  if (input.exactStatus) {
+    request = request.eq("live_status", input.exactStatus);
+  } else if (input.statuses.length > 0) {
+    request = request.in("live_status", input.statuses);
+  }
+  if (q) {
+    request = request.or(
+      [
+        `quote_number.ilike.%${q}%`,
+        `order_number.ilike.%${q}%`,
+        `customer_name.ilike.%${q}%`,
+        `customer_phone.ilike.%${q}%`,
+        `created_by_name.ilike.%${q}%`,
+      ].join(","),
+    );
+  }
+  if (input.from && input.to) {
+    const iso = rangeToIso(input.from, input.to);
+    request = request.gte("updated_at", iso.start).lte("updated_at", iso.end);
+  } else if (input.from) {
+    request = request.gte("updated_at", rangeToIso(input.from, input.from).start);
+  } else if (input.to) {
+    request = request.lte("updated_at", rangeToIso(input.to, input.to).end);
+  }
+
+  const { data, error, count } = await request;
+  if (error) {
+    throw new Error(`Failed to load quotes: ${error.message}`);
+  }
+  return {
+    rows: (data ?? []) as FloorJobRow[],
+    total: count ?? 0,
+    page,
+    pageSize,
+  };
 });
 
 export const listQuotesForCustomer = cache(async (customerId: string) => {

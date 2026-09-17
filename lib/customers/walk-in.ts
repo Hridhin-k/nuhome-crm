@@ -40,6 +40,7 @@ export const INTERESTS = [
   "Mouldings",
   "Adhesives",
   "Artificial Plants",
+  "Others",
 ] as const;
 
 export const HEAR_SOURCES = [
@@ -61,4 +62,16 @@ export function listFromForm(values: FormDataEntryValue[]) {
   return values
     .map((value) => (typeof value === "string" ? value.trim() : ""))
     .filter(Boolean);
+}
+
+/** Replace an "Others" checkbox with the free-text value when provided. */
+export function withOtherValue(
+  values: string[],
+  otherLabel: string,
+  otherValue?: string | null,
+) {
+  const typed = otherValue?.trim();
+  if (!values.includes(otherLabel)) return values;
+  if (!typed) return values.filter((value) => value !== otherLabel);
+  return values.map((value) => (value === otherLabel ? typed : value));
 }

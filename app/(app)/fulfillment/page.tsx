@@ -1,11 +1,13 @@
 import { EmptyState } from "@/components/app/empty-state";
 import { JobRow } from "@/components/app/job-row";
+import { ListPager } from "@/components/app/list-pager";
 import { PageFrame, wellClass } from "@/components/app/page-frame";
 import { PageHeader } from "@/components/app/page-header";
-import { listOrders } from "@/lib/api/orders";
+import { listOrdersPage } from "@/lib/api/orders";
 import { rel } from "@/lib/api/rel";
 import { orderRef } from "@/lib/orders/ref";
 import { requirePermission } from "@/lib/auth/guards";
+import { parsePage, pathWithQuery } from "@/lib/search";
 import { ORDER_BUCKET_STATUSES } from "@/lib/workflow/status-buckets";
 import {
   earliestOpenExpectedDate,
@@ -14,12 +16,21 @@ import {
 } from "@/lib/workflow/fulfillment";
 import type { WorkflowStatus } from "@/lib/workflow/types";
 
-export default async function FulfillmentPage() {
-  const [, orders] = await Promise.all([
+export default async function FulfillmentPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>;
+}) {
+  const { page: pageRaw } = await searchParams;
+  const page = parsePage(pageRaw);
+  const [, list] = await Promise.all([
     requirePermission("orders.send_to_vendor"),
-    listOrders([...ORDER_BUCKET_STATUSES.active]),
+    listOrdersPage({
+      statuses: [...ORDER_BUCKET_STATUSES.active],
+      page,
+    }),
   ]);
-  const sorted = [...orders].sort((a, b) => {
+  const sorted = [...list.rows].sort((a, b) => {
     const aLate = orderHasOverdueVendor(a.vendor_orders) ? 0 : 1;
     const bLate = orderHasOverdueVendor(b.vendor_orders) ? 0 : 1;
     if (aLate !== bLate) return aLate - bLate;
@@ -41,6 +52,7 @@ export default async function FulfillmentPage() {
           description="QUOTE jobs stay with Sales and Accounts until payment is verified. Once an order is Active, it lands here so you can send it to a vendor, mark dispatch, and record what arrived."
         />
       ) : (
+        <>
         <ul className={wellClass}>
           {sorted.map((order) => {
             const expected = formatExpectedDate(
@@ -71,6 +83,17 @@ export default async function FulfillmentPage() {
             );
           })}
         </ul>
+        <ListPager
+          page={list.page}
+          pageSize={list.pageSize}
+          total={list.total}
+          hrefFor={(next) =>
+            pathWithQuery("/fulfillment", {
+              page: next > 1 ? String(next) : undefined,
+            })
+          }
+        />
+        </>
       )}
     </PageFrame>
   );

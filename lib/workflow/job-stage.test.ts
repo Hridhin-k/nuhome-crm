@@ -37,4 +37,16 @@ describe("jobTracks", () => {
     expect(tracks.find((t) => t.id === "money")?.state).toBe("idle");
     expect(tracks.find((t) => t.id === "factory")?.state).toBe("idle");
   });
+
+  it("treats approved credit delivery as money clear and site unlocked", () => {
+    const tracks = jobTracks({
+      status: "delivery_pending_payment",
+      outstanding: 40_000,
+      paid: 0,
+      creditApproved: true,
+    });
+    expect(tracks.find((t) => t.id === "money")?.state).toBe("done");
+    expect(tracks.find((t) => t.id === "money")?.detail).toMatch(/Credit delivery/);
+    expect(tracks.find((t) => t.id === "site")?.state).toBe("current");
+  });
 });

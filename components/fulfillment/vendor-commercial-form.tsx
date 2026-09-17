@@ -9,6 +9,7 @@ import {
   type ActionState,
 } from "@/app/actions/workflow";
 import { ConfirmActionSheet } from "@/components/app/confirm-action-sheet";
+import { rememberFulfillmentScroll } from "@/components/app/scroll-to-focus";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -108,7 +109,11 @@ export function VendorCommercialForm({
       ) : null}
 
       {needsQuote && canSend ? (
-        <form action={quoteAction} className="grid gap-2">
+        <form
+          action={quoteAction}
+          onSubmit={rememberFulfillmentScroll}
+          className="grid gap-2"
+        >
           <input type="hidden" name="order_id" value={orderId} />
           <input type="hidden" name="vendor_order_id" value={vendorOrderId} />
           <Label>Vendor quote ref</Label>
@@ -134,7 +139,11 @@ export function VendorCommercialForm({
       ) : null}
 
       {waitingDecision && canApproveQuote ? (
-        <form action={decideAction} className="grid gap-2">
+        <form
+          action={decideAction}
+          onSubmit={rememberFulfillmentScroll}
+          className="grid gap-2"
+        >
           <input type="hidden" name="order_id" value={orderId} />
           <input type="hidden" name="vendor_order_id" value={vendorOrderId} />
           <Label>Return reason (if sending back)</Label>
@@ -173,6 +182,7 @@ export function VendorCommercialForm({
           triggerLabel="Confirm send"
           confirmLabel="Send to vendor"
           action={confirmVendorSendAction.bind(null, vendorOrderId, orderId)}
+          onSubmit={rememberFulfillmentScroll}
         />
       ) : null}
 
@@ -187,7 +197,11 @@ export function VendorCommercialForm({
               {billRef ? ` · bill ${billRef}` : ""}
             </p>
           ) : (
-            <form action={payAction} className="grid gap-2">
+            <form
+              action={payAction}
+              onSubmit={rememberFulfillmentScroll}
+              className="grid gap-2"
+            >
               <input type="hidden" name="order_id" value={orderId} />
               <input type="hidden" name="vendor_order_id" value={vendorOrderId} />
               <Label>Vendor bill ref</Label>
@@ -225,16 +239,35 @@ export function VendorCommercialForm({
                   </option>
                 ))}
               </select>
-              <Label htmlFor={`ref-${vendorOrderId}`}>
-                {needsReference ? "UTR / cheque (required)" : "UTR / cheque (optional)"}
-              </Label>
-              <Input
-                id={`ref-${vendorOrderId}`}
-                name="reference"
-                required={needsReference}
-                placeholder="UTR / cheque"
-                className="h-11 min-h-11"
-              />
+              {method === "other" ? (
+                <>
+                  <Label htmlFor={`method-other-${vendorOrderId}`}>
+                    Describe method
+                  </Label>
+                  <Input
+                    id={`method-other-${vendorOrderId}`}
+                    name="reference"
+                    required
+                    placeholder="How was the vendor paid?"
+                    className="h-11 min-h-11"
+                  />
+                </>
+              ) : (
+                <>
+                  <Label htmlFor={`ref-${vendorOrderId}`}>
+                    {needsReference
+                      ? "UTR / cheque (required)"
+                      : "UTR / cheque (optional)"}
+                  </Label>
+                  <Input
+                    id={`ref-${vendorOrderId}`}
+                    name="reference"
+                    required={needsReference}
+                    placeholder="UTR / cheque"
+                    className="h-11 min-h-11"
+                  />
+                </>
+              )}
               <Button type="submit" variant="outline" disabled={paying} className="min-h-11">
                 {paying ? "Recording…" : "Mark vendor paid"}
               </Button>

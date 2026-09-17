@@ -1,15 +1,15 @@
 import { EmptyState } from "@/components/app/empty-state";
 import { JobRow } from "@/components/app/job-row";
+import { ListPager } from "@/components/app/list-pager";
 import { ListSearchForm } from "@/components/app/list-search-form";
 import { PageFrame, wellClass } from "@/components/app/page-frame";
 import { PageHeader } from "@/components/app/page-header";
 import { OrderBucketNav } from "@/components/orders/order-bucket-nav";
-import { listProfiles } from "@/lib/api/catalog";
-import { listOrders } from "@/lib/api/orders";
+import { listOrdersPage } from "@/lib/api/orders";
 import { rel } from "@/lib/api/rel";
 import { requireUser } from "@/lib/auth/guards";
 import { formatInr } from "@/lib/format/money";
-import { inDateRange, matchesSearch, parseYmd } from "@/lib/search";
+import { parsePage, parseYmd, pathWithQuery } from "@/lib/search";
 import { orderRef } from "@/lib/orders/ref";
 import { STATUS_NEXT_LINE } from "@/lib/workflow/labels";
 import { statusesForOrderQuery } from "@/lib/workflow/status-buckets";
@@ -25,37 +25,28 @@ export default async function OrdersPage({
     from?: string;
     to?: string;
     credit?: string;
+    page?: string;
   }>;
 }) {
-  const { status, bucket, q, from: fromRaw, to: toRaw, credit } = await searchParams;
+  const { status, bucket, q, from: fromRaw, to: toRaw, credit, page: pageRaw } =
+    await searchParams;
   const from = parseYmd(fromRaw) ?? undefined;
   const to = parseYmd(toRaw) ?? undefined;
+  const page = parsePage(pageRaw);
   const query = statusesForOrderQuery({ bucket, status });
   const extra = { q, from, to };
-  const [, orders, profiles] = await Promise.all([
+  const [, list] = await Promise.all([
     requireUser(),
-    listOrders(query.filter),
-    listProfiles(),
+    listOrdersPage({
+      statuses: query.filter,
+      q,
+      from,
+      to,
+      credit: credit === "1",
+      page,
+    }),
   ]);
-  const names = new Map(profiles.map((p) => [p.id, p.full_name || "Staff"]));
-  const visible = orders.filter((order) => {
-    const quote = rel(order.quotes);
-    const customer = rel(order.customers);
-    return (
-      matchesSearch(
-        [
-          order.order_number,
-          quote?.quote_number,
-          customer?.name,
-          customer?.phone,
-          names.get(order.assigned_sales_id ?? ""),
-        ],
-        q,
-      ) &&
-      inDateRange(order.updated_at, from, to) &&
-      (credit !== "1" || order.credit_delivery_status === "requested")
-    );
-  });
+  const orders = list.rows;
 
   return (
     <PageFrame>
@@ -77,36 +68,51 @@ export default async function OrdersPage({
         active={query.bucket === "attention" ? "open" : query.bucket}
         extra={extra}
       />
-      {visible.length === 0 ? (
+      {orders.length === 0 ? (
         <EmptyState
           title="No orders here"
           description="Orders appear after an approved quote is sent to the customer."
         />
       ) : (
-        <ul className={wellClass}>
-          {visible.map((order) => {
-            const workflowStatus = order.status as WorkflowStatus;
-            const quote = rel(order.quotes);
-            const version = rel(
-              (quote as { quote_versions?: unknown } | null)?.quote_versions,
-            ) as { total?: number | string } | null;
-            const total = Number(version?.total ?? 0);
-            const owner = names.get(order.assigned_sales_id ?? "");
-            return (
-              <JobRow
-                key={order.id}
-                href={`/orders/${order.id}`}
-                title={orderRef(order)}
-                subtitle={[quote?.quote_number, rel(order.customers)?.name, owner]
-                  .filter(Boolean)
-                  .join(" · ")}
-                amount={total ? formatInr(total) : undefined}
-                hint={STATUS_NEXT_LINE[workflowStatus]}
-                status={workflowStatus}
-              />
-            );
-          })}
-        </ul>
+        <>
+          <ul className={wellClass}>
+            {orders.map((order) => {
+              const workflowStatus = order.status as WorkflowStatus;
+              const quote = rel(order.quotes);
+              const version = rel(
+                (quote as { quote_versions?: unknown } | null)?.quote_versions,
+              ) as { total?: number | string } | null;
+              const total = Number(version?.total ?? 0);
+              const owner = rel(order.assigned_sales)?.full_name;
+              return (
+                <JobRow
+                  key={order.id}
+                  href={`/orders/${order.id}`}
+                  title={orderRef(order)}
+                  subtitle={[quote?.quote_number, rel(order.customers)?.name, owner]
+                    .filter(Boolean)
+                    .join(" · ")}
+                  amount={total ? formatInr(total) : undefined}
+                  hint={STATUS_NEXT_LINE[workflowStatus]}
+                  status={workflowStatus}
+                />
+              );
+            })}
+          </ul>
+          <ListPager
+            page={list.page}
+            pageSize={list.pageSize}
+            total={list.total}
+            hrefFor={(next) =>
+              pathWithQuery("/orders", {
+                ...extra,
+                bucket: query.bucket === "open" ? undefined : query.bucket,
+                credit: credit === "1" ? "1" : undefined,
+                page: next > 1 ? String(next) : undefined,
+              })
+            }
+          />
+        </>
       )}
     </PageFrame>
   );

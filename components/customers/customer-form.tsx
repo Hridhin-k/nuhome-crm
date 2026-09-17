@@ -103,6 +103,12 @@ export function CustomerForm({
   const [showProfessionOther, setShowProfessionOther] = useState(
     professions.includes("Others") || Boolean(customer?.profession_other),
   );
+  const knownInterests = new Set<string>(INTERESTS);
+  const customInterest =
+    interests.find((item) => !knownInterests.has(item)) ?? "";
+  const [showInterestOther, setShowInterestOther] = useState(
+    interests.includes("Others") || Boolean(customInterest),
+  );
   const [propertyType, setPropertyType] = useState(customer?.property_type ?? "");
   const [hearSource, setHearSource] = useState(customer?.source ?? "");
 
@@ -294,10 +300,26 @@ export function CustomerForm({
                   key={item}
                   name="interests"
                   value={item}
-                  defaultChecked={interests.includes(item)}
+                  defaultChecked={
+                    item === "Others"
+                      ? interests.includes("Others") || Boolean(customInterest)
+                      : interests.includes(item)
+                  }
+                  onCheckedChange={
+                    item === "Others" ? setShowInterestOther : undefined
+                  }
                 />
               ))}
             </div>
+            {showInterestOther ? (
+              <Input
+                name="interest_other"
+                placeholder="Enter interest"
+                required
+                defaultValue={customInterest}
+                className="h-11 min-h-11"
+              />
+            ) : null}
           </fieldset>
 
           <fieldset className="flex flex-col gap-2">

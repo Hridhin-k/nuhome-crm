@@ -145,12 +145,18 @@ export function PaymentForm({
                 </select>
               </div>
               <div>
-                <Label htmlFor="reference">Reference</Label>
+                <Label htmlFor="reference">
+                  {method === "other" ? "Describe method / reference" : "Reference"}
+                </Label>
                 <Input
                   id="reference"
                   name="reference"
                   required
-                  placeholder="UTR / cheque / receipt no."
+                  placeholder={
+                    method === "other"
+                      ? "How was this paid?"
+                      : "UTR / cheque / receipt no."
+                  }
                   className="mt-2 h-11 min-h-11"
                 />
               </div>

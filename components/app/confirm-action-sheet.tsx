@@ -15,6 +15,7 @@ export function ConfirmActionSheet({
   action,
   details,
   triggerClassName,
+  onSubmit,
 }: {
   title: string;
   description: string;
@@ -23,6 +24,7 @@ export function ConfirmActionSheet({
   action: (formData: FormData) => void | Promise<void>;
   details?: string;
   triggerClassName?: string;
+  onSubmit?: () => void;
 }) {
   return (
     <FormSheet
@@ -39,7 +41,11 @@ export function ConfirmActionSheet({
         </span>
       }
     >
-      <form action={action} className="flex min-h-0 flex-1 flex-col">
+      <form
+        action={action}
+        onSubmit={onSubmit}
+        className="flex min-h-0 flex-1 flex-col"
+      >
         <FormSheetBody>
           <p className="text-[13px] leading-snug text-on-surface-variant">
             {details ?? "Confirm this step to continue the order."}

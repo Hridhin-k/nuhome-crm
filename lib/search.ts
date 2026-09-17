@@ -10,6 +10,12 @@ export function defaultDateRange(now = new Date()) {
   return { from: kolkataDate(start), to };
 }
 
+export function parsePage(value: string | undefined | null, fallback = 1) {
+  const parsed = Number.parseInt(value ?? "", 10);
+  if (!Number.isFinite(parsed) || parsed < 1) return fallback;
+  return Math.min(parsed, 10_000);
+}
+
 export function parseYmd(value: string | undefined | null) {
   if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return null;
   return value;

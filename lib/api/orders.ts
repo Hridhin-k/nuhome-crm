@@ -1,10 +1,12 @@
 import { cache } from "react";
 import { getDb, throwQuery } from "@/lib/api/db";
+import { emptyPage, pageRange, type ListPage } from "@/lib/api/paging";
 import { isOrderNumber } from "@/lib/orders/ref";
+import { rangeToIso, sanitizeSearch } from "@/lib/search";
 import type { WorkflowStatus } from "@/lib/workflow/types";
 
 const ORDER_LIST_SELECT =
-  "id, order_number, status, updated_at, created_at, customer_id, quote_id, assigned_sales_id, on_hold_reason, credit_delivery_status, customers(name, phone), quotes(quote_number, revision_pending, quote_versions!quotes_current_version_fk(total, margin_amount)), vendor_orders(status, expected_delivery_at, received_at, sent_at, dispatched_at, commercial_status, bill_amount, payable_amount), assigned_sales:profiles!orders_assigned_sales_id_fkey(full_name)";
+  "id, order_number, status, updated_at, created_at, customer_id, quote_id, assigned_sales_id, on_hold_reason, credit_delivery_status, customers(name, phone), quotes(quote_number, revision_pending, quote_versions!quotes_current_version_fk(total, margin_amount)), vendor_orders(status, expected_delivery_at, received_at, commercial_status), assigned_sales:profiles!orders_assigned_sales_id_fkey(full_name)";
 
 export function listOrders(filter?: WorkflowStatus | WorkflowStatus[]) {
   const key = !filter
@@ -31,14 +33,136 @@ const listOrdersCached = cache(async (key: string) => {
   return throwQuery(request, "Failed to load orders");
 });
 
-export const listOrderFooters = cache(async () => {
+export type OrderListRow = Awaited<ReturnType<typeof listOrders>>[number];
+
+async function orderIdsMatchingSearch(query: string) {
+  const q = sanitizeSearch(query);
+  if (!q) return null;
+  const db = await getDb();
+  const like = `%${q}%`;
+  const [byNumber, customers, quotes] = await Promise.all([
+    throwQuery(
+      db.from("orders").select("id").ilike("order_number", like).limit(200),
+      "Failed to search orders",
+    ),
+    throwQuery(
+      db
+        .from("customers")
+        .select("id")
+        .or(`name.ilike.${like},phone.ilike.${like}`)
+        .limit(80),
+      "Failed to search customers",
+    ),
+    throwQuery(
+      db.from("quotes").select("id").ilike("quote_number", like).limit(80),
+      "Failed to search quotes",
+    ),
+  ]);
+  const extra = await Promise.all([
+    customers.length
+      ? throwQuery(
+          db
+            .from("orders")
+            .select("id")
+            .in(
+              "customer_id",
+              customers.map((row) => row.id),
+            )
+            .limit(200),
+          "Failed to search orders",
+        )
+      : Promise.resolve([] as { id: string }[]),
+    quotes.length
+      ? throwQuery(
+          db
+            .from("orders")
+            .select("id")
+            .in(
+              "quote_id",
+              quotes.map((row) => row.id),
+            )
+            .limit(200),
+          "Failed to search orders",
+        )
+      : Promise.resolve([] as { id: string }[]),
+  ]);
+  return [
+    ...new Set([...byNumber, ...extra[0], ...extra[1]].map((row) => row.id)),
+  ];
+}
+
+export function listOrdersPage(input: {
+  statuses?: WorkflowStatus | WorkflowStatus[];
+  q?: string;
+  from?: string;
+  to?: string;
+  credit?: boolean;
+  page?: number;
+}) {
+  return listOrdersPageCached(JSON.stringify(input));
+}
+
+const listOrdersPageCached = cache(async (raw: string): Promise<ListPage<OrderListRow>> => {
+  const input = JSON.parse(raw) as {
+    statuses?: WorkflowStatus | WorkflowStatus[];
+    q?: string;
+    from?: string;
+    to?: string;
+    credit?: boolean;
+    page?: number;
+  };
+  const { page, pageSize, from, to } = pageRange(input.page ?? 1);
+  const ids = await orderIdsMatchingSearch(input.q ?? "");
+  if (ids && ids.length === 0) {
+    return emptyPage(page, pageSize);
+  }
+
+  const db = await getDb();
+  let request = db
+    .from("orders")
+    .select(ORDER_LIST_SELECT, { count: "exact" })
+    .order("updated_at", { ascending: false })
+    .range(from, to);
+
+  const statuses = input.statuses;
+  if (Array.isArray(statuses) && statuses.length > 0) {
+    request = request.in("status", statuses);
+  } else if (typeof statuses === "string" && statuses) {
+    request = request.eq("status", statuses);
+  }
+  if (ids) {
+    request = request.in("id", ids);
+  }
+  if (input.from && input.to) {
+    const iso = rangeToIso(input.from, input.to);
+    request = request.gte("updated_at", iso.start).lte("updated_at", iso.end);
+  } else if (input.from) {
+    request = request.gte("updated_at", rangeToIso(input.from, input.from).start);
+  } else if (input.to) {
+    request = request.lte("updated_at", rangeToIso(input.to, input.to).end);
+  }
+  if (input.credit) {
+    request = request.eq("credit_delivery_status", "requested");
+  }
+
+  const { data, error, count } = await request;
+  if (error) {
+    throw new Error(`Failed to load orders: ${error.message}`);
+  }
+  return {
+    rows: (data ?? []) as OrderListRow[],
+    total: count ?? 0,
+    page,
+    pageSize,
+  };
+});
+
+export const listCustomerLatestOrders = cache(async (customerIds: string[]) => {
+  if (customerIds.length === 0) return [];
   const db = await getDb();
   return throwQuery(
-    db
-      .from("orders")
-      .select("id, order_number, status, customer_id, updated_at")
-      .order("updated_at", { ascending: false }),
-    "Failed to load orders",
+    db.rpc("customer_latest_orders", { p_ids: customerIds }),
+    "Failed to load latest orders",
   );
 });
 

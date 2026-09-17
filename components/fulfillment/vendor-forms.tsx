@@ -12,6 +12,7 @@ import {
   FormSheetBody,
   FormSheetFooter,
 } from "@/components/app/form-sheet";
+import { rememberFulfillmentScroll } from "@/components/app/scroll-to-focus";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -92,7 +93,11 @@ export function SendToVendorForm({
         </span>
       }
     >
-      <form action={action} className="flex min-h-0 flex-1 flex-col">
+      <form
+        action={action}
+        onSubmit={rememberFulfillmentScroll}
+        className="flex min-h-0 flex-1 flex-col"
+      >
         <input type="hidden" name="order_id" value={orderId} />
         <input type="hidden" name="order_number" value={orderNumber} />
         <input type="hidden" name="items" value={JSON.stringify(payload)} />
@@ -323,7 +328,11 @@ export function ReceiveItemsForm({
         </span>
       }
     >
-      <form action={action} className="flex min-h-0 flex-1 flex-col">
+      <form
+        action={action}
+        onSubmit={rememberFulfillmentScroll}
+        className="flex min-h-0 flex-1 flex-col"
+      >
         <input type="hidden" name="order_id" value={orderId} />
         <input type="hidden" name="vendor_order_id" value={vendorOrderId} />
         <input type="hidden" name="received" value={JSON.stringify(payload)} />
@@ -425,7 +434,11 @@ export function WriteOffItemsForm({
         </span>
       }
     >
-      <form action={action} className="flex min-h-0 flex-1 flex-col">
+      <form
+        action={action}
+        onSubmit={rememberFulfillmentScroll}
+        className="flex min-h-0 flex-1 flex-col"
+      >
         <input type="hidden" name="order_id" value={orderId} />
         <input type="hidden" name="items" value={JSON.stringify(payload)} />
         <FormSheetBody className="flex flex-col gap-3">

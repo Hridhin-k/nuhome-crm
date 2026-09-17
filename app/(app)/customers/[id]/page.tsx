@@ -70,16 +70,10 @@ export default async function CustomerDetailPage({
       {notice === "updated" ? <Notice>Customer updated.</Notice> : null}
       {notice === "uploaded" ? <Notice>File uploaded.</Notice> : null}
       {notice === "file-removed" ? <Notice>File removed.</Notice> : null}
-      {customer.gstin || customer.billing_address || customer.site_address || customer.address ? (
+      {customer.billing_address || customer.site_address || customer.address ? (
         <div className="rounded-lg border border-outline-variant bg-card p-4 text-sm text-on-surface">
-          {customer.gstin ? (
-            <p>
-              <span className="text-on-surface-variant">GSTIN · </span>
-              {customer.gstin}
-            </p>
-          ) : null}
           {customer.billing_address || customer.address ? (
-            <p className="mt-2 whitespace-pre-wrap">
+            <p className="whitespace-pre-wrap">
               <span className="text-on-surface-variant">Billing · </span>
               {customer.billing_address || customer.address}
             </p>

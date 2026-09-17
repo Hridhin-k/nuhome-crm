@@ -1,16 +1,51 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useRef } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import {
   bindRealtimeAuth,
   createBrowserSupabaseClient,
 } from "@/lib/supabase/client";
 
-const CORE_TABLES = ["notifications", "quotes", "orders", "payments"] as const;
-const EXTRA_TABLES = ["vendor_orders", "deliveries", "customers"] as const;
+const DEBOUNCE_MS = 800;
 
-const DEBOUNCE_MS = 400;
+function tablesForPath(pathname: string): string[] {
+  if (
+    pathname === "/home" ||
+    pathname.startsWith("/reports") ||
+    pathname === "/"
+  ) {
+    return [
+      "notifications",
+      "quotes",
+      "orders",
+      "payments",
+      "vendor_orders",
+      "deliveries",
+      "customers",
+    ];
+  }
+  if (pathname.startsWith("/customers")) {
+    return ["notifications", "customers", "orders"];
+  }
+  if (
+    pathname.startsWith("/quotes") ||
+    pathname.startsWith("/approvals") ||
+    pathname.startsWith("/walk-in")
+  ) {
+    return ["notifications", "quotes", "orders"];
+  }
+  if (pathname.startsWith("/fulfillment")) {
+    return ["notifications", "orders", "vendor_orders"];
+  }
+  if (pathname.startsWith("/payments")) {
+    return ["notifications", "payments", "orders"];
+  }
+  if (pathname.startsWith("/ready") || pathname.startsWith("/orders")) {
+    return ["notifications", "orders", "payments", "deliveries"];
+  }
+  return ["notifications"];
+}
 
 export function LiveRefresh({
   userId,
@@ -20,6 +55,8 @@ export function LiveRefresh({
   accessToken: string | null;
 }) {
   const router = useRouter();
+  const pathname = usePathname() ?? "/home";
+  const tables = useMemo(() => tablesForPath(pathname), [pathname]);
   const tokenRef = useRef(accessToken);
   tokenRef.current = accessToken;
 
@@ -64,13 +101,9 @@ export function LiveRefresh({
     const channels: ReturnType<typeof supabase.channel>[] = [];
     let retryTimer: ReturnType<typeof setTimeout> | null = null;
 
-    function listen(
-      name: string,
-      tables: readonly string[],
-      retryOnError: boolean,
-    ) {
+    function listen(name: string, tableList: string[], retryOnError: boolean) {
       const next = supabase.channel(name);
-      for (const table of tables) {
+      for (const table of tableList) {
         next.on(
           "postgres_changes",
           table === "notifications"
@@ -113,9 +146,7 @@ export function LiveRefresh({
           void supabase.removeChannel(existing);
         }
       }
-
-      listen(`live:${userId}`, CORE_TABLES, true);
-      listen(`live-extra:${userId}`, EXTRA_TABLES, false);
+      listen(`live:${userId}:${tables.join(",")}`, tables, true);
     }
 
     document.addEventListener("visibilitychange", onVisible);
@@ -136,7 +167,7 @@ export function LiveRefresh({
         void supabase.removeChannel(channel);
       }
     };
-  }, [userId, accessToken, router]);
+  }, [userId, accessToken, router, tables]);
 
   return null;
 }

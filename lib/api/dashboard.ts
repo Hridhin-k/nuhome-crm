@@ -1,20 +1,9 @@
 import { cache } from "react";
-import { listPendingPayments } from "@/lib/api/catalog";
-import { countCustomers } from "@/lib/api/customers";
-import { listOrders } from "@/lib/api/orders";
-import { listPendingApprovals, listQuotes } from "@/lib/api/quotes";
+import { getFloorCounts, censusFromCounts, sumStatuses } from "@/lib/api/floor-counts";
 import type { Accent } from "@/components/app/progress-bar";
-import { WORKFLOW_STATUSES, type AppRole, type WorkflowStatus } from "@/lib/workflow/types";
-import {
-  completedOrderCount,
-  liveJobCount,
-  liveStatus,
-  openQuoteCount,
-  ordersInBucket,
-  ordersWithStatus,
-} from "@/lib/workflow/home-counts";
-import { floorHref, ORDER_BUCKET_STATUSES } from "@/lib/workflow/status-buckets";
-import { orderHasOverdueVendor, vendorOrderList } from "@/lib/workflow/fulfillment";
+import { liveJobCount } from "@/lib/workflow/home-counts";
+import { ORDER_BUCKET_STATUSES, QUOTE_ONLY_STATUSES } from "@/lib/workflow/status-buckets";
+import type { AppRole, WorkflowStatus } from "@/lib/workflow/types";
 
 export type QueueCard = {
   id: string;
@@ -55,18 +44,6 @@ export type OperationsSnapshot = {
   queues: QueueCard[];
 };
 
-function overdueVendorCount(
-  orders: { vendor_orders?: unknown }[],
-) {
-  return orders.filter((order) =>
-    orderHasOverdueVendor(
-      order.vendor_orders as
-        | { status: string; expected_delivery_at?: string | null }[]
-        | null,
-    ),
-  ).length;
-}
-
 function withAccents(cards: QueueCard[]): QueueCard[] {
   const cycle: Accent[] = ["cobalt", "violet", "forest", "cerulean"];
   return cards.map((card, index) => ({
@@ -80,45 +57,23 @@ function scale(value: number, max: number) {
 }
 
 export const getOperationsSnapshot = cache(async (): Promise<OperationsSnapshot> => {
-  const [quotes, customerCount, orders, approvals, payments] = await Promise.all([
-    listQuotes(),
-    countCustomers(),
-    listOrders(),
-    listPendingApprovals(),
-    listPendingPayments(),
-  ]);
-
-  const pendingQuotes = openQuoteCount(quotes);
-  const payment = ordersInBucket(orders, "payment");
-  const active = ordersInBucket(orders, "active");
-  const hold = ordersInBucket(orders, "hold");
-  const deliveries = ordersInBucket(orders, "delivery");
-  const overdue = overdueVendorCount(orders);
-  const delivered = completedOrderCount(orders);
-  const revisionPending = quotes.filter((quote) => quote.revision_pending).length;
-  const creditRequested = orders.filter(
-    (order) => order.credit_delivery_status === "requested",
-  ).length;
+  const counts = await getFloorCounts();
+  const pendingQuotes = sumStatuses(counts, QUOTE_ONLY_STATUSES);
+  const payment = sumStatuses(counts, ORDER_BUCKET_STATUSES.payment);
+  const active = sumStatuses(counts, ORDER_BUCKET_STATUSES.active);
+  const hold = sumStatuses(counts, ORDER_BUCKET_STATUSES.hold);
+  const deliveries = sumStatuses(counts, ORDER_BUCKET_STATUSES.delivery);
+  const overdue = counts.overdue_orders;
+  const delivered = sumStatuses(counts, ["delivered", "closed"]);
+  const census = censusFromCounts(counts);
+  const open = liveJobCount(census);
   const stuck =
-    approvals.length +
-    payments.length +
+    counts.pending_approvals +
+    counts.pending_payments +
     hold +
     overdue +
-    revisionPending +
-    creditRequested;
-
-  const censusCounts = Object.fromEntries(
-    WORKFLOW_STATUSES.map((status) => [status, 0]),
-  ) as Record<WorkflowStatus, number>;
-  for (const quote of quotes) {
-    censusCounts[liveStatus(quote)] += 1;
-  }
-  const census: StatusCensus[] = WORKFLOW_STATUSES.map((status) => ({
-    status,
-    count: censusCounts[status],
-    href: floorHref(status),
-  }));
-  const open = liveJobCount(census);
+    counts.revision_pending +
+    counts.credit_requested;
 
   const stages: PipelineStage[] = [
     {
@@ -129,7 +84,7 @@ export const getOperationsSnapshot = cache(async (): Promise<OperationsSnapshot>
     },
     {
       label: "Awaiting accounts",
-      count: approvals.length,
+      count: counts.pending_approvals,
       href: "/approvals",
       accent: "violet",
     },
@@ -141,7 +96,7 @@ export const getOperationsSnapshot = cache(async (): Promise<OperationsSnapshot>
     },
     {
       label: "Payments to verify",
-      count: payments.length,
+      count: counts.pending_payments,
       href: "/payments",
       accent: "cerulean",
     },
@@ -165,34 +120,26 @@ export const getOperationsSnapshot = cache(async (): Promise<OperationsSnapshot>
     },
   ];
 
-  const workMax = Math.max(
-    pendingQuotes,
-    payment,
-    active,
-    hold,
-    deliveries,
-    overdue,
-    1,
-  );
+  const workMax = Math.max(pendingQuotes, payment, active, hold, deliveries, overdue, 1);
 
   const queues = withAccents([
     {
       id: "approvals",
       title: "Quotes awaiting approval",
-      count: approvals.length,
+      count: counts.pending_approvals,
       href: "/approvals",
       detail: "Selling price, discount, and margin",
       accent: "violet",
-      progress: scale(approvals.length, workMax),
+      progress: scale(counts.pending_approvals, workMax),
     },
     {
       id: "payments",
       title: "Payments awaiting verification",
-      count: payments.length,
+      count: counts.pending_payments,
       href: "/payments",
       detail: "Pending receipts — one per payment, not per job",
       accent: "cerulean",
-      progress: scale(payments.length, workMax),
+      progress: scale(counts.pending_payments, workMax),
     },
     {
       id: "pending-quotes",
@@ -244,11 +191,11 @@ export const getOperationsSnapshot = cache(async (): Promise<OperationsSnapshot>
       id: "credit-delivery",
       title: "Credit delivery requests",
       kind: "flag",
-      count: creditRequested,
+      count: counts.credit_requested,
       href: "/orders?credit=1",
       detail: "Operations must approve handover without full payment",
       accent: "violet",
-      progress: scale(creditRequested, workMax),
+      progress: scale(counts.credit_requested, workMax),
     },
     {
       id: "deliveries",
@@ -263,13 +210,13 @@ export const getOperationsSnapshot = cache(async (): Promise<OperationsSnapshot>
 
   return {
     open,
-    customers: customerCount,
+    customers: counts.customers,
     delivered,
-    pendingApprovals: approvals.length,
-    pendingPayments: payments.length,
+    pendingApprovals: counts.pending_approvals,
+    pendingPayments: counts.pending_payments,
     overdue,
     stuck,
-    creditRequested,
+    creditRequested: counts.credit_requested,
     asOf: new Date().toISOString(),
     census,
     stages,
@@ -283,20 +230,16 @@ export const getHomeQueues = cache(async (role: AppRole): Promise<QueueCard[]> =
     return snapshot.queues;
   }
 
-  if (role === "sales") {
-    const [quotes, customerCount, orders] = await Promise.all([
-      listQuotes(),
-      countCustomers(),
-      listOrders(),
-    ]);
-    const pendingQuotes = openQuoteCount(quotes);
-    const payment = ordersInBucket(orders, "payment");
-    const active = ordersInBucket(orders, "active");
-    const hold = ordersInBucket(orders, "hold");
-    const deliveries = ordersInBucket(orders, "delivery");
-    const overdue = overdueVendorCount(orders);
-    const max = Math.max(pendingQuotes, payment, active, hold, deliveries, overdue, 1);
+  const counts = await getFloorCounts();
 
+  if (role === "sales") {
+    const pendingQuotes = sumStatuses(counts, QUOTE_ONLY_STATUSES);
+    const payment = sumStatuses(counts, ORDER_BUCKET_STATUSES.payment);
+    const active = sumStatuses(counts, ORDER_BUCKET_STATUSES.active);
+    const hold = sumStatuses(counts, ORDER_BUCKET_STATUSES.hold);
+    const deliveries = sumStatuses(counts, ORDER_BUCKET_STATUSES.delivery);
+    const overdue = counts.overdue_orders;
+    const max = Math.max(pendingQuotes, payment, active, hold, deliveries, overdue, 1);
     return withAccents([
       {
         id: "pending-quotes",
@@ -350,7 +293,7 @@ export const getHomeQueues = cache(async (role: AppRole): Promise<QueueCard[]> =
       {
         id: "customers",
         title: "Customers",
-        count: customerCount,
+        count: counts.customers,
         href: "/customers",
         detail: "Profiles on file — not open work",
         kind: "directory",
@@ -359,26 +302,23 @@ export const getHomeQueues = cache(async (role: AppRole): Promise<QueueCard[]> =
   }
 
   if (role === "accounts") {
-    const [approvals, payments, activeOrders] = await Promise.all([
-      listPendingApprovals(),
-      listPendingPayments(),
-      listOrders([...ORDER_BUCKET_STATUSES.active]),
-    ]);
-    const awaiting = ordersWithStatus(activeOrders, "order_active");
-    const vendorQuotes = activeOrders.filter((order) =>
-      vendorOrderList(order.vendor_orders).some(
-        (batch) => batch.commercial_status === "quoted",
-      ),
-    ).length;
-    const max = Math.max(approvals.length, payments.length, awaiting, vendorQuotes, 1);
+    const awaiting = counts.order_counts.order_active ?? 0;
+    const vendorQuotes = counts.vendor_quoted;
+    const max = Math.max(
+      counts.pending_approvals,
+      counts.pending_payments,
+      awaiting,
+      vendorQuotes,
+      1,
+    );
     return withAccents([
       {
         id: "approvals",
         title: "Quotes awaiting approval",
-        count: approvals.length,
+        count: counts.pending_approvals,
         href: "/approvals",
         detail: "Review selling price, discount, and margin",
-        progress: scale(approvals.length, max),
+        progress: scale(counts.pending_approvals, max),
       },
       {
         id: "vendor-quotes",
@@ -391,10 +331,10 @@ export const getHomeQueues = cache(async (role: AppRole): Promise<QueueCard[]> =
       {
         id: "payments",
         title: "Payments awaiting verification",
-        count: payments.length,
+        count: counts.pending_payments,
         href: "/payments",
         detail: "Pending receipts — one per payment, not per job",
-        progress: scale(payments.length, max),
+        progress: scale(counts.pending_payments, max),
       },
       {
         id: "awaiting-vendor",
@@ -408,12 +348,11 @@ export const getHomeQueues = cache(async (role: AppRole): Promise<QueueCard[]> =
   }
 
   if (role === "procurement") {
-    const orders = await listOrders([...ORDER_BUCKET_STATUSES.active]);
-    const awaiting = ordersWithStatus(orders, "order_active");
-    const dispatches = ordersWithStatus(orders, "sent_to_vendor");
-    const expected = ordersWithStatus(orders, "vendor_dispatched");
-    const received = ordersWithStatus(orders, "items_received");
-    const overdue = overdueVendorCount(orders);
+    const awaiting = counts.order_counts.order_active ?? 0;
+    const dispatches = counts.order_counts.sent_to_vendor ?? 0;
+    const expected = counts.order_counts.vendor_dispatched ?? 0;
+    const received = counts.order_counts.items_received ?? 0;
+    const overdue = counts.overdue_orders;
     const max = Math.max(awaiting, dispatches, expected, received, overdue, 1);
     return withAccents([
       {
@@ -460,16 +399,9 @@ export const getHomeQueues = cache(async (role: AppRole): Promise<QueueCard[]> =
     ]);
   }
 
-  const [gateOrders, activeOrders] = await Promise.all([
-    listOrders([
-      ...ORDER_BUCKET_STATUSES.delivery,
-      ...ORDER_BUCKET_STATUSES.hold,
-    ]),
-    listOrders([...ORDER_BUCKET_STATUSES.active]),
-  ]);
-  const ready = ordersWithStatus(gateOrders, "delivery_unlocked");
-  const collect = ordersInBucket(gateOrders, "hold");
-  const overdue = overdueVendorCount(activeOrders);
+  const ready = counts.order_counts.delivery_unlocked ?? 0;
+  const collect = sumStatuses(counts, ORDER_BUCKET_STATUSES.hold);
+  const overdue = counts.overdue_orders;
   const max = Math.max(ready, collect, overdue, 1);
   return withAccents([
     {

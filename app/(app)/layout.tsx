@@ -19,16 +19,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
   ]);
   const items = navForRoles(user.roles, user.role);
   const canQuote = rolesHavePermission(user.roles, "quotes.create");
-  const canAdmin = rolesHavePermission(user.roles, "admin.manage");
-  const canOpsDesk =
-    canAdmin ||
-    rolesHavePermission(user.roles, "staff.manage") ||
-    rolesHavePermission(user.roles, "catalog.manage");
-  const warm = [
-    ...items.map((item) => item.href),
-    ...(canQuote ? ["/walk-in"] : []),
-    ...(canOpsDesk ? ["/users", "/vendors", "/materials", "/company", "/reports"] : []),
-  ];
+  const warm = items.map((item) => item.href);
 
   return (
     <div className="flex min-h-dvh min-w-0 flex-col bg-background text-on-background">

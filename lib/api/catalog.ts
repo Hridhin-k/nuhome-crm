@@ -1,5 +1,6 @@
 import { cache } from "react";
 import { getDb, throwQuery } from "@/lib/api/db";
+import { getFloorCounts } from "@/lib/api/floor-counts";
 import { relList } from "@/lib/api/rel";
 import { parseAppRole } from "@/lib/auth/roles";
 import type { AppRole } from "@/lib/workflow/types";
@@ -130,14 +131,10 @@ export function listCoverSales(profiles: ProfileRow[]) {
 }
 
 export const getCatalogSnapshot = cache(async () => {
-  const [users, vendors, materials] = await Promise.all([
-    listProfiles(),
-    listVendors({ includeInactive: true }),
-    listMaterials({ includeInactive: true }),
-  ]);
+  const counts = await getFloorCounts();
   return {
-    users: users.length,
-    vendors: vendors.length,
-    materials: materials.length,
+    users: counts.catalog_users,
+    vendors: counts.catalog_vendors,
+    materials: counts.catalog_materials,
   };
 });

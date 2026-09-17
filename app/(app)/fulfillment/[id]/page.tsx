@@ -2,7 +2,10 @@ import { notFound } from "next/navigation";
 import { dispatchAction } from "@/app/actions/workflow";
 import { ConfirmActionSheet } from "@/components/app/confirm-action-sheet";
 import { Notice } from "@/components/app/notice";
-import { ScrollToFocus } from "@/components/app/scroll-to-focus";
+import {
+  rememberFulfillmentScroll,
+  ScrollToFocus,
+} from "@/components/app/scroll-to-focus";
 import { PageFrame } from "@/components/app/page-frame";
 import { PageHeader } from "@/components/app/page-header";
 import { AttachmentPanel } from "@/components/documents/attachment-panel";
@@ -293,6 +296,7 @@ export default async function FulfillmentDetailPage({
                     vendorOrder.id,
                     detail.order.id,
                   )}
+                  onSubmit={rememberFulfillmentScroll}
                 />
               ) : vendorOrder.status === "sent" ? (
                 <p className="text-sm text-on-surface-variant">

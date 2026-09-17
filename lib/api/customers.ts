@@ -1,5 +1,6 @@
 import { cache } from "react";
 import { getDb, throwQuery } from "@/lib/api/db";
+import { pageRange, type ListPage } from "@/lib/api/paging";
 import { sanitizeSearch } from "@/lib/search";
 
 export const countCustomers = cache(async () => {
@@ -20,7 +21,8 @@ export const listCustomers = cache(async (query?: string) => {
   let request = db
     .from("customers")
     .select("id, name, phone, email, address, gstin, billing_address, site_address, firm, created_at, updated_at, created_by")
-    .order("updated_at", { ascending: false });
+    .order("updated_at", { ascending: false })
+    .limit(400);
 
   if (q) {
     const quoted = await throwQuery(
@@ -51,6 +53,67 @@ export const listCustomers = cache(async (query?: string) => {
   }
 
   return throwQuery(request, "Failed to load customers");
+});
+
+export type CustomerListRow = Awaited<ReturnType<typeof listCustomers>>[number];
+
+export function listCustomersPage(input: { q?: string; page?: number }) {
+  return listCustomersPageCached(JSON.stringify(input));
+}
+
+const listCustomersPageCached = cache(async (raw: string): Promise<ListPage<CustomerListRow>> => {
+  const input = JSON.parse(raw) as { q?: string; page?: number };
+  const { page, pageSize, from, to } = pageRange(input.page ?? 1);
+  const db = await getDb();
+  const q = sanitizeSearch(input.q);
+
+  let request = db
+    .from("customers")
+    .select(
+      "id, name, phone, email, address, gstin, billing_address, site_address, firm, created_at, updated_at, created_by",
+      { count: "exact" },
+    )
+    .order("updated_at", { ascending: false })
+    .range(from, to);
+
+  if (q) {
+    const [quoted, ordered] = await Promise.all([
+      throwQuery(
+        db.from("quotes").select("customer_id").ilike("quote_number", `%${q}%`).limit(80),
+        "Failed to search quotes",
+      ),
+      throwQuery(
+        db.from("orders").select("customer_id").ilike("order_number", `%${q}%`).limit(80),
+        "Failed to search orders",
+      ),
+    ]);
+    const extraIds = [
+      ...new Set(
+        [...quoted, ...ordered].map((row) => row.customer_id).filter(Boolean),
+      ),
+    ];
+    request = request.or(
+      [
+        `name.ilike.%${q}%`,
+        `phone.ilike.%${q}%`,
+        `email.ilike.%${q}%`,
+        extraIds.length > 0 ? `id.in.(${extraIds.join(",")})` : null,
+      ]
+        .filter(Boolean)
+        .join(","),
+    );
+  }
+
+  const { data, error, count } = await request;
+  if (error) {
+    throw new Error(`Failed to load customers: ${error.message}`);
+  }
+  return {
+    rows: (data ?? []) as CustomerListRow[],
+    total: count ?? 0,
+    page,
+    pageSize,
+  };
 });
 
 export const getCustomer = cache(async (id: string) => {

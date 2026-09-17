@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   inDateRange,
   matchesSearch,
+  parsePage,
   parseYmd,
   pathWithQuery,
   sanitizeSearch,
@@ -36,5 +37,11 @@ describe("list search helpers", () => {
     expect(pathWithQuery("/quotes", { q: "nh", group: undefined })).toBe(
       "/quotes?q=nh",
     );
+  });
+
+  it("parses page numbers", () => {
+    expect(parsePage(undefined)).toBe(1);
+    expect(parsePage("0")).toBe(1);
+    expect(parsePage("3")).toBe(3);
   });
 });

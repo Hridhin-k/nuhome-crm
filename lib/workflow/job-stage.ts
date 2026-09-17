@@ -175,6 +175,7 @@ export function jobTracks(input: {
   const siteDone = status === "delivered" || status === "closed";
   const siteBlocked =
     outstanding > 0 &&
+    !input.creditApproved &&
     (status === "items_received" ||
       status === "delivery_pending_payment" ||
       status === "order_on_hold");
@@ -188,9 +189,16 @@ export function jobTracks(input: {
   } else if (siteBlocked) {
     siteState = "blocked";
     siteDetail = "Delivery locked until the balance is verified or credit is approved.";
-  } else if (siteUnlocked || (status === "items_received" && outstanding <= 0)) {
+  } else if (
+    siteUnlocked ||
+    (status === "items_received" && (outstanding <= 0 || input.creditApproved)) ||
+    (input.creditApproved &&
+      (status === "delivery_pending_payment" || status === "order_on_hold"))
+  ) {
     siteState = "current";
-    siteDetail = "Ready to deliver.";
+    siteDetail = input.creditApproved
+      ? "Credit delivery approved. Ready to deliver."
+      : "Ready to deliver.";
   }
 
   return [
