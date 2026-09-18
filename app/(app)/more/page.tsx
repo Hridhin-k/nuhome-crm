@@ -80,7 +80,7 @@ export default async function MorePage() {
             .concat(canStaff || canAdmin ? [ADMIN_LINKS[0]] : [])
             .concat(canAdmin ? [ADMIN_LINKS[1]] : [])
             .concat(canCatalog || canAdmin ? [ADMIN_LINKS[2]] : [])
-            .concat(canAdmin ? [ADMIN_LINKS[3]] : [])
+            .concat(canCatalog || canAdmin ? [ADMIN_LINKS[3]] : [])
             .concat(canReports || canAdmin ? [ADMIN_LINKS[4]] : [])
             .map((link) => (
             <JobRow

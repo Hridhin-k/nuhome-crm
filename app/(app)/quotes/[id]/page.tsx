@@ -15,13 +15,12 @@ import { StickyActionBar } from "@/components/app/sticky-action-bar";
 import { RejectQuoteSheet } from "@/components/quotes/reject-sheet";
 import { CancelJobSheet } from "@/components/quotes/cancel-sheet";
 import { WhatsAppShareSheet } from "@/components/quotes/whatsapp-share-sheet";
-import { EmailShareSheet } from "@/components/quotes/email-share-sheet";
-import { AttachmentPanel } from "@/components/documents/attachment-panel";
+import { ItemDescriptionHint } from "@/components/app/item-description-hint";
 import { JobTracks } from "@/components/jobs/job-tracks";
 import { listQuoteActivity } from "@/lib/api/audit";
-import { listAttachments } from "@/lib/api/documents";
 import { listPaymentsForOrder } from "@/lib/api/orders";
 import { getQuote } from "@/lib/api/quotes";
+import { rel } from "@/lib/api/rel";
 import { publicQuotePath, publicQuoteUrl } from "@/lib/quotes/public-url";
 import { getCustomerSiteUrl } from "@/lib/site-url";
 import { requireUser } from "@/lib/auth/guards";
@@ -46,11 +45,10 @@ export default async function QuoteDetailPage({
   const { notice, error } = await searchParams;
   const canRevise = rolesHavePermission(user.roles, "quotes.revise");
   const canShareWhatsApp = rolesHavePermission(user.roles, "quotes.send_to_customer");
-  const [detail, activity, siteUrl, files] = await Promise.all([
+  const [detail, activity, siteUrl] = await Promise.all([
     getQuote(id),
     listQuoteActivity(id).catch(() => []),
     getCustomerSiteUrl(),
-    listAttachments("quote", id).catch(() => []),
   ]);
   if (!detail) {
     notFound();
@@ -158,8 +156,6 @@ export default async function QuoteDetailPage({
       {notice === "draft" ? (
         <Notice>Draft saved. Submit to Accounts when you are ready.</Notice>
       ) : null}
-      {notice === "uploaded" ? <Notice>File uploaded.</Notice> : null}
-      {notice === "file-removed" ? <Notice>File removed.</Notice> : null}
       {error ? (
         <p className="rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
           {error}
@@ -248,10 +244,17 @@ export default async function QuoteDetailPage({
                   const sell = Number(item.quantity) * Number(item.unit_price);
                   const discPct =
                     sell > 0 ? (Number(item.discount) / sell) * 100 : 0;
+                  const materialDescription =
+                    typeof rel(item.materials)?.description === "string"
+                      ? String(rel(item.materials)?.description).trim()
+                      : "";
                   return (
                     <tr key={item.id}>
-                      <td className="max-w-[150px] truncate p-3 text-data-tabular">
-                        {item.description}
+                      <td className="max-w-[180px] p-3 text-data-tabular">
+                        <span className="flex min-w-0 items-start gap-2">
+                          <span className="min-w-0 truncate">{item.description}</span>
+                          <ItemDescriptionHint description={materialDescription} />
+                        </span>
                       </td>
                       <td className="p-3 text-right font-mono text-xs text-secondary">
                         {item.item_code ?? "—"}
@@ -299,34 +302,45 @@ export default async function QuoteDetailPage({
             ) : null}
           </div>
           <ul className="mt-3 flex flex-col gap-3">
-            {currentItems.map((item) => (
+            {currentItems.map((item) => {
+              const materialDescription =
+                typeof rel(item.materials)?.description === "string"
+                  ? String(rel(item.materials)?.description).trim()
+                  : "";
+              return (
               <li
                 key={item.id}
-                className="flex min-w-0 justify-between gap-3"
+                className="flex min-w-0 items-start justify-between gap-3"
               >
-                <span className="min-w-0">
-                  <span className="block text-body-md text-on-surface">
-                    {item.description}
-                  </span>
-                  <span className="text-body-sm text-on-surface-variant">
-                    Qty {item.quantity}
-                    {item.item_code ? ` · ${item.item_code}` : ""}
-                    {item.hsn_code ? ` · HSN ${item.hsn_code}` : ""}
-                    {Number(item.gst_rate) > 0
-                      ? ` · GST ${item.gst_rate}%`
-                      : ""}
-                  </span>
-                  {item.specification ? (
-                    <span className="mt-0.5 block text-body-sm text-on-surface-variant">
-                      {item.specification}
+                <span className="min-w-0 flex-1">
+                  <span className="flex items-start gap-2">
+                    <span className="min-w-0 flex-1">
+                      <span className="block text-body-md text-on-surface">
+                        {item.description}
+                      </span>
+                      <span className="text-body-sm text-on-surface-variant">
+                        Qty {item.quantity}
+                        {item.item_code ? ` · ${item.item_code}` : ""}
+                        {item.hsn_code ? ` · HSN ${item.hsn_code}` : ""}
+                        {Number(item.gst_rate) > 0
+                          ? ` · GST ${item.gst_rate}%`
+                          : ""}
+                      </span>
+                      {item.specification ? (
+                        <span className="mt-0.5 block text-body-sm text-on-surface-variant">
+                          {item.specification}
+                        </span>
+                      ) : null}
                     </span>
-                  ) : null}
+                    <ItemDescriptionHint description={materialDescription} />
+                  </span>
                 </span>
                 <span className="shrink-0 text-data-tabular">
                   {formatInrExact(Number(item.line_total))}
                 </span>
               </li>
-            ))}
+              );
+            })}
           </ul>
           {current ? (
             <div className="mt-4 flex items-center justify-between border-t border-surface-variant pt-3">
@@ -350,14 +364,6 @@ export default async function QuoteDetailPage({
         <p className="text-sm text-on-surface-variant">{current.notes}</p>
       ) : null}
 
-      <AttachmentPanel
-        entityType="quote"
-        entityId={quote.id}
-        returnTo={`/quotes/${quote.id}`}
-        files={files}
-        canUpload={rolesHavePermission(user.roles, "quotes.create")}
-      />
-
       {order ? (
         <AppLink
           href={`/orders/${order.id}/invoice`}
@@ -374,17 +380,6 @@ export default async function QuoteDetailPage({
               quoteId={quote.id}
               customerName={customer?.name ?? "Customer"}
               customerPhone={customer?.phone}
-              quoteNumber={quote.quote_number}
-              versionNumber={current.version_number}
-              total={Number(current.total)}
-              quoteUrl={publicUrl}
-            />
-          ) : null}
-          {canWhatsApp && current && publicUrl ? (
-            <EmailShareSheet
-              quoteId={quote.id}
-              customerName={customer?.name ?? "Customer"}
-              customerEmail={customer?.email}
               quoteNumber={quote.quote_number}
               versionNumber={current.version_number}
               total={Number(current.total)}
@@ -457,21 +452,6 @@ export default async function QuoteDetailPage({
               quoteId={quote.id}
               customerName={customer?.name ?? "Customer"}
               customerPhone={customer?.phone}
-              quoteNumber={quote.quote_number}
-              versionNumber={current.version_number}
-              total={Number(current.total)}
-              quoteUrl={publicUrl}
-            />
-          ) : null}
-          {status === "quote_sent_to_customer" &&
-          !orderClosed &&
-          canWhatsApp &&
-          current &&
-          publicUrl ? (
-            <EmailShareSheet
-              quoteId={quote.id}
-              customerName={customer?.name ?? "Customer"}
-              customerEmail={customer?.email}
               quoteNumber={quote.quote_number}
               versionNumber={current.version_number}
               total={Number(current.total)}
@@ -567,21 +547,30 @@ export default async function QuoteDetailPage({
                         View items · {formatInrExact(Number(version.total))}
                       </summary>
                       <ul className="mt-2 divide-y divide-surface-variant">
-                        {versionItems.map((item) => (
+                        {versionItems.map((item) => {
+                          const materialDescription =
+                            typeof rel(item.materials)?.description === "string"
+                              ? String(rel(item.materials)?.description).trim()
+                              : "";
+                          return (
                           <li
                             key={item.id}
                             className="flex justify-between gap-3 py-1.5 text-sm"
                           >
-                            <span>
-                              {item.description}
-                              <span className="text-on-surface-variant">
-                                {" "}
-                                × {item.quantity}
+                            <span className="inline-flex min-w-0 items-start gap-2">
+                              <span className="min-w-0">
+                                {item.description}
+                                <span className="text-on-surface-variant">
+                                  {" "}
+                                  × {item.quantity}
+                                </span>
                               </span>
+                              <ItemDescriptionHint description={materialDescription} />
                             </span>
                             <span>{formatInrExact(Number(item.line_total))}</span>
                           </li>
-                        ))}
+                          );
+                        })}
                       </ul>
                     </details>
                   ) : null}

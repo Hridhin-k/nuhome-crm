@@ -219,12 +219,13 @@ describe("vendor and delivery gate", () => {
     });
   });
 
-  it("holds delivery when outstanding > 0", () => {
+  it("holds delivery when outstanding > 0 unless credit is approved", () => {
     expect(resolveDeliveryGate(1)).toBe("order_on_hold");
     expect(resolveDeliveryGate(0)).toBe("delivery_unlocked");
+    expect(resolveDeliveryGate(1, true)).toBe("delivery_unlocked");
   });
 
-  it("rejects delivery unless unlocked, received, and paid", () => {
+  it("rejects delivery unless unlocked, received, and paid (or credit approved)", () => {
     expect(() =>
       assertCanDeliver({
         actorRole: "store",
@@ -242,6 +243,16 @@ describe("vendor and delivery gate", () => {
         itemsFullyReceived: true,
       }),
     ).toThrow(/Outstanding/);
+
+    expect(() =>
+      assertCanDeliver({
+        actorRole: "store",
+        status: "delivery_unlocked",
+        outstanding: 50,
+        itemsFullyReceived: true,
+        creditApproved: true,
+      }),
+    ).not.toThrow();
 
     expect(() =>
       assertCanDeliver({

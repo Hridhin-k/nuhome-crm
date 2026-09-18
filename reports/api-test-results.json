@@ -1,0 +1,947 @@
+{
+  "startedAt": "2026-09-17T18:00:02.714Z",
+  "results": [
+    {
+      "name": "admin_set_profile_roles",
+      "group": "RPC",
+      "status": "pass",
+      "ms": 154,
+      "detail": "reachable (auth) · Not allowed"
+    },
+    {
+      "name": "admin_set_role",
+      "group": "RPC",
+      "status": "pass",
+      "ms": 139,
+      "detail": "reachable (auth) · Not allowed"
+    },
+    {
+      "name": "admin_update_user",
+      "group": "RPC",
+      "status": "pass",
+      "ms": 145,
+      "detail": "reachable (auth) · Not allowed"
+    },
+    {
+      "name": "floor_counts",
+      "group": "RPC",
+      "status": "pass",
+      "ms": 149,
+      "detail": "ok · {\"customers\":15,\"order_counts\":{\"closed\":11,\"cancelled\":2,\"order_on_hold\":6,\"quote_sent_to_customer\":1},\"quote_counts\":{"
+    },
+    {
+      "name": "customer_latest_orders",
+      "group": "RPC",
+      "status": "pass",
+      "ms": 186,
+      "detail": "ok · []"
+    },
+    {
+      "name": "allow_status",
+      "group": "RPC",
+      "status": "pass",
+      "ms": 147,
+      "detail": "ok · null"
+    },
+    {
+      "name": "approve_quote",
+      "group": "RPC",
+      "status": "pass",
+      "ms": 143,
+      "detail": "reachable (auth) · Not authenticated"
+    },
+    {
+      "name": "request_credit_delivery",
+      "group": "RPC",
+      "status": "pass",
+      "ms": 146,
+      "detail": "reachable (auth) · Not authenticated"
+    },
+    {
+      "name": "decide_credit_delivery",
+      "group": "RPC",
+      "status": "pass",
+      "ms": 145,
+      "detail": "reachable (auth) · Not authenticated"
+    },
+    {
+      "name": "save_vendor_commercial",
+      "group": "RPC",
+      "status": "pass",
+      "ms": 138,
+      "detail": "reachable (auth) · Not authenticated"
+    },
+    {
+      "name": "allocate_vendor_order",
+      "group": "RPC",
+      "status": "pass",
+      "ms": 145,
+      "detail": "reachable (auth) · Not authenticated"
+    },
+    {
+      "name": "save_vendor_quote",
+      "group": "RPC",
+      "status": "pass",
+      "ms": 143,
+      "detail": "reachable (auth) · Not authenticated"
+    },
+    {
+      "name": "decide_vendor_quote",
+      "group": "RPC",
+      "status": "pass",
+      "ms": 143,
+      "detail": "reachable (auth) · Not authenticated"
+    },
+    {
+      "name": "confirm_vendor_send",
+      "group": "RPC",
+      "status": "pass",
+      "ms": 144,
+      "detail": "reachable (auth) · Not authenticated"
+    },
+    {
+      "name": "record_vendor_payment",
+      "group": "RPC",
+      "status": "pass",
+      "ms": 142,
+      "detail": "reachable (auth) · Not authenticated"
+    },
+    {
+      "name": "assert_transition",
+      "group": "RPC",
+      "status": "pass",
+      "ms": 140,
+      "detail": "ok · null"
+    },
+    {
+      "name": "cancel_job",
+      "group": "RPC",
+      "status": "pass",
+      "ms": 151,
+      "detail": "reachable (validation) · Quote not found"
+    },
+    {
+      "name": "complete_delivery",
+      "group": "RPC",
+      "status": "pass",
+      "ms": 140,
+      "detail": "reachable (auth) · Not authenticated"
+    },
+    {
+      "name": "create_quote",
+      "group": "RPC",
+      "status": "pass",
+      "ms": 140,
+      "detail": "reachable (auth) · Not authenticated"
+    },
+    {
+      "name": "find_customer_by_phone",
+      "group": "RPC",
+      "status": "pass",
+      "ms": 142,
+      "detail": "reachable (auth) · Missing permission: customers.read"
+    },
+    {
+      "name": "normalize_phone",
+      "group": "RPC",
+      "status": "pass",
+      "ms": 142,
+      "detail": "ok · 9876543210"
+    },
+    {
+      "name": "current_profile",
+      "group": "RPC",
+      "status": "pass",
+      "ms": 143,
+      "detail": "ok · {\"id\":null,\"full_name\":null,\"phone\":null,\"role\":null,\"is_active\":null,\"created_at\":null,\"updated_at\":null,\"email\":null}"
+    },
+    {
+      "name": "current_role",
+      "group": "RPC",
+      "status": "pass",
+      "ms": 144,
+      "detail": "ok · null"
+    },
+    {
+      "name": "can_schedule_aftercare",
+      "group": "RPC",
+      "status": "pass",
+      "ms": 145,
+      "detail": "ok · false"
+    },
+    {
+      "name": "ensure_tax_invoice",
+      "group": "RPC",
+      "status": "pass",
+      "ms": 143,
+      "detail": "reachable (auth) · Not authenticated"
+    },
+    {
+      "name": "has_permission",
+      "group": "RPC",
+      "status": "pass",
+      "ms": 140,
+      "detail": "ok · false"
+    },
+    {
+      "name": "has_role",
+      "group": "RPC",
+      "status": "pass",
+      "ms": 142,
+      "detail": "ok · false"
+    },
+    {
+      "name": "insert_quote_items",
+      "group": "RPC",
+      "status": "pass",
+      "ms": 141,
+      "detail": "reachable (other) · Quote must have at least one item"
+    },
+    {
+      "name": "is_accounts",
+      "group": "RPC",
+      "status": "pass",
+      "ms": 144,
+      "detail": "ok · false"
+    },
+    {
+      "name": "is_admin",
+      "group": "RPC",
+      "status": "pass",
+      "ms": 148,
+      "detail": "ok · false"
+    },
+    {
+      "name": "mark_vendor_dispatched",
+      "group": "RPC",
+      "status": "pass",
+      "ms": 143,
+      "detail": "reachable (auth) · Not authenticated"
+    },
+    {
+      "name": "notify_user",
+      "group": "RPC",
+      "status": "pass",
+      "ms": 143,
+      "detail": "reachable (validation) · insert or update on table \"notifications\" violates foreign key constraint \"notifications_user_id_fkey\""
+    },
+    {
+      "name": "order_balance",
+      "group": "RPC",
+      "status": "pass",
+      "ms": 156,
+      "detail": "reachable (auth) · Not allowed"
+    },
+    {
+      "name": "order_items_fully_received",
+      "group": "RPC",
+      "status": "pass",
+      "ms": 137,
+      "detail": "ok · true"
+    },
+    {
+      "name": "order_outstanding",
+      "group": "RPC",
+      "status": "pass",
+      "ms": 158,
+      "detail": "ok · 66511.1"
+    },
+    {
+      "name": "quote_balance",
+      "group": "RPC",
+      "status": "pass",
+      "ms": 144,
+      "detail": "reachable (auth) · Not allowed"
+    },
+    {
+      "name": "order_item_available_to_send",
+      "group": "RPC",
+      "status": "pass",
+      "ms": 144,
+      "detail": "ok · null"
+    },
+    {
+      "name": "quote_outstanding",
+      "group": "RPC",
+      "status": "pass",
+      "ms": 146,
+      "detail": "ok · 0"
+    },
+    {
+      "name": "recalc_version_totals",
+      "group": "RPC",
+      "status": "pass",
+      "ms": 142,
+      "detail": "ok · null"
+    },
+    {
+      "name": "record_items_received",
+      "group": "RPC",
+      "status": "pass",
+      "ms": 148,
+      "detail": "reachable (auth) · Not authenticated"
+    },
+    {
+      "name": "record_payment",
+      "group": "RPC",
+      "status": "pass",
+      "ms": 142,
+      "detail": "reachable (auth) · Not authenticated"
+    },
+    {
+      "name": "reassign_order_sales",
+      "group": "RPC",
+      "status": "pass",
+      "ms": 137,
+      "detail": "reachable (auth) · Not authenticated"
+    },
+    {
+      "name": "reassign_sales_cover",
+      "group": "RPC",
+      "status": "pass",
+      "ms": 140,
+      "detail": "reachable (auth) · Not authenticated"
+    },
+    {
+      "name": "write_off_order_items",
+      "group": "RPC",
+      "status": "pass",
+      "ms": 151,
+      "detail": "reachable (auth) · Not authenticated"
+    },
+    {
+      "name": "reject_payment",
+      "group": "RPC",
+      "status": "pass",
+      "ms": 143,
+      "detail": "reachable (auth) · Not authenticated"
+    },
+    {
+      "name": "reject_quote",
+      "group": "RPC",
+      "status": "pass",
+      "ms": 146,
+      "detail": "reachable (auth) · Not authenticated"
+    },
+    {
+      "name": "require_permission",
+      "group": "RPC",
+      "status": "pass",
+      "ms": 140,
+      "detail": "reachable (auth) · Not authenticated"
+    },
+    {
+      "name": "revise_quote",
+      "group": "RPC",
+      "status": "pass",
+      "ms": 144,
+      "detail": "reachable (auth) · Not authenticated"
+    },
+    {
+      "name": "send_order_to_vendor",
+      "group": "RPC",
+      "status": "pass",
+      "ms": 143,
+      "detail": "reachable (auth) · Not authenticated"
+    },
+    {
+      "name": "get_public_quote",
+      "group": "RPC",
+      "status": "pass",
+      "ms": 139,
+      "detail": "ok · null"
+    },
+    {
+      "name": "send_quote_to_customer",
+      "group": "RPC",
+      "status": "pass",
+      "ms": 145,
+      "detail": "reachable (auth) · Not authenticated"
+    },
+    {
+      "name": "submit_quote",
+      "group": "RPC",
+      "status": "pass",
+      "ms": 142,
+      "detail": "reachable (auth) · Not authenticated"
+    },
+    {
+      "name": "user_has_role",
+      "group": "RPC",
+      "status": "pass",
+      "ms": 145,
+      "detail": "ok · false"
+    },
+    {
+      "name": "verify_payment",
+      "group": "RPC",
+      "status": "pass",
+      "ms": 161,
+      "detail": "reachable (auth) · Not authenticated"
+    },
+    {
+      "name": "write_audit",
+      "group": "RPC",
+      "status": "pass",
+      "ms": 142,
+      "detail": "ok · 912547b3-19e8-4855-95d7-8070775eecbd"
+    },
+    {
+      "name": "GET /rest/v1/orders (service)",
+      "group": "REST",
+      "status": "pass",
+      "ms": 146,
+      "detail": "count=20"
+    },
+    {
+      "name": "GET /rest/v1/orders (anon)",
+      "group": "REST",
+      "status": "pass",
+      "ms": 217,
+      "detail": "reachable (RLS may return 0)"
+    },
+    {
+      "name": "GET /rest/v1/quotes (service)",
+      "group": "REST",
+      "status": "pass",
+      "ms": 188,
+      "detail": "count=23"
+    },
+    {
+      "name": "GET /rest/v1/quotes (anon)",
+      "group": "REST",
+      "status": "pass",
+      "ms": 188,
+      "detail": "reachable (RLS may return 0)"
+    },
+    {
+      "name": "GET /rest/v1/customers (service)",
+      "group": "REST",
+      "status": "pass",
+      "ms": 218,
+      "detail": "count=15"
+    },
+    {
+      "name": "GET /rest/v1/customers (anon)",
+      "group": "REST",
+      "status": "pass",
+      "ms": 197,
+      "detail": "reachable (RLS may return 0)"
+    },
+    {
+      "name": "GET /rest/v1/payments (service)",
+      "group": "REST",
+      "status": "pass",
+      "ms": 196,
+      "detail": "count=20"
+    },
+    {
+      "name": "GET /rest/v1/payments (anon)",
+      "group": "REST",
+      "status": "pass",
+      "ms": 189,
+      "detail": "reachable (RLS may return 0)"
+    },
+    {
+      "name": "GET /rest/v1/vendor_orders (service)",
+      "group": "REST",
+      "status": "pass",
+      "ms": 183,
+      "detail": "count=22"
+    },
+    {
+      "name": "GET /rest/v1/vendor_orders (anon)",
+      "group": "REST",
+      "status": "pass",
+      "ms": 205,
+      "detail": "reachable (RLS may return 0)"
+    },
+    {
+      "name": "GET /rest/v1/profiles (service)",
+      "group": "REST",
+      "status": "pass",
+      "ms": 196,
+      "detail": "count=7"
+    },
+    {
+      "name": "GET /rest/v1/profiles (anon)",
+      "group": "REST",
+      "status": "pass",
+      "ms": 182,
+      "detail": "reachable (RLS may return 0)"
+    },
+    {
+      "name": "GET /rest/v1/materials (service)",
+      "group": "REST",
+      "status": "pass",
+      "ms": 180,
+      "detail": "count=28"
+    },
+    {
+      "name": "GET /rest/v1/materials (anon)",
+      "group": "REST",
+      "status": "pass",
+      "ms": 184,
+      "detail": "reachable (RLS may return 0)"
+    },
+    {
+      "name": "GET /rest/v1/vendors (service)",
+      "group": "REST",
+      "status": "pass",
+      "ms": 192,
+      "detail": "count=3"
+    },
+    {
+      "name": "GET /rest/v1/vendors (anon)",
+      "group": "REST",
+      "status": "pass",
+      "ms": 181,
+      "detail": "reachable (RLS may return 0)"
+    },
+    {
+      "name": "GET /rest/v1/notifications (service)",
+      "group": "REST",
+      "status": "pass",
+      "ms": 192,
+      "detail": "count=308"
+    },
+    {
+      "name": "GET /rest/v1/notifications (anon)",
+      "group": "REST",
+      "status": "pass",
+      "ms": 183,
+      "detail": "reachable (RLS may return 0)"
+    },
+    {
+      "name": "GET /rest/v1/audit_logs (service)",
+      "group": "REST",
+      "status": "pass",
+      "ms": 208,
+      "detail": "count=362"
+    },
+    {
+      "name": "GET /rest/v1/audit_logs (anon)",
+      "group": "REST",
+      "status": "pass",
+      "ms": 179,
+      "detail": "reachable (RLS may return 0)"
+    },
+    {
+      "name": "GET /rest/v1/company_settings (service)",
+      "group": "REST",
+      "status": "pass",
+      "ms": 194,
+      "detail": "count=1"
+    },
+    {
+      "name": "GET /rest/v1/company_settings (anon)",
+      "group": "REST",
+      "status": "pass",
+      "ms": 194,
+      "detail": "reachable (RLS may return 0)"
+    },
+    {
+      "name": "GET /rest/v1/leads (service)",
+      "group": "REST",
+      "status": "pass",
+      "ms": 201,
+      "detail": "count=0"
+    },
+    {
+      "name": "GET /rest/v1/leads (anon)",
+      "group": "REST",
+      "status": "pass",
+      "ms": 188,
+      "detail": "reachable (RLS may return 0)"
+    },
+    {
+      "name": "GET /rest/v1/role_permissions (service)",
+      "group": "REST",
+      "status": "pass",
+      "ms": 220,
+      "detail": "count=79"
+    },
+    {
+      "name": "GET /rest/v1/role_permissions (anon)",
+      "group": "REST",
+      "status": "pass",
+      "ms": 184,
+      "detail": "reachable (RLS may return 0)"
+    },
+    {
+      "name": "/",
+      "group": "HTTP",
+      "status": "pass",
+      "ms": 472,
+      "detail": "307 → /login"
+    },
+    {
+      "name": "/login",
+      "group": "HTTP",
+      "status": "pass",
+      "ms": 408,
+      "detail": "200"
+    },
+    {
+      "name": "/home",
+      "group": "HTTP",
+      "status": "pass",
+      "ms": 65,
+      "detail": "307 → /login?next=%2Fhome"
+    },
+    {
+      "name": "/orders",
+      "group": "HTTP",
+      "status": "pass",
+      "ms": 63,
+      "detail": "307 → /login?next=%2Forders"
+    },
+    {
+      "name": "/orders?credit=1",
+      "group": "HTTP",
+      "status": "pass",
+      "ms": 60,
+      "detail": "307 → /login?credit=1&next=%2Forders"
+    },
+    {
+      "name": "/customers",
+      "group": "HTTP",
+      "status": "pass",
+      "ms": 69,
+      "detail": "307 → /login?next=%2Fcustomers"
+    },
+    {
+      "name": "/quotes",
+      "group": "HTTP",
+      "status": "pass",
+      "ms": 59,
+      "detail": "307 → /login?next=%2Fquotes"
+    },
+    {
+      "name": "/reports",
+      "group": "HTTP",
+      "status": "pass",
+      "ms": 67,
+      "detail": "307 → /login?next=%2Freports"
+    },
+    {
+      "name": "/more",
+      "group": "HTTP",
+      "status": "pass",
+      "ms": 58,
+      "detail": "307 → /login?next=%2Fmore"
+    },
+    {
+      "name": "lib/csv.test.ts",
+      "group": "Unit",
+      "status": "pass",
+      "ms": 7,
+      "detail": "5 passed, 0 failed"
+    },
+    {
+      "name": "lib/gst.test.ts",
+      "group": "Unit",
+      "status": "pass",
+      "ms": 3,
+      "detail": "3 passed, 0 failed"
+    },
+    {
+      "name": "lib/lists-and-reports.test.ts",
+      "group": "Unit",
+      "status": "pass",
+      "ms": 64,
+      "detail": "8 passed, 0 failed"
+    },
+    {
+      "name": "lib/platform.test.ts",
+      "group": "Unit",
+      "status": "pass",
+      "ms": 25,
+      "detail": "11 passed, 0 failed"
+    },
+    {
+      "name": "lib/search.test.ts",
+      "group": "Unit",
+      "status": "pass",
+      "ms": 35,
+      "detail": "5 passed, 0 failed"
+    },
+    {
+      "name": "components/app/inbox-list.test.ts",
+      "group": "Unit",
+      "status": "pass",
+      "ms": 2,
+      "detail": "3 passed, 0 failed"
+    },
+    {
+      "name": "lib/customers/phone.test.ts",
+      "group": "Unit",
+      "status": "pass",
+      "ms": 6,
+      "detail": "4 passed, 0 failed"
+    },
+    {
+      "name": "lib/customers/walk-in.test.ts",
+      "group": "Unit",
+      "status": "pass",
+      "ms": 5,
+      "detail": "4 passed, 0 failed"
+    },
+    {
+      "name": "lib/auth/nav.test.ts",
+      "group": "Unit",
+      "status": "pass",
+      "ms": 8,
+      "detail": "5 passed, 0 failed"
+    },
+    {
+      "name": "lib/auth/permissions.matrix.test.ts",
+      "group": "Unit",
+      "status": "pass",
+      "ms": 10,
+      "detail": "6 passed, 0 failed"
+    },
+    {
+      "name": "lib/auth/permissions.test.ts",
+      "group": "Unit",
+      "status": "pass",
+      "ms": 4,
+      "detail": "3 passed, 0 failed"
+    },
+    {
+      "name": "lib/auth/roles.test.ts",
+      "group": "Unit",
+      "status": "pass",
+      "ms": 2,
+      "detail": "1 passed, 0 failed"
+    },
+    {
+      "name": "lib/notifications/copy.test.ts",
+      "group": "Unit",
+      "status": "pass",
+      "ms": 3,
+      "detail": "2 passed, 0 failed"
+    },
+    {
+      "name": "lib/notifications/types.test.ts",
+      "group": "Unit",
+      "status": "pass",
+      "ms": 3,
+      "detail": "2 passed, 0 failed"
+    },
+    {
+      "name": "lib/payments/advance.test.ts",
+      "group": "Unit",
+      "status": "pass",
+      "ms": 2,
+      "detail": "2 passed, 0 failed"
+    },
+    {
+      "name": "lib/payments/reference.test.ts",
+      "group": "Unit",
+      "status": "pass",
+      "ms": 4,
+      "detail": "3 passed, 0 failed"
+    },
+    {
+      "name": "lib/quotes/lines.test.ts",
+      "group": "Unit",
+      "status": "pass",
+      "ms": 58,
+      "detail": "13 passed, 0 failed"
+    },
+    {
+      "name": "lib/quotes/spec.test.ts",
+      "group": "Unit",
+      "status": "pass",
+      "ms": 2,
+      "detail": "2 passed, 0 failed"
+    },
+    {
+      "name": "lib/reports/csv-export.test.ts",
+      "group": "Unit",
+      "status": "pass",
+      "ms": 49,
+      "detail": "4 passed, 0 failed"
+    },
+    {
+      "name": "lib/reports/stuck.test.ts",
+      "group": "Unit",
+      "status": "pass",
+      "ms": 3,
+      "detail": "1 passed, 0 failed"
+    },
+    {
+      "name": "lib/validation/admin.test.ts",
+      "group": "Unit",
+      "status": "pass",
+      "ms": 25,
+      "detail": "9 passed, 0 failed"
+    },
+    {
+      "name": "lib/validation/auth.test.ts",
+      "group": "Unit",
+      "status": "pass",
+      "ms": 12,
+      "detail": "5 passed, 0 failed"
+    },
+    {
+      "name": "lib/validation/documents.test.ts",
+      "group": "Unit",
+      "status": "pass",
+      "ms": 21,
+      "detail": "5 passed, 0 failed"
+    },
+    {
+      "name": "lib/validation/workflow.test.ts",
+      "group": "Unit",
+      "status": "pass",
+      "ms": 34,
+      "detail": "18 passed, 0 failed"
+    },
+    {
+      "name": "lib/workflow/audit-labels.test.ts",
+      "group": "Unit",
+      "status": "pass",
+      "ms": 41,
+      "detail": "6 passed, 0 failed"
+    },
+    {
+      "name": "lib/workflow/cancel.test.ts",
+      "group": "Unit",
+      "status": "pass",
+      "ms": 6,
+      "detail": "4 passed, 0 failed"
+    },
+    {
+      "name": "lib/workflow/engine.test.ts",
+      "group": "Unit",
+      "status": "pass",
+      "ms": 16,
+      "detail": "22 passed, 0 failed"
+    },
+    {
+      "name": "lib/workflow/floor-rules.test.ts",
+      "group": "Unit",
+      "status": "pass",
+      "ms": 40,
+      "detail": "9 passed, 0 failed"
+    },
+    {
+      "name": "lib/workflow/fulfillment.test.ts",
+      "group": "Unit",
+      "status": "pass",
+      "ms": 7,
+      "detail": "5 passed, 0 failed"
+    },
+    {
+      "name": "lib/workflow/home-counts.test.ts",
+      "group": "Unit",
+      "status": "pass",
+      "ms": 4,
+      "detail": "6 passed, 0 failed"
+    },
+    {
+      "name": "lib/workflow/job-stage.test.ts",
+      "group": "Unit",
+      "status": "pass",
+      "ms": 6,
+      "detail": "4 passed, 0 failed"
+    },
+    {
+      "name": "lib/workflow/labels-and-stages.test.ts",
+      "group": "Unit",
+      "status": "pass",
+      "ms": 29,
+      "detail": "4 passed, 0 failed"
+    },
+    {
+      "name": "lib/workflow/labels.test.ts",
+      "group": "Unit",
+      "status": "pass",
+      "ms": 3,
+      "detail": "1 passed, 0 failed"
+    },
+    {
+      "name": "lib/workflow/next-action.test.ts",
+      "group": "Unit",
+      "status": "pass",
+      "ms": 30,
+      "detail": "9 passed, 0 failed"
+    },
+    {
+      "name": "lib/workflow/payment-recording.test.ts",
+      "group": "Unit",
+      "status": "pass",
+      "ms": 8,
+      "detail": "7 passed, 0 failed"
+    },
+    {
+      "name": "lib/workflow/state-machine.test.ts",
+      "group": "Unit",
+      "status": "pass",
+      "ms": 8,
+      "detail": "6 passed, 0 failed"
+    },
+    {
+      "name": "lib/workflow/status-buckets.test.ts",
+      "group": "Unit",
+      "status": "pass",
+      "ms": 7,
+      "detail": "6 passed, 0 failed"
+    },
+    {
+      "name": "lib/workflow/transitions.exhaustive.test.ts",
+      "group": "Unit",
+      "status": "pass",
+      "ms": 51,
+      "detail": "6 passed, 0 failed"
+    },
+    {
+      "name": "lib/workflow/vendor-split.test.ts",
+      "group": "Unit",
+      "status": "pass",
+      "ms": 7,
+      "detail": "6 passed, 0 failed"
+    },
+    {
+      "name": "tests/integration/gst-balance-hats.test.ts",
+      "group": "Unit",
+      "status": "pass",
+      "ms": 22,
+      "detail": "5 passed, 0 failed"
+    },
+    {
+      "name": "tests/integration/happy-path.test.ts",
+      "group": "Unit",
+      "status": "pass",
+      "ms": 15,
+      "detail": "1 passed, 0 failed"
+    },
+    {
+      "name": "tests/integration/quote-to-delivery.test.ts",
+      "group": "Unit",
+      "status": "pass",
+      "ms": 10,
+      "detail": "5 passed, 0 failed"
+    },
+    {
+      "name": "tests/regression/manual-paths.test.ts",
+      "group": "Unit",
+      "status": "pass",
+      "ms": 59,
+      "detail": "17 passed, 0 failed"
+    }
+  ],
+  "fixtures": {
+    "orderId": "7289c517-4947-4b8f-954a-22c5d20f6112",
+    "orderNumber": "ORD-1039",
+    "quoteId": "a439b425-3f6e-41ca-a148-4b5d3b262616",
+    "versionId": "788112cf-ab26-49c4-8838-1d420400017f",
+    "customerId": "ad903824-0f00-4f5c-83e8-44651f3f06ab",
+    "phone": "9746257007",
+    "paymentId": "e1f53e7a-00e6-4a5b-abc3-48b22e11875e",
+    "vendorOrderId": "d682dcfd-a972-49cf-b0e6-d95d0cf3c442",
+    "userId": "41733764-5840-4d8a-babf-5491124efe22"
+  }
+}

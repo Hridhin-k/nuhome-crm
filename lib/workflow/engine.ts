@@ -106,11 +106,12 @@ export function calculateOutstanding(orderTotal: number, verifiedPayments: numbe
   return { orderTotal, verifiedPayments, outstanding };
 }
 
-export function resolveDeliveryGate(outstanding: number): Extract<
-  WorkflowStatus,
-  "delivery_unlocked" | "order_on_hold"
-> {
-  return outstanding > 0 ? "order_on_hold" : "delivery_unlocked";
+export function resolveDeliveryGate(
+  outstanding: number,
+  creditApproved = false,
+): Extract<WorkflowStatus, "delivery_unlocked" | "order_on_hold"> {
+  if (creditApproved || outstanding <= 0) return "delivery_unlocked";
+  return "order_on_hold";
 }
 
 export function resolvePaymentVerificationNext(input: {
@@ -118,6 +119,7 @@ export function resolvePaymentVerificationNext(input: {
   outstanding: number;
   currentStatus: WorkflowStatus;
   itemsFullyReceived: boolean;
+  creditApproved?: boolean;
 }): WorkflowStatus {
   if (!input.alreadyActivated) {
     return "order_active";
@@ -133,7 +135,7 @@ export function resolvePaymentVerificationNext(input: {
     return input.currentStatus;
   }
 
-  return resolveDeliveryGate(input.outstanding);
+  return resolveDeliveryGate(input.outstanding, Boolean(input.creditApproved));
 }
 
 export function assertCanDeliver(input: {
@@ -141,6 +143,7 @@ export function assertCanDeliver(input: {
   status: WorkflowStatus;
   outstanding: number;
   itemsFullyReceived: boolean;
+  creditApproved?: boolean;
 }) {
   assertPermission(input.actorRole, "deliveries.complete");
   if (input.status !== "delivery_unlocked") {
@@ -155,7 +158,7 @@ export function assertCanDeliver(input: {
       "DELIVERY_LOCKED",
     );
   }
-  if (input.outstanding > 0) {
+  if (input.outstanding > 0 && !input.creditApproved) {
     throw new WorkflowError(
       `Delivery blocked. Outstanding balance is ${input.outstanding}`,
       "DELIVERY_LOCKED",

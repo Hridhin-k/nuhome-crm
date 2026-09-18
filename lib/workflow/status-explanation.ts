@@ -15,6 +15,14 @@ export function orderStatusExplanation(input: {
     if (status === "order_active") {
       return "Credit delivery approved. Accounts can send this order to a vendor.";
     }
+    if (
+      status === "order_on_hold" ||
+      status === "delivery_pending_payment" ||
+      status === "items_received" ||
+      status === "delivery_unlocked"
+    ) {
+      return "Credit delivery approved. Handover is not blocked by outstanding balance.";
+    }
   }
   switch (status) {
     case "quote_sent_to_customer":

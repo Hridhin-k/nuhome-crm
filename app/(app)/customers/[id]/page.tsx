@@ -5,10 +5,8 @@ import { Notice } from "@/components/app/notice";
 import { PageFrame, wellClass } from "@/components/app/page-frame";
 import { PageHeader } from "@/components/app/page-header";
 import { CustomerForm } from "@/components/customers/customer-form";
-import { AttachmentPanel } from "@/components/documents/attachment-panel";
 import { buttonVariants } from "@/components/ui/button";
 import { getCustomer } from "@/lib/api/customers";
-import { listAttachments } from "@/lib/api/documents";
 import { listOrdersForCustomer } from "@/lib/api/orders";
 import { listQuotesForCustomer } from "@/lib/api/quotes";
 import { rel } from "@/lib/api/rel";
@@ -31,11 +29,10 @@ export default async function CustomerDetailPage({
   const user = await requirePermission("customers.read");
   const { id } = await params;
   const { notice } = await searchParams;
-  const [customer, theirs, theirOrders, files] = await Promise.all([
+  const [customer, theirs, theirOrders] = await Promise.all([
     getCustomer(id),
     listQuotesForCustomer(id),
     listOrdersForCustomer(id),
-    listAttachments("customer", id).catch(() => []),
   ]);
   if (!customer) {
     notFound();
@@ -68,8 +65,6 @@ export default async function CustomerDetailPage({
         }
       />
       {notice === "updated" ? <Notice>Customer updated.</Notice> : null}
-      {notice === "uploaded" ? <Notice>File uploaded.</Notice> : null}
-      {notice === "file-removed" ? <Notice>File removed.</Notice> : null}
       {customer.billing_address || customer.site_address || customer.address ? (
         <div className="rounded-lg border border-outline-variant bg-card p-4 text-sm text-on-surface">
           {customer.billing_address || customer.address ? (
@@ -87,14 +82,6 @@ export default async function CustomerDetailPage({
           ) : null}
         </div>
       ) : null}
-
-      <AttachmentPanel
-        entityType="customer"
-        entityId={id}
-        returnTo={`/customers/${id}`}
-        files={files}
-        canUpload={rolesHavePermission(user.roles, "customers.write")}
-      />
 
       <div className="flex flex-col gap-2 sm:grid sm:grid-cols-2">
         {rolesHavePermission(user.roles, "quotes.create") ? (

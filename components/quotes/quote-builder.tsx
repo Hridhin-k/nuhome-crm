@@ -5,6 +5,7 @@ import {
   saveQuoteAction,
   type ActionState,
 } from "@/app/actions/workflow";
+import { ItemDescriptionHint } from "@/components/app/item-description-hint";
 import { CustomerPicker } from "@/components/quotes/customer-picker";
 import {
   MaterialPicker,
@@ -82,6 +83,22 @@ export function QuoteBuilder({
     () => new Set(lines.map((l) => l.material_id).filter(Boolean) as string[]),
     [lines],
   );
+
+  const materialById = useMemo(() => {
+    const map = new Map<string, PickerMaterial>();
+    for (const material of materials) {
+      map.set(material.id, material);
+    }
+    return map;
+  }, [materials]);
+
+  function materialDescriptionFor(line: QuoteLine) {
+    if (line.material_id) {
+      const fromCatalog = materialById.get(line.material_id)?.description?.trim();
+      if (fromCatalog) return fromCatalog;
+    }
+    return line.specification?.trim() ?? "";
+  }
 
   const totals = useMemo(() => {
     const subtotal = lines.reduce((s, l) => s + l.quantity * l.unit_price, 0);
@@ -281,14 +298,20 @@ export function QuoteBuilder({
                       className="min-w-0 border-b border-surface-variant pb-4 last:border-0 last:pb-0"
                     >
                       <div className="flex min-w-0 items-start justify-between gap-3">
-                        <Input
-                          value={line.description}
-                          onChange={(e) =>
-                            updateLine(line.key, { description: e.target.value })
-                          }
-                          className="h-10 min-w-0 flex-1 border-0 bg-transparent px-0 text-body-md font-semibold shadow-none"
-                          aria-label="Item description"
-                        />
+                        <div className="flex min-w-0 flex-1 items-start gap-2">
+                          <Input
+                            value={line.description}
+                            onChange={(e) =>
+                              updateLine(line.key, { description: e.target.value })
+                            }
+                            className="h-10 min-w-0 flex-1 border-0 bg-transparent px-0 text-body-md font-semibold shadow-none"
+                            aria-label="Item description"
+                          />
+                          <ItemDescriptionHint
+                            description={materialDescriptionFor(line)}
+                            className="mt-1.5"
+                          />
+                        </div>
                         <div className="flex shrink-0 items-center gap-2">
                           <p className="text-data-tabular font-semibold">
                             {formatInrExact(
@@ -480,20 +503,20 @@ export function QuoteBuilder({
                     className="flex items-start justify-between gap-4 border-b border-surface-variant p-4 last:border-0"
                   >
                     <div className="min-w-0">
-                      <p className="text-subheading text-on-surface">
-                        {line.description}
-                      </p>
+                      <div className="flex min-w-0 items-start gap-2">
+                        <p className="min-w-0 flex-1 text-subheading text-on-surface">
+                          {line.description}
+                        </p>
+                        <ItemDescriptionHint
+                          description={materialDescriptionFor(line)}
+                        />
+                      </div>
                       <p className="mt-1 text-body-sm text-on-surface-variant">
                         Qty: {line.quantity}
                         {line.item_code ? ` · ${line.item_code}` : ""}
                         {line.hsn_code ? ` · HSN ${line.hsn_code}` : ""}
                         {line.gst_rate ? ` · GST ${line.gst_rate}%` : ""}
                       </p>
-                      {line.specification ? (
-                        <p className="mt-1 text-body-sm text-on-surface-variant">
-                          {line.specification}
-                        </p>
-                      ) : null}
                     </div>
                     <p className="shrink-0 text-data-tabular">
                       {formatInrExact(

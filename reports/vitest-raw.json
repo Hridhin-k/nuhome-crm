@@ -1,0 +1,3454 @@
+{
+  "numTotalTestSuites": 152,
+  "numPassedTestSuites": 152,
+  "numFailedTestSuites": 0,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 253,
+  "numPassedTests": 253,
+  "numFailedTests": 0,
+  "numPendingTests": 0,
+  "numTodoTests": 0,
+  "snapshot": {
+    "added": 0,
+    "failure": false,
+    "filesAdded": 0,
+    "filesRemoved": 0,
+    "filesRemovedList": [],
+    "filesUnmatched": 0,
+    "filesUpdated": 0,
+    "matched": 0,
+    "total": 0,
+    "unchecked": 0,
+    "uncheckedKeysByFile": [],
+    "unmatched": 0,
+    "updated": 0,
+    "didUpdate": false
+  },
+  "startTime": 1789668018027,
+  "success": true,
+  "testResults": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "parseCsv"
+          ],
+          "fullName": "parseCsv reads headers and rows",
+          "status": "passed",
+          "title": "reads headers and rows",
+          "duration": 3.3292920000000095,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "parseCsv"
+          ],
+          "fullName": "parseCsv aliases common headers and quoted commas",
+          "status": "passed",
+          "title": "aliases common headers and quoted commas",
+          "duration": 0.5639999999999645,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "parseCsv"
+          ],
+          "fullName": "parseCsv skips blank lines and a BOM",
+          "status": "passed",
+          "title": "skips blank lines and a BOM",
+          "duration": 1.590332999999987,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "normalizeCsvHeader"
+          ],
+          "fullName": "normalizeCsvHeader maps delivery-style labels",
+          "status": "passed",
+          "title": "maps delivery-style labels",
+          "duration": 0.3846659999999815,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "toCsv"
+          ],
+          "fullName": "toCsv quotes commas",
+          "status": "passed",
+          "title": "quotes commas",
+          "duration": 0.5742079999999987,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1789668019427,
+      "endTime": 1789668019433.5742,
+      "status": "passed",
+      "message": "",
+      "name": "/Users/hridhin/Documents/explaineddigital/nuhome-crm/lib/csv.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "GST on a quote line"
+          ],
+          "fullName": "GST on a quote line treats sell price as GST-exclusive",
+          "status": "passed",
+          "title": "treats sell price as GST-exclusive",
+          "duration": 2.451125000000019,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "GST on a quote line"
+          ],
+          "fullName": "GST on a quote line rounds to paise",
+          "status": "passed",
+          "title": "rounds to paise",
+          "duration": 0.4403750000000173,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "GST on a quote line"
+          ],
+          "fullName": "GST on a quote line does not tax a fully discounted line",
+          "status": "passed",
+          "title": "does not tax a fully discounted line",
+          "duration": 0.16125000000002387,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1789668019883,
+      "endTime": 1789668019886.4404,
+      "status": "passed",
+      "message": "",
+      "name": "/Users/hridhin/Documents/explaineddigital/nuhome-crm/lib/gst.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "search, dates, and CSV extras"
+          ],
+          "fullName": "search, dates, and CSV extras builds a 30-day IST range and ISO bounds",
+          "status": "passed",
+          "title": "builds a 30-day IST range and ISO bounds",
+          "duration": 47.352499999999964,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "search, dates, and CSV extras"
+          ],
+          "fullName": "search, dates, and CSV extras counts sitting days and treats invalid dates as 0",
+          "status": "passed",
+          "title": "counts sitting days and treats invalid dates as 0",
+          "duration": 4.407666999999947,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "search, dates, and CSV extras"
+          ],
+          "fullName": "search, dates, and CSV extras strips SQL metacharacters and builds list URLs",
+          "status": "passed",
+          "title": "strips SQL metacharacters and builds list URLs",
+          "duration": 0.6668750000000045,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "search, dates, and CSV extras"
+          ],
+          "fullName": "search, dates, and CSV extras round-trips quoted commas, doubled quotes, and newlines",
+          "status": "passed",
+          "title": "round-trips quoted commas, doubled quotes, and newlines",
+          "duration": 2.2010420000000295,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "notification fallbacks"
+          ],
+          "fullName": "notification fallbacks falls back to list pages when ids are missing and to quote/order for unknown types",
+          "status": "passed",
+          "title": "falls back to list pages when ids are missing and to quote/order for unknown types",
+          "duration": 3.063625000000002,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "list query helpers and home focus"
+          ],
+          "fullName": "list query helpers and home focus parses order buckets, attention, and quote groups",
+          "status": "passed",
+          "title": "parses order buckets, attention, and quote groups",
+          "duration": 2.144625000000019,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "list query helpers and home focus"
+          ],
+          "fullName": "list query helpers and home focus skips empty and directory cards, and prefers approval/ready over quieter queues",
+          "status": "passed",
+          "title": "skips empty and directory cards, and prefers approval/ready over quieter queues",
+          "duration": 0.7096669999999676,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "remaining report CSVs"
+          ],
+          "fullName": "remaining report CSVs writes queues, collections, sitting, aging, and a date-less filename",
+          "status": "passed",
+          "title": "writes queues, collections, sitting, aging, and a date-less filename",
+          "duration": 1.6482499999999618,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1789668018880,
+      "endTime": 1789668018943.6482,
+      "status": "passed",
+      "message": "",
+      "name": "/Users/hridhin/Documents/explaineddigital/nuhome-crm/lib/lists-and-reports.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "site URLs"
+          ],
+          "fullName": "site URLs treats localhost, loopback, and .local as local",
+          "status": "passed",
+          "title": "treats localhost, loopback, and .local as local",
+          "duration": 2.6247919999999567,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "site URLs"
+          ],
+          "fullName": "site URLs never puts a localhost origin on a customer WhatsApp link when a public URL is set",
+          "status": "passed",
+          "title": "never puts a localhost origin on a customer WhatsApp link when a public URL is set",
+          "duration": 0.6669579999999087,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "site URLs"
+          ],
+          "fullName": "site URLs falls back to the request host, using http only for local hosts",
+          "status": "passed",
+          "title": "falls back to the request host, using http only for local hosts",
+          "duration": 0.7515839999999798,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "humanizeError"
+          ],
+          "fullName": "humanizeError maps duplicate phone, permission, transition, and SoD errors",
+          "status": "passed",
+          "title": "maps duplicate phone, permission, transition, and SoD errors",
+          "duration": 2.0448749999999336,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "humanizeError"
+          ],
+          "fullName": "humanizeError rethrows Next.js navigation errors and ignores others",
+          "status": "passed",
+          "title": "rethrows Next.js navigation errors and ignores others",
+          "duration": 1.9229579999999942,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "navChrome"
+          ],
+          "fullName": "navChrome titles list, detail, revise, and walk-in screens",
+          "status": "passed",
+          "title": "titles list, detail, revise, and walk-in screens",
+          "duration": 4.367750000000001,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "roles, statuses, and export kinds"
+          ],
+          "fullName": "roles, statuses, and export kinds parses every app role and rejects junk",
+          "status": "passed",
+          "title": "parses every app role and rejects junk",
+          "duration": 0.9560420000000249,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "roles, statuses, and export kinds"
+          ],
+          "fullName": "roles, statuses, and export kinds generates a 12-character temp password without ambiguous characters",
+          "status": "passed",
+          "title": "generates a 12-character temp password without ambiguous characters",
+          "duration": 4.778542000000016,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "roles, statuses, and export kinds"
+          ],
+          "fullName": "roles, statuses, and export kinds parses every workflow status and unknown values",
+          "status": "passed",
+          "title": "parses every workflow status and unknown values",
+          "duration": 2.1572499999999764,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "roles, statuses, and export kinds"
+          ],
+          "fullName": "roles, statuses, and export kinds parses every report export kind",
+          "status": "passed",
+          "title": "parses every report export kind",
+          "duration": 0.4426250000000209,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "nav for every role"
+          ],
+          "fullName": "nav for every role gives each role a primary bar that starts at Home and ends in More",
+          "status": "passed",
+          "title": "gives each role a primary bar that starts at Home and ends in More",
+          "duration": 1.2480829999999514,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1789668018928,
+      "endTime": 1789668018953.248,
+      "status": "passed",
+      "message": "",
+      "name": "/Users/hridhin/Documents/explaineddigital/nuhome-crm/lib/platform.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "list search helpers"
+          ],
+          "fullName": "list search helpers matches quote number, phone, and name",
+          "status": "passed",
+          "title": "matches quote number, phone, and name",
+          "duration": 4.216707999999983,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "list search helpers"
+          ],
+          "fullName": "list search helpers filters calendar dates in IST",
+          "status": "passed",
+          "title": "filters calendar dates in IST",
+          "duration": 28.398041000000035,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "list search helpers"
+          ],
+          "fullName": "list search helpers strips SQL wildcards from search",
+          "status": "passed",
+          "title": "strips SQL wildcards from search",
+          "duration": 0.5562089999999671,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "list search helpers"
+          ],
+          "fullName": "list search helpers omits empty query params",
+          "status": "passed",
+          "title": "omits empty query params",
+          "duration": 1.0747920000000022,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "list search helpers"
+          ],
+          "fullName": "list search helpers parses page numbers",
+          "status": "passed",
+          "title": "parses page numbers",
+          "duration": 0.5282500000000141,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1789668018789,
+      "endTime": 1789668018823.5283,
+      "status": "passed",
+      "message": "",
+      "name": "/Users/hridhin/Documents/explaineddigital/nuhome-crm/lib/search.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "pickHomeFocus"
+          ],
+          "fullName": "pickHomeFocus prefers overdue work over quieter queues",
+          "status": "passed",
+          "title": "prefers overdue work over quieter queues",
+          "duration": 1.2310830000000124,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "pickHomeFocus"
+          ],
+          "fullName": "pickHomeFocus falls back to the first live queue when nothing is on fire",
+          "status": "passed",
+          "title": "falls back to the first live queue when nothing is on fire",
+          "duration": 0.29924999999997226,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "pickHomeFocus"
+          ],
+          "fullName": "pickHomeFocus returns null when the desk is clear",
+          "status": "passed",
+          "title": "returns null when the desk is clear",
+          "duration": 0.12308299999995143,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1789668020061,
+      "endTime": 1789668020063.123,
+      "status": "passed",
+      "message": "",
+      "name": "/Users/hridhin/Documents/explaineddigital/nuhome-crm/components/app/inbox-list.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "normalizePhone"
+          ],
+          "fullName": "normalizePhone strips formatting and country code",
+          "status": "passed",
+          "title": "strips formatting and country code",
+          "duration": 2.626249999999999,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "normalizePhone"
+          ],
+          "fullName": "normalizePhone ignores empty values",
+          "status": "passed",
+          "title": "ignores empty values",
+          "duration": 0.593874999999997,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "sanitizeLocalMobileInput"
+          ],
+          "fullName": "sanitizeLocalMobileInput keeps only 10 local digits and drops letters",
+          "status": "passed",
+          "title": "keeps only 10 local digits and drops letters",
+          "duration": 0.8047079999999767,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "isLocalMobile"
+          ],
+          "fullName": "isLocalMobile allows empty or a 10-digit number and rejects text",
+          "status": "passed",
+          "title": "allows empty or a 10-digit number and rejects text",
+          "duration": 1.6479590000000144,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1789668019700,
+      "endTime": 1789668019705.648,
+      "status": "passed",
+      "message": "",
+      "name": "/Users/hridhin/Documents/explaineddigital/nuhome-crm/lib/customers/phone.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "withOtherValue"
+          ],
+          "fullName": "withOtherValue replaces Others with the typed value",
+          "status": "passed",
+          "title": "replaces Others with the typed value",
+          "duration": 3.0735839999999826,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "withOtherValue"
+          ],
+          "fullName": "withOtherValue drops Others when no typed value is given",
+          "status": "passed",
+          "title": "drops Others when no typed value is given",
+          "duration": 0.5512079999999742,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "withOtherValue"
+          ],
+          "fullName": "withOtherValue leaves lists without Others unchanged",
+          "status": "passed",
+          "title": "leaves lists without Others unchanged",
+          "duration": 0.24712500000003956,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "listFromForm"
+          ],
+          "fullName": "listFromForm trims and drops empty entries",
+          "status": "passed",
+          "title": "trims and drops empty entries",
+          "duration": 0.5195420000000013,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1789668019569,
+      "endTime": 1789668019573.5195,
+      "status": "passed",
+      "message": "",
+      "name": "/Users/hridhin/Documents/explaineddigital/nuhome-crm/lib/customers/walk-in.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "navForRoles"
+          ],
+          "fullName": "navForRoles keeps the primary bar when there is only one hat",
+          "status": "passed",
+          "title": "keeps the primary bar when there is only one hat",
+          "duration": 3.8552500000000123,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "navForRoles"
+          ],
+          "fullName": "navForRoles parks extra-hat screens in More when the bar is full",
+          "status": "passed",
+          "title": "parks extra-hat screens in More when the bar is full",
+          "duration": 0.8176250000000209,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "navForRoles"
+          ],
+          "fullName": "navForRoles joins role labels",
+          "status": "passed",
+          "title": "joins role labels",
+          "duration": 0.43695899999997323,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "navForRoles"
+          ],
+          "fullName": "navForRoles highlights Home only on the home route",
+          "status": "passed",
+          "title": "highlights Home only on the home route",
+          "duration": 0.5677080000000103,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "navForRoles"
+          ],
+          "fullName": "navForRoles gives Operations customers plus reports",
+          "status": "passed",
+          "title": "gives Operations customers plus reports",
+          "duration": 0.7979590000000201,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1789668019570,
+      "endTime": 1789668019577.7979,
+      "status": "passed",
+      "message": "",
+      "name": "/Users/hridhin/Documents/explaineddigital/nuhome-crm/lib/auth/nav.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "role × permission matrix"
+          ],
+          "fullName": "role × permission matrix decides every permission for every role with nothing skipped",
+          "status": "passed",
+          "title": "decides every permission for every role with nothing skipped",
+          "duration": 6.269207999999992,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "role × permission matrix"
+          ],
+          "fullName": "role × permission matrix never lets Sales approve, reject, or verify",
+          "status": "passed",
+          "title": "never lets Sales approve, reject, or verify",
+          "duration": 0.9277920000000108,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "role × permission matrix"
+          ],
+          "fullName": "role × permission matrix lets combined Accounts send to vendor but not create quotes",
+          "status": "passed",
+          "title": "lets combined Accounts send to vendor but not create quotes",
+          "duration": 0.7007919999999785,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "role × permission matrix"
+          ],
+          "fullName": "role × permission matrix never lets Procurement touch money or quotes",
+          "status": "passed",
+          "title": "never lets Procurement touch money or quotes",
+          "duration": 0.34333300000002964,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "role × permission matrix"
+          ],
+          "fullName": "role × permission matrix lets Delivery record handover cash but never verify or approve",
+          "status": "passed",
+          "title": "lets Delivery record handover cash but never verify or approve",
+          "duration": 1.5837080000000014,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "role × permission matrix"
+          ],
+          "fullName": "role × permission matrix unions extra hats without granting a missing duty",
+          "status": "passed",
+          "title": "unions extra hats without granting a missing duty",
+          "duration": 0.31716699999998355,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1789668019267,
+      "endTime": 1789668019277.3171,
+      "status": "passed",
+      "message": "",
+      "name": "/Users/hridhin/Documents/explaineddigital/nuhome-crm/lib/auth/permissions.matrix.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "role permission matrix"
+          ],
+          "fullName": "role permission matrix enforces separation of duties",
+          "status": "passed",
+          "title": "enforces separation of duties",
+          "duration": 2.260791999999981,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "role permission matrix"
+          ],
+          "fullName": "role permission matrix gives admin every permission",
+          "status": "passed",
+          "title": "gives admin every permission",
+          "duration": 0.600625000000008,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "role permission matrix"
+          ],
+          "fullName": "role permission matrix combines extra hats",
+          "status": "passed",
+          "title": "combines extra hats",
+          "duration": 0.36170800000002146,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1789668019647,
+      "endTime": 1789668019650.6006,
+      "status": "passed",
+      "message": "",
+      "name": "/Users/hridhin/Documents/explaineddigital/nuhome-crm/lib/auth/permissions.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "parseAppRole"
+          ],
+          "fullName": "parseAppRole accepts app roles and delivery alias",
+          "status": "passed",
+          "title": "accepts app roles and delivery alias",
+          "duration": 1.937749999999994,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1789668019925,
+      "endTime": 1789668019926.9377,
+      "status": "passed",
+      "message": "",
+      "name": "/Users/hridhin/Documents/explaineddigital/nuhome-crm/lib/auth/roles.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "notificationBody"
+          ],
+          "fullName": "notificationBody starts with customer name then status, ref, and item",
+          "status": "passed",
+          "title": "starts with customer name then status, ref, and item",
+          "duration": 2.7748339999999985,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "notificationBody"
+          ],
+          "fullName": "notificationBody falls back to the detail when nothing else is present",
+          "status": "passed",
+          "title": "falls back to the detail when nothing else is present",
+          "duration": 0.3889999999999816,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1789668019906,
+      "endTime": 1789668019909.389,
+      "status": "passed",
+      "message": "",
+      "name": "/Users/hridhin/Documents/explaineddigital/nuhome-crm/lib/notifications/copy.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "notificationHref"
+          ],
+          "fullName": "notificationHref sends each role to the screen that has the work",
+          "status": "passed",
+          "title": "sends each role to the screen that has the work",
+          "duration": 3.3654579999999896,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "notificationHref"
+          ],
+          "fullName": "notificationHref keeps quote approval and return on the quote page",
+          "status": "passed",
+          "title": "keeps quote approval and return on the quote page",
+          "duration": 0.443916999999999,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1789668019756,
+      "endTime": 1789668019759.4438,
+      "status": "passed",
+      "message": "",
+      "name": "/Users/hridhin/Documents/explaineddigital/nuhome-crm/lib/notifications/types.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "defaultAdvanceAmount"
+          ],
+          "fullName": "defaultAdvanceAmount defaults to half of outstanding",
+          "status": "passed",
+          "title": "defaults to half of outstanding",
+          "duration": 1.7787910000000124,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "defaultAdvanceAmount"
+          ],
+          "fullName": "defaultAdvanceAmount returns 0 when there is nothing outstanding",
+          "status": "passed",
+          "title": "returns 0 when there is nothing outstanding",
+          "duration": 0.4111249999999984,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1789668019943,
+      "endTime": 1789668019945.4111,
+      "status": "passed",
+      "message": "",
+      "name": "/Users/hridhin/Documents/explaineddigital/nuhome-crm/lib/payments/advance.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "payment reference rules"
+          ],
+          "fullName": "payment reference rules requires a customer reference except for nil/credit",
+          "status": "passed",
+          "title": "requires a customer reference except for nil/credit",
+          "duration": 2.267750000000035,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "payment reference rules"
+          ],
+          "fullName": "payment reference rules requires a vendor reference for non-cash amounts",
+          "status": "passed",
+          "title": "requires a vendor reference for non-cash amounts",
+          "duration": 0.565040999999951,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "payment reference rules"
+          ],
+          "fullName": "payment reference rules hides Advance after a verified advance exists",
+          "status": "passed",
+          "title": "hides Advance after a verified advance exists",
+          "duration": 1.2832500000000095,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1789668019364,
+      "endTime": 1789668019368.2832,
+      "status": "passed",
+      "message": "",
+      "name": "/Users/hridhin/Documents/explaineddigital/nuhome-crm/lib/payments/reference.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "quote lines with GST"
+          ],
+          "fullName": "quote lines with GST fills tax from rate when adding a material",
+          "status": "passed",
+          "title": "fills tax from rate when adding a material",
+          "duration": 5.903665999999987,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "quote lines with GST"
+          ],
+          "fullName": "quote lines with GST appends catalogue description when picking an item",
+          "status": "passed",
+          "title": "appends catalogue description when picking an item",
+          "duration": 0.47766599999999926,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "quote lines with GST"
+          ],
+          "fullName": "quote lines with GST defaults GST to 18% when the material has no rate",
+          "status": "passed",
+          "title": "defaults GST to 18% when the material has no rate",
+          "duration": 0.73275000000001,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "quote lines with GST"
+          ],
+          "fullName": "quote lines with GST rounds imported quantities to whole items",
+          "status": "passed",
+          "title": "rounds imported quantities to whole items",
+          "duration": 0.6592080000000351,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "quote lines with GST"
+          ],
+          "fullName": "quote lines with GST increments quantity when the same catalogue item is added again",
+          "status": "passed",
+          "title": "increments quantity when the same catalogue item is added again",
+          "duration": 1.508833999999979,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "quote lines with GST"
+          ],
+          "fullName": "quote lines with GST clamps GST below 0 or above 100",
+          "status": "passed",
+          "title": "clamps GST below 0 or above 100",
+          "duration": 0.2995000000000232,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "quote lines with GST"
+          ],
+          "fullName": "quote lines with GST leaves tax alone when the line has no GST rate",
+          "status": "passed",
+          "title": "leaves tax alone when the line has no GST rate",
+          "duration": 0.29837499999996453,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "quote lines with GST"
+          ],
+          "fullName": "quote lines with GST recomputes tax from stored quote items",
+          "status": "passed",
+          "title": "recomputes tax from stored quote items",
+          "duration": 0.41062500000003865,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "GST edge cases"
+          ],
+          "fullName": "GST edge cases handles 0, 5, 12, 18, and 28 percent and a discount larger than the line",
+          "status": "passed",
+          "title": "handles 0, 5, 12, 18, and 28 percent and a discount larger than the line",
+          "duration": 1.0625,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "public quotation URL and order ref"
+          ],
+          "fullName": "public quotation URL and order ref builds a public path that never includes localhost when given a public origin",
+          "status": "passed",
+          "title": "builds a public path that never includes localhost when given a public origin",
+          "duration": 0.5450000000000159,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "public quotation URL and order ref"
+          ],
+          "fullName": "public quotation URL and order ref recognizes ORD- numbers and falls back to a short id",
+          "status": "passed",
+          "title": "recognizes ORD- numbers and falls back to a short id",
+          "duration": 1.9512919999999667,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "INR formatting"
+          ],
+          "fullName": "INR formatting uses Indian grouping and optional paise",
+          "status": "passed",
+          "title": "uses Indian grouping and optional paise",
+          "duration": 27.341334000000018,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "relativeTime"
+          ],
+          "fullName": "relativeTime buckets just now, minutes, hours, days, and older dates",
+          "status": "passed",
+          "title": "buckets just now, minutes, hours, days, and older dates",
+          "duration": 15.276457999999991,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1789668018457,
+      "endTime": 1789668018515.2764,
+      "status": "passed",
+      "message": "",
+      "name": "/Users/hridhin/Documents/explaineddigital/nuhome-crm/lib/quotes/lines.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "quote specification"
+          ],
+          "fullName": "quote specification splits a legacy name — detail description",
+          "status": "passed",
+          "title": "splits a legacy name — detail description",
+          "duration": 2.2069589999999835,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "quote specification"
+          ],
+          "fullName": "quote specification prefers the stored specification",
+          "status": "passed",
+          "title": "prefers the stored specification",
+          "duration": 0.4724170000000072,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1789668019883,
+      "endTime": 1789668019885.4724,
+      "status": "passed",
+      "message": "",
+      "name": "/Users/hridhin/Documents/explaineddigital/nuhome-crm/lib/quotes/spec.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "csvFilename"
+          ],
+          "fullName": "csvFilename uses the date range in the download name",
+          "status": "passed",
+          "title": "uses the date range in the download name",
+          "duration": 6.424041999999986,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "auditCsv"
+          ],
+          "fullName": "auditCsv writes a readable production row",
+          "status": "passed",
+          "title": "writes a readable production row",
+          "duration": 39.102374999999995,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "floorCsv"
+          ],
+          "fullName": "floorCsv lists every census cell",
+          "status": "passed",
+          "title": "lists every census cell",
+          "duration": 0.3627920000000131,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "withExcelBom"
+          ],
+          "fullName": "withExcelBom prefixes UTF-8 BOM so Excel opens names correctly",
+          "status": "passed",
+          "title": "prefixes UTF-8 BOM so Excel opens names correctly",
+          "duration": 0.23766599999999016,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1789668018835,
+      "endTime": 1789668018884.2375,
+      "status": "passed",
+      "message": "",
+      "name": "/Users/hridhin/Documents/explaineddigital/nuhome-crm/lib/reports/csv-export.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "stuckReasonFor"
+          ],
+          "fullName": "stuckReasonFor classifies blocked jobs",
+          "status": "passed",
+          "title": "classifies blocked jobs",
+          "duration": 2.729040999999995,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1789668019891,
+      "endTime": 1789668019893.729,
+      "status": "passed",
+      "message": "",
+      "name": "/Users/hridhin/Documents/explaineddigital/nuhome-crm/lib/reports/stuck.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "createStaffSchema"
+          ],
+          "fullName": "createStaffSchema accepts every app role with a name, email, and password",
+          "status": "passed",
+          "title": "accepts every app role with a name, email, and password",
+          "duration": 3.9061249999999745,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "createStaffSchema"
+          ],
+          "fullName": "createStaffSchema rejects delivery as a stored role, a short password, and a blank name",
+          "status": "passed",
+          "title": "rejects delivery as a stored role, a short password, and a blank name",
+          "duration": 3.7935830000000124,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "updateStaffSchema"
+          ],
+          "fullName": "updateStaffSchema accepts extra hats and an inactive flag",
+          "status": "passed",
+          "title": "accepts extra hats and an inactive flag",
+          "duration": 5.064917000000037,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "updateStaffSchema"
+          ],
+          "fullName": "updateStaffSchema rejects an unknown extra hat",
+          "status": "passed",
+          "title": "rejects an unknown extra hat",
+          "duration": 0.8104159999999183,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "vendorInputSchema"
+          ],
+          "fullName": "vendorInputSchema requires a name and accepts contacts plus an inactive flag",
+          "status": "passed",
+          "title": "requires a name and accepts contacts plus an inactive flag",
+          "duration": 1.9654999999999063,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "vendorInputSchema"
+          ],
+          "fullName": "vendorInputSchema rejects a bad vendor or contact email",
+          "status": "passed",
+          "title": "rejects a bad vendor or contact email",
+          "duration": 1.1134170000000267,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "vendorInputSchema"
+          ],
+          "fullName": "vendorInputSchema accepts only a 10-digit mobile and rejects text in contact phone fields",
+          "status": "passed",
+          "title": "accepts only a 10-digit mobile and rejects text in contact phone fields",
+          "duration": 2.5194999999999936,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "materialInputSchema"
+          ],
+          "fullName": "materialInputSchema requires name, SKU, category, and non-negative prices",
+          "status": "passed",
+          "title": "requires name, SKU, category, and non-negative prices",
+          "duration": 1.3908340000000408,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "materialInputSchema"
+          ],
+          "fullName": "materialInputSchema rejects negative prices, GST over 100, and warranty over 120 months",
+          "status": "passed",
+          "title": "rejects negative prices, GST over 100, and warranty over 120 months",
+          "duration": 3.4942499999999654,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1789668019116,
+      "endTime": 1789668019141.4941,
+      "status": "passed",
+      "message": "",
+      "name": "/Users/hridhin/Documents/explaineddigital/nuhome-crm/lib/validation/admin.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "loginSchema"
+          ],
+          "fullName": "loginSchema accepts a valid email and 8+ character password",
+          "status": "passed",
+          "title": "accepts a valid email and 8+ character password",
+          "duration": 3.926832999999988,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "loginSchema"
+          ],
+          "fullName": "loginSchema rejects missing, invalid, or short credentials",
+          "status": "passed",
+          "title": "rejects missing, invalid, or short credentials",
+          "duration": 3.4019589999999766,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "forgotPasswordSchema"
+          ],
+          "fullName": "forgotPasswordSchema requires a valid email",
+          "status": "passed",
+          "title": "requires a valid email",
+          "duration": 1.2574159999999779,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "changePasswordSchema"
+          ],
+          "fullName": "changePasswordSchema requires matching new passwords of at least 8 characters",
+          "status": "passed",
+          "title": "requires matching new passwords of at least 8 characters",
+          "duration": 1.4685830000000237,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "changePasswordSchema"
+          ],
+          "fullName": "changePasswordSchema rejects a mismatch and a short new password",
+          "status": "passed",
+          "title": "rejects a mismatch and a short new password",
+          "duration": 0.9792500000000359,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1789668019291,
+      "endTime": 1789668019302.9792,
+      "status": "passed",
+      "message": "",
+      "name": "/Users/hridhin/Documents/explaineddigital/nuhome-crm/lib/validation/auth.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "uploadAttachmentSchema"
+          ],
+          "fullName": "uploadAttachmentSchema accepts every attachment kind on customer, quote, order, and vendor_order",
+          "status": "passed",
+          "title": "accepts every attachment kind on customer, quote, order, and vendor_order",
+          "duration": 6.951375000000041,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "uploadAttachmentSchema"
+          ],
+          "fullName": "uploadAttachmentSchema rejects an unknown kind, entity, or an external return path",
+          "status": "passed",
+          "title": "rejects an unknown kind, entity, or an external return path",
+          "duration": 2.901875000000018,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "companySettingsSchema"
+          ],
+          "fullName": "companySettingsSchema requires a legal name and a GST rate between 0 and 100",
+          "status": "passed",
+          "title": "requires a legal name and a GST rate between 0 and 100",
+          "duration": 3.550875000000019,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "installationSchema / warrantySchema"
+          ],
+          "fullName": "installationSchema / warrantySchema requires an order and a scheduled date",
+          "status": "passed",
+          "title": "requires an order and a scheduled date",
+          "duration": 3.4414999999999623,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "installationSchema / warrantySchema"
+          ],
+          "fullName": "installationSchema / warrantySchema accepts warranty and AMC with start and end dates",
+          "status": "passed",
+          "title": "accepts warranty and AMC with start and end dates",
+          "duration": 2.5127499999999827,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1789668018990,
+      "endTime": 1789668019010.5127,
+      "status": "passed",
+      "message": "",
+      "name": "/Users/hridhin/Documents/explaineddigital/nuhome-crm/lib/validation/documents.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "quoteItemSchema"
+          ],
+          "fullName": "quoteItemSchema accepts a priced line and defaults cost, discount, and tax",
+          "status": "passed",
+          "title": "accepts a priced line and defaults cost, discount, and tax",
+          "duration": 4.451207999999951,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "quoteItemSchema"
+          ],
+          "fullName": "quoteItemSchema rejects empty description, zero quantity, and GST over 100",
+          "status": "passed",
+          "title": "rejects empty description, zero quantity, and GST over 100",
+          "duration": 5.665333000000032,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "quoteItemSchema"
+          ],
+          "fullName": "quoteItemSchema accepts GST 0–100 and an 8-character HSN",
+          "status": "passed",
+          "title": "accepts GST 0–100 and an 8-character HSN",
+          "duration": 0.3821249999999736,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "createQuoteSchema / reviseQuoteSchema"
+          ],
+          "fullName": "createQuoteSchema / reviseQuoteSchema requires a customer and at least one line",
+          "status": "passed",
+          "title": "requires a customer and at least one line",
+          "duration": 2.905708000000004,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "createQuoteSchema / reviseQuoteSchema"
+          ],
+          "fullName": "createQuoteSchema / reviseQuoteSchema requires a quote id to revise",
+          "status": "passed",
+          "title": "requires a quote id to revise",
+          "duration": 1.4397920000000113,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "rejectQuoteSchema / cancelJobSchema"
+          ],
+          "fullName": "rejectQuoteSchema / cancelJobSchema requires a non-blank reason",
+          "status": "passed",
+          "title": "requires a non-blank reason",
+          "duration": 1.2624169999999708,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "recordPaymentSchema"
+          ],
+          "fullName": "recordPaymentSchema accepts cash / UPI / bank / cheque / card / other methods",
+          "status": "passed",
+          "title": "accepts cash / UPI / bank / cheque / card / other methods",
+          "duration": 1.0668750000000387,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "recordPaymentSchema"
+          ],
+          "fullName": "recordPaymentSchema forces nil to amount 0 and advance/full above 0",
+          "status": "passed",
+          "title": "forces nil to amount 0 and advance/full above 0",
+          "duration": 1.4243749999999977,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "recordPaymentSchema"
+          ],
+          "fullName": "recordPaymentSchema rejects unknown payment kinds",
+          "status": "passed",
+          "title": "rejects unknown payment kinds",
+          "duration": 1.5813750000000368,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "recordVendorPaymentSchema"
+          ],
+          "fullName": "recordVendorPaymentSchema requires a reference for non-cash vendor payments",
+          "status": "passed",
+          "title": "requires a reference for non-cash vendor payments",
+          "duration": 0.8488750000000209,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "verify / reject payment"
+          ],
+          "fullName": "verify / reject payment lets Accounts verify without notes and requires a reason to reject",
+          "status": "passed",
+          "title": "lets Accounts verify without notes and requires a reason to reject",
+          "duration": 0.6960410000000365,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "fulfillment schemas"
+          ],
+          "fullName": "fulfillment schemas requires at least one vendor line with a positive quantity",
+          "status": "passed",
+          "title": "requires at least one vendor line with a positive quantity",
+          "duration": 1.2113749999999754,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "fulfillment schemas"
+          ],
+          "fullName": "fulfillment schemas requires a vendor quote ref and amount before approval",
+          "status": "passed",
+          "title": "requires a vendor quote ref and amount before approval",
+          "duration": 2.3093340000000353,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "fulfillment schemas"
+          ],
+          "fullName": "fulfillment schemas allows a zero received qty (partial GRN of nothing this trip) but not empty lists",
+          "status": "passed",
+          "title": "allows a zero received qty (partial GRN of nothing this trip) but not empty lists",
+          "duration": 0.5853329999999914,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "fulfillment schemas"
+          ],
+          "fullName": "fulfillment schemas accepts every write-off reason and rejects unknown ones",
+          "status": "passed",
+          "title": "accepts every write-off reason and rejects unknown ones",
+          "duration": 0.6547080000000278,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "fulfillment schemas"
+          ],
+          "fullName": "fulfillment schemas requires an order id to complete delivery",
+          "status": "passed",
+          "title": "requires an order id to complete delivery",
+          "duration": 0.2927500000000123,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "customerSchema"
+          ],
+          "fullName": "customerSchema requires a name and accepts billing vs site plus GSTIN",
+          "status": "passed",
+          "title": "requires a name and accepts billing vs site plus GSTIN",
+          "duration": 3.061584000000039,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "customerSchema"
+          ],
+          "fullName": "customerSchema rejects a GSTIN longer than 15 characters and a bad email",
+          "status": "passed",
+          "title": "rejects a GSTIN longer than 15 characters and a bad email",
+          "duration": 3.280750000000012,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1789668018492,
+      "endTime": 1789668018526.2808,
+      "status": "passed",
+      "message": "",
+      "name": "/Users/hridhin/Documents/explaineddigital/nuhome-crm/lib/validation/workflow.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "formatAuditEvent"
+          ],
+          "fullName": "formatAuditEvent titles every known audit action",
+          "status": "passed",
+          "title": "titles every known audit action",
+          "duration": 4.213499999999954,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "formatAuditEvent"
+          ],
+          "fullName": "formatAuditEvent includes money, version, order number, and cancel reason in details",
+          "status": "passed",
+          "title": "includes money, version, order number, and cancel reason in details",
+          "duration": 23.969583,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "formatAuditEvent"
+          ],
+          "fullName": "formatAuditEvent falls back for an unknown action and labels a missing actor as System",
+          "status": "passed",
+          "title": "falls back for an unknown action and labels a missing actor as System",
+          "duration": 0.39220799999998235,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "groupAuditByDay"
+          ],
+          "fullName": "groupAuditByDay buckets events by calendar day",
+          "status": "passed",
+          "title": "buckets events by calendar day",
+          "duration": 8.992958999999985,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "groupAuditByDay"
+          ],
+          "fullName": "groupAuditByDay buckets late-evening UTC events on the IST calendar day",
+          "status": "passed",
+          "title": "buckets late-evening UTC events on the IST calendar day",
+          "duration": 0.8643340000000421,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "buildAuditRow"
+          ],
+          "fullName": "buildAuditRow nulls missing states and defaults metadata to {}",
+          "status": "passed",
+          "title": "nulls missing states and defaults metadata to {}",
+          "duration": 0.8294999999999959,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1789668018440,
+      "endTime": 1789668018480.8296,
+      "status": "passed",
+      "message": "",
+      "name": "/Users/hridhin/Documents/explaineddigital/nuhome-crm/lib/workflow/audit-labels.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "canCancelJob"
+          ],
+          "fullName": "canCancelJob lets Sales cancel a live quote or order",
+          "status": "passed",
+          "title": "lets Sales cancel a live quote or order",
+          "duration": 2.808166999999969,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "canCancelJob"
+          ],
+          "fullName": "canCancelJob lets combined Accounts cancel a pending quote and an active order",
+          "status": "passed",
+          "title": "lets combined Accounts cancel a pending quote and an active order",
+          "duration": 0.522625000000005,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "canCancelJob"
+          ],
+          "fullName": "canCancelJob lets Procurement cancel an order but blocks Store",
+          "status": "passed",
+          "title": "lets Procurement cancel an order but blocks Store",
+          "duration": 1.2947090000000117,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "canCancelJob"
+          ],
+          "fullName": "canCancelJob blocks delivered, closed, and already cancelled jobs",
+          "status": "passed",
+          "title": "blocks delivered, closed, and already cancelled jobs",
+          "duration": 0.5085829999999874,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1789668019599,
+      "endTime": 1789668019604.5085,
+      "status": "passed",
+      "message": "",
+      "name": "/Users/hridhin/Documents/explaineddigital/nuhome-crm/lib/workflow/cancel.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "quote workflow"
+          ],
+          "fullName": "quote workflow allows draft → pending accounts",
+          "status": "passed",
+          "title": "allows draft → pending accounts",
+          "duration": 2.8530829999999696,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "quote workflow"
+          ],
+          "fullName": "quote workflow allows accounts to approve or reject a submitted quote",
+          "status": "passed",
+          "title": "allows accounts to approve or reject a submitted quote",
+          "duration": 0.6767909999999802,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "quote workflow"
+          ],
+          "fullName": "quote workflow returns a rejected quote to draft for revision",
+          "status": "passed",
+          "title": "returns a rejected quote to draft for revision",
+          "duration": 0.24874999999997272,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "quote workflow"
+          ],
+          "fullName": "quote workflow lets sales withdraw an approved quote before send",
+          "status": "passed",
+          "title": "lets sales withdraw an approved quote before send",
+          "duration": 0.557124999999985,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "quote workflow"
+          ],
+          "fullName": "quote workflow never sends a rejected quote to the customer",
+          "status": "passed",
+          "title": "never sends a rejected quote to the customer",
+          "duration": 0.8553340000000276,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "quote workflow"
+          ],
+          "fullName": "quote workflow only sends an approved quote",
+          "status": "passed",
+          "title": "only sends an approved quote",
+          "duration": 0.2150829999999928,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "quote workflow"
+          ],
+          "fullName": "quote workflow blocks sales from approving their own quote",
+          "status": "passed",
+          "title": "blocks sales from approving their own quote",
+          "duration": 0.5024999999999977,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "quote workflow"
+          ],
+          "fullName": "quote workflow requires a rejection reason",
+          "status": "passed",
+          "title": "requires a rejection reason",
+          "duration": 0.7192499999999882,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "payment and activation"
+          ],
+          "fullName": "payment and activation blocks sales from verifying their own payment",
+          "status": "passed",
+          "title": "blocks sales from verifying their own payment",
+          "duration": 1.8313750000000368,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "payment and activation"
+          ],
+          "fullName": "payment and activation activates the order on first verified payment terms",
+          "status": "passed",
+          "title": "activates the order on first verified payment terms",
+          "duration": 0.4657090000000039,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "payment and activation"
+          ],
+          "fullName": "payment and activation does not skip vendor fulfillment when a later payment is verified",
+          "status": "passed",
+          "title": "does not skip vendor fulfillment when a later payment is verified",
+          "duration": 0.5527500000000032,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "payment and activation"
+          ],
+          "fullName": "payment and activation unlocks delivery after on-hold payment when outstanding is 0",
+          "status": "passed",
+          "title": "unlocks delivery after on-hold payment when outstanding is 0",
+          "duration": 0.18787500000001955,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "payment and activation"
+          ],
+          "fullName": "payment and activation keeps the order on hold if a verified payment still leaves a balance",
+          "status": "passed",
+          "title": "keeps the order on hold if a verified payment still leaves a balance",
+          "duration": 0.09433400000000347,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "payment and activation"
+          ],
+          "fullName": "payment and activation validates nil vs advance amounts",
+          "status": "passed",
+          "title": "validates nil vs advance amounts",
+          "duration": 0.5763329999999769,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "vendor and delivery gate"
+          ],
+          "fullName": "vendor and delivery gate does not allow skip from items_received to delivered",
+          "status": "passed",
+          "title": "does not allow skip from items_received to delivered",
+          "duration": 0.2663750000000391,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "vendor and delivery gate"
+          ],
+          "fullName": "vendor and delivery gate allows closing remainder without a goods receipt",
+          "status": "passed",
+          "title": "allows closing remainder without a goods receipt",
+          "duration": 0.12841600000001563,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "vendor and delivery gate"
+          ],
+          "fullName": "vendor and delivery gate calculates outstanding server-side",
+          "status": "passed",
+          "title": "calculates outstanding server-side",
+          "duration": 0.6614160000000311,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "vendor and delivery gate"
+          ],
+          "fullName": "vendor and delivery gate holds delivery when outstanding > 0",
+          "status": "passed",
+          "title": "holds delivery when outstanding > 0",
+          "duration": 0.13283400000000256,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "vendor and delivery gate"
+          ],
+          "fullName": "vendor and delivery gate rejects delivery unless unlocked, received, and paid",
+          "status": "passed",
+          "title": "rejects delivery unless unlocked, received, and paid",
+          "duration": 0.8792920000000208,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "permissions"
+          ],
+          "fullName": "permissions does not let sales approve quotes or verify payments",
+          "status": "passed",
+          "title": "does not let sales approve quotes or verify payments",
+          "duration": 0.4803749999999809,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "audit payload"
+          ],
+          "fullName": "audit payload records actor, role, action, entity, and states",
+          "status": "passed",
+          "title": "records actor, role, action, entity, and states",
+          "duration": 0.2785000000000082,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "transition table completeness"
+          ],
+          "fullName": "transition table completeness defines every workflow status",
+          "status": "passed",
+          "title": "defines every workflow status",
+          "duration": 0.88737500000002,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1789668018898,
+      "endTime": 1789668018913.8875,
+      "status": "passed",
+      "message": "",
+      "name": "/Users/hridhin/Documents/explaineddigital/nuhome-crm/lib/workflow/engine.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "fulfillment remainder and overdue"
+          ],
+          "fullName": "fulfillment remainder and overdue labels every write-off reason",
+          "status": "passed",
+          "title": "labels every write-off reason",
+          "duration": 1.574624999999969,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "fulfillment remainder and overdue"
+          ],
+          "fullName": "fulfillment remainder and overdue never returns a negative available or unaccounted qty",
+          "status": "passed",
+          "title": "never returns a negative available or unaccounted qty",
+          "duration": 0.4585840000000303,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "fulfillment remainder and overdue"
+          ],
+          "fullName": "fulfillment remainder and overdue normalizes a single vendor order or a missing list",
+          "status": "passed",
+          "title": "normalizes a single vendor order or a missing list",
+          "duration": 1.865542000000005,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "fulfillment remainder and overdue"
+          ],
+          "fullName": "fulfillment remainder and overdue picks the earliest promised date among in-flight batches",
+          "status": "passed",
+          "title": "picks the earliest promised date among in-flight batches",
+          "duration": 0.30279100000001336,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "fulfillment remainder and overdue"
+          ],
+          "fullName": "fulfillment remainder and overdue flags an order overdue only when an in-flight batch is past due",
+          "status": "passed",
+          "title": "flags an order overdue only when an in-flight batch is past due",
+          "duration": 31.241333999999995,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "payment recording on every status"
+          ],
+          "fullName": "payment recording on every status allows recording only on the live money statuses",
+          "status": "passed",
+          "title": "allows recording only on the live money statuses",
+          "duration": 0.7970000000000255,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "payment recording on every status"
+          ],
+          "fullName": "payment recording on every status blocks draft, approved, unlocked, delivered, closed, and cancelled",
+          "status": "passed",
+          "title": "blocks draft, approved, unlocked, delivered, closed, and cancelled",
+          "duration": 0.558290999999997,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "payment recording on every status"
+          ],
+          "fullName": "payment recording on every status explains a pending verification and stays silent otherwise",
+          "status": "passed",
+          "title": "explains a pending verification and stays silent otherwise",
+          "duration": 0.4759999999999991,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "cancel coverage"
+          ],
+          "fullName": "cancel coverage lets Admin cancel a live job and nobody cancel a finished one",
+          "status": "passed",
+          "title": "lets Admin cancel a live job and nobody cancel a finished one",
+          "duration": 1.920332999999971,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1789668018435,
+      "endTime": 1789668018474.9204,
+      "status": "passed",
+      "message": "",
+      "name": "/Users/hridhin/Documents/explaineddigital/nuhome-crm/lib/workflow/floor-rules.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "fulfillment quantities"
+          ],
+          "fullName": "fulfillment quantities lets accounts hold back or split a line",
+          "status": "passed",
+          "title": "lets accounts hold back or split a line",
+          "duration": 2.7404579999999896,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "fulfillment quantities"
+          ],
+          "fullName": "fulfillment quantities treats shortage write-off as accounted",
+          "status": "passed",
+          "title": "treats shortage write-off as accounted",
+          "duration": 0.6269160000000227,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "expected delivery"
+          ],
+          "fullName": "expected delivery flags in-flight orders past the promised date",
+          "status": "passed",
+          "title": "flags in-flight orders past the promised date",
+          "duration": 0.3290839999999946,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "expected delivery"
+          ],
+          "fullName": "expected delivery formats dates for the floor",
+          "status": "passed",
+          "title": "formats dates for the floor",
+          "duration": 1.2635839999999803,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "vendor batch stepper"
+          ],
+          "fullName": "vendor batch stepper stays allocated until quote, then send, then goods",
+          "status": "passed",
+          "title": "stays allocated until quote, then send, then goods",
+          "duration": 0.5358750000000043,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1789668019851,
+      "endTime": 1789668019857.536,
+      "status": "passed",
+      "message": "",
+      "name": "/Users/hridhin/Documents/explaineddigital/nuhome-crm/lib/workflow/fulfillment.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "home counts"
+          ],
+          "fullName": "home counts counts only quotes that have not become an order",
+          "status": "passed",
+          "title": "counts only quotes that have not become an order",
+          "duration": 2.011250000000018,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "home counts"
+          ],
+          "fullName": "home counts uses the order status once an order exists",
+          "status": "passed",
+          "title": "uses the order status once an order exists",
+          "duration": 0.3643329999999878,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "home counts"
+          ],
+          "fullName": "home counts keeps payment-stage orders out of the active bucket",
+          "status": "passed",
+          "title": "keeps payment-stage orders out of the active bucket",
+          "duration": 0.44929199999995717,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "home counts"
+          ],
+          "fullName": "home counts does not treat cancelled jobs as delivered",
+          "status": "passed",
+          "title": "does not treat cancelled jobs as delivered",
+          "duration": 0.27983400000005076,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "home counts"
+          ],
+          "fullName": "home counts counts unique live jobs from the census",
+          "status": "passed",
+          "title": "counts unique live jobs from the census",
+          "duration": 0.33491700000001856,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "home counts"
+          ],
+          "fullName": "home counts excludes directory cards from work waiting",
+          "status": "passed",
+          "title": "excludes directory cards from work waiting",
+          "duration": 0.18354199999998855,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1789668019509,
+      "endTime": 1789668019513.335,
+      "status": "passed",
+      "message": "",
+      "name": "/Users/hridhin/Documents/explaineddigital/nuhome-crm/lib/workflow/home-counts.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "jobStage"
+          ],
+          "fullName": "jobStage maps every status onto five shop stages",
+          "status": "passed",
+          "title": "maps every status onto five shop stages",
+          "duration": 3.397291999999993,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "jobTracks"
+          ],
+          "fullName": "jobTracks keeps four parallel tracks on a live unpaid job",
+          "status": "passed",
+          "title": "keeps four parallel tracks on a live unpaid job",
+          "duration": 1.9110829999999623,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "jobTracks"
+          ],
+          "fullName": "jobTracks marks a list-price draft as quote-current only",
+          "status": "passed",
+          "title": "marks a list-price draft as quote-current only",
+          "duration": 0.6144580000000133,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "jobTracks"
+          ],
+          "fullName": "jobTracks treats approved credit delivery as money clear and site unlocked",
+          "status": "passed",
+          "title": "treats approved credit delivery as money clear and site unlocked",
+          "duration": 0.36537500000002865,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1789668019607,
+      "endTime": 1789668019613.3655,
+      "status": "passed",
+      "message": "",
+      "name": "/Users/hridhin/Documents/explaineddigital/nuhome-crm/lib/workflow/job-stage.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "status copy completeness"
+          ],
+          "fullName": "status copy completeness gives every status a label, tone, next line, and explanation",
+          "status": "passed",
+          "title": "gives every status a label, tone, next line, and explanation",
+          "duration": 25.015125000000012,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "status copy completeness"
+          ],
+          "fullName": "status copy completeness mentions the outstanding amount when delivery is locked",
+          "status": "passed",
+          "title": "mentions the outstanding amount when delivery is locked",
+          "duration": 0.49850000000003547,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "timelineIndex"
+          ],
+          "fullName": "timelineIndex maps every status onto the floor timeline",
+          "status": "passed",
+          "title": "maps every status onto the floor timeline",
+          "duration": 1.3425829999999905,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "flow stages"
+          ],
+          "fullName": "flow stages walks the business diagram from walk-in to closed",
+          "status": "passed",
+          "title": "walks the business diagram from walk-in to closed",
+          "duration": 1.9087920000000054,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1789668018441,
+      "endTime": 1789668018469.9087,
+      "status": "passed",
+      "message": "",
+      "name": "/Users/hridhin/Documents/explaineddigital/nuhome-crm/lib/workflow/labels-and-stages.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "status colors"
+          ],
+          "fullName": "status colors gives every status a tile, a badge class, and a unique dot",
+          "status": "passed",
+          "title": "gives every status a tile, a badge class, and a unique dot",
+          "duration": 2.566541000000001,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1789668019830,
+      "endTime": 1789668019832.5667,
+      "status": "passed",
+      "message": "",
+      "name": "/Users/hridhin/Documents/explaineddigital/nuhome-crm/lib/workflow/labels.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "nextRequiredAction for every status and role"
+          ],
+          "fullName": "nextRequiredAction for every status and role returns a title and detail for every status × role combination",
+          "status": "passed",
+          "title": "returns a title and detail for every status × role combination",
+          "duration": 7.005084000000011,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "nextRequiredAction for every status and role"
+          ],
+          "fullName": "nextRequiredAction for every status and role gives Sales the draft / send / record CTAs and hides Accounts ones",
+          "status": "passed",
+          "title": "gives Sales the draft / send / record CTAs and hides Accounts ones",
+          "duration": 0.7348340000000348,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "nextRequiredAction for every status and role"
+          ],
+          "fullName": "nextRequiredAction for every status and role gives Accounts the review CTAs on pending quote and payment",
+          "status": "passed",
+          "title": "gives Accounts the review CTAs on pending quote and payment",
+          "duration": 0.33379100000001927,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "nextRequiredAction for every status and role"
+          ],
+          "fullName": "nextRequiredAction for every status and role asks Sales to re-record after Accounts rejects a payment",
+          "status": "passed",
+          "title": "asks Sales to re-record after Accounts rejects a payment",
+          "duration": 0.2283750000000282,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "nextRequiredAction for every status and role"
+          ],
+          "fullName": "nextRequiredAction for every status and role gives Accounts vendor CTAs and Delivery the handover CTA",
+          "status": "passed",
+          "title": "gives Accounts vendor CTAs and Delivery the handover CTA",
+          "duration": 0.31420799999995097,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "nextRequiredAction for every status and role"
+          ],
+          "fullName": "nextRequiredAction for every status and role shows outstanding on hold and a record CTA when a balance remains",
+          "status": "passed",
+          "title": "shows outstanding on hold and a record CTA when a balance remains",
+          "duration": 20.014875000000018,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "nextRequiredAction for every status and role"
+          ],
+          "fullName": "nextRequiredAction for every status and role follows the live order status when the quote is still marked sent",
+          "status": "passed",
+          "title": "follows the live order status when the quote is still marked sent",
+          "duration": 0.366958000000011,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "nextRequiredAction for every status and role"
+          ],
+          "fullName": "nextRequiredAction for every status and role asks for installation after close when none is booked",
+          "status": "passed",
+          "title": "asks for installation after close when none is booked",
+          "duration": 0.20608299999997826,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "nextRequiredAction for every status and role"
+          ],
+          "fullName": "nextRequiredAction for every status and role lets Admin act at every desk that a specialist would",
+          "status": "passed",
+          "title": "lets Admin act at every desk that a specialist would",
+          "duration": 0.7621660000000361,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1789668018414,
+      "endTime": 1789668018443.7622,
+      "status": "passed",
+      "message": "",
+      "name": "/Users/hridhin/Documents/explaineddigital/nuhome-crm/lib/workflow/next-action.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "payment recording visibility"
+          ],
+          "fullName": "payment recording visibility blocks when a payment is pending verification",
+          "status": "passed",
+          "title": "blocks when a payment is pending verification",
+          "duration": 5.881500000000017,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "payment recording visibility"
+          ],
+          "fullName": "payment recording visibility allows the first payment on a sent quote",
+          "status": "passed",
+          "title": "allows the first payment on a sent quote",
+          "duration": 0.5530410000000074,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "payment recording visibility"
+          ],
+          "fullName": "payment recording visibility allows retry after Accounts rejects a payment",
+          "status": "passed",
+          "title": "allows retry after Accounts rejects a payment",
+          "duration": 0.2737499999999784,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "payment recording visibility"
+          ],
+          "fullName": "payment recording visibility allows balance payments on hold when nothing is pending",
+          "status": "passed",
+          "title": "allows balance payments on hold when nothing is pending",
+          "duration": 0.3301659999999913,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "payment recording visibility"
+          ],
+          "fullName": "payment recording visibility allows a further installment while the job is with the vendor",
+          "status": "passed",
+          "title": "allows a further installment while the job is with the vendor",
+          "duration": 0.28129200000000765,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "payment recording visibility"
+          ],
+          "fullName": "payment recording visibility hides recording when the vendor-stage balance is already cleared",
+          "status": "passed",
+          "title": "hides recording when the vendor-stage balance is already cleared",
+          "duration": 0.15662499999999113,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "payment recording visibility"
+          ],
+          "fullName": "payment recording visibility blocks recording on a cancelled job",
+          "status": "passed",
+          "title": "blocks recording on a cancelled job",
+          "duration": 0.45924999999999727,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1789668019653,
+      "endTime": 1789668019661.4592,
+      "status": "passed",
+      "message": "",
+      "name": "/Users/hridhin/Documents/explaineddigital/nuhome-crm/lib/workflow/payment-recording.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "quote transitions"
+          ],
+          "fullName": "quote transitions allows draft to pending_accounts",
+          "status": "passed",
+          "title": "allows draft to pending_accounts",
+          "duration": 3.253291000000047,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "quote transitions"
+          ],
+          "fullName": "quote transitions rejects sending an unapproved quote",
+          "status": "passed",
+          "title": "rejects sending an unapproved quote",
+          "duration": 0.6494579999999814,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "quote transitions"
+          ],
+          "fullName": "quote transitions requires a new version after rejection",
+          "status": "passed",
+          "title": "requires a new version after rejection",
+          "duration": 0.7107920000000263,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "order transitions"
+          ],
+          "fullName": "order transitions allows closing remainder without a goods receipt",
+          "status": "passed",
+          "title": "allows closing remainder without a goods receipt",
+          "duration": 0.34595899999999347,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "order transitions"
+          ],
+          "fullName": "order transitions blocks delivery from items_received without the payment gate",
+          "status": "passed",
+          "title": "blocks delivery from items_received without the payment gate",
+          "duration": 0.4504590000000235,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "order transitions"
+          ],
+          "fullName": "order transitions routes unpaid delivery to on hold",
+          "status": "passed",
+          "title": "routes unpaid delivery to on hold",
+          "duration": 0.5050840000000107,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1789668019276,
+      "endTime": 1789668019283.5051,
+      "status": "passed",
+      "message": "",
+      "name": "/Users/hridhin/Documents/explaineddigital/nuhome-crm/lib/workflow/state-machine.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "order status buckets"
+          ],
+          "fullName": "order status buckets never puts closed or delivered orders in open, active, or payment buckets",
+          "status": "passed",
+          "title": "never puts closed or delivered orders in open, active, or payment buckets",
+          "duration": 4.377375000000029,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "order status buckets"
+          ],
+          "fullName": "order status buckets classifies every order status as either open or closed, never both",
+          "status": "passed",
+          "title": "classifies every order status as either open or closed, never both",
+          "duration": 1.1281659999999647,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "order status buckets"
+          ],
+          "fullName": "order status buckets shows the order status on quotes once an order exists",
+          "status": "passed",
+          "title": "shows the order status on quotes once an order exists",
+          "duration": 0.20487500000001546,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "order status buckets"
+          ],
+          "fullName": "order status buckets groups a closed order separately from payment and in-progress",
+          "status": "passed",
+          "title": "groups a closed order separately from payment and in-progress",
+          "duration": 0.21625000000000227,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "order status buckets"
+          ],
+          "fullName": "order status buckets deep-links the floor board into the matching list",
+          "status": "passed",
+          "title": "deep-links the floor board into the matching list",
+          "duration": 0.19695799999999508,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "order status buckets"
+          ],
+          "fullName": "order status buckets prefers an open order over a closed one for customer badges",
+          "status": "passed",
+          "title": "prefers an open order over a closed one for customer badges",
+          "duration": 0.16070799999999963,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1789668019277,
+      "endTime": 1789668019284.1606,
+      "status": "passed",
+      "message": "",
+      "name": "/Users/hridhin/Documents/explaineddigital/nuhome-crm/lib/workflow/status-buckets.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "workflow transition table"
+          ],
+          "fullName": "workflow transition table lists every status exactly once as a from-state",
+          "status": "passed",
+          "title": "lists every status exactly once as a from-state",
+          "duration": 2.4368749999999864,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workflow transition table"
+          ],
+          "fullName": "workflow transition table allows only the canonical edges and rejects every other pair",
+          "status": "passed",
+          "title": "allows only the canonical edges and rejects every other pair",
+          "duration": 44.078709,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workflow transition table"
+          ],
+          "fullName": "workflow transition table has no self-transitions and terminal closed/cancelled states",
+          "status": "passed",
+          "title": "has no self-transitions and terminal closed/cancelled states",
+          "duration": 0.8948330000000055,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workflow transition table"
+          ],
+          "fullName": "workflow transition table only sends an approved quote to the customer",
+          "status": "passed",
+          "title": "only sends an approved quote to the customer",
+          "duration": 0.5637089999999603,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workflow transition table"
+          ],
+          "fullName": "workflow transition table keeps quote and order wrappers in sync with the table",
+          "status": "passed",
+          "title": "keeps quote and order wrappers in sync with the table",
+          "duration": 1.3758339999999976,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workflow transition table"
+          ],
+          "fullName": "workflow transition table can cancel from every live status and never from delivered/closed/cancelled",
+          "status": "passed",
+          "title": "can cancel from every live status and never from delivered/closed/cancelled",
+          "duration": 0.5065000000000168,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1789668018868,
+      "endTime": 1789668018918.5066,
+      "status": "passed",
+      "message": "",
+      "name": "/Users/hridhin/Documents/explaineddigital/nuhome-crm/lib/workflow/transitions.exhaustive.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "vendor quotation split"
+          ],
+          "fullName": "vendor quotation split keeps one batch when every line uses the same vendor",
+          "status": "passed",
+          "title": "keeps one batch when every line uses the same vendor",
+          "duration": 3.22199999999998,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "vendor quotation split"
+          ],
+          "fullName": "vendor quotation split splits the quotation across vendors and fills qty from the order lines",
+          "status": "passed",
+          "title": "splits the quotation across vendors and fills qty from the order lines",
+          "duration": 0.6339159999999993,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "vendor quotation split"
+          ],
+          "fullName": "vendor quotation split auto-fills a quote reference from the order and vendor name",
+          "status": "passed",
+          "title": "auto-fills a quote reference from the order and vendor name",
+          "duration": 0.3664999999999736,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "vendor quotation split"
+          ],
+          "fullName": "vendor quotation split splits one order line across two vendors",
+          "status": "passed",
+          "title": "splits one order line across two vendors",
+          "duration": 0.8188749999999914,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "vendor quotation split"
+          ],
+          "fullName": "vendor quotation split merges qty when the same vendor is chosen twice on one line",
+          "status": "passed",
+          "title": "merges qty when the same vendor is chosen twice on one line",
+          "duration": 0.5617500000000177,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "vendor quotation split"
+          ],
+          "fullName": "vendor quotation split adds leftover qty, or splits 10 into 5+5 when the line is already full",
+          "status": "passed",
+          "title": "adds leftover qty, or splits 10 into 5+5 when the line is already full",
+          "duration": 1.1092499999999745,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1789668019566,
+      "endTime": 1789668019573.1091,
+      "status": "passed",
+      "message": "",
+      "name": "/Users/hridhin/Documents/explaineddigital/nuhome-crm/lib/workflow/vendor-split.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "GST, quote totals, and delivery gate"
+          ],
+          "fullName": "GST, quote totals, and delivery gate sums exclusive GST lines into outstanding that unlocks only at zero",
+          "status": "passed",
+          "title": "sums exclusive GST lines into outstanding that unlocks only at zero",
+          "duration": 12.614958000000001,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "GST, quote totals, and delivery gate"
+          ],
+          "fullName": "GST, quote totals, and delivery gate splits a line across vendors and writes off a shortage so GRN can close",
+          "status": "passed",
+          "title": "splits a line across vendors and writes off a shortage so GRN can close",
+          "duration": 0.8606249999999704,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "customer, vendor, material, and extra-hat nav together"
+          ],
+          "fullName": "customer, vendor, material, and extra-hat nav together keeps billing distinct from site and accepts a GSTIN",
+          "status": "passed",
+          "title": "keeps billing distinct from site and accepts a GSTIN",
+          "duration": 3.214790999999991,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "customer, vendor, material, and extra-hat nav together"
+          ],
+          "fullName": "customer, vendor, material, and extra-hat nav together accepts a vendor with contacts and a GST-rated material",
+          "status": "passed",
+          "title": "accepts a vendor with contacts and a GST-rated material",
+          "duration": 2.1872920000000136,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "customer, vendor, material, and extra-hat nav together"
+          ],
+          "fullName": "customer, vendor, material, and extra-hat nav together parks Delivery Ready under More when Sales wears a Saturday hat",
+          "status": "passed",
+          "title": "parks Delivery Ready under More when Sales wears a Saturday hat",
+          "duration": 1.761291999999969,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1789668019188,
+      "endTime": 1789668019209.7612,
+      "status": "passed",
+      "message": "",
+      "name": "/Users/hridhin/Documents/explaineddigital/nuhome-crm/tests/integration/gst-balance-hats.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "happy path by role"
+          ],
+          "fullName": "happy path by role Sales quotes and pays; Accounts fulfills; Sales delivers",
+          "status": "passed",
+          "title": "Sales quotes and pays; Accounts fulfills; Sales delivers",
+          "duration": 14.840458000000012,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1789668019362,
+      "endTime": 1789668019376.8406,
+      "status": "passed",
+      "message": "",
+      "name": "/Users/hridhin/Documents/explaineddigital/nuhome-crm/tests/integration/happy-path.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "quote → pay → vendor → deliver pipeline"
+          ],
+          "fullName": "quote → pay → vendor → deliver pipeline walks a fully paid job through every live status without skipping vendor",
+          "status": "passed",
+          "title": "walks a fully paid job through every live status without skipping vendor",
+          "duration": 6.824124999999981,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "quote → pay → vendor → deliver pipeline"
+          ],
+          "fullName": "quote → pay → vendor → deliver pipeline keeps an advance job on hold after GRN until the balance is verified",
+          "status": "passed",
+          "title": "keeps an advance job on hold after GRN until the balance is verified",
+          "duration": 1.364582999999982,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "quote → pay → vendor → deliver pipeline"
+          ],
+          "fullName": "quote → pay → vendor → deliver pipeline does not skip vendor when a later installment is verified mid-fulfillment",
+          "status": "passed",
+          "title": "does not skip vendor when a later installment is verified mid-fulfillment",
+          "duration": 0.22295800000000554,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "quote → pay → vendor → deliver pipeline"
+          ],
+          "fullName": "quote → pay → vendor → deliver pipeline lets Accounts reject a payment so Sales can record again",
+          "status": "passed",
+          "title": "lets Accounts reject a payment so Sales can record again",
+          "duration": 0.6097909999999729,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "extra hats vs separation of duties"
+          ],
+          "fullName": "extra hats vs separation of duties lets Sales+Delivery complete handover but still blocks self-approval",
+          "status": "passed",
+          "title": "lets Sales+Delivery complete handover but still blocks self-approval",
+          "duration": 0.391125000000045,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1789668019259,
+      "endTime": 1789668019269.391,
+      "status": "passed",
+      "message": "",
+      "name": "/Users/hridhin/Documents/explaineddigital/nuhome-crm/tests/integration/quote-to-delivery.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "PATH A — happy path full pay end to end"
+          ],
+          "fullName": "PATH A — happy path full pay end to end draft → approve → send → full pay → vendor → receive → unlock → deliver → close",
+          "status": "passed",
+          "title": "draft → approve → send → full pay → vendor → receive → unlock → deliver → close",
+          "duration": 5.973875000000021,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "PATH B — reject quote + revise + advance + hold"
+          ],
+          "fullName": "PATH B — reject quote + revise + advance + hold returns a rejected quote to draft, then holds delivery on an unpaid remainder",
+          "status": "passed",
+          "title": "returns a rejected quote to draft, then holds delivery on an unpaid remainder",
+          "duration": 3.219249999999988,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "PATH C — nil (credit) then later real payment"
+          ],
+          "fullName": "PATH C — nil (credit) then later real payment activates on nil, then holds after goods until a real payment clears the balance",
+          "status": "passed",
+          "title": "activates on nil, then holds after goods until a real payment clears the balance",
+          "duration": 2.5622079999999414,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "PATH D — installment while the job is with the vendor"
+          ],
+          "fullName": "PATH D — installment while the job is with the vendor lets Sales record a further advance on active / vendor / dispatched / received",
+          "status": "passed",
+          "title": "lets Sales record a further advance on active / vendor / dispatched / received",
+          "duration": 1.3752499999999372,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "PATH E — cancel a dead quote / order"
+          ],
+          "fullName": "PATH E — cancel a dead quote / order enforces who can cancel at each stage and requires a reason",
+          "status": "passed",
+          "title": "enforces who can cancel at each stage and requires a reason",
+          "duration": 1.1283750000000055,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "PATH F — split vendors, partial GRN, shortage, overdue"
+          ],
+          "fullName": "PATH F — split vendors, partial GRN, shortage, overdue holds qty back, writes off shortage, and flags an overdue in-flight batch",
+          "status": "passed",
+          "title": "holds qty back, writes off shortage, and flags an overdue in-flight batch",
+          "duration": 1.2148339999999962,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "PATH G — payment rejected, then re-recorded"
+          ],
+          "fullName": "PATH G — payment rejected, then re-recorded blocks verify-own-payment and reopens recording after reject",
+          "status": "passed",
+          "title": "blocks verify-own-payment and reopens recording after reject",
+          "duration": 2.3811249999999973,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "PATH H — customer GST / billing vs site / files"
+          ],
+          "fullName": "PATH H — customer GST / billing vs site / files stores GSTIN, distinct addresses, and job-file kinds",
+          "status": "passed",
+          "title": "stores GSTIN, distinct addresses, and job-file kinds",
+          "duration": 3.52312500000005,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "PATH I — tax invoice + installation + warranty / AMC"
+          ],
+          "fullName": "PATH I — tax invoice + installation + warranty / AMC accepts company GST settings, a site date, and warranty or AMC",
+          "status": "passed",
+          "title": "accepts company GST settings, a site date, and warranty or AMC",
+          "duration": 3.786875000000009,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "PATH J — public quotation + WhatsApp"
+          ],
+          "fullName": "PATH J — public quotation + WhatsApp builds a public /q/ link on a non-localhost origin",
+          "status": "passed",
+          "title": "builds a public /q/ link on a non-localhost origin",
+          "duration": 0.5432080000000497,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "PATH K — vendors, materials, company"
+          ],
+          "fullName": "PATH K — vendors, materials, company validates vendor contacts, material sheet, and inactive flags",
+          "status": "passed",
+          "title": "validates vendor contacts, material sheet, and inactive flags",
+          "duration": 2.5165829999999687,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "PATH L — users, extra hats, cover, CSV, passwords"
+          ],
+          "fullName": "PATH L — users, extra hats, cover, CSV, passwords covers login, forgot/change password, staff hats, and CSV import aliases",
+          "status": "passed",
+          "title": "covers login, forgot/change password, staff hats, and CSV import aliases",
+          "duration": 4.668208999999933,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "PATH M — lists, search, floor book, reports"
+          ],
+          "fullName": "PATH M — lists, search, floor book, reports matches quote number / phone / name and deep-links the floor board",
+          "status": "passed",
+          "title": "matches quote number / phone / name and deep-links the floor board",
+          "duration": 0.9592920000000049,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "PATH N — each role's Home"
+          ],
+          "fullName": "PATH N — each role's Home gives every role a Home nav item and a next action on a live job",
+          "status": "passed",
+          "title": "gives every role a Home nav item and a next action on a live job",
+          "duration": 15.877542000000062,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "PATH O — live refresh + every bell type"
+          ],
+          "fullName": "PATH O — live refresh + every bell type routes every floor notification type to the next desk",
+          "status": "passed",
+          "title": "routes every floor notification type to the next desk",
+          "duration": 1.1222080000000005,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "PATH P — negative / permission checks"
+          ],
+          "fullName": "PATH P — negative / permission checks blocks every SoD and stage skip the floor is not allowed to take",
+          "status": "passed",
+          "title": "blocks every SoD and stage skip the floor is not allowed to take",
+          "duration": 3.262707999999975,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "PART 0 — login, nav, role gates"
+          ],
+          "fullName": "PART 0 — login, nav, role gates validates demo login and keeps each role on its own bar",
+          "status": "passed",
+          "title": "validates demo login and keeps each role on its own bar",
+          "duration": 1.692083000000025,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1789668018672,
+      "endTime": 1789668018730.6921,
+      "status": "passed",
+      "message": "",
+      "name": "/Users/hridhin/Documents/explaineddigital/nuhome-crm/tests/regression/manual-paths.test.ts"
+    }
+  ]
+}

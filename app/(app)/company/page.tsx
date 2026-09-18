@@ -4,7 +4,7 @@ import { PageFrame } from "@/components/app/page-frame";
 import { PageHeader } from "@/components/app/page-header";
 import { AdminCatalogNav } from "@/components/admin/admin-catalog-nav";
 import { getCompanySettings } from "@/lib/api/documents";
-import { requirePermission } from "@/lib/auth/guards";
+import { requireAnyPermission } from "@/lib/auth/guards";
 
 export default async function CompanyPage({
   searchParams,
@@ -12,7 +12,7 @@ export default async function CompanyPage({
   searchParams: Promise<{ notice?: string }>;
 }) {
   const [, { notice }, company] = await Promise.all([
-    requirePermission("admin.manage"),
+    requireAnyPermission("admin.manage", "catalog.manage"),
     searchParams,
     getCompanySettings(),
   ]);

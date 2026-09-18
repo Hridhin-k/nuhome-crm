@@ -10,7 +10,7 @@ import {
   upsertInstallation,
   upsertWarranty,
 } from "@/lib/api/documents";
-import { requirePermission, requireUser } from "@/lib/auth/guards";
+import { requireAnyPermission, requireUser } from "@/lib/auth/guards";
 import { rolesHavePermission } from "@/lib/auth/permissions";
 import {
   companySettingsSchema,
@@ -29,7 +29,7 @@ export async function saveCompanySettingsAction(
   _prev: DocumentActionState,
   formData: FormData,
 ): Promise<DocumentActionState> {
-  await requirePermission("admin.manage");
+  await requireAnyPermission("admin.manage", "catalog.manage");
   const parsed = companySettingsSchema.safeParse({
     legal_name: formData.get("legal_name"),
     gstin: formData.get("gstin") || undefined,

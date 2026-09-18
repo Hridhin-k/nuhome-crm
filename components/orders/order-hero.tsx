@@ -14,6 +14,7 @@ export function OrderHero({
   paid,
   outstanding,
   statusExplanation,
+  creditApproved = false,
 }: {
   orderNumber: string;
   quoteNumber?: string;
@@ -23,14 +24,16 @@ export function OrderHero({
   paid: number;
   outstanding: number;
   statusExplanation: string;
+  creditApproved?: boolean;
 }) {
   const blocked =
-    status === "order_on_hold" ||
-    status === "delivery_pending_payment" ||
-    (outstanding > 0 &&
-      ["items_received", "delivery_pending_payment", "order_on_hold"].includes(
-        status,
-      ));
+    !creditApproved &&
+    (status === "order_on_hold" ||
+      status === "delivery_pending_payment" ||
+      (outstanding > 0 &&
+        ["items_received", "delivery_pending_payment", "order_on_hold"].includes(
+          status,
+        )));
   const closed = isClosedOrderStatus(status);
 
   return (

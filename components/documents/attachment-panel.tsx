@@ -43,6 +43,11 @@ export function AttachmentPanel({
   );
   const [fileName, setFileName] = useState("");
 
+  // Hide measurement / general file panels; keep vendor quote uploads only.
+  if (entityType !== "vendor_order") {
+    return null;
+  }
+
   return (
     <section className="rounded-2xl border border-outline-variant bg-card p-4 shadow-card">
       <h2 className="text-subheading text-on-surface">{title}</h2>

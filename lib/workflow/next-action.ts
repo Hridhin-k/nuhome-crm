@@ -21,9 +21,10 @@ export function nextRequiredAction(input: {
   quoteId?: string;
   activated?: boolean;
   orderStatus?: WorkflowStatus;
-    payments?: { status: string }[];
-    hasInstallation?: boolean;
-    hasUnsent?: boolean;
+  payments?: { status: string }[];
+  hasInstallation?: boolean;
+  hasUnsent?: boolean;
+  creditApproved?: boolean;
 }): NextAction {
   const {
     status,
@@ -36,6 +37,7 @@ export function nextRequiredAction(input: {
     payments = [],
     hasInstallation = true,
     hasUnsent = false,
+    creditApproved = false,
   } = input;
   const hats = input.roles?.length ? input.roles : [role];
   const can = (check: AppRole) => hats.includes(check);
@@ -68,6 +70,7 @@ export function nextRequiredAction(input: {
       orderStatus,
       payments,
       hasUnsent,
+      creditApproved,
     });
   }
 
@@ -107,6 +110,14 @@ export function nextRequiredAction(input: {
         cta: can("sales") || can("admin") ? "Send" : undefined,
       };
     case "quote_sent_to_customer":
+      if (creditApproved) {
+        return {
+          title: "Credit delivery approved",
+          detail: "Accounts can place this with a vendor. Balance can be collected later.",
+          href: orderId ? `/fulfillment/${orderId}` : "/fulfillment",
+          cta: canFulfill ? "Allocate to vendor" : undefined,
+        };
+      }
       return {
         title: "Record payment terms",
         detail: hasPendingPayment(payments)
@@ -116,6 +127,16 @@ export function nextRequiredAction(input: {
         cta: salesCanRecord ? "Record payment" : undefined,
       };
     case "payment_pending_verification": {
+      if (creditApproved) {
+        return {
+          title: "Credit delivery approved",
+          detail: activated
+            ? "Payment verification is optional. The job can continue."
+            : "Credit unlocks this job. Accounts can send it to a vendor.",
+          href: orderId ? `/fulfillment/${orderId}` : "/fulfillment",
+          cta: canFulfill ? "Allocate to vendor" : undefined,
+        };
+      }
       const rejected = payments.some((payment) => payment.status === "rejected");
       if (!hasPendingPayment(payments) && rejected) {
         return {
@@ -170,6 +191,15 @@ export function nextRequiredAction(input: {
     case "items_received":
     case "delivery_pending_payment":
     case "order_on_hold":
+      if (creditApproved) {
+        return {
+          title: "Ready for delivery",
+          detail:
+            "Credit delivery is approved. Complete handover even if a balance remains.",
+          href: orderId ? `/orders/${orderId}` : "/ready",
+          cta: canDeliver ? "Complete delivery" : undefined,
+        };
+      }
       return {
         title:
           outstanding > 0
@@ -190,7 +220,9 @@ export function nextRequiredAction(input: {
     case "delivery_unlocked":
       return {
         title: "Ready for delivery",
-        detail: "Balance is cleared. Complete delivery with the customer.",
+        detail: creditApproved
+          ? "Credit delivery approved. Complete delivery with the customer."
+          : "Balance is cleared. Complete delivery with the customer.",
         href: orderId ? `/orders/${orderId}` : "/ready",
         cta: canDeliver ? "Complete delivery" : undefined,
       };

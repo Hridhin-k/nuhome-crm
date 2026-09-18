@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { Plus } from "lucide-react";
+import { ItemDescriptionHint } from "@/components/app/item-description-hint";
 import { Input } from "@/components/ui/input";
 import { formatInr } from "@/lib/format/money";
 import { cn } from "@/lib/utils";
@@ -45,7 +46,8 @@ export function MaterialPicker({
         !q ||
         m.name.toLowerCase().includes(q) ||
         (m.sku?.toLowerCase().includes(q) ?? false) ||
-        (m.category_name?.toLowerCase().includes(q) ?? false);
+        (m.category_name?.toLowerCase().includes(q) ?? false) ||
+        (m.description?.toLowerCase().includes(q) ?? false);
       return matchesCategory && matchesQuery;
     });
   }, [materials, categoryId, query]);
@@ -105,15 +107,15 @@ export function MaterialPicker({
                   key={m.id}
                   className="flex items-center justify-between gap-3 border-b border-surface-variant py-3 last:border-0"
                 >
-                  <div className="min-w-0">
-                    <p className="truncate text-body-md font-semibold text-on-surface">
-                      {m.name}
-                    </p>
-                    {m.description ? (
-                      <p className="mt-0.5 line-clamp-2 text-body-sm text-on-surface-variant">
-                        {m.description}
+                  <div className="min-w-0 flex-1">
+                    <div className="flex min-w-0 items-start gap-2">
+                      <p className="min-w-0 flex-1 truncate text-body-md font-semibold text-on-surface">
+                        {m.name}
                       </p>
-                    ) : null}
+                      <ItemDescriptionHint
+                        description={m.description?.trim() ?? ""}
+                      />
+                    </div>
                     <p className="mt-0.5 truncate text-data-tabular text-secondary">
                       {[m.sku, formatInr(Number(m.default_sell_price))]
                         .filter(Boolean)

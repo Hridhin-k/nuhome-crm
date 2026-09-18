@@ -5,11 +5,11 @@ import { Notice } from "@/components/app/notice";
 import { NextActionCard } from "@/components/app/next-action-card";
 import { PageFrame, panelClass } from "@/components/app/page-frame";
 import { CompleteDeliveryForm } from "@/components/deliveries/complete-form";
-import { AttachmentPanel } from "@/components/documents/attachment-panel";
 import { InstallationForm } from "@/components/documents/installation-form";
 import { WarrantyPanel } from "@/components/documents/warranty-form";
 import { CreditDeliveryDecide, CreditDeliveryRequest } from "@/components/orders/credit-delivery-forms";
 import { HoldCard } from "@/components/orders/hold-card";
+import { ItemDescriptionHint } from "@/components/app/item-description-hint";
 import { JobTracks } from "@/components/jobs/job-tracks";
 import { OrderHero } from "@/components/orders/order-hero";
 import { ReassignOrderForm } from "@/components/orders/reassign-order-form";
@@ -20,7 +20,6 @@ import { listOrderActivity } from "@/lib/api/audit";
 import { listCoverSales, listProfiles } from "@/lib/api/catalog";
 import {
   getInstallationForOrder,
-  listAttachments,
   listWarrantiesForOrder,
 } from "@/lib/api/documents";
 import { getOrder } from "@/lib/api/orders";
@@ -54,12 +53,11 @@ export default async function OrderDetailPage({
   const canAftercare =
     rolesHavePermission(user.roles, "quotes.create") ||
     rolesHavePermission(user.roles, "deliveries.complete");
-  const [detail, activity, profiles, files, installation, warranties] =
+  const [detail, activity, profiles, installation, warranties] =
     await Promise.all([
       getOrder(id),
       listOrderActivity(id).catch(() => []),
       canReassign ? listProfiles() : Promise.resolve([]),
-      listAttachments("order", id).catch(() => []),
       getInstallationForOrder(id).catch(() => null),
       listWarrantiesForOrder(id).catch(() => []),
     ]);
@@ -106,6 +104,7 @@ export default async function OrderDetailPage({
     payments,
     hasInstallation: Boolean(installation),
     hasUnsent,
+    creditApproved: order.credit_delivery_status === "approved",
   });
   const showRecordPayment =
     rolesHavePermission(user.roles, "payments.record") &&
@@ -142,7 +141,6 @@ export default async function OrderDetailPage({
       {notice === "sent" ? (
         <Notice>Approved quote sent. Record payment terms next.</Notice>
       ) : null}
-      {notice === "uploaded" ? <Notice>File uploaded.</Notice> : null}
       {notice === "file-removed" ? <Notice>File removed.</Notice> : null}
       {notice === "install" ? <Notice>Installation saved.</Notice> : null}
       {notice === "warranty" ? <Notice>Warranty / AMC saved.</Notice> : null}
@@ -168,6 +166,7 @@ export default async function OrderDetailPage({
         paid={paid}
         outstanding={outstanding}
         statusExplanation={statusExplanation}
+        creditApproved={order.credit_delivery_status === "approved"}
       />
       <JobTracks
         status={status}
@@ -290,23 +289,35 @@ export default async function OrderDetailPage({
       <section className={panelClass}>
         <h2 className="text-subheading text-on-surface">Items</h2>
         <ul className="mt-3 divide-y divide-surface-variant">
-          {items.map((item) => (
-            <li
-              key={item.id}
-              className="flex min-w-0 justify-between gap-3 py-2.5 text-[13px]"
-            >
-              <span className="min-w-0 break-words">
-                {item.description}
-                <span className="text-on-surface-variant">
-                  {" "}
-                  · {item.quantity_received}/{item.quantity} received
-                  {Number(item.quantity_written_off ?? 0) > 0
-                    ? ` · ${item.quantity_written_off} ${item.write_off_reason ?? "closed"}`
-                    : ""}
+          {items.map((item) => {
+            const material = rel(item.materials);
+            const materialDescription =
+              typeof material?.description === "string"
+                ? material.description.trim()
+                : "";
+            return (
+              <li
+                key={item.id}
+                className="flex min-w-0 items-start gap-2 py-2.5 text-[13px]"
+              >
+                <span className="min-w-0 flex-1 break-words">
+                  <span className="inline-flex max-w-full items-start gap-2">
+                    <span className="min-w-0">
+                      {item.description}
+                      <span className="text-on-surface-variant">
+                        {" "}
+                        · {item.quantity_received}/{item.quantity} received
+                        {Number(item.quantity_written_off ?? 0) > 0
+                          ? ` · ${item.quantity_written_off} ${item.write_off_reason ?? "closed"}`
+                          : ""}
+                      </span>
+                    </span>
+                    <ItemDescriptionHint description={materialDescription} />
+                  </span>
                 </span>
-              </span>
-            </li>
-          ))}
+              </li>
+            );
+          })}
         </ul>
       </section>
 
@@ -352,17 +363,6 @@ export default async function OrderDetailPage({
       >
         Tax invoice
       </AppLink>
-
-      <AttachmentPanel
-        entityType="order"
-        entityId={order.id}
-        returnTo={`/orders/${order.id}`}
-        files={files}
-        canUpload={
-          rolesHavePermission(user.roles, "customers.write") ||
-          rolesHavePermission(user.roles, "deliveries.complete")
-        }
-      />
 
       {status === "delivery_unlocked" ||
       status === "delivered" ||
