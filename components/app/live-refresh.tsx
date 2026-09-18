@@ -7,7 +7,8 @@ import {
   createBrowserSupabaseClient,
 } from "@/lib/supabase/client";
 
-const DEBOUNCE_MS = 800;
+const DEBOUNCE_MS = 1800;
+const MUTATION_SUPPRESS_MS = 2200;
 
 function tablesForPath(pathname: string): string[] {
   if (
@@ -66,8 +67,14 @@ export function LiveRefresh({
     let queued = false;
     let hiddenAt: number | null = null;
     let disposed = false;
+    let suppressUntil = 0;
 
     function flush() {
+      if (Date.now() < suppressUntil) {
+        const wait = suppressUntil - Date.now() + 50;
+        timer = setTimeout(flush, wait);
+        return;
+      }
       queued = false;
       router.refresh();
     }
@@ -80,7 +87,19 @@ export function LiveRefresh({
       if (timer) {
         clearTimeout(timer);
       }
-      timer = setTimeout(flush, DEBOUNCE_MS);
+      const delay =
+        Date.now() < suppressUntil
+          ? Math.max(DEBOUNCE_MS, suppressUntil - Date.now() + 50)
+          : DEBOUNCE_MS;
+      timer = setTimeout(flush, delay);
+    }
+
+    function onActionPending() {
+      suppressUntil = Date.now() + MUTATION_SUPPRESS_MS;
+      if (timer) {
+        clearTimeout(timer);
+        timer = setTimeout(flush, MUTATION_SUPPRESS_MS + 50);
+      }
     }
 
     function onVisible() {
@@ -92,7 +111,7 @@ export function LiveRefresh({
         flush();
         return;
       }
-      if (hiddenAt && Date.now() - hiddenAt > 2000) {
+      if (hiddenAt && Date.now() - hiddenAt > 2000 && Date.now() >= suppressUntil) {
         router.refresh();
       }
       hiddenAt = null;
@@ -151,12 +170,14 @@ export function LiveRefresh({
 
     document.addEventListener("visibilitychange", onVisible);
     window.addEventListener("focus", onVisible);
+    window.addEventListener("nuhome:action-pending", onActionPending);
     void connect();
 
     return () => {
       disposed = true;
       document.removeEventListener("visibilitychange", onVisible);
       window.removeEventListener("focus", onVisible);
+      window.removeEventListener("nuhome:action-pending", onActionPending);
       if (timer) {
         clearTimeout(timer);
       }

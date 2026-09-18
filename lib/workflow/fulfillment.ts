@@ -14,10 +14,10 @@ export const WRITE_OFF_LABELS: Record<WriteOffReason, string> = {
   cancelled: "Cancelled / held back",
 };
 
+import { formatIstDate, kolkataDate } from "@/lib/format/date";
+
 export function todayIsoDate(now = new Date()) {
-  return new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Kolkata" }).format(
-    now,
-  );
+  return kolkataDate(now);
 }
 
 export function availableToSend(item: {
@@ -135,7 +135,6 @@ export function vendorBatchStepperLabel(input: {
 export function formatExpectedDate(value: string | null | undefined) {
   if (!value) return null;
   const date = value.slice(0, 10);
-  const [year, month, day] = date.split("-");
-  if (!year || !month || !day) return date;
-  return `${day}/${month}/${year}`;
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return value;
+  return formatIstDate(`${date}T12:00:00+05:30`);
 }

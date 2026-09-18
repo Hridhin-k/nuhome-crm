@@ -1,8 +1,14 @@
-const KOLKATA = "Asia/Kolkata";
+import { kolkataDate } from "@/lib/format/date";
 
-export function kolkataDate(value = new Date()) {
-  return new Intl.DateTimeFormat("en-CA", { timeZone: KOLKATA }).format(value);
-}
+export { kolkataDate } from "@/lib/format/date";
+export {
+  formatIstDate,
+  formatIstDateTime,
+  formatIstDayLabel,
+  formatIstHomeLabel,
+  formatIstShortDate,
+  formatIstTime,
+} from "@/lib/format/date";
 
 export function defaultDateRange(now = new Date()) {
   const to = kolkataDate(now);
@@ -69,41 +75,4 @@ export function pathWithQuery(
   }
   const qs = search.toString();
   return qs ? `${path}?${qs}` : path;
-}
-
-export function formatIstDateTime(iso: string | Date = new Date()) {
-  return new Intl.DateTimeFormat("en-IN", {
-    timeZone: KOLKATA,
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: true,
-  }).format(typeof iso === "string" ? new Date(iso) : iso);
-}
-
-export function formatIstTime(iso: string | Date) {
-  return new Intl.DateTimeFormat("en-IN", {
-    timeZone: KOLKATA,
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: true,
-  }).format(typeof iso === "string" ? new Date(iso) : iso);
-}
-
-export function formatIstDayLabel(iso: string | Date, now = new Date()) {
-  const date = typeof iso === "string" ? new Date(iso) : iso;
-  const yearOf = (value: Date) =>
-    new Intl.DateTimeFormat("en-IN", {
-      timeZone: KOLKATA,
-      year: "numeric",
-    }).format(value);
-  return new Intl.DateTimeFormat("en-IN", {
-    timeZone: KOLKATA,
-    weekday: "long",
-    day: "numeric",
-    month: "short",
-    year: yearOf(date) !== yearOf(now) ? "numeric" : undefined,
-  }).format(date);
 }

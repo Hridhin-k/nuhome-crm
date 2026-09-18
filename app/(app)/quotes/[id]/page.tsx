@@ -45,19 +45,19 @@ export default async function QuoteDetailPage({
   const { notice, error } = await searchParams;
   const canRevise = rolesHavePermission(user.roles, "quotes.revise");
   const canShareWhatsApp = rolesHavePermission(user.roles, "quotes.send_to_customer");
-  const [detail, activity, siteUrl] = await Promise.all([
-    getQuote(id),
-    listQuoteActivity(id).catch(() => []),
-    getCustomerSiteUrl(),
-  ]);
+  const detail = await getQuote(id);
   if (!detail) {
     notFound();
   }
 
   const { quote, customer, versions, items, order } = detail;
-  const payments = order?.id
-    ? await listPaymentsForOrder(order.id).catch(() => [])
-    : [];
+  const [activity, siteUrl, payments] = await Promise.all([
+    listQuoteActivity(id).catch(() => []),
+    getCustomerSiteUrl(),
+    order?.id
+      ? listPaymentsForOrder(order.id).catch(() => [])
+      : Promise.resolve([]),
+  ]);
   const current =
     versions.find((v) => v.id === quote.current_version_id) ?? versions[0];
   const currentItems = items.filter((i) => i.version_id === current?.id);

@@ -1,11 +1,12 @@
 "use client";
 
-import { useActionState, useMemo, useState } from "react";
+import { useActionState, useEffect, useMemo, useState } from "react";
 import {
   saveQuoteAction,
   type ActionState,
 } from "@/app/actions/workflow";
 import { ItemDescriptionHint } from "@/components/app/item-description-hint";
+import { markActionPending } from "@/components/app/submit-button";
 import { CustomerPicker } from "@/components/quotes/customer-picker";
 import {
   MaterialPicker,
@@ -78,6 +79,10 @@ export function QuoteBuilder({
     saveQuoteAction,
     {},
   );
+
+  useEffect(() => {
+    if (pending) markActionPending();
+  }, [pending]);
 
   const addedMaterialIds = useMemo(
     () => new Set(lines.map((l) => l.material_id).filter(Boolean) as string[]),

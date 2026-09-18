@@ -124,14 +124,14 @@ export async function saveQuoteAction(
     if (intent === "submit") {
       await requirePermission("quotes.submit");
       await submitQuote(quoteId);
+      revalidatePath(`/quotes/${quoteId}`);
       revalidatePath("/quotes");
-      revalidatePath("/home");
       redirect(
         `/quotes/${quoteId}?notice=${existingId ? "revised" : "submitted"}`,
       );
     }
+    revalidatePath(`/quotes/${quoteId}`);
     revalidatePath("/quotes");
-    revalidatePath("/home");
     redirect(`/quotes/${quoteId}?notice=draft`);
   } catch (error) {
     rethrowNavigationError(error);
@@ -236,6 +236,7 @@ export async function verifyPaymentAction(paymentId: string, orderId?: string) {
   try {
     await verifyPayment(paymentId);
     revalidatePath("/payments");
+    if (orderId) revalidatePath(`/orders/${orderId}`);
     redirect(
       orderId
         ? `/orders/${orderId}?notice=verified`
@@ -292,9 +293,8 @@ export async function sendToVendorAction(
       expected_delivery: formData.get("expected_delivery") || undefined,
       items,
     });
+    revalidatePath(`/fulfillment/${orderId}`);
     revalidatePath("/fulfillment");
-    revalidatePath("/orders");
-    revalidatePath("/home");
     redirect(`/fulfillment/${orderId}?notice=allocated`);
   } catch (error) {
     rethrowNavigationError(error);
@@ -306,9 +306,8 @@ export async function dispatchAction(vendorOrderId: string, orderId: string) {
   await requirePermission("fulfillment.update");
   try {
     await markVendorDispatched(vendorOrderId);
+    revalidatePath(`/fulfillment/${orderId}`);
     revalidatePath("/fulfillment");
-    revalidatePath("/orders");
-    revalidatePath("/home");
     redirect(fulfillmentHref(orderId, "dispatched", vendorOrderId));
   } catch (error) {
     rethrowNavigationError(error);
@@ -330,9 +329,8 @@ export async function receiveAction(
       vendor_order_id: vendorOrderId,
       received: JSON.parse(String(formData.get("received") ?? "[]")),
     });
+    revalidatePath(`/fulfillment/${orderId}`);
     revalidatePath("/fulfillment");
-    revalidatePath("/orders");
-    revalidatePath("/home");
     redirect(fulfillmentHref(orderId, "received", vendorOrderId));
   } catch (error) {
     rethrowNavigationError(error);
@@ -352,9 +350,8 @@ export async function writeOffItemsAction(
       notes: String(formData.get("notes") ?? "") || undefined,
       items: JSON.parse(String(formData.get("items") ?? "[]")),
     });
+    revalidatePath(`/fulfillment/${orderId}`);
     revalidatePath("/fulfillment");
-    revalidatePath("/orders");
-    revalidatePath("/home");
     redirect(`/fulfillment/${orderId}?notice=written-off`);
   } catch (error) {
     rethrowNavigationError(error);
@@ -425,10 +422,12 @@ export async function cancelJobAction(
       quote_id: quoteId,
       reason: String(formData.get("reason") ?? ""),
     });
+    revalidatePath(`/quotes/${quoteId}`);
     revalidatePath("/quotes");
-    revalidatePath("/orders");
-    revalidatePath("/home");
-    revalidatePath("/fulfillment");
+    if (returnTo.startsWith("/orders/")) {
+      revalidatePath(returnTo.split("?")[0]!);
+      revalidatePath("/orders");
+    }
     const dest =
       returnTo.startsWith("/quotes/") || returnTo.startsWith("/orders/")
         ? returnTo
@@ -574,9 +573,8 @@ export async function confirmVendorSendAction(
   await requirePermission("orders.send_to_vendor");
   try {
     await confirmVendorSend(vendorOrderId);
+    revalidatePath(`/fulfillment/${orderId}`);
     revalidatePath("/fulfillment");
-    revalidatePath("/orders");
-    revalidatePath("/home");
     redirect(fulfillmentHref(orderId, "sent-vendor", vendorOrderId));
   } catch (error) {
     rethrowNavigationError(error);

@@ -22,7 +22,7 @@ export function notificationHref(notification: AppNotification): string | null {
 
   switch (notification.type) {
     case "QUOTE_SUBMITTED":
-      return quoteId ? `/approvals/${quoteId}` : "/approvals";
+      return quoteId ? `/quotes/${quoteId}` : "/approvals";
     case "QUOTE_APPROVED":
     case "QUOTE_REJECTED":
       return quoteId ? `/quotes/${quoteId}` : "/quotes";

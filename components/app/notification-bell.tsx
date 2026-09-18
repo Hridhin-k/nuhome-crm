@@ -26,25 +26,15 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 
+import { formatIstShortDate, formatIstTime, kolkataDate } from "@/lib/format/date";
+
 function formatWhen(iso: string) {
   const date = new Date(iso);
-  const now = new Date();
-  const sameDay =
-    date.getDate() === now.getDate() &&
-    date.getMonth() === now.getMonth() &&
-    date.getFullYear() === now.getFullYear();
-
-  if (sameDay) {
-    return date.toLocaleTimeString("en-IN", {
-      hour: "numeric",
-      minute: "2-digit",
-    });
+  if (Number.isNaN(date.getTime())) return "";
+  if (kolkataDate(date) === kolkataDate()) {
+    return formatIstTime(date);
   }
-
-  return date.toLocaleDateString("en-IN", {
-    day: "numeric",
-    month: "short",
-  });
+  return formatIstShortDate(date);
 }
 
 function mapRow(row: Record<string, unknown>): AppNotification {

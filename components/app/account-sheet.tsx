@@ -6,7 +6,7 @@ import {
   FormSheetBody,
   FormSheetFooter,
 } from "@/components/app/form-sheet";
-import { Button } from "@/components/ui/button";
+import { SubmitButton } from "@/components/app/submit-button";
 
 export function AccountSheet({
   name,
@@ -54,9 +54,13 @@ export function AccountSheet({
           </p>
         </FormSheetBody>
         <FormSheetFooter>
-          <Button type="submit" variant="bordered" className="w-full" size="lg">
-            Sign out
-          </Button>
+          <SubmitButton
+            idleLabel="Sign out"
+            pendingLabel="Signing out…"
+            variant="bordered"
+            className="w-full justify-center text-center"
+            size="lg"
+          />
         </FormSheetFooter>
       </form>
     </FormSheet>

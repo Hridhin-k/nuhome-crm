@@ -20,7 +20,7 @@ describe("notificationHref", () => {
   it("sends each role to the screen that has the work", () => {
     expect(
       notificationHref(notice("QUOTE_SUBMITTED", { quote_id: "q1" })),
-    ).toBe("/approvals/q1");
+    ).toBe("/quotes/q1");
     expect(notificationHref(notice("PAYMENT_RECORDED"))).toBe("/payments");
     expect(
       notificationHref(notice("ORDER_ACTIVATED", { order_id: "o1" })),

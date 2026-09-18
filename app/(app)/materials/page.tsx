@@ -1,10 +1,10 @@
 import {
   importMaterialsCsvAction,
-  toggleMaterialAction,
 } from "@/app/actions/admin";
 import { AdminCatalogNav } from "@/components/admin/admin-catalog-nav";
 import { CsvImportSheet } from "@/components/admin/csv-import-sheet";
 import { MaterialForm } from "@/components/admin/material-form";
+import { MaterialToggleForm } from "@/components/admin/material-toggle-form";
 import { Notice } from "@/components/app/notice";
 import { PageFrame } from "@/components/app/page-frame";
 import { PageHeader } from "@/components/app/page-header";
@@ -109,16 +109,7 @@ export default async function MaterialsPage({
                     isActive: active,
                   }}
                 />
-                <form action={toggleMaterialAction}>
-                  <input type="hidden" name="id" value={material.id} />
-                  <input type="hidden" name="is_active" value={active ? "false" : "true"} />
-                  <button
-                    type="submit"
-                    className="h-9 rounded-lg border border-border px-3 text-[13px] font-medium text-on-surface"
-                  >
-                    {active ? "Hide" : "Restore"}
-                  </button>
-                </form>
+                <MaterialToggleForm id={material.id} active={active} />
               </div>
             </li>
           );

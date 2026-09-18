@@ -5,6 +5,7 @@ import {
   saveInstallationAction,
   type DocumentActionState,
 } from "@/app/actions/documents";
+import { formatIstDate } from "@/lib/format/date";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -38,7 +39,7 @@ export function InstallationForm({
         <p className="mt-3 text-sm text-success">
           Installation marked done
           {installation?.scheduled_on
-            ? ` · ${new Date(installation.scheduled_on).toLocaleDateString("en-IN")}`
+            ? ` · ${formatIstDate(installation.scheduled_on)}`
             : ""}
         </p>
       ) : (

@@ -18,6 +18,8 @@ import { roleLabels } from "@/lib/auth/nav";
 import { rolesHavePermission } from "@/lib/auth/permissions";
 import type { AppRole } from "@/lib/workflow/types";
 
+import { formatIstHomeLabel } from "@/lib/format/date";
+
 function greeting(now = new Date()) {
   const hour = Number(
     new Intl.DateTimeFormat("en-IN", {
@@ -29,22 +31,6 @@ function greeting(now = new Date()) {
   if (hour < 12) return "Good morning 👋";
   if (hour < 17) return "Good afternoon 👋";
   return "Good evening 👋";
-}
-
-function dateLabel(now = new Date()) {
-  const date = new Intl.DateTimeFormat("en-IN", {
-    weekday: "long",
-    day: "numeric",
-    month: "short",
-    timeZone: "Asia/Kolkata",
-  }).format(now);
-  const time = new Intl.DateTimeFormat("en-IN", {
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: true,
-    timeZone: "Asia/Kolkata",
-  }).format(now);
-  return `${date} • ${time} IST`;
 }
 
 function metric(
@@ -215,7 +201,7 @@ function heroAction(roles: AppRole[]) {
 export default async function HomePage() {
   const user = await requireUser();
   const hello = greeting();
-  const today = dateLabel();
+  const today = formatIstHomeLabel();
   const badge = roleLabels(user.roles);
 
   if (user.roles.includes("admin") || user.roles.includes("operations")) {

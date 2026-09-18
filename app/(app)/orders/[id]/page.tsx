@@ -26,6 +26,7 @@ import { getOrder } from "@/lib/api/orders";
 import { rel } from "@/lib/api/rel";
 import { requireUser } from "@/lib/auth/guards";
 import { rolesHavePermission } from "@/lib/auth/permissions";
+import { formatIstDate, formatIstDateTime } from "@/lib/format/date";
 import { formatInrExact } from "@/lib/format/money";
 import { canCancelJob } from "@/lib/workflow/cancel";
 import { availableToSend } from "@/lib/workflow/fulfillment";
@@ -239,7 +240,7 @@ export default async function OrderDetailPage({
                 <div>
                   <p className="font-medium capitalize">{payment.kind}</p>
                   <p className="text-on-surface-variant">
-                    {new Date(payment.created_at).toLocaleString("en-IN")}
+                    {formatIstDateTime(payment.created_at)}
                     {payment.method ? ` · ${payment.method}` : ""}
                     {payment.reference_number
                       ? ` · ${payment.reference_number}`
@@ -391,7 +392,7 @@ export default async function OrderDetailPage({
                   <p className="mt-2 text-sm">
                     Installation {installation.status}
                     {installation.scheduled_on
-                      ? ` · ${new Date(installation.scheduled_on).toLocaleDateString("en-IN")}`
+                      ? ` · ${formatIstDate(installation.scheduled_on)}`
                       : ""}
                   </p>
                 ) : null}
@@ -452,7 +453,7 @@ export default async function OrderDetailPage({
           {delivery ? (
             <p>
               Delivered{" "}
-              {new Date(delivery.delivered_at ?? "").toLocaleString("en-IN")}
+              {formatIstDateTime(delivery.delivered_at ?? "")}
             </p>
           ) : null}
           {version ? <p>Quote v{version.version_number}</p> : null}

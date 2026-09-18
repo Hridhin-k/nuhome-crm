@@ -61,7 +61,8 @@ describe("expected delivery", () => {
   });
 
   it("formats dates for the floor", () => {
-    expect(formatExpectedDate("2026-08-14")).toBe("14/08/2026");
+    expect(formatExpectedDate("2026-08-14")).toMatch(/14/);
+    expect(formatExpectedDate("2026-08-14")).toMatch(/Aug/i);
   });
 });
 

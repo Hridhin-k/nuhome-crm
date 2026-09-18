@@ -1,5 +1,6 @@
 import { PrintQuoteButton } from "@/components/quotes/print-quote-button";
 import { formatInrExact } from "@/lib/format/money";
+import { formatIstDate } from "@/lib/format/date";
 import { displaySpecification } from "@/lib/quotes/spec";
 
 export type NuhomeSheetLine = {
@@ -28,11 +29,7 @@ export type NuhomeSheetCompany = {
 function sheetDate(value: string | Date) {
   const date = value instanceof Date ? value : new Date(value);
   if (Number.isNaN(date.getTime())) return "";
-  return date.toLocaleDateString("en-IN", {
-    day: "numeric",
-    month: "numeric",
-    year: "numeric",
-  });
+  return formatIstDate(date);
 }
 
 function dealerRate(line: NuhomeSheetLine) {

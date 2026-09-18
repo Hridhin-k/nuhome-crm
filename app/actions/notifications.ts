@@ -1,6 +1,5 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
 import { getDb } from "@/lib/api/db";
 import { requireUser } from "@/lib/auth/guards";
 
@@ -18,7 +17,6 @@ export async function markNotificationReadAction(notificationId: string) {
     return { error: "Could not mark notification as read" };
   }
 
-  revalidatePath("/", "layout");
   return {};
 }
 
@@ -35,6 +33,5 @@ export async function markAllNotificationsReadAction() {
     return { error: "Could not mark notifications as read" };
   }
 
-  revalidatePath("/", "layout");
   return {};
 }
