@@ -55,7 +55,11 @@ export async function upsertMaterial(input: {
   const descriptionFields =
     input.description === undefined
       ? {}
-      : { description: input.description.trim() ? input.description.trim() : null };
+      : {
+          description: input.description?.trim()
+            ? input.description.trim()
+            : null,
+        };
   const gstFields = {
     hsn_code: input.hsnCode || null,
     gst_rate: input.gstRate ?? 18,
