@@ -47,15 +47,20 @@ export async function upsertMaterial(input: {
   hsnCode?: string | null;
   gstRate?: number;
   warrantyMonths?: number;
+  /** Omit to leave existing description unchanged (e.g. CSV without that column). */
   description?: string | null;
   isActive?: boolean;
 }) {
   const db = await getDb();
+  const descriptionFields =
+    input.description === undefined
+      ? {}
+      : { description: input.description.trim() ? input.description.trim() : null };
   const gstFields = {
     hsn_code: input.hsnCode || null,
     gst_rate: input.gstRate ?? 18,
     warranty_months: input.warrantyMonths ?? 12,
-    description: input.description || null,
+    ...descriptionFields,
   };
   if (input.id) {
     const { error } = await db

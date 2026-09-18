@@ -83,11 +83,14 @@ export default async function CustomerDetailPage({
         </div>
       ) : null}
 
-      <div className="flex flex-col gap-2 sm:grid sm:grid-cols-2">
+      <div className="flex flex-col gap-3 sm:grid sm:grid-cols-2">
         {rolesHavePermission(user.roles, "quotes.create") ? (
           <AppLink
             href={`/walk-in?customerId=${id}&step=2`}
-            className={cn(buttonVariants({ size: "lg" }))}
+            className={cn(
+              buttonVariants({ size: "lg" }),
+              "w-full justify-center text-center",
+            )}
           >
             Create quote
           </AppLink>
@@ -95,7 +98,10 @@ export default async function CustomerDetailPage({
         {rolesHavePermission(user.roles, "payments.record") && payableOrder ? (
           <AppLink
             href={`/orders/${payableOrder.id}#payment`}
-            className={cn(buttonVariants({ variant: "outline", size: "lg" }))}
+            className={cn(
+              buttonVariants({ variant: "outline", size: "lg" }),
+              "w-full justify-center text-center",
+            )}
           >
             Record payment
           </AppLink>

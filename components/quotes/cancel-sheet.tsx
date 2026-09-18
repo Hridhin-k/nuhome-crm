@@ -7,9 +7,10 @@ import {
   FormSheetBody,
   FormSheetFooter,
 } from "@/components/app/form-sheet";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
 
 export function CancelJobSheet({
   quoteId,
@@ -30,7 +31,12 @@ export function CancelJobSheet({
       title="Cancel this job"
       description="Use this when the quote or order will never complete. A reason is required."
       trigger={
-        <span className="inline-flex h-11 min-h-11 w-full items-center justify-center rounded-lg border border-error bg-surface-container-lowest px-4 text-subheading text-error">
+        <span
+          className={cn(
+            buttonVariants({ variant: "outline", size: "lg" }),
+            "w-full justify-center text-center border-error text-error hover:bg-error/5",
+          )}
+        >
           {triggerLabel}
         </span>
       }
@@ -54,7 +60,12 @@ export function CancelJobSheet({
           ) : null}
         </FormSheetBody>
         <FormSheetFooter>
-          <Button type="submit" disabled={pending} size="lg" className="w-full">
+          <Button
+            type="submit"
+            disabled={pending}
+            size="lg"
+            className="w-full justify-center text-center"
+          >
             {pending ? "Cancelling…" : "Cancel job"}
           </Button>
         </FormSheetFooter>

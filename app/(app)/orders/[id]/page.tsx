@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { ActivityTimeline } from "@/components/app/activity-timeline";
 import { Notice } from "@/components/app/notice";
 import { NextActionCard } from "@/components/app/next-action-card";
-import { PageFrame, panelClass } from "@/components/app/page-frame";
+import { PageFrame, fullWidthButtonClass, panelClass } from "@/components/app/page-frame";
 import { CompleteDeliveryForm } from "@/components/deliveries/complete-form";
 import { InstallationForm } from "@/components/documents/installation-form";
 import { WarrantyPanel } from "@/components/documents/warranty-form";
@@ -358,7 +358,7 @@ export default async function OrderDetailPage({
         href={`/orders/${order.id}/invoice`}
         className={cn(
           buttonVariants({ variant: "outline", size: "lg" }),
-          "w-full text-center",
+          fullWidthButtonClass,
         )}
       >
         Tax invoice
@@ -430,33 +430,33 @@ export default async function OrderDetailPage({
         </p>
       ) : null}
 
-      {vendorOrders[0] ? (
-        <p className="text-sm text-on-surface-variant">
-          Vendor: {rel(vendorOrders[0].vendors)?.name} ·{" "}
-          {vendorOrders[0].status}
-        </p>
-      ) : null}
-
-      {rolesHavePermission(user.roles, "fulfillment.update") ? (
-        <AppLink
-          href={`/fulfillment/${order.id}`}
-          className="text-sm underline"
-        >
-          Fulfillment
-        </AppLink>
-      ) : null}
-
-      {delivery ? (
-        <p className="text-sm text-on-surface-variant">
-          Delivered{" "}
-          {new Date(delivery.delivered_at ?? "").toLocaleString("en-IN")}
-        </p>
-      ) : null}
-
-      {version ? (
-        <p className="text-xs text-on-surface-variant">
-          Quote v{version.version_number}
-        </p>
+      {(vendorOrders[0] ||
+        rolesHavePermission(user.roles, "fulfillment.update") ||
+        delivery ||
+        version) ? (
+        <section className="flex flex-col gap-1.5 text-body-sm text-on-surface-variant">
+          {vendorOrders[0] ? (
+            <p>
+              Vendor: {rel(vendorOrders[0].vendors)?.name} ·{" "}
+              {vendorOrders[0].status}
+            </p>
+          ) : null}
+          {rolesHavePermission(user.roles, "fulfillment.update") ? (
+            <AppLink
+              href={`/fulfillment/${order.id}`}
+              className="w-fit text-body-sm text-primary underline underline-offset-2"
+            >
+              Fulfillment
+            </AppLink>
+          ) : null}
+          {delivery ? (
+            <p>
+              Delivered{" "}
+              {new Date(delivery.delivered_at ?? "").toLocaleString("en-IN")}
+            </p>
+          ) : null}
+          {version ? <p>Quote v{version.version_number}</p> : null}
+        </section>
       ) : null}
 
       <ActivityTimeline events={activity} />

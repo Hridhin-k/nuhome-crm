@@ -44,7 +44,7 @@ export function NextActionCard({
             href={action.href!}
             className={cn(
               buttonVariants({ size: "lg" }),
-              "w-full shrink-0 sm:w-auto",
+              "w-full shrink-0 justify-center text-center sm:w-auto sm:min-w-[9.5rem]",
             )}
           >
             {action.cta}

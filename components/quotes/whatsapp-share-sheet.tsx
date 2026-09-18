@@ -7,9 +7,10 @@ import {
   FormSheetBody,
   FormSheetFooter,
 } from "@/components/app/form-sheet";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { formatInrExact } from "@/lib/format/money";
 import { isLocalSiteUrl } from "@/lib/site-url-shared";
+import { cn } from "@/lib/utils";
 
 function normalizeWhatsAppPhone(phone: string) {
   const digits = phone.replace(/\D/g, "");
@@ -91,10 +92,11 @@ export function WhatsAppShareSheet({
       description="Review the message before opening WhatsApp."
       trigger={
         <span
-          className={
-            triggerClassName ??
-            "inline-flex h-11 min-h-11 w-full items-center justify-center rounded-lg border border-outline-variant bg-surface-container-lowest px-4 text-subheading text-on-surface"
-          }
+          className={cn(
+            buttonVariants({ variant: "outline", size: "lg" }),
+            "w-full justify-center text-center",
+            triggerClassName,
+          )}
         >
           {triggerLabel}
         </span>
@@ -157,7 +159,7 @@ export function WhatsAppShareSheet({
           <Button
             type="button"
             size="lg"
-            className="w-full bg-[#25D366] text-white hover:bg-[#1da851]"
+            className="w-full justify-center text-center bg-[#25D366] text-white hover:bg-[#1da851]"
             disabled={pending}
             onClick={openWhatsApp}
           >

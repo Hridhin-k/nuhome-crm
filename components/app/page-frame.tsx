@@ -33,3 +33,9 @@ export const panelClass =
 
 export const listRowClass =
   "block min-w-0 rounded-2xl border border-outline-variant bg-card p-4 shadow-card transition-colors hover:bg-surface-container-low/50 active:bg-surface-container-low";
+
+/** Full-width CTA stack used on detail pages */
+export const actionStackClass = "flex w-full flex-col gap-3";
+
+/** Pair with buttonVariants on AppLink / sheet triggers */
+export const fullWidthButtonClass = "w-full justify-center text-center";

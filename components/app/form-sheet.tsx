@@ -34,8 +34,8 @@ export function FormSheet({
     <Sheet defaultOpen={defaultOpen}>
       <SheetTrigger
         className={cn(
-          "inline-flex items-center justify-center",
-          triggerClassName ?? "w-full",
+          "inline-flex w-full items-stretch justify-stretch",
+          triggerClassName,
         )}
       >
         {trigger}
@@ -90,17 +90,19 @@ export function FormSheetFooter({
         className,
       )}
     >
-      <div className="flex gap-2">
+      <div className="flex w-full items-stretch gap-3">
         <SheetClose
           type="button"
           className={cn(
             buttonVariants({ variant: "outline", size: "lg" }),
-            "flex-1",
+            "min-w-0 flex-1 justify-center text-center",
           )}
         >
           Cancel
         </SheetClose>
-        <div className="min-w-0 flex-1">{children}</div>
+        <div className="flex min-w-0 flex-1 items-stretch [&_>_*]:min-w-0 [&_>_*]:w-full">
+          {children}
+        </div>
       </div>
     </div>
   );

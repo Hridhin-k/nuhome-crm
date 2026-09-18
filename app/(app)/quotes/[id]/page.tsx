@@ -9,7 +9,7 @@ import { ActivityTimeline } from "@/components/app/activity-timeline";
 import { ConfirmActionSheet } from "@/components/app/confirm-action-sheet";
 import { NextActionCard } from "@/components/app/next-action-card";
 import { Notice } from "@/components/app/notice";
-import { PageFrame, panelClass } from "@/components/app/page-frame";
+import { PageFrame, actionStackClass, fullWidthButtonClass, panelClass } from "@/components/app/page-frame";
 import { StatusBadge } from "@/components/app/status-badge";
 import { StickyActionBar } from "@/components/app/sticky-action-bar";
 import { RejectQuoteSheet } from "@/components/quotes/reject-sheet";
@@ -367,14 +367,14 @@ export default async function QuoteDetailPage({
       {order ? (
         <AppLink
           href={`/orders/${order.id}/invoice`}
-          className={cn(buttonVariants({ variant: "outline", size: "lg" }), "w-full text-center")}
+          className={cn(buttonVariants({ variant: "outline", size: "lg" }), fullWidthButtonClass)}
         >
           Tax invoice
         </AppLink>
       ) : null}
 
       {salesSend ? (
-        <div className="flex flex-col gap-2">
+        <div className={actionStackClass}>
           {canWhatsApp && current && publicUrl ? (
             <WhatsAppShareSheet
               quoteId={quote.id}
@@ -393,7 +393,7 @@ export default async function QuoteDetailPage({
               rel="noopener noreferrer"
               className={cn(
                 buttonVariants({ variant: "outline", size: "lg" }),
-                "w-full text-center",
+                fullWidthButtonClass,
               )}
             >
               View public link
@@ -404,7 +404,7 @@ export default async function QuoteDetailPage({
               href={`/quotes/${quote.id}/revise`}
               className={cn(
                 buttonVariants({ variant: "outline", size: "lg" }),
-                "w-full text-center",
+                fullWidthButtonClass,
               )}
             >
               Correct before send
@@ -421,13 +421,13 @@ export default async function QuoteDetailPage({
       ) : null}
 
       {!accountsReview && !salesSend ? (
-        <div className="flex flex-col gap-3">
+        <div className={actionStackClass}>
           {status === "quote_draft" && canRevise ? (
             <AppLink
               href={`/quotes/${quote.id}/revise`}
               className={cn(
                 buttonVariants({ variant: "outline", size: "lg" }),
-                "w-full text-center",
+                fullWidthButtonClass,
               )}
             >
               Edit draft
@@ -463,7 +463,7 @@ export default async function QuoteDetailPage({
           !orderClosed ? (
             <AppLink
               href={`/quotes/${quote.id}/revise`}
-              className={cn(buttonVariants({ variant: "outline", size: "lg" }), "w-full text-center")}
+              className={cn(buttonVariants({ variant: "outline", size: "lg" }), fullWidthButtonClass)}
             >
               Revise after approval
             </AppLink>
@@ -471,7 +471,7 @@ export default async function QuoteDetailPage({
           {status === "quote_rejected" && canRevise ? (
             <AppLink
               href={`/quotes/${quote.id}/revise`}
-              className={cn(buttonVariants({ size: "lg" }), "w-full text-center")}
+              className={cn(buttonVariants({ size: "lg" }), fullWidthButtonClass)}
             >
               Revise quote
             </AppLink>
@@ -484,7 +484,7 @@ export default async function QuoteDetailPage({
                   variant: orderClosed ? "outline" : "default",
                   size: "lg",
                 }),
-                "w-full text-center",
+                fullWidthButtonClass,
               )}
             >
               {orderClosed ? "View closed order" : "Open order"}
@@ -497,7 +497,7 @@ export default async function QuoteDetailPage({
           href={`/orders/${order.id}`}
           className={cn(
             buttonVariants({ variant: "outline", size: "lg" }),
-            "w-full text-center",
+            fullWidthButtonClass,
           )}
         >
           Open order
@@ -585,10 +585,10 @@ export default async function QuoteDetailPage({
 
       {accountsReview ? (
         <StickyActionBar>
-          <div className="flex-1">
+          <div className="min-w-0 flex-1">
             <RejectQuoteSheet quoteId={quote.id} />
           </div>
-          <div className="flex-[2]">
+          <div className="min-w-0 flex-[1.4]">
             <ConfirmActionSheet
               title="Approve quote"
               description="Sales can then send this version to the customer."

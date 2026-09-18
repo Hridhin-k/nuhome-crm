@@ -15,7 +15,9 @@ export function StickyActionBar({
         className,
       )}
     >
-      <div className="mx-auto flex w-full max-w-3xl gap-2">{children}</div>
+      <div className="mx-auto flex w-full max-w-3xl items-stretch gap-3">
+        {children}
+      </div>
     </div>
   );
 }

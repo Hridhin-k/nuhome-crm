@@ -8,7 +8,6 @@ import {
 } from "@/components/app/scroll-to-focus";
 import { PageFrame } from "@/components/app/page-frame";
 import { PageHeader } from "@/components/app/page-header";
-import { AttachmentPanel } from "@/components/documents/attachment-panel";
 import { VendorCommercialForm } from "@/components/fulfillment/vendor-commercial-form";
 import {
   ReceiveItemsForm,
@@ -16,7 +15,6 @@ import {
   WriteOffItemsForm,
 } from "@/components/fulfillment/vendor-forms";
 import { listVendors } from "@/lib/api/catalog";
-import { listAttachments } from "@/lib/api/documents";
 import { getOrder } from "@/lib/api/orders";
 import { rel } from "@/lib/api/rel";
 import { displaySpecification } from "@/lib/quotes/spec";
@@ -44,17 +42,6 @@ export default async function FulfillmentDetailPage({
   if (!detail) {
     notFound();
   }
-  const vendorFiles = await Promise.all(
-    detail.vendorOrders.map((vendorOrder) =>
-      listAttachments("vendor_order", vendorOrder.id).catch(() => []),
-    ),
-  );
-  const filesByVendor = new Map(
-    detail.vendorOrders.map((vendorOrder, index) => [
-      vendorOrder.id,
-      vendorFiles[index] ?? [],
-    ]),
-  );
 
   const descriptions = new Map(
     detail.items.map((item) => [item.id, item.description]),
@@ -135,8 +122,6 @@ export default async function FulfillmentDetailPage({
       {notice === "vendor-quoted" ? <Notice>Vendor quote saved.</Notice> : null}
       {notice === "vendor-bill" ? <Notice>Vendor bill saved.</Notice> : null}
       {notice === "vendor-paid" ? <Notice>Vendor marked as paid.</Notice> : null}
-      {notice === "uploaded" ? <Notice>File uploaded.</Notice> : null}
-      {notice === "file-removed" ? <Notice>File removed.</Notice> : null}
       {notice === "written-off" ? (
         <Notice>Remainder closed. Delivery can proceed if nothing is left open.</Notice>
       ) : null}
@@ -271,18 +256,6 @@ export default async function FulfillmentDetailPage({
                 };
               })}
             />
-            <div className="mt-3">
-              <AttachmentPanel
-                entityType="vendor_order"
-                entityId={vendorOrder.id}
-                returnTo={`/fulfillment/${detail.order.id}`}
-                files={filesByVendor.get(vendorOrder.id) ?? []}
-                canUpload={canSend || canApproveQuote}
-                title="Vendor files"
-                description="Upload the vendor quotation PDF or photos. Accounts can open them when verifying."
-                defaultKind="file"
-              />
-            </div>
             <div className="mt-4 flex flex-col gap-2">
               {vendorOrder.status === "sent" &&
               vendorOrder.commercial_status === "vendor_paid" ? (

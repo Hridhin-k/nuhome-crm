@@ -314,7 +314,8 @@ export async function createMaterialAction(
     hsn_code: formString(formData, "hsn_code") || undefined,
     gst_rate: parseMoney(formString(formData, "gst_rate") || "18") ?? 18,
     warranty_months: Number(formString(formData, "warranty_months") || "12") || 12,
-    description: formString(formData, "description") || undefined,
+    // Always persist (empty clears). Do not coerce "" → undefined or upsert skips the column.
+    description: formString(formData, "description"),
     is_active: formString(formData, "is_active") !== "false",
   });
   if (!parsed.success) {
@@ -332,7 +333,7 @@ export async function createMaterialAction(
       hsnCode: parsed.data.hsn_code,
       gstRate: parsed.data.gst_rate,
       warrantyMonths: parsed.data.warranty_months,
-      description: parsed.data.description,
+      description: parsed.data.description ?? "",
       id: parsed.data.id,
       isActive: parsed.data.is_active,
     });
@@ -373,6 +374,10 @@ export async function importMaterialsCsvAction(
 
     for (const [index, row] of rows.entries()) {
       const line = index + 2;
+      const hasDescriptionColumn = Object.prototype.hasOwnProperty.call(
+        row,
+        "description",
+      );
       const parsed = materialInputSchema.safeParse({
         name: (row.name ?? "").trim(),
         sku: (row.sku ?? "").trim(),
@@ -385,7 +390,9 @@ export async function importMaterialsCsvAction(
         warranty_months: row.warranty_months
           ? Number(row.warranty_months)
           : 12,
-        description: (row.description ?? "").trim() || undefined,
+        description: hasDescriptionColumn
+          ? String(row.description ?? "").trim()
+          : undefined,
       });
       if (!parsed.success) {
         rowErrors.push({
@@ -406,7 +413,9 @@ export async function importMaterialsCsvAction(
           hsnCode: parsed.data.hsn_code,
           gstRate: parsed.data.gst_rate,
           warrantyMonths: parsed.data.warranty_months,
-          description: parsed.data.description,
+          ...(hasDescriptionColumn
+            ? { description: parsed.data.description ?? "" }
+            : {}),
         });
         created += 1;
       } catch (error) {

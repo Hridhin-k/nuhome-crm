@@ -35,12 +35,12 @@ export default async function MaterialsPage({
           <div className="flex flex-col items-end gap-2 sm:flex-row">
             <CsvImportSheet
               title="Import materials"
-              description="Columns: sku, name, category, unit, sell_price, cost. Existing SKUs are updated."
+              description="Columns: sku, name, category, unit, sell_price, cost, description. Existing SKUs are updated. Leave description blank to keep the current one."
               templateName="nuhome-materials.csv"
-              templateHeaders={["sku", "name", "category", "unit", "sell_price", "cost", "hsn_code", "gst_rate", "warranty_months"]}
+              templateHeaders={["sku", "name", "category", "unit", "sell_price", "cost", "hsn_code", "gst_rate", "warranty_months", "description"]}
               templateRows={[
-                ["MK-BASE-600", "Base cabinet 600mm", "Modular Kitchen", "pcs", "8500", "5200", "9403", "18", "12"],
-                ["SV-INSTALL", "Installation labour", "Services", "day", "2500", "1500", "9987", "18", "0"],
+                ["MK-BASE-600", "Base cabinet 600mm", "Modular Kitchen", "pcs", "8500", "5200", "9403", "18", "12", "600mm base with soft-close"],
+                ["SV-INSTALL", "Installation labour", "Services", "day", "2500", "1500", "9987", "18", "0", "On-site fitting"],
               ]}
               action={importMaterialsCsvAction}
             />
@@ -81,6 +81,15 @@ export default async function MaterialsPage({
                   Sell {formatInr(Number(material.default_sell_price))} · Cost{" "}
                   {formatInr(Number(material.default_cost))}
                 </p>
+                {material.description?.trim() ? (
+                  <p className="mt-2 text-body-sm text-on-surface">
+                    {material.description.trim()}
+                  </p>
+                ) : (
+                  <p className="mt-2 text-body-sm text-on-surface-variant">
+                    No description yet — edit to add one for the ⓘ hint.
+                  </p>
+                )}
               </div>
               <div className="flex shrink-0 items-start gap-2">
                 <MaterialForm

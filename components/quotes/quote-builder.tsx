@@ -626,14 +626,14 @@ export function QuoteBuilder({
               </p>
             ) : null}
 
-            <div className="mt-3 flex flex-col gap-3">
+            <div className="mt-3 flex w-full flex-col gap-3">
               <Button
                 type="submit"
                 name="intent"
                 value="draft"
                 variant="bordered"
                 size="lg"
-                className="w-full"
+                className="w-full justify-center text-center"
                 disabled={
                   pending ||
                   (!reviseQuoteId && !customerId) ||
@@ -647,7 +647,7 @@ export function QuoteBuilder({
                 name="intent"
                 value="submit"
                 size="lg"
-                className="w-full"
+                className="w-full justify-center text-center"
                 disabled={
                   pending ||
                   (!reviseQuoteId && !customerId) ||
@@ -665,10 +665,11 @@ export function QuoteBuilder({
         ) : null}
 
         {activeStep === 2 ? (
-          <div className="sticky bottom-[calc(4rem+env(safe-area-inset-bottom))] z-20 -mx-4 flex justify-end border-t border-outline-variant bg-card px-4 py-3 md:static md:mx-0 md:rounded-lg md:border">
+          <div className="sticky bottom-[calc(4rem+env(safe-area-inset-bottom))] z-20 -mx-4 border-t border-outline-variant bg-card px-4 py-3 md:static md:mx-0 md:rounded-2xl md:border">
             <Button
               type="button"
               size="lg"
+              className="w-full justify-center text-center md:ml-auto md:w-auto md:min-w-[8.5rem]"
               disabled={lines.length === 0}
               onClick={() => setActiveStep(3)}
             >

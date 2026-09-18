@@ -39,8 +39,8 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
         />
       </div>
 
-      <main className="min-w-0 flex-1 bg-background px-4 pt-0 pb-[calc(5.5rem+env(safe-area-inset-bottom))] print:bg-white print:px-0 print:pb-0 md:px-8 md:pt-6 md:pb-10">
-        <div className="pt-4 md:pt-0">{children}</div>
+      <main className="min-w-0 flex-1 bg-background px-4 pt-0 pb-[calc(5.75rem+env(safe-area-inset-bottom))] print:bg-white print:px-0 print:pb-0 md:px-8 md:pt-6 md:pb-10">
+        <div className="pt-3 md:pt-0">{children}</div>
       </main>
 
       <div className="print:hidden">

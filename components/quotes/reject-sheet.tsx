@@ -7,9 +7,10 @@ import {
   FormSheetBody,
   FormSheetFooter,
 } from "@/components/app/form-sheet";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
 
 export function RejectQuoteSheet({
   quoteId,
@@ -31,10 +32,11 @@ export function RejectQuoteSheet({
       description="A reason is required. The customer will not see this quote."
       trigger={
         <span
-          className={
-            triggerClassName ??
-            "inline-flex h-11 min-h-11 w-full items-center justify-center rounded-lg border border-error bg-surface-container-lowest px-4 text-subheading text-error"
-          }
+          className={cn(
+            buttonVariants({ variant: "outline", size: "lg" }),
+            "w-full justify-center text-center border-error text-error hover:bg-error/5",
+            triggerClassName,
+          )}
         >
           {triggerLabel}
         </span>
@@ -58,7 +60,12 @@ export function RejectQuoteSheet({
           ) : null}
         </FormSheetBody>
         <FormSheetFooter>
-          <Button type="submit" disabled={pending} size="lg" className="w-full">
+          <Button
+            type="submit"
+            disabled={pending}
+            size="lg"
+            className="w-full justify-center text-center"
+          >
             {pending ? "Sending…" : "Send back to Sales"}
           </Button>
         </FormSheetFooter>

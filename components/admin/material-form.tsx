@@ -10,6 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 
 export function MaterialForm({
   categories,
@@ -159,12 +160,16 @@ export function MaterialForm({
           </div>
           <div>
             <Label htmlFor={`description-${suffix}`}>Description</Label>
-            <Input
+            <p className="mt-1 text-xs text-on-surface-variant">
+              Shown on the ⓘ button when Sales adds this item to a quote.
+            </p>
+            <Textarea
               id={`description-${suffix}`}
               name="description"
+              rows={3}
               defaultValue={material?.description ?? ""}
-              className="mt-2 h-11 min-h-11"
-              placeholder="Shown when Sales picks this item"
+              className="mt-2"
+              placeholder="e.g. 600mm base with soft-close hinges"
             />
           </div>
           <div>
