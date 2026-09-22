@@ -40,11 +40,11 @@ describe("navForRoles", () => {
     expect(navItemIsActive("/quotes", "/quotes")).toBe(true);
   });
 
-  it("gives Operations customers plus reports", () => {
+  it("gives Operations floor desks plus reports", () => {
     expect(navForRoles(["operations"], "operations").map((item) => item.href)).toEqual([
       "/home",
-      "/customers",
       "/orders",
+      "/fulfillment",
       "/reports",
       "/more",
     ]);

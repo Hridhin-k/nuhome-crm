@@ -9,7 +9,7 @@ import {
   type CollectionRow,
   type SittingRow,
 } from "@/lib/api/reports";
-import { requirePermission } from "@/lib/auth/guards";
+import { requireAnyPermission } from "@/lib/auth/guards";
 import { formatInr } from "@/lib/format/money";
 import {
   loadReportExport,
@@ -49,7 +49,7 @@ export default async function ReportPrintPage({
     q?: string;
   }>;
 }) {
-  await requirePermission("admin.manage");
+  await requireAnyPermission("admin.manage", "reports.read");
   const params = await searchParams;
   const kind = parsePrintKind(params.kind);
   const fallback = defaultDateRange();

@@ -50,7 +50,8 @@ export default async function OrderDetailPage({
   const user = await requireUser();
   const { id } = await params;
   const { notice, error } = await searchParams;
-  const canReassign = rolesHavePermission(user.roles, "admin.manage");
+  const canReassign = rolesHavePermission(user.roles, "staff.manage") ||
+    rolesHavePermission(user.roles, "admin.manage");
   const canAftercare =
     rolesHavePermission(user.roles, "quotes.create") ||
     rolesHavePermission(user.roles, "deliveries.complete");

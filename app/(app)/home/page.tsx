@@ -1,9 +1,11 @@
 import { ActivityTimeline } from "@/components/app/activity-timeline";
+import { AdminCommandCenterView } from "@/components/app/admin-command-center";
 import { FloorBoard } from "@/components/app/floor-board";
 import { HomeHero, HomeSection, type HeroMetric } from "@/components/app/home-hero";
 import { InboxList } from "@/components/app/inbox-list";
 import { PageFrame } from "@/components/app/page-frame";
 import { AppLink } from "@/components/app/app-link";
+import { getAdminCommandCenter } from "@/lib/api/admin-overview";
 import {
   cardById,
   getHomeQueuesForRoles,
@@ -17,6 +19,7 @@ import { requireUser } from "@/lib/auth/guards";
 import { roleLabels } from "@/lib/auth/nav";
 import { rolesHavePermission } from "@/lib/auth/permissions";
 import type { AppRole } from "@/lib/workflow/types";
+import { defaultDateRange, parseYmd } from "@/lib/search";
 
 import { formatIstHomeLabel } from "@/lib/format/date";
 
@@ -167,8 +170,8 @@ function deskLine(primary: AppRole, roles: AppRole[], openCount: number) {
     accounts: "Approve, verify, and send jobs to vendors.",
     procurement: "Send, chase, and receive vendor batches.",
     store: "Handover only when the gate is unlocked.",
-    operations: "Items, members, leads, and stuck jobs.",
-    admin: "Every job, every status, in one view.",
+    operations: "Items, vendors, members, and stuck jobs.",
+    admin: "Profit, sales execs, and shop health — not day-to-day ops.",
   };
   if (openCount === 0) {
     return `${lines[primary]} You’re clear.`;
@@ -180,7 +183,10 @@ function deskLine(primary: AppRole, roles: AppRole[], openCount: number) {
 }
 
 function heroAction(roles: AppRole[]) {
-  if (roles.includes("admin") || roles.includes("operations")) {
+  if (roles.includes("admin")) {
+    return { href: "/reports?view=business", label: "Business report" };
+  }
+  if (roles.includes("operations")) {
     return { href: "/reports?view=floor&stuck=1", label: "Stuck jobs first" };
   }
   if (rolesHavePermission(roles, "quotes.create")) {
@@ -198,13 +204,62 @@ function heroAction(roles: AppRole[]) {
   return undefined;
 }
 
-export default async function HomePage() {
-  const user = await requireUser();
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ from?: string; to?: string }>;
+}) {
+  const [user, params] = await Promise.all([requireUser(), searchParams]);
   const hello = greeting();
   const today = formatIstHomeLabel();
   const badge = roleLabels(user.roles);
+  const fallback = defaultDateRange();
+  const from = parseYmd(params.from) ?? fallback.from;
+  const to = parseYmd(params.to) ?? fallback.to;
 
-  if (user.roles.includes("admin") || user.roles.includes("operations")) {
+  if (user.roles.includes("admin")) {
+    const command = await getAdminCommandCenter(from, to);
+    const waiting = command.stuck + command.overdue + command.creditRequested;
+    return (
+      <PageFrame>
+        <HomeHero
+          hello={hello}
+          name={user.fullName}
+          role="admin"
+          badge={badge}
+          line={deskLine("admin", user.roles, waiting)}
+          dateLabel={today}
+          action={heroAction(user.roles)}
+          metrics={[
+            {
+              label: "Stuck",
+              value: command.stuck,
+              href: "/reports?view=floor&stuck=1",
+              tone: "rose",
+              hint: filledHint(command.stuck, "Floor is clear", "Blocked jobs"),
+            },
+            {
+              label: "Overdue",
+              value: command.overdue,
+              href: "/fulfillment",
+              tone: "amber",
+              hint: filledHint(command.overdue, "Vendors on time", "Past expected date"),
+            },
+            {
+              label: "Done",
+              value: command.delivered,
+              href: "/orders?bucket=closed",
+              tone: "green",
+              hint: filledHint(command.delivered, "None closed in range", "Delivered in range"),
+            },
+          ]}
+        />
+        <AdminCommandCenterView data={command} />
+      </PageFrame>
+    );
+  }
+
+  if (user.roles.includes("operations")) {
     const [snapshot, catalog, recent] = await Promise.all([
       getOperationsSnapshot(),
       getCatalogSnapshot(),
@@ -217,9 +272,9 @@ export default async function HomePage() {
         <HomeHero
           hello={hello}
           name={user.fullName}
-          role="admin"
+          role="operations"
           badge={badge}
-          line={deskLine("admin", user.roles, waiting)}
+          line={deskLine("operations", user.roles, waiting)}
           dateLabel={today}
           action={heroAction(user.roles)}
           metrics={[
@@ -265,7 +320,7 @@ export default async function HomePage() {
           <HomeSection
             title="Catalog"
             action={
-              <AppLink href="/users" className="text-body-sm text-primary">
+              <AppLink href="/materials" className="text-body-sm text-primary">
                 Manage
               </AppLink>
             }

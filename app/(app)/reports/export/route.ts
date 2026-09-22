@@ -1,4 +1,4 @@
-import { requirePermission } from "@/lib/auth/guards";
+import { requireAnyPermission } from "@/lib/auth/guards";
 import { loadReportExport, parseExportKind } from "@/lib/reports/load-export";
 import { reportExportToCsv, withExcelBom } from "@/lib/reports/csv-export";
 import { defaultDateRange, parseYmd } from "@/lib/search";
@@ -16,7 +16,7 @@ function csvResponse(filename: string, csv: string) {
 }
 
 export async function GET(request: Request) {
-  await requirePermission("admin.manage");
+  await requireAnyPermission("admin.manage", "reports.read");
   const url = new URL(request.url);
   const kind = parseExportKind(url.searchParams.get("kind"));
   if (!kind) {

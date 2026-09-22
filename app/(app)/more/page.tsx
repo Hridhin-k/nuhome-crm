@@ -9,12 +9,45 @@ import { requireUser } from "@/lib/auth/guards";
 import { overflowNavForRoles, roleLabels } from "@/lib/auth/nav";
 import { rolesHavePermission } from "@/lib/auth/permissions";
 
-const ADMIN_LINKS = [
+const MANAGE_LINKS = [
   { href: "/users", label: "Users", subtitle: "Staff, extra hats, cover for leave" },
-  { href: "/vendors", label: "Vendors", subtitle: "Edit, contacts, deactivate" },
-  { href: "/materials", label: "Materials", subtitle: "HSN, GST, warranty term" },
+  { href: "/vendors", label: "Vendors", subtitle: "Edit, contacts, CSV import" },
+  { href: "/materials", label: "Materials", subtitle: "HSN, GST, warranty, descriptions" },
   { href: "/company", label: "Company", subtitle: "GSTIN on tax invoices" },
-  { href: "/reports", label: "Reports", subtitle: "Collections, aging, audit" },
+  { href: "/reports", label: "Reports", subtitle: "Floor, collections, aging, audit" },
+] as const;
+
+const FLOOR_LINKS = [
+  {
+    href: "/approvals",
+    label: "Approvals",
+    subtitle: "Quotes waiting for review",
+    permission: "quotes.approve" as const,
+  },
+  {
+    href: "/payments",
+    label: "Payments",
+    subtitle: "Verify receipts",
+    permission: "payments.verify" as const,
+  },
+  {
+    href: "/fulfillment",
+    label: "Fulfillment",
+    subtitle: "Send and chase vendors",
+    permission: "orders.send_to_vendor" as const,
+  },
+  {
+    href: "/customers",
+    label: "Customers",
+    subtitle: "Book and update customers",
+    permission: "customers.read" as const,
+  },
+  {
+    href: "/leads",
+    label: "Leads",
+    subtitle: "Follow-up book",
+    permission: "leads.manage" as const,
+  },
 ] as const;
 
 export default async function MorePage() {
@@ -30,11 +63,33 @@ export default async function MorePage() {
   const canCatalog = rolesHavePermission(user.roles, "catalog.manage");
   const canStaff = rolesHavePermission(user.roles, "staff.manage");
   const canReports = rolesHavePermission(user.roles, "reports.read");
-  const canLeads = rolesHavePermission(user.roles, "leads.manage");
-  const extraLinks = extras.filter(
-    (item) =>
-      !ADMIN_LINKS.some((link) => link.href === item.href),
+  const canVendors =
+    canCatalog ||
+    canAdmin ||
+    rolesHavePermission(user.roles, "orders.send_to_vendor");
+
+  const floorLinks = FLOOR_LINKS.filter((link) =>
+    rolesHavePermission(user.roles, link.permission),
   );
+
+  // Reports sits on the Ops/Admin bar — keep it in More for other hats.
+  const showReportsInMore =
+    canReports &&
+    !user.roles.includes("operations") &&
+    !user.roles.includes("admin");
+
+  const manageLinks = [
+    ...(canStaff ? [MANAGE_LINKS[0]] : []),
+    ...(canVendors ? [MANAGE_LINKS[1]] : []),
+    ...(canCatalog ? [MANAGE_LINKS[2], MANAGE_LINKS[3]] : []),
+    ...(showReportsInMore ? [MANAGE_LINKS[4]] : []),
+  ];
+
+  const knownHrefs = new Set<string>([
+    ...floorLinks.map((link) => link.href),
+    ...manageLinks.map((link) => link.href),
+  ]);
+  const extraLinks = extras.filter((item) => !knownHrefs.has(item.href));
 
   return (
     <PageFrame width="detail">
@@ -71,18 +126,22 @@ export default async function MorePage() {
           ))}
         </ul>
       ) : null}
-      {canAdmin || canCatalog || canStaff || canReports || canLeads ? (
+      {floorLinks.length > 0 ? (
         <ul className={`${wellClass} mb-6`}>
-          {(canLeads
-            ? [{ href: "/leads", label: "Leads", subtitle: "Follow-up book" }]
-            : []
-          )
-            .concat(canStaff || canAdmin ? [ADMIN_LINKS[0]] : [])
-            .concat(canAdmin ? [ADMIN_LINKS[1]] : [])
-            .concat(canCatalog || canAdmin ? [ADMIN_LINKS[2]] : [])
-            .concat(canCatalog || canAdmin ? [ADMIN_LINKS[3]] : [])
-            .concat(canReports || canAdmin ? [ADMIN_LINKS[4]] : [])
-            .map((link) => (
+          {floorLinks.map((link) => (
+            <JobRow
+              key={link.href}
+              href={link.href}
+              title={link.label}
+              subtitle={link.subtitle}
+              stacked
+            />
+          ))}
+        </ul>
+      ) : null}
+      {manageLinks.length > 0 ? (
+        <ul className={`${wellClass} mb-6`}>
+          {manageLinks.map((link) => (
             <JobRow
               key={link.href}
               href={link.href}

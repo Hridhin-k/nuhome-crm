@@ -442,7 +442,7 @@ export async function createVendorAdminAction(
   _prev: AdminActionState,
   formData: FormData,
 ): Promise<AdminActionState> {
-  await requirePermission("orders.send_to_vendor");
+  await requireAnyPermission("admin.manage", "catalog.manage", "orders.send_to_vendor");
   let contacts: { name: string; phone?: string; email?: string; notes?: string }[] =
     [];
   try {
@@ -497,7 +497,7 @@ export async function importVendorsCsvAction(
   _prev: AdminActionState,
   formData: FormData,
 ): Promise<AdminActionState> {
-  await requirePermission("admin.manage");
+  await requireAnyPermission("admin.manage", "catalog.manage");
   try {
     const rows = await readCsvFile(formData);
     const existing = await listVendors({ includeInactive: true });
@@ -613,7 +613,7 @@ export async function reassignOrderSalesAction(
   _prev: AdminActionState,
   formData: FormData,
 ): Promise<AdminActionState> {
-  await requirePermission("admin.manage");
+  await requireAnyPermission("admin.manage", "staff.manage");
   const orderId = formString(formData, "order_id");
   try {
     const db = await createServerSupabaseClient();

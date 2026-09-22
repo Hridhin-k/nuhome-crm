@@ -56,6 +56,8 @@ const METRIC_ICON: Record<string, LucideIcon> = {
   Credit: Wallet,
   Done: CheckSquare,
   Catalog: Boxes,
+  Margin: BarChart3,
+  Stuck: Activity,
 };
 
 const ROLE_MOTIF: Record<AppRole, LucideIcon[]> = {

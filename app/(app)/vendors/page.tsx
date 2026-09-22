@@ -19,12 +19,14 @@ export default async function VendorsPage({
     requireUser(),
     searchParams,
   ]);
-  const isAdmin = rolesHavePermission(user.roles, "admin.manage");
-  const canCatalog = isAdmin || rolesHavePermission(user.roles, "catalog.manage");
+  const canCatalog =
+    rolesHavePermission(user.roles, "admin.manage") ||
+    rolesHavePermission(user.roles, "catalog.manage");
   const vendors = await listVendors({
     includeInactive: canCatalog,
   });
-  const canWrite = rolesHavePermission(user.roles, "orders.send_to_vendor");
+  const canWrite =
+    canCatalog || rolesHavePermission(user.roles, "orders.send_to_vendor");
 
   return (
     <PageFrame>
