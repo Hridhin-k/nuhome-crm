@@ -309,7 +309,7 @@ export function QuoteBuilder({
                             onChange={(e) =>
                               updateLine(line.key, { description: e.target.value })
                             }
-                            className="h-10 min-w-0 flex-1 border-0 bg-transparent px-0 text-body-md font-semibold shadow-none"
+                            className="h-10 min-w-0 flex-1 border-0 bg-transparent px-0 text-lg md:text-lg font-bold shadow-none"
                             aria-label="Item description"
                           />
                           <ItemDescriptionHint
