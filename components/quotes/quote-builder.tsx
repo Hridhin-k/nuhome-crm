@@ -302,8 +302,8 @@ export function QuoteBuilder({
                       key={line.key}
                       className="min-w-0 border-b border-surface-variant pb-4 last:border-0 last:pb-0"
                     >
-                      <div className="flex min-w-0 items-start justify-between gap-3">
-                        <div className="flex min-w-0 flex-1 items-start gap-2">
+                      <div className="flex min-w-0 items-center justify-between gap-3">
+                        <div className="flex min-w-0 flex-1 items-center gap-2">
                           <Input
                             value={line.description}
                             onChange={(e) =>
@@ -312,13 +312,9 @@ export function QuoteBuilder({
                             className="h-10 min-w-0 flex-1 border-0 bg-transparent px-0 text-lg md:text-lg font-bold shadow-none"
                             aria-label="Item description"
                           />
-                          <ItemDescriptionHint
-                            description={materialDescriptionFor(line)}
-                            className="mt-1.5"
-                          />
                         </div>
                         <div className="flex shrink-0 items-center gap-2">
-                          <p className="text-data-tabular font-semibold">
+                          <p className="tabular-nums text-sm md:text-md font-bold">
                             {formatInrExact(
                               lineTotalWithGst(
                                 line.quantity,
@@ -352,34 +348,43 @@ export function QuoteBuilder({
                         >
                           {openLine === line.key ? "Hide price" : "Edit price"}
                         </button>
-                        <div className="flex items-center gap-3 rounded-full border border-surface-variant bg-surface-container px-2 py-1">
-                          <button
-                            type="button"
-                            className="inline-flex size-6 items-center justify-center rounded-full text-secondary hover:bg-surface-variant hover:text-primary"
-                            onClick={() =>
-                              updateLine(line.key, {
-                                quantity: Math.max(1, line.quantity - 1),
-                              })
-                            }
-                            aria-label="Decrease quantity"
-                          >
-                            −
-                          </button>
-                          <span className="min-w-[1ch] text-center text-data-tabular">
-                            {line.quantity}
-                          </span>
-                          <button
-                            type="button"
-                            className="inline-flex size-6 items-center justify-center rounded-full text-secondary hover:bg-surface-variant hover:text-primary"
-                            onClick={() =>
-                              updateLine(line.key, {
-                                quantity: line.quantity + 1,
-                              })
-                            }
-                            aria-label="Increase quantity"
-                          >
-                            +
-                          </button>
+                        
+                        <div className="flex justify-between gap-3">
+                          <ItemDescriptionHint
+                            description={materialDescriptionFor(line)}
+                            className="mt-1.5"
+                          />
+
+                          <div className="flex items-center gap-3 rounded-full border border-surface-variant bg-surface-container px-2 py-1">
+                            
+                            <button
+                              type="button"
+                              className="inline-flex size-6 items-center justify-center rounded-full text-secondary hover:bg-surface-variant hover:text-primary"
+                              onClick={() =>
+                                updateLine(line.key, {
+                                  quantity: Math.max(1, line.quantity - 1),
+                                })
+                              }
+                              aria-label="Decrease quantity"
+                            >
+                              −
+                            </button>
+                            <span className="min-w-[1ch] text-center text-data-tabular">
+                              {line.quantity}
+                            </span>
+                            <button
+                              type="button"
+                              className="inline-flex size-6 items-center justify-center rounded-full text-secondary hover:bg-surface-variant hover:text-primary"
+                              onClick={() =>
+                                updateLine(line.key, {
+                                  quantity: line.quantity + 1,
+                                })
+                              }
+                              aria-label="Increase quantity"
+                            >
+                              +
+                            </button>
+                          </div>
                         </div>
                       </div>
                       {openLine === line.key ? (
@@ -670,11 +675,11 @@ export function QuoteBuilder({
         ) : null}
 
         {activeStep === 2 ? (
-          <div className="sticky bottom-[calc(4rem+env(safe-area-inset-bottom))] z-20 -mx-4 border-t border-outline-variant bg-card px-4 py-3 md:static md:mx-0 md:rounded-2xl md:border">
+          <div className="flex justify-end sticky bottom-[calc(4rem+env(safe-area-inset-bottom))] z-20 -mx-4 border-t border-outline-variant bg-card px-4 py-3 md:static md:mx-0 md:rounded-2xl md:border ">
             <Button
               type="button"
               size="lg"
-              className="w-full justify-center text-center md:ml-auto md:w-auto md:min-w-[8.5rem]"
+              className="w-auto min-w-[8.5rem] cursor-pointer"
               disabled={lines.length === 0}
               onClick={() => setActiveStep(3)}
             >
