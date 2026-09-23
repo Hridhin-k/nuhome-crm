@@ -306,6 +306,7 @@ export function QuoteBuilder({
                         <div className="flex min-w-0 flex-1 items-center gap-2">
                           <Input
                             value={line.description}
+                            readOnly={!!line.material_id}
                             onChange={(e) =>
                               updateLine(line.key, { description: e.target.value })
                             }
@@ -399,6 +400,7 @@ export function QuoteBuilder({
                             min={0}
                             className="mt-1 h-10"
                             value={line.unit_price}
+                            disabled={!!line.material_id}
                             onChange={(e) =>
                               updateLine(line.key, {
                                 unit_price: Number(e.target.value),
