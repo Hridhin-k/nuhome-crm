@@ -29,9 +29,16 @@ export function ItemDescriptionHint({
         i
       </summary>
       <div
+        className="fixed inset-0 z-40 bg-transparent"
+        onClick={(e) => {
+          const details = e.currentTarget.closest("details");
+          if (details) details.open = false;
+        }}
+      />
+      <div
         role="dialog"
         className={cn(
-          "absolute right-0 top-[calc(100%+0.35rem)] z-50 w-[min(18rem,calc(100vw-2.5rem))]",
+          "absolute right-[-3rem] top-[calc(100%+0.35rem)] z-50 w-56 max-w-[calc(100vw-3.5rem)] max-h-60 overflow-y-auto",
           "rounded-xl border border-outline-variant bg-card p-3 text-left shadow-card",
         )}
       >
