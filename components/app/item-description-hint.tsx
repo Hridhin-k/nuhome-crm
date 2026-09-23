@@ -59,8 +59,8 @@ export function ItemDescriptionHint({
         title={label}
         aria-label={label}
         className={cn(
-          "flex h-7 w-7 cursor-pointer list-none items-center justify-center rounded-full",
-          "border-2 border-primary bg-primary text-[13px] font-bold leading-none text-on-primary",
+          "flex h-4 w-4 cursor-pointer list-none items-center justify-center rounded-full",
+          "border-2 border-primary bg-primary text-[10px] pt-[10%] font-bold leading-none text-on-primary",
           "shadow-sm transition-colors hover:bg-primary/90",
           "[&::-webkit-details-marker]:hidden",
         )}
