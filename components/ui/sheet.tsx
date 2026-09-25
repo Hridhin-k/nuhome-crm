@@ -64,10 +64,9 @@ function SheetContent({
           formLayout
             ? cn(
                 "inset-x-0 bottom-0 min-h-0 max-h-[min(92dvh,100%)] gap-0 overflow-hidden rounded-t-xl border-t p-0",
-                "sm:inset-x-4 sm:bottom-4 sm:max-h-[min(88dvh,100%)] sm:rounded-xl sm:border",
                 "md:inset-x-auto md:top-1/2 md:bottom-auto md:left-1/2 md:max-h-[min(84vh,840px)] md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-xl md:border",
                 size === "lg"
-                  ? "h-[min(92dvh,100%)] sm:h-[min(88dvh,100%)] md:h-[min(84vh,840px)] md:w-[min(calc(100%-4rem),42rem)]"
+                  ? "h-[min(92dvh,100%)] md:h-[min(84vh,840px)] md:w-[min(calc(100%-4rem),42rem)]"
                   : "w-full md:w-[min(calc(100%-4rem),32rem)]",
               )
             : "gap-4 data-[side=bottom]:inset-x-0 data-[side=bottom]:bottom-0 data-[side=bottom]:h-auto data-[side=bottom]:rounded-t-xl data-[side=bottom]:border-t data-[side=bottom]:data-ending-style:translate-y-[2.5rem] data-[side=bottom]:data-starting-style:translate-y-[2.5rem] data-[side=left]:inset-y-0 data-[side=left]:left-0 data-[side=left]:h-full data-[side=left]:w-3/4 data-[side=left]:border-r data-[side=left]:data-ending-style:translate-x-[-2.5rem] data-[side=left]:data-starting-style:translate-x-[-2.5rem] data-[side=right]:inset-y-0 data-[side=right]:right-0 data-[side=right]:h-full data-[side=right]:w-3/4 data-[side=right]:border-l data-[side=right]:data-ending-style:translate-x-[2.5rem] data-[side=right]:data-starting-style:translate-x-[2.5rem] data-[side=top]:inset-x-0 data-[side=top]:top-0 data-[side=top]:h-auto data-[side=top]:border-b data-[side=top]:data-ending-style:translate-y-[-2.5rem] data-[side=top]:data-starting-style:translate-y-[-2.5rem] data-[side=left]:sm:max-w-sm data-[side=right]:sm:max-w-sm",
