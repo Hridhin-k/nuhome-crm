@@ -581,10 +581,8 @@ export default async function QuoteDetailPage({
         </section>
       ) : null}
 
-      <ActivityTimeline events={activity} />
-
       {accountsReview ? (
-        <StickyActionBar>
+        <StickyActionBar className="md:mt-[3%]">
           <div className="min-w-0 flex-1">
             <RejectQuoteSheet quoteId={quote.id} />
           </div>
@@ -599,6 +597,11 @@ export default async function QuoteDetailPage({
           </div>
         </StickyActionBar>
       ) : null}
+
+      <div className="md:mt-[3%]"></div>
+      
+      <ActivityTimeline events={activity}/>
+
     </PageFrame>
   );
 }

@@ -48,14 +48,23 @@ export default async function PaymentsPage({
             const quote = rel(payment.quotes);
             const customer = rel(quote?.customers);
             const order = rel(payment.orders);
-            const details = [
-              kindLabel(payment.kind),
-              formatInr(Number(payment.amount)),
-              payment.method,
-              payment.reference_number,
-            ]
-              .filter(Boolean)
-              .join(" · ");
+            const details = (
+              <>
+                {kindLabel(payment.kind)} ·{" "}
+                <span className="font-bold text-on-surface">
+                  {formatInr(Number(payment.amount))}
+                </span>
+                {payment.method ? ` · ${payment.method}` : ""}
+                {payment.reference_number ? (
+                  <>
+                    {" · "}
+                    <span className="font-bold text-on-surface">
+                      {payment.reference_number}
+                    </span>
+                  </>
+                ) : null}
+              </>
+            );
             return (
               <li
                 key={payment.id}
@@ -72,7 +81,7 @@ export default async function PaymentsPage({
                       {kindLabel(payment.kind)}
                     </span>
                   </div>
-                  <p className="mt-1 text-headline-md text-primary">
+                  <p className="mt-1 text-headline-md font-bold text-primary">
                     {formatInr(Number(payment.amount))}
                   </p>
                   <p className="mt-1 text-data-tabular text-on-surface-variant">
@@ -83,10 +92,17 @@ export default async function PaymentsPage({
                         ? `Sales ${rel(order)?.assigned_sales?.full_name}`
                         : null,
                       payment.method,
-                      payment.reference_number,
                     ]
                       .filter(Boolean)
-                      .join(" · ") || "No method recorded"}
+                      .join(" · ")}
+                    {payment.reference_number ? (
+                      <>
+                        {" · "}
+                        <span className="font-bold text-on-surface">
+                          {payment.reference_number}
+                        </span>
+                      </>
+                    ) : null}
                   </p>
                 </div>
                 <div className="w-full md:w-auto md:min-w-[240px]">

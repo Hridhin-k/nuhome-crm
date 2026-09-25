@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { verifyPaymentAction } from "@/app/actions/workflow";
 import { ConfirmActionSheet } from "@/components/app/confirm-action-sheet";
 import { RejectPaymentSheet } from "@/components/payments/reject-sheet";
@@ -9,7 +10,7 @@ export function PaymentReviewActions({
 }: {
   paymentId: string;
   orderId?: string;
-  details?: string;
+  details?: ReactNode;
 }) {
   return (
     <div className="flex gap-2">
