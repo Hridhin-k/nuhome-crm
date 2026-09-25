@@ -278,7 +278,14 @@ export default async function OrderDetailPage({
                   <PaymentReviewActions
                     paymentId={payment.id}
                     orderId={order.id}
-                    details={`${payment.kind} · ${formatInrExact(Number(payment.amount))}`}
+                    details={
+                      <>
+                        <span className="capitalize">{payment.kind}</span> ·{" "}
+                        <span className="font-bold text-on-surface">
+                          {formatInrExact(Number(payment.amount))}
+                        </span>
+                      </>
+                    }
                   />
                 ) : null}
               </li>

@@ -101,7 +101,7 @@ export function PaymentForm({
               name="amount"
               type="number"
               inputMode="decimal"
-              step="1"
+              step="any"
               min={creditTerms ? 0 : 1}
               max={remaining}
               readOnly={amountLocked}
