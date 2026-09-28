@@ -107,12 +107,13 @@ export function SendToVendorForm({
             id="expected_delivery"
             name="expected_delivery"
             type="date"
+            min={new Date().toLocaleDateString("en-CA")}
             className="h-11 min-h-11 rounded-lg border border-outline-variant bg-surface px-3 text-on-surface"
           />
           <p className="text-xs text-on-surface-variant">
             Used for overdue flags. Same date is applied to every vendor batch.
           </p>
-          <ul className="divide-y divide-surface-variant rounded-lg border border-surface-variant">
+          <ul className="divide-y-2 divide-outline-variant rounded-lg border-2 border-outline-variant">
             {sendable.map((item) => {
               const itemRows = byItem.get(item.id) ?? [];
               const leftover = remainingToAllocate(
@@ -131,7 +132,7 @@ export function SendToVendorForm({
                 }),
               );
               return (
-                <li key={item.id} className="flex min-w-0 flex-col gap-2 px-3 py-2.5">
+                <li key={item.id} className="flex min-w-0 flex-col gap-2 px-3 py-2.5 ">
                   <div>
                     <p className="text-sm font-medium">{item.description}</p>
                     <p className="text-xs text-on-surface-variant">
@@ -337,7 +338,7 @@ export function ReceiveItemsForm({
         <input type="hidden" name="vendor_order_id" value={vendorOrderId} />
         <input type="hidden" name="received" value={JSON.stringify(payload)} />
         <FormSheetBody className="flex flex-col gap-3">
-          <ul className="divide-y divide-surface-variant rounded-lg border border-surface-variant">
+          <ul className="divide-y-2 divide-outline-variant rounded-lg border-2 border-outline-variant">
             {open.map((item) => (
               <li
                 key={item.order_item_id}
@@ -455,7 +456,7 @@ export function WriteOffItemsForm({
               </option>
             ))}
           </select>
-          <ul className="divide-y divide-surface-variant rounded-lg border border-surface-variant">
+          <ul className="divide-y-2 divide-outline-variant rounded-lg border-2 border-outline-variant">
             {open.map((item) => (
               <li key={item.id} className="flex min-w-0 items-center gap-2 px-3 py-2.5">
                 <div className="min-w-0 flex-1">

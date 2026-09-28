@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import {
   FormSheet,
   FormSheetBody,
@@ -24,7 +25,7 @@ export function ConfirmActionSheet({
   triggerLabel: string;
   confirmLabel: string;
   action: (formData: FormData) => void | Promise<void>;
-  details?: string;
+  details?: ReactNode;
   triggerClassName?: string;
   onSubmit?: () => void;
 }) {

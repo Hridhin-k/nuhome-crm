@@ -278,7 +278,14 @@ export default async function OrderDetailPage({
                   <PaymentReviewActions
                     paymentId={payment.id}
                     orderId={order.id}
-                    details={`${payment.kind} · ${formatInrExact(Number(payment.amount))}`}
+                    details={
+                      <>
+                        <span className="capitalize">{payment.kind}</span> ·{" "}
+                        <span className="font-bold text-on-surface">
+                          {formatInrExact(Number(payment.amount))}
+                        </span>
+                      </>
+                    }
                   />
                 ) : null}
               </li>
@@ -303,9 +310,9 @@ export default async function OrderDetailPage({
                 className="flex min-w-0 items-start gap-2 py-2.5 text-[13px]"
               >
                 <span className="min-w-0 flex-1 break-words">
-                  <span className="inline-flex max-w-full items-start gap-2">
+                  <span className="inline-flex max-w-full items-center gap-2">
                     <span className="min-w-0">
-                      {item.description}
+                      <span className="font-semibold">{item.description}</span>
                       <span className="text-on-surface-variant">
                         {" "}
                         · {item.quantity_received}/{item.quantity} received

@@ -26,7 +26,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
       <Suspense fallback={null}>
         <RouteProgress />
       </Suspense>
-      <div className="sticky top-0 z-50 print:hidden">
+      <div className="fixed top-0 inset-x-0 z-50 print:hidden">
         <AppNavbar
           items={items}
           name={user.fullName}
@@ -39,7 +39,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
         />
       </div>
 
-      <main className="min-w-0 flex-1 bg-background px-4 pt-0 pb-[calc(5.75rem+env(safe-area-inset-bottom))] print:bg-white print:px-0 print:pb-0 md:px-8 md:pt-6 md:pb-10">
+      <main className="min-w-0 flex-1 bg-background px-4 pt-12 pb-[calc(5.75rem+env(safe-area-inset-bottom))] print:bg-white print:px-0 print:pb-0 md:px-8 md:pt-18 md:pb-10">
         <div className="pt-3 md:pt-0">{children}</div>
       </main>
 

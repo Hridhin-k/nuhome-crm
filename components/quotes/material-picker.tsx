@@ -58,7 +58,7 @@ export function MaterialPicker({
         id="material-search"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="Search by name or SKU…"
+        placeholder="Search by name..."
         className="h-11 min-h-11"
         aria-label="Search catalogue"
       />
@@ -105,16 +105,13 @@ export function MaterialPicker({
               return (
                 <li
                   key={m.id}
-                  className="flex items-center justify-between gap-3 border-b border-surface-variant py-3 last:border-0"
+                  className="flex items-center justify-between gap-3 border-b border-surface-variant py-3 px-2 last:border-0"
                 >
                   <div className="min-w-0 flex-1">
                     <div className="flex min-w-0 items-start gap-2">
                       <p className="min-w-0 flex-1 truncate text-body-md font-semibold text-on-surface">
                         {m.name}
                       </p>
-                      <ItemDescriptionHint
-                        description={m.description?.trim() ?? ""}
-                      />
                     </div>
                     <p className="mt-0.5 truncate text-data-tabular text-secondary">
                       {[m.sku, formatInr(Number(m.default_sell_price))]
@@ -123,6 +120,11 @@ export function MaterialPicker({
                       {isAdded ? " · added" : ""}
                     </p>
                   </div>
+
+                  <ItemDescriptionHint
+                    description={m.description?.trim() ?? ""}
+                  />
+                  
                   <button
                     type="button"
                     aria-label={`Add ${m.name}`}

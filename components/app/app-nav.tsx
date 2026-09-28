@@ -75,7 +75,7 @@ export function AppNavbar({
   const desktopItems = items.filter((item) => item.href !== "/more");
 
   return (
-    <header className="bg-[#09090b]">
+    <header className="fixed top-0 inset-x-0 z-50 bg-[#09090b]">
       <div className="relative mx-auto flex h-12 max-w-6xl items-center px-2 md:h-14 md:gap-6 md:px-8">
         <div className="flex w-16 shrink-0 items-center md:w-auto">
           {backHref ? (
