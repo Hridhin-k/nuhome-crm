@@ -1,4 +1,5 @@
 import { getDb, throwQuery } from "@/lib/api/db";
+import type { MaterialVendorInput } from "@/lib/catalog/material-vendors";
 
 export async function ensureCategoryId(name: string) {
   const db = await getDb();
@@ -102,6 +103,55 @@ export async function upsertMaterial(input: {
     throw error;
   }
   return data.id;
+}
+
+async function resolveVendorId(row: MaterialVendorInput) {
+  if (row.vendor_id) return row.vendor_id;
+  const name = row.vendor_name?.trim() ?? "";
+  const db = await getDb();
+  const existing = await throwQuery(
+    db.from("vendors").select("id").ilike("name", name).limit(1),
+    "Failed to look up vendor",
+  );
+  if (existing[0]) return existing[0].id;
+  return insertVendor({ name });
+}
+
+/** Replace who supplies this material. Names that already exist are reused. */
+export async function replaceMaterialVendors(
+  materialId: string,
+  rows: MaterialVendorInput[],
+) {
+  const db = await getDb();
+  const seen = new Set<string>();
+  const resolved: {
+    material_id: string;
+    vendor_id: string;
+    unit_cost: number;
+    is_preferred: boolean;
+  }[] = [];
+  for (const row of rows) {
+    const vendorId = await resolveVendorId(row);
+    if (seen.has(vendorId)) {
+      throw new Error("Each vendor can only be added once");
+    }
+    seen.add(vendorId);
+    resolved.push({
+      material_id: materialId,
+      vendor_id: vendorId,
+      unit_cost: row.unit_cost,
+      is_preferred: Boolean(row.is_preferred),
+    });
+  }
+
+  const { error: deleteError } = await db
+    .from("material_vendors")
+    .delete()
+    .eq("material_id", materialId);
+  if (deleteError) throw deleteError;
+  if (resolved.length === 0) return;
+  const { error } = await db.from("material_vendors").insert(resolved);
+  if (error) throw error;
 }
 
 export async function insertVendor(input: {

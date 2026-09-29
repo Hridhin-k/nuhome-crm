@@ -8,7 +8,7 @@ import { MaterialToggleForm } from "@/components/admin/material-toggle-form";
 import { Notice } from "@/components/app/notice";
 import { PageFrame } from "@/components/app/page-frame";
 import { PageHeader } from "@/components/app/page-header";
-import { listCategories, listMaterials } from "@/lib/api/catalog";
+import { listCategories, listMaterialVendorOffers, listMaterials, listVendors } from "@/lib/api/catalog";
 import { listMaterialOfficeBalances } from "@/lib/api/stock";
 import { rel } from "@/lib/api/rel";
 import { requireAnyPermission } from "@/lib/auth/guards";
@@ -23,34 +23,58 @@ export default async function MaterialsPage({
 }: {
   searchParams: Promise<{ notice?: string; error?: string }>;
 }) {
-  const [, { notice, error }, materials, categories, officeBalances] = await Promise.all([
-    requireAnyPermission("admin.manage", "catalog.manage"),
-    searchParams,
-    listMaterials({ includeInactive: true }),
-    listCategories(),
-    listMaterialOfficeBalances(),
-  ]);
+  const [, { notice, error }, materials, categories, officeBalances, vendorOffers, vendors] =
+    await Promise.all([
+      requireAnyPermission("admin.manage", "catalog.manage"),
+      searchParams,
+      listMaterials({ includeInactive: true }),
+      listCategories(),
+      listMaterialOfficeBalances(),
+      listMaterialVendorOffers(),
+      listVendors(),
+    ]);
+  const linksByMaterial = new Map<
+    string,
+    { vendorId: string; name: string; unitCost: number; preferred: boolean }[]
+  >();
+  for (const offer of vendorOffers) {
+    const vendor = rel(offer.vendors);
+    const list = linksByMaterial.get(offer.material_id) ?? [];
+    list.push({
+      vendorId: offer.vendor_id,
+      name: vendor?.name ?? "Vendor",
+      unitCost: Number(offer.unit_cost),
+      preferred: offer.is_preferred,
+    });
+    linksByMaterial.set(offer.material_id, list);
+  }
+  for (const list of linksByMaterial.values()) {
+    list.sort((a, b) => Number(b.preferred) - Number(a.preferred) || a.name.localeCompare(b.name));
+  }
+  const vendorOptions = vendors
+    .filter((vendor) => vendor.is_active)
+    .map((vendor) => ({ id: vendor.id, name: vendor.name }));
 
   return (
     <PageFrame>
       <PageHeader
         title="Materials"
         hideTitleOnMobile
-        description="Catalogue Sales uses. Set how many of each material are already at the office."
+        description="Catalogue Sales uses. Set the office quantity and the vendors who supply each material."
         action={
           <div className="flex flex-col items-end gap-2 sm:flex-row">
             <CsvImportSheet
               title="Import materials"
-              description="Columns: sku, name, category, unit, sell_price, cost, office_quantity, description. Existing SKUs are updated. Leave description blank to keep the current one. Leave out office_quantity to keep the quantity already at the office."
+              description="Columns: sku, name, category, unit, sell_price, cost, office_quantity, vendors, description. Vendors look like Name:price|Other:price. Add a star after the usual supplier's price. Leave vendors out to keep the suppliers already saved."
               templateName="nuhome-materials.csv"
-              templateHeaders={["sku", "name", "category", "unit", "sell_price", "cost", "hsn_code", "gst_rate", "warranty_months", "office_quantity", "description"]}
+              templateHeaders={["sku", "name", "category", "unit", "sell_price", "cost", "hsn_code", "gst_rate", "warranty_months", "office_quantity", "vendors", "description"]}
               templateRows={[
-                ["MK-BASE-600", "Base cabinet 600mm", "Modular Kitchen", "pcs", "8500", "5200", "9403", "18", "12", "4", "600mm base with soft-close"],
-                ["SV-INSTALL", "Installation labour", "Services", "day", "2500", "1500", "9987", "18", "0", "0", "On-site fitting"],
+                ["MK-BASE-600", "Base cabinet 600mm", "Modular Kitchen", "pcs", "8500", "5200", "9403", "18", "12", "4", "Adhams:5200*|Kerala Woods:5400", "600mm base with soft-close"],
+                ["SV-INSTALL", "Installation labour", "Services", "day", "2500", "1500", "9987", "18", "0", "0", "In-house:1500*", "On-site fitting"],
               ]}
               action={importMaterialsCsvAction}
             />
-            <MaterialForm categories={categories} />
+            <MaterialForm categories={categories} vendors={vendorOptions} />
           </div>
         }
       />
@@ -71,6 +95,7 @@ export default async function MaterialsPage({
           const office = officeBalances.get(material.id);
           const atOffice = Number(office?.onHand ?? 0);
           const reserved = Number(office?.reserved ?? 0);
+          const links = linksByMaterial.get(material.id) ?? [];
           return (
             <li
               key={material.id}
@@ -95,6 +120,16 @@ export default async function MaterialsPage({
                     : "Order when a customer wants it"}
                   {reserved > 0 ? ` · ${formatQty(reserved)} reserved` : ""}
                 </p>
+                <p className="mt-1 text-sm text-on-surface-variant">
+                  {links.length > 0
+                    ? links
+                        .map(
+                          (link) =>
+                            `${link.name} ${formatInr(link.unitCost)}${link.preferred ? " usual" : ""}`,
+                        )
+                        .join(" · ")
+                    : "No vendor yet"}
+                </p>
                 {material.description?.trim() ? (
                   <p className="mt-2 text-body-sm text-on-surface">
                     {material.description.trim()}
@@ -108,6 +143,7 @@ export default async function MaterialsPage({
               <div className="flex shrink-0 items-start gap-2">
                 <MaterialForm
                   categories={categories}
+                  vendors={vendorOptions}
                   material={{
                     id: material.id,
                     name: material.name,
@@ -123,6 +159,7 @@ export default async function MaterialsPage({
                     isActive: active,
                     officeQuantity: atOffice,
                     officeReserved: reserved,
+                    vendorLinks: links,
                   }}
                 />
                 <MaterialToggleForm id={material.id} active={active} />

@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { createMaterialAction, type AdminActionState } from "@/app/actions/admin";
 import {
   FormSheet,
@@ -12,11 +12,38 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
+type VendorRow = {
+  key: string;
+  vendorId: string;
+  newName: string;
+  unitCost: string;
+  preferred: boolean;
+};
+
+function startingVendorRows(
+  links: { vendorId: string; unitCost: number; preferred: boolean }[] | undefined,
+): VendorRow[] {
+  if (!links?.length) {
+    return [
+      { key: "first", vendorId: "", newName: "", unitCost: "", preferred: true },
+    ];
+  }
+  return links.map((link) => ({
+    key: link.vendorId,
+    vendorId: link.vendorId,
+    newName: "",
+    unitCost: String(link.unitCost),
+    preferred: link.preferred,
+  }));
+}
+
 export function MaterialForm({
   categories,
+  vendors,
   material,
 }: {
   categories: { id: string; name: string }[];
+  vendors: { id: string; name: string }[];
   material?: {
     id: string;
     name: string;
@@ -32,6 +59,7 @@ export function MaterialForm({
     isActive: boolean;
     officeQuantity?: number;
     officeReserved?: number;
+    vendorLinks?: { vendorId: string; unitCost: number; preferred: boolean }[];
   };
 }) {
   const [state, action, pending] = useActionState<AdminActionState, FormData>(
@@ -40,6 +68,20 @@ export function MaterialForm({
   );
   const editing = Boolean(material);
   const suffix = material?.id ?? "new";
+  const [vendorRows, setVendorRows] = useState(() =>
+    startingVendorRows(material?.vendorLinks),
+  );
+  const vendorPayload = vendorRows.map((row) => ({
+    vendor_id: row.vendorId && row.vendorId !== "__new__" ? row.vendorId : "",
+    vendor_name: row.vendorId === "__new__" ? row.newName : "",
+    unit_cost: Number(row.unitCost || 0),
+    is_preferred: row.preferred,
+  }));
+  const takenVendorIds = new Set(
+    vendorRows
+      .map((row) => row.vendorId)
+      .filter((id) => id && id !== "__new__"),
+  );
 
   return (
     <FormSheet
@@ -60,6 +102,7 @@ export function MaterialForm({
     >
       <form action={action} className="flex min-h-0 flex-1 flex-col">
         {material ? <input type="hidden" name="id" value={material.id} /> : null}
+        <input type="hidden" name="vendors" value={JSON.stringify(vendorPayload)} />
         <FormSheetBody className="flex flex-col gap-3">
           <div>
             <Label htmlFor={`name-${suffix}`}>Name</Label>
@@ -203,6 +246,129 @@ export function MaterialForm({
               defaultValue={String(material?.warrantyMonths ?? 12)}
               className="mt-2 h-11 min-h-11"
             />
+          </div>
+          <div className="flex flex-col gap-3 rounded-lg border border-outline-variant p-3">
+            <div>
+              <p className="text-sm font-medium text-on-surface">Vendors</p>
+              <p className="mt-1 text-xs text-on-surface-variant">
+                Who supplies this. Add every vendor, with the price they charge. Mark one as the usual supplier.
+              </p>
+            </div>
+            {vendorRows.map((row) => (
+              <div key={row.key} className="flex flex-col gap-2 border-t border-surface-variant pt-3">
+                <Label htmlFor={`vendor-${suffix}-${row.key}`}>Vendor</Label>
+                <select
+                  id={`vendor-${suffix}-${row.key}`}
+                  value={row.vendorId}
+                  onChange={(event) =>
+                    setVendorRows((current) =>
+                      current.map((entry) =>
+                        entry.key === row.key
+                          ? { ...entry, vendorId: event.target.value }
+                          : entry,
+                      ),
+                    )
+                  }
+                  className="h-11 min-h-11 w-full rounded-lg border border-outline-variant bg-surface px-3"
+                >
+                  <option value="">Choose a vendor</option>
+                  {vendors
+                    .filter((vendor) => vendor.id === row.vendorId || !takenVendorIds.has(vendor.id))
+                    .map((vendor) => (
+                      <option key={vendor.id} value={vendor.id}>
+                        {vendor.name}
+                      </option>
+                    ))}
+                  <option value="__new__">New vendor</option>
+                </select>
+                {row.vendorId === "__new__" ? (
+                  <Input
+                    value={row.newName}
+                    placeholder="Vendor name"
+                    onChange={(event) =>
+                      setVendorRows((current) =>
+                        current.map((entry) =>
+                          entry.key === row.key
+                            ? { ...entry, newName: event.target.value }
+                            : entry,
+                        ),
+                      )
+                    }
+                    className="h-11 min-h-11"
+                  />
+                ) : null}
+                <Label htmlFor={`vendor-price-${suffix}-${row.key}`}>Their price</Label>
+                <Input
+                  id={`vendor-price-${suffix}-${row.key}`}
+                  type="number"
+                  inputMode="decimal"
+                  min={0}
+                  step="0.01"
+                  value={row.unitCost}
+                  onChange={(event) =>
+                    setVendorRows((current) =>
+                      current.map((entry) =>
+                        entry.key === row.key
+                          ? { ...entry, unitCost: event.target.value }
+                          : entry,
+                      ),
+                    )
+                  }
+                  className="h-11 min-h-11"
+                />
+                <div className="flex items-center justify-between gap-2">
+                  <button
+                    type="button"
+                    className="text-xs font-semibold text-primary"
+                    onClick={() =>
+                      setVendorRows((current) =>
+                        current.map((entry) => ({
+                          ...entry,
+                          preferred: entry.key === row.key,
+                        })),
+                      )
+                    }
+                  >
+                    {row.preferred ? "Usual supplier" : "Make usual supplier"}
+                  </button>
+                  {vendorRows.length > 1 ? (
+                    <button
+                      type="button"
+                      className="text-xs font-semibold text-on-surface-variant"
+                      onClick={() =>
+                        setVendorRows((current) => {
+                          const next = current.filter((entry) => entry.key !== row.key);
+                          if (!next.some((entry) => entry.preferred) && next[0]) {
+                            next[0] = { ...next[0], preferred: true };
+                          }
+                          return next;
+                        })
+                      }
+                    >
+                      Remove
+                    </button>
+                  ) : null}
+                </div>
+              </div>
+            ))}
+            <button
+              type="button"
+              className="text-sm font-semibold text-primary"
+              onClick={() =>
+                setVendorRows((current) => [
+                  ...current,
+                  {
+                    key: crypto.randomUUID(),
+                    vendorId: "",
+                    newName: "",
+                    unitCost: "",
+                    preferred: false,
+                  },
+                ])
+              }
+            >
+              Add another vendor
+            </button>
           </div>
           {editing ? (
             <div>

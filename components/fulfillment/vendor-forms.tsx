@@ -16,6 +16,7 @@ import { rememberFulfillmentScroll } from "@/components/app/scroll-to-focus";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { formatInr } from "@/lib/format/money";
 import { Textarea } from "@/components/ui/textarea";
 import {
   WRITE_OFF_LABELS,
@@ -41,17 +42,31 @@ export function SendToVendorForm({
     description: string;
     available: number;
     unit_cost?: number;
+    vendors?: { id: string; name: string; unitCost: number; preferred?: boolean }[];
   }[];
 }) {
   const sendable = items.filter((item) => item.available > 0);
-  const defaultVendor = vendors[0]?.id ?? "";
+  const optionsFor = (item: (typeof sendable)[number]) => {
+    if (item.vendors && item.vendors.length > 0) return item.vendors;
+    return vendors.map((vendor) => ({
+      id: vendor.id,
+      name: vendor.name,
+      unitCost: item.unit_cost ?? 0,
+      preferred: false,
+    }));
+  };
   const [rows, setRows] = useState(() =>
-    sendable.map((item) => ({
-      key: item.id,
-      itemId: item.id,
-      vendorId: defaultVendor,
-      qty: Math.floor(item.available),
-    })),
+    sendable.map((item) => {
+      const options = optionsFor(item);
+      const preferred = options.find((vendor) => vendor.preferred) ?? options[0];
+      return {
+        key: item.id,
+        itemId: item.id,
+        vendorId: preferred?.id ?? "",
+        qty: Math.floor(item.available),
+        unitCost: preferred?.unitCost ?? item.unit_cost ?? 0,
+      };
+    }),
   );
   const [state, action, pending] = useActionState<ActionState, FormData>(
     sendToVendorAction,
@@ -73,7 +88,7 @@ export function SendToVendorForm({
         vendor_id: row.vendorId,
         vendor_name: vendor?.name,
         quantity: Number(row.qty ?? 0),
-        unit_cost: item?.unit_cost ?? 0,
+        unit_cost: row.unitCost,
       };
     })
     .filter((row) => row.quantity > 0 && row.vendor_id);
@@ -114,6 +129,8 @@ export function SendToVendorForm({
           </p>
           <ul className="divide-y divide-surface-variant rounded-lg border border-surface-variant">
             {sendable.map((item) => {
+              const options = optionsFor(item);
+              const linked = Boolean(item.vendors && item.vendors.length > 0);
               const itemRows = byItem.get(item.id) ?? [];
               const leftover = remainingToAllocate(
                 item.available,
@@ -127,7 +144,7 @@ export function SendToVendorForm({
                     quantity: row.qty,
                     vendor_id: row.vendorId,
                   })),
-                  vendors,
+                  vendors: options,
                 }),
               );
               return (
@@ -139,6 +156,11 @@ export function SendToVendorForm({
                       {assigned > 0 ? ` · Assigned ${assigned}` : ""}
                       {leftover > 0 ? ` · Left ${leftover}` : ""}
                     </p>
+                    {linked ? (
+                      <p className="text-xs text-on-surface-variant">
+                        Only vendors saved on this material.
+                      </p>
+                    ) : null}
                   </div>
                   {itemRows.map((row) => {
                     const others = assigned - row.qty;
@@ -184,22 +206,29 @@ export function SendToVendorForm({
                             </button>
                           ) : null}
                         </div>
-                        <select
+                          <select
                           value={row.vendorId}
-                          onChange={(e) =>
+                          onChange={(e) => {
+                            const choice = options.find((vendor) => vendor.id === e.target.value);
                             setRows((current) =>
                               current.map((entry) =>
                                 entry.key === row.key
-                                  ? { ...entry, vendorId: e.target.value }
+                                  ? {
+                                      ...entry,
+                                      vendorId: e.target.value,
+                                      unitCost: choice?.unitCost ?? entry.unitCost,
+                                    }
                                   : entry,
                               ),
-                            )
-                          }
+                            );
+                          }}
                           className="h-11 min-h-11 rounded-lg border border-outline-variant bg-surface px-3 text-on-surface"
                         >
-                          {vendors.map((vendor) => (
+                          {options.map((vendor) => (
                             <option key={vendor.id} value={vendor.id}>
-                              {vendor.name}
+                              {linked
+                                ? `${vendor.name} · ${formatInr(vendor.unitCost)}`
+                                : vendor.name}
                             </option>
                           ))}
                         </select>
@@ -219,9 +248,10 @@ export function SendToVendorForm({
                             quantity: row.qty,
                             vendor_id: row.vendorId,
                           })),
-                          vendors,
+                          vendors: options,
                         });
                         if (!added) return;
+                        const addedOffer = options.find((vendor) => vendor.id === added.vendor_id);
                         setRows((current) => {
                           const leftoverNow = remainingToAllocate(
                             item.available,
@@ -248,6 +278,7 @@ export function SendToVendorForm({
                               itemId: item.id,
                               vendorId: added.vendor_id,
                               qty: added.quantity,
+                              unitCost: addedOffer?.unitCost ?? item.unit_cost ?? 0,
                             },
                           ];
                         });

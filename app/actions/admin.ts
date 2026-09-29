@@ -5,10 +5,15 @@ import { redirect } from "next/navigation";
 import {
   ensureCategoryId,
   insertVendor,
+  replaceMaterialVendors,
   replaceVendorContacts,
   updateVendor,
   upsertMaterial,
 } from "@/lib/api/catalog-write";
+import {
+  normalizeMaterialVendors,
+  parseVendorColumn,
+} from "@/lib/catalog/material-vendors";
 import { listVendors } from "@/lib/api/catalog";
 import { humanizeError, rethrowNavigationError } from "@/lib/api/errors";
 import { revalidateApp } from "@/lib/api/revalidate";
@@ -304,6 +309,13 @@ export async function createMaterialAction(
   formData: FormData,
 ): Promise<AdminActionState> {
   await requireAnyPermission("admin.manage", "catalog.manage");
+  let vendorRows: unknown = [];
+  try {
+    const raw = formString(formData, "vendors");
+    vendorRows = raw ? JSON.parse(raw) : [];
+  } catch {
+    return { error: "Vendors could not be read" };
+  }
   const parsed = materialInputSchema.safeParse({
     id: formString(formData, "id") || undefined,
     name: formString(formData, "name"),
@@ -319,9 +331,16 @@ export async function createMaterialAction(
     description: formString(formData, "description"),
     is_active: formString(formData, "is_active") !== "false",
     office_quantity: parseMoney(formString(formData, "office_quantity")),
+    vendors: vendorRows,
   });
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Check the form" };
+  }
+  let vendorLinks;
+  try {
+    vendorLinks = normalizeMaterialVendors(parsed.data.vendors ?? []);
+  } catch (error) {
+    return { error: humanizeError(error) };
   }
   try {
     const categoryId = await ensureCategoryId(parsed.data.category);
@@ -342,6 +361,7 @@ export async function createMaterialAction(
     if (parsed.data.office_quantity !== undefined) {
       await setMaterialOfficeOnHand(materialId, parsed.data.office_quantity);
     }
+    await replaceMaterialVendors(materialId, vendorLinks);
     refreshCatalog();
     redirect(
       parsed.data.id
@@ -387,6 +407,18 @@ export async function importMaterialsCsvAction(
         row,
         "office_quantity",
       );
+      const hasVendors = Object.prototype.hasOwnProperty.call(row, "vendors");
+      let vendorLinks;
+      if (hasVendors) {
+        try {
+          vendorLinks = normalizeMaterialVendors(
+            parseVendorColumn(String(row.vendors ?? "")),
+          );
+        } catch (error) {
+          rowErrors.push({ row: line, message: humanizeError(error) });
+          continue;
+        }
+      }
       const officeQuantity = hasOfficeQuantity
         ? parseMoney(String(row.office_quantity ?? ""))
         : undefined;
@@ -439,6 +471,9 @@ export async function importMaterialsCsvAction(
         });
         if (parsed.data.office_quantity !== undefined) {
           await setMaterialOfficeOnHand(materialId, parsed.data.office_quantity);
+        }
+        if (vendorLinks) {
+          await replaceMaterialVendors(materialId, vendorLinks);
         }
         created += 1;
       } catch (error) {

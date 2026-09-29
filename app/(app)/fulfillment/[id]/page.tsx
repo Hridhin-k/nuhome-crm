@@ -14,7 +14,7 @@ import {
   SendToVendorForm,
   WriteOffItemsForm,
 } from "@/components/fulfillment/vendor-forms";
-import { listVendors } from "@/lib/api/catalog";
+import { listMaterialVendorOffers, listVendors } from "@/lib/api/catalog";
 import { getOrder } from "@/lib/api/orders";
 import { rel } from "@/lib/api/rel";
 import { displaySpecification } from "@/lib/quotes/spec";
@@ -38,7 +38,11 @@ export default async function FulfillmentDetailPage({
   const user = await requirePermission("fulfillment.update");
   const { id } = await params;
   const { notice, error, focus } = await searchParams;
-  const [detail, vendors] = await Promise.all([getOrder(id), listVendors()]);
+  const [detail, vendors, vendorOffers] = await Promise.all([
+    getOrder(id),
+    listVendors(),
+    listMaterialVendorOffers(),
+  ]);
   if (!detail) {
     notFound();
   }
@@ -79,6 +83,27 @@ export default async function FulfillmentDetailPage({
     }
   }
 
+  const offersByMaterial = new Map<
+    string,
+    { id: string; name: string; unitCost: number; preferred: boolean }[]
+  >();
+  for (const offer of vendorOffers) {
+    const vendor = rel(offer.vendors);
+    const list = offersByMaterial.get(offer.material_id) ?? [];
+    list.push({
+      id: offer.vendor_id,
+      name: vendor?.name ?? "Vendor",
+      unitCost: Number(offer.unit_cost),
+      preferred: offer.is_preferred,
+    });
+    offersByMaterial.set(offer.material_id, list);
+  }
+  for (const list of offersByMaterial.values()) {
+    list.sort(
+      (a, b) => Number(b.preferred) - Number(a.preferred) || a.name.localeCompare(b.name),
+    );
+  }
+
   const vendorLines = detail.items.filter((item) => item.supply_source !== "office");
   const sendItems = vendorLines.map((item) => ({
     id: item.id,
@@ -89,6 +114,7 @@ export default async function FulfillmentDetailPage({
       quantity_written_off: Number(item.quantity_written_off ?? 0),
     }),
     unit_cost: Number(rel(item.quote_items)?.unit_cost ?? 0),
+    vendors: item.material_id ? offersByMaterial.get(item.material_id) ?? [] : [],
   }));
   const closeItems = detail.items.map((item) => ({
     id: item.id,

@@ -24,6 +24,7 @@ Write the quote number on a piece of paper when the app shows it. You will need 
 - Some materials are already at the NuHome office. The customer can pay and take them the same day.
 - Some materials are ordered only when a customer wants them. Those go to a vendor and are delivered later.
 - One visit can have both. It stays one job and one bill.
+- The same material can come from more than one vendor. Each vendor has its own price. That list is saved when the material is added.
 
 ---
 
@@ -35,9 +36,10 @@ Write the quote number on a piece of paper when the app shows it. You will need 
 2. Find **Cabinet handle**. Note how many it says are at the office. If it says the item is ordered when a customer wants it, the number is 0.
 3. Tap **Edit**.
 4. In **Quantity at office**, type a number that is 4 more than the number you wrote down. Example: if it said 4, type 8.
-5. Save.
+5. Under **Vendors**, if it already lists a vendor, leave that list as it is. If it says **Choose a vendor**, pick one, type their price, and leave it as **Usual supplier**. A material cannot be saved with no vendor.
+6. Save.
 
-**You should see:** the materials list shows the new number, such as “8 pcs at office”.
+**You should see:** the materials list shows the new number, such as “8 pcs at office”, and the vendor with their price. One vendor is marked **usual**.
 
 6. Open **More**, then **Office stock**.
 
@@ -180,6 +182,8 @@ This is the main mixed visit. Use a fresh quote.
 
 - The form to send to a vendor lists the chimney and the custom line only.
 - Cabinet handle says it is not sent to a vendor.
+- If Chimney 60cm already has vendors saved on the material, only those vendors appear, each with its price. The usual supplier is already selected.
+- The custom line still lists every vendor, because it is not in the catalogue.
 
 You can stop this test here. The rest of this job follows Test 7.
 
@@ -192,8 +196,8 @@ Use the job from Test 6, or start a new quote with only a chimney (nothing from 
 **Sign in as Operations.**
 
 1. Open the job in **Fulfillment**.
-2. Choose a vendor for each line that still needs one. Save that split.
-3. Enter the vendor’s price if the screen asks, then confirm the send.
+2. Tap **Allocate to vendor**. For a catalogue line, pick one of the vendors saved on that material. Their price is already filled in. You can switch to another vendor from that same list. For a custom line, pick any vendor. Save that split.
+3. Enter the vendor’s price if the screen asks, then confirm the send. Accounts still has to check that vendor quote before the goods are sent. Saving vendors on the material does not skip this.
 
 **Sign in as Accounts** if the app asks Accounts to check the vendor price.
 
@@ -239,7 +243,7 @@ Use the job from Test 6, or start a new quote with only a chimney (nothing from 
 
 **Sign in as Operations.**
 
-1. Open **More**, then **Materials**. Edit **Cabinet handle**.
+1. Open **More**, then **Materials**. Edit **Cabinet handle**. Leave the vendors already on the form.
 2. Set **Quantity at office** to 0. Save.
 
 **You should see:** a message that this would drop the quantity below what is already reserved. The old number stays.
@@ -274,11 +278,44 @@ Do these quickly. Each one should send you away from a screen that person does n
 | Sales | **More**, then **Materials** | Materials does not open for Sales |
 | Operations | **New quote** | The walk-in screen does not open for Operations |
 | Accounts | A quote that still has office lines to hand over | There is no **Take payment and hand over** button |
-| Admin | **More**, then **Materials**, edit Cabinet handle | **Quantity at office** is there. You can type a number and save |
+| Admin | **More**, then **Materials**, edit Cabinet handle | **Quantity at office** and **Vendors** are there. You can change them and save |
 
 After a handover, open that quote as Sales.
 
 **You should see:** no **Edit draft** link. If you open revise, the screen says the office lines were already handed over and the handover must be voided first.
+
+---
+
+## Test 12. The same item, different vendors and prices
+
+**Sign in as Operations.**
+
+1. Open **More**, then **Materials**. Tap **Add material**.
+2. Fill in a new item. Example: name **Shower head**, SKU **BT-HEAD-TEST**, category **Bathroom**, sell price **1200**, cost **450**.
+3. Leave **Vendor** as **Choose a vendor**. Tap **Save material**.
+
+**You should see:** “Choose a vendor or type a new vendor name”. The material is not saved.
+
+4. Choose a vendor that already exists. Set **Their price** to 450. It should say **Usual supplier**.
+5. Tap **Add another vendor**. Choose a different vendor. Set their price to 520.
+6. Tap **Add another vendor** again. Choose **New vendor**. Type a new name, such as **Bath House**. Set their price to 390.
+7. Save.
+
+**You should see:** Shower head on the list with all three vendors and their prices. One of them says **usual**. The new name is now a vendor you can pick on other materials.
+
+8. Edit **Chimney 60cm** the same way if it still says **No vendor yet**. Add two vendors with different prices. Mark one as the usual supplier. Save.
+9. Open the job from Test 6 in **Fulfillment**. Tap **Allocate to vendor**.
+
+**You should see:**
+
+- Chimney 60cm lists only the vendors you just saved, each with its price. The usual supplier is already selected.
+- You can switch the chimney to the other saved vendor. A vendor that is not on the material is not in that list.
+- The custom line still lists every vendor.
+- Cabinet handle is not in this form.
+
+10. Save the vendor split. Then follow Test 7 from the Accounts check onward.
+
+**You should see:** Accounts still approves the vendor quote before the goods are sent.
 
 ---
 
@@ -287,6 +324,11 @@ After a handover, open that quote as Sales.
 Tick these. Every box should be ticked before you sign off.
 
 - [ ] Operations can set how many of an item are already at the office
+- [ ] A material cannot be saved until it has at least one vendor and that vendor’s price
+- [ ] The same material can have several vendors, each with a different price, and one usual supplier
+- [ ] A new vendor can be typed in while adding the material
+- [ ] Fulfillment offers only the vendors saved on that material, with their prices. A custom line still lists every vendor
+- [ ] Accounts still checks the vendor quote before the goods are sent
 - [ ] Sales sees that number in the catalogue as “in office”
 - [ ] Adding the same item twice becomes one line
 - [ ] A shelf-only sale takes payment, hands the goods over, closes the job, and shows **Supplied today** on the invoice
@@ -301,4 +343,4 @@ Tick these. Every box should be ticked before you sign off.
 - [ ] Cancelling a quote before handover puts the pieces back
 - [ ] Operations cannot set the office quantity below what a saved quote is already holding
 - [ ] A price below cost shows a warning and still lets you continue
-- [ ] Sales cannot edit materials. Operations cannot start a quote. Accounts cannot hand over the shelf. Admin can set the office quantity
+- [ ] Sales cannot edit materials. Operations cannot start a quote. Accounts cannot hand over the shelf. Admin can set the office quantity and the vendors

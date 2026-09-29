@@ -1,3 +1,4 @@
+import { assertCatalogueVendors } from "@/lib/api/catalog";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import {
   cancelJobSchema,
@@ -154,6 +155,7 @@ export async function sendOrderToVendor(input: unknown) {
 
 export async function allocateVendors(input: unknown) {
   const parsed = allocateVendorsSchema.parse(input);
+  await assertCatalogueVendors(parsed.order_id, parsed.items);
   const batches = groupLinesByVendor(parsed.items);
   if (batches.length === 0) {
     throw new Error("Select at least one item to send");

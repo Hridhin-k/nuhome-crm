@@ -59,6 +59,16 @@ export const materialInputSchema = z.object({
     .number()
     .nonnegative("Quantity at office cannot be negative")
     .optional(),
+  vendors: z
+    .array(
+      z.object({
+        vendor_id: z.string().uuid().optional().or(z.literal("")),
+        vendor_name: z.string().trim().optional(),
+        unit_cost: z.number().nonnegative("Vendor price cannot be negative"),
+        is_preferred: z.boolean().optional(),
+      }),
+    )
+    .optional(),
 });
 
 export type CreateStaffInput = z.infer<typeof createStaffSchema>;

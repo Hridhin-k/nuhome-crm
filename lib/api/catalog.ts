@@ -73,6 +73,72 @@ const listMaterialsCached = cache(async (includeInactive: boolean) => {
   return throwQuery(request, "Failed to load materials") as Promise<MaterialRow[]>;
 });
 
+export type MaterialVendorOffer = {
+  material_id: string;
+  vendor_id: string;
+  unit_cost: number | string;
+  is_preferred: boolean;
+  vendors?: { name: string; is_active: boolean } | { name: string; is_active: boolean }[] | null;
+};
+
+export const listMaterialVendorOffers = cache(async () => {
+  const db = await getDb();
+  return throwQuery(
+    db
+      .from("material_vendors")
+      .select("material_id, vendor_id, unit_cost, is_preferred, vendors(name, is_active)"),
+    "Failed to load material vendors",
+  ) as Promise<MaterialVendorOffer[]>;
+});
+
+export async function assertCatalogueVendors(
+  orderId: string,
+  items: { order_item_id: string; vendor_id: string }[],
+) {
+  const db = await getDb();
+  const orderItems = await throwQuery(
+    db
+      .from("order_items")
+      .select("id, material_id, description")
+      .eq("order_id", orderId),
+    "Failed to load order lines",
+  );
+  const materialIds = [
+    ...new Set(
+      orderItems
+        .map((item) => item.material_id)
+        .filter((id): id is string => Boolean(id)),
+    ),
+  ];
+  if (materialIds.length === 0) return;
+
+  const links = await throwQuery(
+    db
+      .from("material_vendors")
+      .select("material_id, vendor_id")
+      .in("material_id", materialIds),
+    "Failed to load material vendors",
+  );
+  const allowed = new Map<string, Set<string>>();
+  for (const link of links) {
+    const set = allowed.get(link.material_id) ?? new Set<string>();
+    set.add(link.vendor_id);
+    allowed.set(link.material_id, set);
+  }
+
+  for (const line of items) {
+    const item = orderItems.find((row) => row.id === line.order_item_id);
+    if (!item?.material_id) continue;
+    const vendors = allowed.get(item.material_id);
+    if (!vendors || vendors.size === 0) continue;
+    if (!vendors.has(line.vendor_id)) {
+      throw new Error(
+        `${item.description} can only be ordered from a vendor saved on that material`,
+      );
+    }
+  }
+}
+
 export function listVendors(options?: { includeInactive?: boolean }) {
   return listVendorsCached(Boolean(options?.includeInactive));
 }

@@ -548,6 +548,48 @@ export type Database = {
           },
         ]
       }
+      material_vendors: {
+        Row: {
+          created_at: string
+          id: string
+          is_preferred: boolean
+          material_id: string
+          unit_cost: number
+          vendor_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_preferred?: boolean
+          material_id: string
+          unit_cost: number
+          vendor_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_preferred?: boolean
+          material_id?: string
+          unit_cost?: number
+          vendor_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "material_vendors_material_id_fkey"
+            columns: ["material_id"]
+            isOneToOne: false
+            referencedRelation: "materials"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "material_vendors_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notifications: {
         Row: {
           body: string | null

@@ -156,6 +156,21 @@ describe("materialInputSchema", () => {
     ).toThrow();
   });
 
+  it("accepts vendor prices on the material", () => {
+    const parsed = materialInputSchema.parse({
+      name: "Shower head",
+      sku: "SH-1",
+      category: "Bathroom",
+      sell_price: 800,
+      cost: 400,
+      vendors: [
+        { vendor_id: UUID, unit_cost: 450, is_preferred: true },
+        { vendor_name: "Other Bath", unit_cost: 520 },
+      ],
+    });
+    expect(parsed.vendors).toHaveLength(2);
+  });
+
   it("accepts a quantity already at the office", () => {
     const parsed = materialInputSchema.parse({
       name: "Handle",
