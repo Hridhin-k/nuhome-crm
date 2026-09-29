@@ -36,14 +36,14 @@ Write the quote number on a piece of paper when the app shows it. You will need 
 2. Find **Cabinet handle**. Note how many it says are at the office. If it says the item is ordered when a customer wants it, the number is 0.
 3. Tap **Edit**.
 4. In **Quantity at office**, type a number that is 4 more than the number you wrote down. Example: if it said 4, type 8.
-5. Under **Vendors**, if it already lists a vendor, leave that list as it is. If it says **Choose a vendor**, pick one, type their price, and leave it as **Usual supplier**. A material cannot be saved with no vendor.
+5. Under **Vendors**, if it already lists a vendor, leave that list as it is. You can save the office quantity without a vendor. Add a vendor, with their price, when this item will be ordered.
 6. Save.
 
 **You should see:** the materials list shows the new number, such as “8 pcs at office”, and the vendor with their price. One vendor is marked **usual**.
 
 6. Open **More**, then **Office stock**.
 
-**You should see:** Cabinet handle with that same number on hand.
+**You should see:** Cabinet handle with that same number “in office”.
 
 ---
 
@@ -72,7 +72,11 @@ Write the quote number on a piece of paper when the app shows it. You will need 
 
 10. Go back to a new quote and open the catalogue again.
 
-**You should see:** Cabinet handle “in office” is 2 less than before this sale.
+**You should see:** Cabinet handle “in office” is 2 less than before this sale. Example: 10 becomes 8.
+
+11. Sign in as Operations. Open **Materials** and **Office stock**.
+
+**You should see:** the same lower number in both places, and in **Quantity at office** when you tap **Edit**.
 
 ---
 
@@ -172,11 +176,21 @@ This is the main mixed visit. Use a fresh quote.
 
 11. Open the quote. Tap **Send**.
 
-**You should see:** the customer has been sent the quote. The office line stays supplied. The other lines are still to be ordered.
+**You should see:**
+
+- The customer has been sent the quote. The office line stays supplied. The other lines are still to be ordered.
+- The order is already active. Sales does not have to take any more money before the vendor steps. The money for the handle does not count as the advance for the ordered items.
+- In the order’s payment list, the money for the handle shows as **Office items**.
+
+12. Optional: if the customer agrees to pay an advance for the ordered items, open the order and tap **Record payment**.
+
+**You should see:** **Advance** is offered, with the amount based on the ordered items still unpaid. **Full** is not the only choice. Accounts verifies this advance as usual. The job keeps moving either way.
+
+The same applies if the quote was already sent before the handle was handed over. The order becomes active as soon as the handover is done.
 
 **Sign in as Operations.**
 
-12. Open **Fulfillment** and open this job.
+13. Open **Fulfillment** and open this job.
 
 **You should see:**
 
@@ -237,22 +251,25 @@ Use the job from Test 6, or start a new quote with only a chimney (nothing from 
 
 ---
 
-## Test 9. The shelf count cannot go below what is already promised
+## Test 9. Pieces already sold stay with their customer
 
 **Sign in as Sales.** Save a quote with 2 Cabinet handles **From office**. Do not hand them over. Leave the quote open.
 
 **Sign in as Operations.**
 
-1. Open **More**, then **Materials**. Edit **Cabinet handle**. Leave the vendors already on the form.
+1. Open **More**, then **Materials**. Edit **Cabinet handle**.
 2. Set **Quantity at office** to 0. Save.
 
-**You should see:** a message that this would drop the quantity below what is already reserved. The old number stays.
+**You should see:** Materials says the item is ordered when a customer wants it. The saved quote still has its 2 pieces **From office**.
 
-3. Open **More**, then **Office stock**. Use **Count correction** to subtract a large number, and type a reason. Save.
+3. Open **More**, then **Office stock**. Use **Count correction** to subtract 1, and type a reason. Save.
 
-**You should see:** the same kind of message. The count does not change.
+**You should see:** a message that this would drop the count below what is already reserved. The count does not change.
 
-4. Go back to Sales and cancel that quote, as in Test 8, so the pieces are free again.
+4. Set **Quantity at office** back to the number from before this test.
+5. Go back to Sales and cancel that quote, as in Test 8.
+
+**You should see:** the 2 pieces are added back to “in office”.
 
 ---
 
@@ -324,7 +341,7 @@ After a handover, open that quote as Sales.
 Tick these. Every box should be ticked before you sign off.
 
 - [ ] Operations can set how many of an item are already at the office
-- [ ] A material cannot be saved until it has at least one vendor and that vendor’s price
+- [ ] Operations can save the office quantity on its own. A vendor and price are added when the item will be ordered
 - [ ] The same material can have several vendors, each with a different price, and one usual supplier
 - [ ] A new vendor can be typed in while adding the material
 - [ ] Fulfillment offers only the vendors saved on that material, with their prices. A custom line still lists every vendor
@@ -338,6 +355,7 @@ Tick these. Every box should be ticked before you sign off.
 - [ ] A custom line is always ordered
 - [ ] A mixed visit is one quote and one invoice. Office lines are supplied today. The rest says to be delivered
 - [ ] Accounts approves the quote. Sales sends it
+- [ ] After the office items are paid for, the ordered items go ahead without more money. Sales can still record an optional advance for them
 - [ ] Fulfillment sends only the lines that still need a vendor
 - [ ] The job closes when those vendor lines are done. It does not wait again on the office lines
 - [ ] Cancelling a quote before handover puts the pieces back

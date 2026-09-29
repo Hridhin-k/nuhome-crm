@@ -5,19 +5,19 @@ export type MaterialVendorInput = {
   is_preferred?: boolean;
 };
 
-/** One preferred supplier. Blank ids are dropped. The same vendor cannot appear twice. */
+/** One preferred supplier. Blank rows are ignored so an office quantity can be saved on its own. */
 export function normalizeMaterialVendors(rows: MaterialVendorInput[]) {
-  if (rows.length === 0) {
-    throw new Error("Add at least one vendor");
-  }
-
-  const seen = new Set<string>();
-  const normalized = rows.map((row) => {
+  const filled = rows.filter((row) => {
     const vendorId = row.vendor_id?.trim() ?? "";
     const vendorName = row.vendor_name?.trim() ?? "";
-    if (!vendorId && !vendorName) {
-      throw new Error("Choose a vendor or type a new vendor name");
-    }
+    return Boolean(vendorId || vendorName);
+  });
+  if (filled.length === 0) return [];
+
+  const seen = new Set<string>();
+  const normalized = filled.map((row) => {
+    const vendorId = row.vendor_id?.trim() ?? "";
+    const vendorName = row.vendor_name?.trim() ?? "";
     if (!Number.isFinite(row.unit_cost) || row.unit_cost < 0) {
       throw new Error("Vendor price cannot be negative");
     }

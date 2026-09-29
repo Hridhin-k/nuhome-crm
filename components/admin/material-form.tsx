@@ -58,7 +58,6 @@ export function MaterialForm({
     description?: string | null;
     isActive: boolean;
     officeQuantity?: number;
-    officeReserved?: number;
     vendorLinks?: { vendorId: string; unitCost: number; preferred: boolean }[];
   };
 }) {
@@ -153,10 +152,7 @@ export function MaterialForm({
           <div>
             <Label htmlFor={`office-${suffix}`}>Quantity at office</Label>
             <p className="mt-1 text-xs text-on-surface-variant">
-              Already at the firm. 0 means order this only when a customer wants it.
-              {material && Number(material.officeReserved) > 0
-                ? ` ${Number(material.officeReserved)} are reserved on open quotes.`
-                : ""}
+              How many are ready at the office. Sales sees this number, and it goes down when Sales sells from the office. 0 means order this only when a customer wants it.
             </p>
             <Input
               id={`office-${suffix}`}

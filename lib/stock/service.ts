@@ -63,7 +63,10 @@ export async function closeStockPurchase(purchaseId: string) {
   throwIfError(error);
 }
 
-/** Make on-hand match the quantity Operations saved on the material. */
+/**
+ * Make the quantity left at the office match what Operations saved on the material.
+ * Pieces already on a saved quote stay held on top of that number.
+ */
 export async function setMaterialOfficeOnHand(materialId: string, quantity: number) {
   const supabase = await createServerSupabaseClient();
   const { data, error } = await supabase
@@ -71,8 +74,10 @@ export async function setMaterialOfficeOnHand(materialId: string, quantity: numb
     .select("material_id, kind, quantity")
     .eq("material_id", materialId);
   throwIfError(error);
-  const onHand = officeBalances(data ?? []).get(materialId)?.onHand ?? 0;
-  const delta = quantityDelta(onHand, quantity);
+  const balance = officeBalances(data ?? []).get(materialId);
+  const onHand = balance?.onHand ?? 0;
+  const reserved = balance?.reserved ?? 0;
+  const delta = quantityDelta(onHand, quantity + reserved);
   if (delta === 0) return;
   const { error: adjustError } = await supabase.rpc("adjust_office_stock", {
     p_material_id: materialId,

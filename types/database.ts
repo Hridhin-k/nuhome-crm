@@ -821,6 +821,7 @@ export type Database = {
           kind: Database["public"]["Enums"]["payment_kind"]
           method: Database["public"]["Enums"]["payment_method"] | null
           notes: string | null
+          office_counter: boolean
           order_id: string | null
           paid_at: string
           quote_id: string
@@ -836,6 +837,7 @@ export type Database = {
           kind: Database["public"]["Enums"]["payment_kind"]
           method?: Database["public"]["Enums"]["payment_method"] | null
           notes?: string | null
+          office_counter?: boolean
           order_id?: string | null
           paid_at?: string
           quote_id: string
@@ -851,6 +853,7 @@ export type Database = {
           kind?: Database["public"]["Enums"]["payment_kind"]
           method?: Database["public"]["Enums"]["payment_method"] | null
           notes?: string | null
+          office_counter?: boolean
           order_id?: string | null
           paid_at?: string
           quote_id?: string

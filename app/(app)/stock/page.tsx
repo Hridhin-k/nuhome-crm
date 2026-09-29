@@ -28,11 +28,9 @@ export default async function StockPage({
       ...row,
       name: names.get(row.material_id)?.name ?? "Material",
       sku: names.get(row.material_id)?.sku ?? null,
-      on_hand: Number(row.on_hand),
-      reserved: Number(row.reserved),
       available: Number(row.available),
     }))
-    .filter((row) => row.on_hand !== 0 || row.reserved !== 0)
+    .filter((row) => row.available > 0)
     .sort((a, b) => a.name.localeCompare(b.name));
 
   return (
@@ -60,10 +58,7 @@ export default async function StockPage({
                   <span className="text-on-surface-variant">{row.sku ?? "No SKU"}</span>
                 </span>
                 <span className="shrink-0 text-right text-on-surface-variant">
-                  {row.available} free
-                  <span className="block text-xs">
-                    {row.on_hand} on hand · {row.reserved} reserved
-                  </span>
+                  {row.available} in office
                 </span>
               </li>
             ))}

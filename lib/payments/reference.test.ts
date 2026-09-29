@@ -28,4 +28,12 @@ describe("payment reference rules", () => {
       remainingPaymentKinds([{ kind: "advance", status: "verified" }]),
     ).toEqual(["full", "nil"]);
   });
+
+  it("keeps Advance after an office counter payment", () => {
+    expect(
+      remainingPaymentKinds([
+        { kind: "advance", status: "verified", office_counter: true },
+      ]),
+    ).toEqual(["advance", "full", "nil"]);
+  });
 });

@@ -231,7 +231,7 @@ export const getOrder = cache(async (id: string) => {
       db
         .from("payments")
         .select(
-          "id, kind, amount, status, recorded_by, created_at, notes, method, reference_number, payment_verifications(decision, notes, created_at)",
+          "id, kind, amount, status, recorded_by, created_at, notes, method, reference_number, office_counter, payment_verifications(decision, notes, created_at)",
         )
         .eq("order_id", orderId)
         .order("created_at", { ascending: false }),

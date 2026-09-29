@@ -241,7 +241,9 @@ export default async function OrderDetailPage({
               >
                 <div className="flex flex-wrap items-center justify-between gap-2">
                 <div>
-                  <p className="font-medium capitalize">{payment.kind}</p>
+                  <p className="font-medium capitalize">
+                    {payment.office_counter ? "Office items" : payment.kind}
+                  </p>
                   <p className="text-on-surface-variant">
                     {formatIstDateTime(payment.created_at)}
                     {payment.method ? ` · ${payment.method}` : ""}

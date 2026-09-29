@@ -21,11 +21,19 @@ export function vendorPaymentReferenceRequired(
   return method !== "cash";
 }
 
+/** Office counter money pays for items already handed over, so it never uses up the advance. */
 export function remainingPaymentKinds(
-  payments: { kind?: string | null; status?: string | null }[],
+  payments: {
+    kind?: string | null;
+    status?: string | null;
+    office_counter?: boolean | null;
+  }[],
 ): Array<"advance" | "full" | "nil"> {
   const advancePaid = payments.some(
-    (payment) => payment.kind === "advance" && payment.status === "verified",
+    (payment) =>
+      payment.kind === "advance" &&
+      payment.status === "verified" &&
+      !payment.office_counter,
   );
   return advancePaid ? ["full", "nil"] : ["advance", "full", "nil"];
 }

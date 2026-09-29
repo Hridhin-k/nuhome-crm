@@ -22,6 +22,16 @@ export type PickerMaterial = {
   office_available?: number | null;
 };
 
+function formatQty(value: number) {
+  return Number.isInteger(value) ? String(value) : String(Math.round(value * 1000) / 1000);
+}
+
+function officeLabel(material: PickerMaterial) {
+  const ready = Number(material.office_available ?? 0);
+  if (!(ready > 0)) return " · order";
+  return ` · ${formatQty(ready)} in office`;
+}
+
 export function MaterialPicker({
   materials,
   categories,
@@ -121,9 +131,7 @@ export function MaterialPicker({
                       {[m.sku, formatInr(Number(m.default_sell_price))]
                         .filter(Boolean)
                         .join(" · ")}
-                      {Number(m.office_available ?? 0) > 0
-                        ? ` · ${Number(m.office_available)} in office`
-                        : " · order"}
+                      {officeLabel(m)}
                       {isAdded ? " · added" : ""}
                     </p>
                   </div>

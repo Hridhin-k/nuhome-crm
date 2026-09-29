@@ -7,11 +7,9 @@ import {
 const VENDOR = "550e8400-e29b-41d4-a716-446655440000";
 
 describe("normalizeMaterialVendors", () => {
-  it("requires a vendor and keeps a single usual supplier", () => {
-    expect(() => normalizeMaterialVendors([])).toThrow(/at least one vendor/i);
-    expect(() =>
-      normalizeMaterialVendors([{ unit_cost: 10 }]),
-    ).toThrow(/choose a vendor/i);
+  it("ignores a blank vendor row and keeps a single usual supplier", () => {
+    expect(normalizeMaterialVendors([])).toEqual([]);
+    expect(normalizeMaterialVendors([{ unit_cost: 10 }])).toEqual([]);
 
     const rows = normalizeMaterialVendors([
       { vendor_id: VENDOR, unit_cost: 450 },

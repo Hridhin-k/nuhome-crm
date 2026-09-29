@@ -93,8 +93,10 @@ export default async function MaterialsPage({
           const category = rel(material.material_categories);
           const active = material.is_active !== false;
           const office = officeBalances.get(material.id);
-          const atOffice = Number(office?.onHand ?? 0);
-          const reserved = Number(office?.reserved ?? 0);
+          const atOffice = Math.max(
+            0,
+            Number(office?.onHand ?? 0) - Number(office?.reserved ?? 0),
+          );
           const links = linksByMaterial.get(material.id) ?? [];
           return (
             <li
@@ -118,7 +120,6 @@ export default async function MaterialsPage({
                   {atOffice > 0
                     ? `${formatQty(atOffice)} ${material.unit} at office`
                     : "Order when a customer wants it"}
-                  {reserved > 0 ? ` · ${formatQty(reserved)} reserved` : ""}
                 </p>
                 <p className="mt-1 text-sm text-on-surface-variant">
                   {links.length > 0
@@ -158,7 +159,6 @@ export default async function MaterialsPage({
                     description: material.description,
                     isActive: active,
                     officeQuantity: atOffice,
-                    officeReserved: reserved,
                     vendorLinks: links,
                   }}
                 />

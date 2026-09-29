@@ -361,7 +361,9 @@ export async function createMaterialAction(
     if (parsed.data.office_quantity !== undefined) {
       await setMaterialOfficeOnHand(materialId, parsed.data.office_quantity);
     }
-    await replaceMaterialVendors(materialId, vendorLinks);
+    if (vendorLinks.length > 0) {
+      await replaceMaterialVendors(materialId, vendorLinks);
+    }
     refreshCatalog();
     redirect(
       parsed.data.id

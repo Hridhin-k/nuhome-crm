@@ -32,7 +32,11 @@ export function PaymentForm({
   quoteId: string;
   orderId: string;
   remaining: number;
-  payments?: { kind?: string | null; status?: string | null }[];
+  payments?: {
+    kind?: string | null;
+    status?: string | null;
+    office_counter?: boolean | null;
+  }[];
 }) {
   const kinds = remainingPaymentKinds(payments);
   const [kind, setKind] = useState<"advance" | "full" | "nil">(kinds[0]);
