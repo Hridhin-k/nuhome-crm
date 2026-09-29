@@ -88,12 +88,14 @@ export default async function OrderDetailPage({
       );
     }
   }
-  const hasUnsent = items.some((item) =>
-    availableToSend({
-      quantity: Number(item.quantity),
-      allocated: allocatedByItem.get(item.id) ?? 0,
-      quantity_written_off: Number(item.quantity_written_off ?? 0),
-    }) > 0,
+  const hasUnsent = items.some(
+    (item) =>
+      item.supply_source !== "office" &&
+      availableToSend({
+        quantity: Number(item.quantity),
+        allocated: allocatedByItem.get(item.id) ?? 0,
+        quantity_written_off: Number(item.quantity_written_off ?? 0),
+      }) > 0,
   );
   const next = nextRequiredAction({
     status,
@@ -308,7 +310,8 @@ export default async function OrderDetailPage({
                       {item.description}
                       <span className="text-on-surface-variant">
                         {" "}
-                        · {item.quantity_received}/{item.quantity} received
+                        · {item.supply_source === "office" ? "from office · " : ""}
+                        {item.quantity_received}/{item.quantity} received
                         {Number(item.quantity_written_off ?? 0) > 0
                           ? ` · ${item.quantity_written_off} ${item.write_off_reason ?? "closed"}`
                           : ""}

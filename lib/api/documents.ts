@@ -331,9 +331,11 @@ export const getTaxInvoice = cache(async (orderId: string) => {
     gst_rate: number | string;
     item_code?: string | null;
     specification?: string | null;
+    supply_source?: string | null;
+    quantity_handed_over?: number | string | null;
   }[] = [];
   const itemSelect =
-    "id, description, quantity, unit_price, discount, tax, line_total, hsn_code, gst_rate, item_code, specification";
+    "id, description, quantity, unit_price, discount, tax, line_total, hsn_code, gst_rate, item_code, specification, supply_source, quantity_handed_over";
 
   if (quote?.current_version_id) {
     items = await throwQuery(

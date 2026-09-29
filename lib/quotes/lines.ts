@@ -1,5 +1,7 @@
 import { DEFAULT_GST_RATE, lineGstAmount } from "@/lib/gst";
 
+export type SupplySource = "office" | "vendor";
+
 export type QuoteLine = {
   key: string;
   material_id?: string;
@@ -13,6 +15,7 @@ export type QuoteLine = {
   tax: number;
   hsn_code?: string;
   gst_rate: number;
+  supply_source?: SupplySource;
 };
 
 export function clampGstRate(value: number) {
@@ -51,7 +54,9 @@ export function lineFromMaterial(material: {
   default_cost: number | string;
   hsn_code?: string | null;
   gst_rate?: number | string | null;
+  office_available?: number | null;
 }): QuoteLine {
+  const shelf = Number(material.office_available ?? 0);
   return withGst({
     key: crypto.randomUUID(),
     material_id: material.id,
@@ -65,6 +70,7 @@ export function lineFromMaterial(material: {
     tax: 0,
     hsn_code: material.hsn_code ?? undefined,
     gst_rate: Number(material.gst_rate ?? DEFAULT_GST_RATE),
+    supply_source: shelf >= 1 ? "office" : "vendor",
   });
 }
 
@@ -107,6 +113,7 @@ export function linesFromQuoteItems(
     gst_rate?: number | string | null;
     specification?: string | null;
     item_code?: string | null;
+    supply_source?: SupplySource | null;
   }[],
 ): QuoteLine[] {
   return items.map((item, index) =>
@@ -123,6 +130,7 @@ export function linesFromQuoteItems(
       tax: Number(item.tax),
       hsn_code: item.hsn_code ?? undefined,
       gst_rate: Number(item.gst_rate ?? 0),
+      supply_source: item.supply_source === "office" ? "office" : "vendor",
     }),
   );
 }

@@ -14,6 +14,7 @@ import { StatusBadge } from "@/components/app/status-badge";
 import { StickyActionBar } from "@/components/app/sticky-action-bar";
 import { RejectQuoteSheet } from "@/components/quotes/reject-sheet";
 import { CancelJobSheet } from "@/components/quotes/cancel-sheet";
+import { OfficeHandoverForm } from "@/components/quotes/office-handover-form";
 import { WhatsAppShareSheet } from "@/components/quotes/whatsapp-share-sheet";
 import { ItemDescriptionHint } from "@/components/app/item-description-hint";
 import { JobTracks } from "@/components/jobs/job-tracks";
@@ -98,6 +99,20 @@ export default async function QuoteDetailPage({
     (sum, item) => sum + Number(item.quantity) * Number(item.unit_cost),
     0,
   );
+  const officeDue = currentItems
+    .filter(
+      (item) =>
+        item.supply_source === "office" &&
+        Number(item.quantity_handed_over) < Number(item.quantity),
+    )
+    .reduce((sum, item) => sum + Number(item.line_total), 0);
+  const officeHanded = currentItems.some(
+    (item) =>
+      item.supply_source === "office" && Number(item.quantity_handed_over) > 0,
+  );
+  const canSellStock = rolesHavePermission(user.roles, "stock.sell");
+  const canHandOver = canSellStock && !cancelled && !orderClosed && officeDue > 0;
+  const canVoidHandover = canSellStock && !cancelled && officeHanded;
   const marginPct = current
     ? Number(current.margin_percent) ||
       (Number(current.total) > 0
@@ -156,6 +171,12 @@ export default async function QuoteDetailPage({
       {notice === "draft" ? (
         <Notice>Draft saved. Submit to Accounts when you are ready.</Notice>
       ) : null}
+      {notice === "handed-over" ? (
+        <Notice>Office stock handed over. The invoice is on this job.</Notice>
+      ) : null}
+      {notice === "handover-voided" ? (
+        <Notice>Today&apos;s office handover was voided and the quantity is back on the shelf.</Notice>
+      ) : null}
       {error ? (
         <p className="rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
           {error}
@@ -163,6 +184,13 @@ export default async function QuoteDetailPage({
       ) : null}
 
       <NextActionCard action={nextForView} />
+      {canHandOver || canVoidHandover ? (
+        <OfficeHandoverForm
+          quoteId={quote.id}
+          amountDue={canHandOver ? officeDue : 0}
+          canVoid={canVoidHandover}
+        />
+      ) : null}
 
       {cancelled ? (
         <Notice>This job was cancelled.</Notice>
@@ -252,7 +280,16 @@ export default async function QuoteDetailPage({
                     <tr key={item.id}>
                       <td className="max-w-[180px] p-3 text-data-tabular">
                         <span className="flex min-w-0 items-start gap-2">
-                          <span className="min-w-0 truncate">{item.description}</span>
+                          <span className="min-w-0">
+                            <span className="block truncate">{item.description}</span>
+                            <span className="text-[11px] text-on-surface-variant">
+                              {item.supply_source === "office"
+                                ? Number(item.quantity_handed_over) >= Number(item.quantity)
+                                  ? "Supplied today"
+                                  : "From office"
+                                : "To order"}
+                            </span>
+                          </span>
                           <ItemDescriptionHint description={materialDescription} />
                         </span>
                       </td>
@@ -322,6 +359,11 @@ export default async function QuoteDetailPage({
                         Qty {item.quantity}
                         {item.item_code ? ` · ${item.item_code}` : ""}
                         {item.hsn_code ? ` · HSN ${item.hsn_code}` : ""}
+                        {item.supply_source === "office"
+                          ? Number(item.quantity_handed_over) >= Number(item.quantity)
+                            ? " · Supplied today"
+                            : " · From office"
+                          : " · To order"}
                         {Number(item.gst_rate) > 0
                           ? ` · GST ${item.gst_rate}%`
                           : ""}
@@ -399,7 +441,7 @@ export default async function QuoteDetailPage({
               View public link
             </AppLink>
           ) : null}
-          {canRevise ? (
+          {canRevise && !officeHanded ? (
             <AppLink
               href={`/quotes/${quote.id}/revise`}
               className={cn(
@@ -422,7 +464,7 @@ export default async function QuoteDetailPage({
 
       {!accountsReview && !salesSend ? (
         <div className={actionStackClass}>
-          {status === "quote_draft" && canRevise ? (
+          {status === "quote_draft" && canRevise && !officeHanded ? (
             <AppLink
               href={`/quotes/${quote.id}/revise`}
               className={cn(
@@ -460,7 +502,8 @@ export default async function QuoteDetailPage({
           ) : null}
           {(status === "quote_sent_to_customer" || Boolean(order)) &&
           canRevise &&
-          !orderClosed ? (
+          !orderClosed &&
+          !officeHanded ? (
             <AppLink
               href={`/quotes/${quote.id}/revise`}
               className={cn(buttonVariants({ variant: "outline", size: "lg" }), fullWidthButtonClass)}

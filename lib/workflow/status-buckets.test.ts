@@ -43,6 +43,12 @@ describe("order status buckets", () => {
       "order_active",
     );
     expect(displayWorkflowStatus("quote_draft")).toBe("quote_draft");
+    expect(displayWorkflowStatus("quote_draft", "quote_sent_to_customer")).toBe(
+      "quote_draft",
+    );
+    expect(displayWorkflowStatus("quote_approved", "quote_sent_to_customer")).toBe(
+      "quote_approved",
+    );
   });
 
   it("groups a closed order separately from payment and in-progress", () => {

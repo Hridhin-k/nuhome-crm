@@ -5,10 +5,17 @@ import { PageHeader } from "@/components/app/page-header";
 import { EmptyState } from "@/components/app/empty-state";
 import { listCategories, listMaterials } from "@/lib/api/catalog";
 import { listCustomers } from "@/lib/api/customers";
+import { listOfficeStock } from "@/lib/api/stock";
 import { requirePermission } from "@/lib/auth/guards";
 import type { MaterialRow } from "@/lib/api/catalog";
 
-function mapMaterials(materials: MaterialRow[]) {
+function mapMaterials(
+  materials: MaterialRow[],
+  stock: { material_id: string; available: number }[],
+) {
+  const available = new Map(
+    stock.map((row) => [row.material_id, Number(row.available)]),
+  );
   return materials.map((m) => ({
     id: m.id,
     name: m.name,
@@ -21,6 +28,7 @@ function mapMaterials(materials: MaterialRow[]) {
     hsn_code: m.hsn_code,
     gst_rate: m.gst_rate,
     description: m.description,
+    office_available: available.get(m.id) ?? 0,
   }));
 }
 
@@ -29,13 +37,14 @@ export default async function WalkInPage({
 }: {
   searchParams: Promise<{ customerId?: string; step?: string }>;
 }) {
-  const [, { customerId, step }, customers, materials, categories] =
+  const [, { customerId, step }, customers, materials, categories, stock] =
     await Promise.all([
       requirePermission("quotes.create"),
       searchParams,
       listCustomers(),
       listMaterials(),
       listCategories(),
+      listOfficeStock(),
     ]);
 
   const initialStep =
@@ -68,7 +77,7 @@ export default async function WalkInPage({
           name: c.name,
           phone: c.phone,
         }))}
-        materials={mapMaterials(materials)}
+        materials={mapMaterials(materials, stock)}
         categories={categories}
         presetCustomerId={customerId}
         returnTo="/walk-in"

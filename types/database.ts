@@ -602,6 +602,8 @@ export type Database = {
           write_off_notes: string | null
           write_off_reason: string | null
           quote_item_id: string | null
+          supply_source: "office" | "vendor"
+          quantity_handed_over: number
         }
         Insert: {
           description: string
@@ -615,6 +617,8 @@ export type Database = {
           write_off_notes?: string | null
           write_off_reason?: string | null
           quote_item_id?: string | null
+          supply_source?: "office" | "vendor"
+          quantity_handed_over?: number
         }
         Update: {
           description?: string
@@ -628,6 +632,8 @@ export type Database = {
           write_off_notes?: string | null
           write_off_reason?: string | null
           quote_item_id?: string | null
+          supply_source?: "office" | "vendor"
+          quantity_handed_over?: number
         }
         Relationships: [
           {
@@ -975,6 +981,8 @@ export type Database = {
           gst_rate: number
           specification: string | null
           item_code: string | null
+          supply_source: "office" | "vendor"
+          quantity_handed_over: number
         }
         Insert: {
           description: string
@@ -992,6 +1000,8 @@ export type Database = {
           gst_rate?: number
           specification?: string | null
           item_code?: string | null
+          supply_source?: "office" | "vendor"
+          quantity_handed_over?: number
         }
         Update: {
           description?: string
@@ -1009,6 +1019,8 @@ export type Database = {
           gst_rate?: number
           specification?: string | null
           item_code?: string | null
+          supply_source?: "office" | "vendor"
+          quantity_handed_over?: number
         }
         Relationships: [
           {
@@ -1520,6 +1532,143 @@ export type Database = {
           },
         ]
       }
+      stock_purchases: {
+        Row: {
+          id: string
+          purchase_number: string
+          vendor_id: string
+          status: Database["public"]["Enums"]["stock_purchase_status"]
+          notes: string | null
+          created_by: string | null
+          sent_at: string | null
+          closed_at: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          purchase_number?: string
+          vendor_id: string
+          status?: Database["public"]["Enums"]["stock_purchase_status"]
+          notes?: string | null
+          created_by?: string | null
+          sent_at?: string | null
+          closed_at?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          purchase_number?: string
+          vendor_id?: string
+          status?: Database["public"]["Enums"]["stock_purchase_status"]
+          notes?: string | null
+          created_by?: string | null
+          sent_at?: string | null
+          closed_at?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stock_purchases_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      stock_purchase_items: {
+        Row: {
+          id: string
+          stock_purchase_id: string
+          material_id: string
+          description: string
+          quantity: number
+          quantity_received: number
+          unit_cost: number
+        }
+        Insert: {
+          id?: string
+          stock_purchase_id: string
+          material_id: string
+          description: string
+          quantity: number
+          quantity_received?: number
+          unit_cost?: number
+        }
+        Update: {
+          id?: string
+          stock_purchase_id?: string
+          material_id?: string
+          description?: string
+          quantity?: number
+          quantity_received?: number
+          unit_cost?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stock_purchase_items_stock_purchase_id_fkey"
+            columns: ["stock_purchase_id"]
+            isOneToOne: false
+            referencedRelation: "stock_purchases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stock_purchase_items_material_id_fkey"
+            columns: ["material_id"]
+            isOneToOne: false
+            referencedRelation: "materials"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      stock_movements: {
+        Row: {
+          id: string
+          material_id: string
+          kind: Database["public"]["Enums"]["stock_movement_kind"]
+          quantity: number
+          stock_purchase_item_id: string | null
+          quote_item_id: string | null
+          order_item_id: string | null
+          payment_id: string | null
+          reverses_id: string | null
+          reason: string | null
+          created_by: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          material_id: string
+          kind: Database["public"]["Enums"]["stock_movement_kind"]
+          quantity: number
+          stock_purchase_item_id?: string | null
+          quote_item_id?: string | null
+          order_item_id?: string | null
+          payment_id?: string | null
+          reverses_id?: string | null
+          reason?: string | null
+          created_by?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          material_id?: string
+          kind?: Database["public"]["Enums"]["stock_movement_kind"]
+          quantity?: number
+          stock_purchase_item_id?: string | null
+          quote_item_id?: string | null
+          order_item_id?: string | null
+          payment_id?: string | null
+          reverses_id?: string | null
+          reason?: string | null
+          created_by?: string | null
+          created_at?: string
+        }
+        Relationships: []
+      }
       workflow_transitions: {
         Row: {
           from_status: Database["public"]["Enums"]["workflow_status"]
@@ -1855,6 +2004,43 @@ export type Database = {
         Args: { p_notes?: string; p_payment_id: string }
         Returns: Database["public"]["Enums"]["workflow_status"]
       }
+      list_office_stock: {
+        Args: { p_quote_id?: string }
+        Returns: {
+          material_id: string
+          on_hand: number
+          reserved: number
+          available: number
+        }[]
+      }
+      create_stock_purchase: {
+        Args: { p_vendor_id: string; p_items: Json; p_notes?: string }
+        Returns: string
+      }
+      send_stock_purchase: { Args: { p_purchase_id: string }; Returns: undefined }
+      receive_stock_purchase: {
+        Args: { p_purchase_id: string; p_items: Json }
+        Returns: undefined
+      }
+      close_stock_purchase: { Args: { p_purchase_id: string }; Returns: undefined }
+      adjust_office_stock: {
+        Args: { p_material_id: string; p_delta: number; p_reason: string }
+        Returns: undefined
+      }
+      hand_over_office_lines: {
+        Args: {
+          p_quote_id: string
+          p_amount: number
+          p_method: Database["public"]["Enums"]["payment_method"]
+          p_reference?: string
+          p_notes?: string
+        }
+        Returns: string
+      }
+      void_office_handover: {
+        Args: { p_quote_id: string; p_reason: string }
+        Returns: undefined
+      }
       write_audit: {
         Args: {
           p_action: string
@@ -1885,6 +2071,15 @@ export type Database = {
         | "card"
         | "other"
       payment_status: "pending" | "verified" | "rejected"
+      supply_source: "office" | "vendor"
+      stock_movement_kind:
+        | "receipt"
+        | "reservation"
+        | "release"
+        | "handover"
+        | "void"
+        | "adjustment"
+      stock_purchase_status: "draft" | "sent" | "partial" | "received" | "closed"
       workflow_status:
         | "quote_draft"
         | "quote_pending_accounts"
@@ -2052,6 +2247,16 @@ export const Constants = {
         "other",
       ],
       payment_status: ["pending", "verified", "rejected"],
+      supply_source: ["office", "vendor"],
+      stock_movement_kind: [
+        "receipt",
+        "reservation",
+        "release",
+        "handover",
+        "void",
+        "adjustment",
+      ],
+      stock_purchase_status: ["draft", "sent", "partial", "received", "closed"],
       workflow_status: [
         "quote_draft",
         "quote_pending_accounts",

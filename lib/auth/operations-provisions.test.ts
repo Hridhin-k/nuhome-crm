@@ -22,6 +22,11 @@ const OPS_SURFACES: Record<string, string[]> = {
   "reports.read": ["/reports"],
   "deliveries.credit_approve": ["/orders"],
   "vendors.quote_approve": ["/fulfillment"],
+  "stock.read": ["/stock"],
+  "stock.purchase": ["/stock"],
+  "stock.receive": ["/stock"],
+  "stock.sell": ["/quotes"],
+  "stock.adjust": ["/stock"],
 };
 
 describe("operations provisions are reachable", () => {

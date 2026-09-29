@@ -3,6 +3,7 @@ import { linesFromQuoteItems } from "@/lib/quotes/lines";
 import { PageFrame } from "@/components/app/page-frame";
 import { PageHeader } from "@/components/app/page-header";
 import { listCategories, listMaterials } from "@/lib/api/catalog";
+import { listOfficeStock } from "@/lib/api/stock";
 import type { MaterialRow } from "@/lib/api/catalog";
 import { listCustomers } from "@/lib/api/customers";
 import { getQuote } from "@/lib/api/quotes";
@@ -11,7 +12,13 @@ import { rolesHavePermission } from "@/lib/auth/permissions";
 import { notFound, redirect } from "next/navigation";
 import type { WorkflowStatus } from "@/lib/workflow/types";
 
-function mapMaterials(materials: MaterialRow[]) {
+function mapMaterials(
+  materials: MaterialRow[],
+  stock: { material_id: string; available: number }[],
+) {
+  const available = new Map(
+    stock.map((row) => [row.material_id, Number(row.available)]),
+  );
   return materials.map((m) => ({
     id: m.id,
     name: m.name,
@@ -24,6 +31,7 @@ function mapMaterials(materials: MaterialRow[]) {
     hsn_code: m.hsn_code,
     gst_rate: m.gst_rate,
     description: m.description,
+    office_available: available.get(m.id) ?? 0,
   }));
 }
 
@@ -41,11 +49,12 @@ export default async function ReviseQuotePage({
 }) {
   const user = await requirePermission("quotes.revise");
   const { id } = await params;
-  const [detail, customers, materials, categories] = await Promise.all([
+  const [detail, customers, materials, categories, stock] = await Promise.all([
     getQuote(id),
     listCustomers(),
     listMaterials(),
     listCategories(),
+    listOfficeStock(id),
   ]);
   if (!detail) {
     notFound();
@@ -60,6 +69,11 @@ export default async function ReviseQuotePage({
     detail.versions.find((v) => v.id === detail.quote.current_version_id) ??
     detail.versions[0];
   const currentItems = detail.items.filter((i) => i.version_id === current?.id);
+  if (currentItems.some((item) => Number(item.quantity_handed_over) > 0)) {
+    redirect(
+      `/quotes/${id}?error=${encodeURIComponent("Office lines already handed over cannot be edited. Void the handover first.")}`,
+    );
+  }
   const initialLines = linesFromQuoteItems(currentItems);
   const title =
     status === "quote_draft"
@@ -81,7 +95,7 @@ export default async function ReviseQuotePage({
           name: c.name,
           phone: c.phone,
         }))}
-        materials={mapMaterials(materials)}
+        materials={mapMaterials(materials, stock)}
         categories={categories}
         presetCustomerId={detail.quote.customer_id}
         reviseQuoteId={id}

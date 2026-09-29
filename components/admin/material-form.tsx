@@ -30,6 +30,8 @@ export function MaterialForm({
     warrantyMonths?: number;
     description?: string | null;
     isActive: boolean;
+    officeQuantity?: number;
+    officeReserved?: number;
   };
 }) {
   const [state, action, pending] = useActionState<AdminActionState, FormData>(
@@ -102,6 +104,25 @@ export function MaterialForm({
               id={`unit-${suffix}`}
               name="unit"
               defaultValue={material?.unit ?? "pcs"}
+              className="mt-2 h-11 min-h-11"
+            />
+          </div>
+          <div>
+            <Label htmlFor={`office-${suffix}`}>Quantity at office</Label>
+            <p className="mt-1 text-xs text-on-surface-variant">
+              Already at the firm. 0 means order this only when a customer wants it.
+              {material && Number(material.officeReserved) > 0
+                ? ` ${Number(material.officeReserved)} are reserved on open quotes.`
+                : ""}
+            </p>
+            <Input
+              id={`office-${suffix}`}
+              name="office_quantity"
+              type="number"
+              inputMode="decimal"
+              min={0}
+              step="any"
+              defaultValue={String(material?.officeQuantity ?? 0)}
               className="mt-2 h-11 min-h-11"
             />
           </div>

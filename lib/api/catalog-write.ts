@@ -81,9 +81,9 @@ export async function upsertMaterial(input: {
       })
       .eq("id", input.id);
     if (error) throw error;
-    return;
+    return input.id;
   }
-  const { error } = await db.from("materials").upsert(
+  const { data, error } = await db.from("materials").upsert(
     {
       sku: input.sku,
       name: input.name,
@@ -95,10 +95,13 @@ export async function upsertMaterial(input: {
       ...gstFields,
     },
     { onConflict: "sku" },
-  );
+  )
+    .select("id")
+    .single();
   if (error) {
     throw error;
   }
+  return data.id;
 }
 
 export async function insertVendor(input: {

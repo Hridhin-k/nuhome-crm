@@ -151,5 +151,20 @@ describe("materialInputSchema", () => {
     expect(() => materialInputSchema.parse({ ...base, warranty_months: 121 })).toThrow();
     expect(() => materialInputSchema.parse({ ...base, name: "" })).toThrow();
     expect(() => materialInputSchema.parse({ ...base, sku: "" })).toThrow();
+    expect(() =>
+      materialInputSchema.parse({ ...base, office_quantity: -1 }),
+    ).toThrow();
+  });
+
+  it("accepts a quantity already at the office", () => {
+    const parsed = materialInputSchema.parse({
+      name: "Handle",
+      sku: "HW-1",
+      category: "Hardware",
+      sell_price: 100,
+      cost: 40,
+      office_quantity: 12,
+    });
+    expect(parsed.office_quantity).toBe(12);
   });
 });

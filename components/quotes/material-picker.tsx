@@ -19,6 +19,7 @@ export type PickerMaterial = {
   hsn_code?: string | null;
   gst_rate?: number | string | null;
   description?: string | null;
+  office_available?: number | null;
 };
 
 export function MaterialPicker({
@@ -120,6 +121,9 @@ export function MaterialPicker({
                       {[m.sku, formatInr(Number(m.default_sell_price))]
                         .filter(Boolean)
                         .join(" · ")}
+                      {Number(m.office_available ?? 0) > 0
+                        ? ` · ${Number(m.office_available)} in office`
+                        : " · order"}
                       {isAdded ? " · added" : ""}
                     </p>
                   </div>

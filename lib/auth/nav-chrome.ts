@@ -29,6 +29,12 @@ export function navChrome(pathname: string): {
   if (root === "/approvals" && isDetail) {
     return { title: "Quote", backHref: "/approvals" };
   }
+  if (root === "/stock" && id === "new") {
+    return { title: "Buy office stock", backHref: "/stock" };
+  }
+  if (root === "/stock" && isDetail) {
+    return { title: "Stock purchase", backHref: "/stock" };
+  }
 
   const listTitles: Record<string, string> = {
     "/leads": "Leads",
@@ -43,6 +49,7 @@ export function navChrome(pathname: string): {
     "/users": "Users",
     "/vendors": "Vendors",
     "/materials": "Materials",
+    "/stock": "Office stock",
     "/reports": "Reports",
   };
 

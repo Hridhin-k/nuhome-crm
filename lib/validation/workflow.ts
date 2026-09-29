@@ -17,6 +17,7 @@ export const quoteItemSchema = z.object({
   gst_rate: z.number().min(0).max(100).optional(),
   specification: z.string().trim().max(500).optional(),
   item_code: z.string().trim().max(40).optional(),
+  supply_source: z.enum(["office", "vendor"]).optional().default("vendor"),
 });
 
 export const createQuoteSchema = z.object({

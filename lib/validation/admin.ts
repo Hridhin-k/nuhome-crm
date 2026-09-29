@@ -55,6 +55,10 @@ export const materialInputSchema = z.object({
   warranty_months: z.number().int().min(0).max(120).optional(),
   description: z.string().trim().max(2000).optional(),
   is_active: z.boolean().optional(),
+  office_quantity: z
+    .number()
+    .nonnegative("Quantity at office cannot be negative")
+    .optional(),
 });
 
 export type CreateStaffInput = z.infer<typeof createStaffSchema>;

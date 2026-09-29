@@ -79,7 +79,8 @@ export default async function FulfillmentDetailPage({
     }
   }
 
-  const sendItems = detail.items.map((item) => ({
+  const vendorLines = detail.items.filter((item) => item.supply_source !== "office");
+  const sendItems = vendorLines.map((item) => ({
     id: item.id,
     description: item.description,
     available: availableToSend({
@@ -135,19 +136,27 @@ export default async function FulfillmentDetailPage({
             const written = Number(item.quantity_written_off ?? 0);
             return (
               <li key={item.id} className="flex min-w-0 justify-between gap-3 py-2.5 text-[13px]">
-                <span className="min-w-0 break-words">{item.description}</span>
+                <span className="min-w-0 break-words">
+                  {item.description}
+                  {item.supply_source === "office" ? (
+                    <span className="mt-0.5 block text-[11px] text-on-surface-variant">
+                      From office
+                    </span>
+                  ) : null}
+                </span>
                 <span className="shrink-0 text-right text-[12px] text-on-surface-variant">
                   {Number(item.quantity_received)}/{Number(item.quantity)} received
                   {written > 0
                     ? ` · ${written} ${item.write_off_reason ?? "closed"}`
                     : ""}
                   <span className="mt-1 block text-xs">
-                    Unsent{" "}
-                    {availableToSend({
-                      quantity: Number(item.quantity),
-                      allocated: allocatedByItem.get(item.id) ?? 0,
-                      quantity_written_off: written,
-                    })}
+                    {item.supply_source === "office"
+                      ? "Not sent to a vendor"
+                      : `Unsent ${availableToSend({
+                          quantity: Number(item.quantity),
+                          allocated: allocatedByItem.get(item.id) ?? 0,
+                          quantity_written_off: written,
+                        })}`}
                   </span>
                 </span>
               </li>

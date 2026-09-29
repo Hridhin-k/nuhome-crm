@@ -17,6 +17,7 @@ import { requireAnyPermission, requirePermission } from "@/lib/auth/guards";
 import type { AppRole } from "@/lib/workflow/types";
 import { parseCsv } from "@/lib/csv";
 import { createServiceRoleClient } from "@/lib/supabase/admin";
+import { setMaterialOfficeOnHand } from "@/lib/stock/service";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import {
   createStaffSchema,
@@ -317,13 +318,14 @@ export async function createMaterialAction(
     // Always persist (empty clears). Do not coerce "" → undefined or upsert skips the column.
     description: formString(formData, "description"),
     is_active: formString(formData, "is_active") !== "false",
+    office_quantity: parseMoney(formString(formData, "office_quantity")),
   });
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Check the form" };
   }
   try {
     const categoryId = await ensureCategoryId(parsed.data.category);
-    await upsertMaterial({
+    const materialId = await upsertMaterial({
       sku: parsed.data.sku,
       name: parsed.data.name,
       categoryId,
@@ -337,6 +339,9 @@ export async function createMaterialAction(
       id: parsed.data.id,
       isActive: parsed.data.is_active,
     });
+    if (parsed.data.office_quantity !== undefined) {
+      await setMaterialOfficeOnHand(materialId, parsed.data.office_quantity);
+    }
     refreshCatalog();
     redirect(
       parsed.data.id
@@ -378,6 +383,20 @@ export async function importMaterialsCsvAction(
         row,
         "description",
       );
+      const hasOfficeQuantity = Object.prototype.hasOwnProperty.call(
+        row,
+        "office_quantity",
+      );
+      const officeQuantity = hasOfficeQuantity
+        ? parseMoney(String(row.office_quantity ?? ""))
+        : undefined;
+      if (hasOfficeQuantity && officeQuantity === null) {
+        rowErrors.push({
+          row: line,
+          message: "Quantity at office must be a number",
+        });
+        continue;
+      }
       const parsed = materialInputSchema.safeParse({
         name: (row.name ?? "").trim(),
         sku: (row.sku ?? "").trim(),
@@ -393,6 +412,7 @@ export async function importMaterialsCsvAction(
         description: hasDescriptionColumn
           ? String(row.description ?? "").trim()
           : undefined,
+        ...(hasOfficeQuantity ? { office_quantity: officeQuantity } : {}),
       });
       if (!parsed.success) {
         rowErrors.push({
@@ -403,7 +423,7 @@ export async function importMaterialsCsvAction(
       }
       try {
         const categoryId = await ensureCategoryId(parsed.data.category);
-        await upsertMaterial({
+        const materialId = await upsertMaterial({
           sku: parsed.data.sku,
           name: parsed.data.name,
           categoryId,
@@ -417,6 +437,9 @@ export async function importMaterialsCsvAction(
             ? { description: parsed.data.description ?? "" }
             : {}),
         });
+        if (parsed.data.office_quantity !== undefined) {
+          await setMaterialOfficeOnHand(materialId, parsed.data.office_quantity);
+        }
         created += 1;
       } catch (error) {
         rowErrors.push({ row: line, message: humanizeError(error) });

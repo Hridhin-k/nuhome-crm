@@ -11,6 +11,7 @@ type InvoiceItem = {
   gst_rate: number | string;
   item_code?: string | null;
   specification?: string | null;
+  supply_note?: string | null;
 };
 
 export function TaxInvoiceDocument({

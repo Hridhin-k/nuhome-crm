@@ -125,11 +125,21 @@ export function statusesForOrderQuery(input: {
 }
 
 /** Prefer the order's live status so a closed job is never shown as sent/pending. */
+const QUOTE_PHASE = new Set<WorkflowStatus>([
+  "quote_draft",
+  "quote_pending_accounts",
+  "quote_rejected",
+  "quote_approved",
+]);
+
 export function displayWorkflowStatus(
   quoteStatus: WorkflowStatus,
   orderStatus?: WorkflowStatus | null,
 ): WorkflowStatus {
-  return orderStatus ?? quoteStatus;
+  if (!orderStatus) return quoteStatus;
+  // An office handover can open the order before Accounts sees the vendor lines.
+  if (QUOTE_PHASE.has(quoteStatus)) return quoteStatus;
+  return orderStatus;
 }
 
 export const QUOTE_GROUP_IDS = [

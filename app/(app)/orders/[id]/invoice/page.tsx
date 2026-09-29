@@ -31,7 +31,18 @@ export default async function TaxInvoicePage({
         quoteNumber={cargo.quote?.quote_number ?? "Quote"}
         orderNumber={cargo.orderNumber}
         version={version}
-        items={cargo.items}
+        items={cargo.items.map((item) => ({
+          ...item,
+          supply_note:
+            item.supply_source === "office" &&
+            Number(item.quantity_handed_over ?? 0) >= Number(item.quantity)
+              ? "Supplied today"
+              : item.supply_source === "vendor"
+                ? "To be delivered"
+                : item.supply_source === "office"
+                  ? "From office"
+                  : undefined,
+        }))}
       />
     </main>
   );

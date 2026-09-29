@@ -22,6 +22,11 @@ export const PERMISSIONS = [
   "reports.read",
   "deliveries.credit_approve",
   "vendors.quote_approve",
+  "stock.read",
+  "stock.purchase",
+  "stock.receive",
+  "stock.sell",
+  "stock.adjust",
   "admin.manage",
 ] as const;
 
@@ -38,6 +43,8 @@ const ROLE_PERMISSIONS: Record<AppRole, Permission[]> = {
     "payments.record",
     "orders.read",
     "deliveries.complete",
+    "stock.read",
+    "stock.sell",
   ],
   accounts: [
     "customers.read",
@@ -49,12 +56,16 @@ const ROLE_PERMISSIONS: Record<AppRole, Permission[]> = {
     "orders.send_to_vendor",
     "fulfillment.update",
     "vendors.quote_approve",
+    "stock.read",
   ],
   procurement: [
     "customers.read",
     "orders.read",
     "orders.send_to_vendor",
     "fulfillment.update",
+    "stock.read",
+    "stock.purchase",
+    "stock.receive",
   ],
   store: [
     "customers.read",
@@ -62,6 +73,9 @@ const ROLE_PERMISSIONS: Record<AppRole, Permission[]> = {
     "fulfillment.update",
     "payments.record",
     "deliveries.complete",
+    "stock.read",
+    "stock.receive",
+    "stock.sell",
   ],
   operations: [
     "customers.read",
@@ -79,6 +93,11 @@ const ROLE_PERMISSIONS: Record<AppRole, Permission[]> = {
     "reports.read",
     "deliveries.credit_approve",
     "vendors.quote_approve",
+    "stock.read",
+    "stock.purchase",
+    "stock.receive",
+    "stock.sell",
+    "stock.adjust",
   ],
   admin: [...PERMISSIONS],
 };

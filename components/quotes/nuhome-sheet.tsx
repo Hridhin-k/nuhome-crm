@@ -11,6 +11,7 @@ export type NuhomeSheetLine = {
   unit_price?: number | string | null;
   discount?: number | string | null;
   line_total?: number | string | null;
+  supply_note?: string | null;
 };
 
 export type NuhomeSheetCompany = {
@@ -188,7 +189,14 @@ export function NuhomeSheet({
                 return (
                   <tr key={`${item.description}-${index}`}>
                     <td className="py-2 pr-2 align-top tabular-nums">{index + 1}</td>
-                    <td className="py-2 pr-2 align-top">{item.description}</td>
+                    <td className="py-2 pr-2 align-top">
+                      {item.description}
+                      {item.supply_note ? (
+                        <span className="mt-0.5 block text-[10px] uppercase tracking-wide text-neutral-500">
+                          {item.supply_note}
+                        </span>
+                      ) : null}
+                    </td>
                     <td className="py-2 pr-2 align-top">{item.item_code?.trim() || ""}</td>
                     <td className="py-2 pr-2 align-top text-neutral-700">
                       {displaySpecification(item.specification, item.description)}

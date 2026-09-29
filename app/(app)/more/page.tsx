@@ -12,7 +12,7 @@ import { rolesHavePermission } from "@/lib/auth/permissions";
 const MANAGE_LINKS = [
   { href: "/users", label: "Users", subtitle: "Staff, extra hats, cover for leave" },
   { href: "/vendors", label: "Vendors", subtitle: "Edit, contacts, CSV import" },
-  { href: "/materials", label: "Materials", subtitle: "HSN, GST, warranty, descriptions" },
+  { href: "/materials", label: "Materials", subtitle: "Catalogue and quantity already at the office" },
   { href: "/company", label: "Company", subtitle: "GSTIN on tax invoices" },
   { href: "/reports", label: "Reports", subtitle: "Floor, collections, aging, audit" },
 ] as const;
@@ -41,6 +41,12 @@ const FLOOR_LINKS = [
     label: "Customers",
     subtitle: "Book and update customers",
     permission: "customers.read" as const,
+  },
+  {
+    href: "/stock",
+    label: "Office stock",
+    subtitle: "What is already at the office",
+    permission: "stock.read" as const,
   },
   {
     href: "/leads",

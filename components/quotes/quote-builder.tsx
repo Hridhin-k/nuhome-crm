@@ -18,12 +18,12 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { lineTotalWithGst } from "@/lib/gst";
 import { formatInrExact } from "@/lib/format/money";
+import { withGst, type QuoteLine } from "@/lib/quotes/lines";
 import {
-  addMaterialLine,
-  addMaterialLines,
-  withGst,
-  type QuoteLine,
-} from "@/lib/quotes/lines";
+  addCatalogueMaterial,
+  setLineQuantity,
+  setLineSupply,
+} from "@/lib/quotes/supply";
 import { cn } from "@/lib/utils";
 
 export type { QuoteLine };
@@ -89,6 +89,14 @@ export function QuoteBuilder({
     [lines],
   );
 
+  const shelfByMaterial = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const material of materials) {
+      map.set(material.id, Number(material.office_available ?? 0));
+    }
+    return map;
+  }, [materials]);
+
   const materialById = useMemo(() => {
     const map = new Map<string, PickerMaterial>();
     for (const material of materials) {
@@ -113,11 +121,18 @@ export function QuoteBuilder({
   }, [lines]);
 
   function addMaterial(material: PickerMaterial) {
-    setLines((current) => addMaterialLine(current, material));
+    setLines((current) =>
+      addCatalogueMaterial(current, material, shelfByMaterial),
+    );
   }
 
   function addManyMaterials(selected: PickerMaterial[]) {
-    setLines((current) => addMaterialLines(current, selected));
+    setLines((current) =>
+      selected.reduce(
+        (rows, material) => addCatalogueMaterial(rows, material, shelfByMaterial),
+        current,
+      ),
+    );
   }
 
   function addCustom() {
@@ -158,6 +173,7 @@ export function QuoteBuilder({
     item_code: line.item_code,
     hsn_code: line.hsn_code,
     gst_rate: line.gst_rate,
+    supply_source: line.supply_source ?? "vendor",
   }));
 
   const extras = {
@@ -357,8 +373,15 @@ export function QuoteBuilder({
                             type="button"
                             className="inline-flex size-6 items-center justify-center rounded-full text-secondary hover:bg-surface-variant hover:text-primary"
                             onClick={() =>
-                              updateLine(line.key, {
-                                quantity: Math.max(1, line.quantity - 1),
+                              setLines((current) => {
+                                const row = current.find((item) => item.key === line.key);
+                                if (!row) return current;
+                                return setLineQuantity(
+                                  current,
+                                  row.key,
+                                  row.quantity - 1,
+                                  shelfByMaterial,
+                                );
                               })
                             }
                             aria-label="Decrease quantity"
@@ -372,8 +395,15 @@ export function QuoteBuilder({
                             type="button"
                             className="inline-flex size-6 items-center justify-center rounded-full text-secondary hover:bg-surface-variant hover:text-primary"
                             onClick={() =>
-                              updateLine(line.key, {
-                                quantity: line.quantity + 1,
+                              setLines((current) => {
+                                const row = current.find((item) => item.key === line.key);
+                                if (!row) return current;
+                                return setLineQuantity(
+                                  current,
+                                  row.key,
+                                  row.quantity + 1,
+                                  shelfByMaterial,
+                                );
                               })
                             }
                             aria-label="Increase quantity"
@@ -382,6 +412,48 @@ export function QuoteBuilder({
                           </button>
                         </div>
                       </div>
+                      {line.material_id ? (
+                        <div className="mt-2 flex flex-wrap items-center gap-2">
+                          <button
+                            type="button"
+                            className={cn(
+                              "rounded-full px-3 py-1 text-xs",
+                              line.supply_source === "office"
+                                ? "bg-primary text-on-primary"
+                                : "border border-outline-variant text-on-surface-variant",
+                            )}
+                            onClick={() =>
+                              setLines((current) =>
+                                setLineSupply(current, line.key, "office", shelfByMaterial),
+                              )
+                            }
+                          >
+                            From office
+                            {line.material_id
+                              ? ` (${shelfByMaterial.get(line.material_id) ?? 0})`
+                              : ""}
+                          </button>
+                          <button
+                            type="button"
+                            className={cn(
+                              "rounded-full px-3 py-1 text-xs",
+                              line.supply_source !== "office"
+                                ? "bg-primary text-on-primary"
+                                : "border border-outline-variant text-on-surface-variant",
+                            )}
+                            onClick={() =>
+                              setLines((current) =>
+                                setLineSupply(current, line.key, "vendor", shelfByMaterial),
+                              )
+                            }
+                          >
+                            Order
+                          </button>
+                          {line.unit_price < line.unit_cost ? (
+                            <span className="text-xs text-warning">Below cost</span>
+                          ) : null}
+                        </div>
+                      ) : null}
                       {openLine === line.key ? (
                       <>
                       <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
