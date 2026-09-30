@@ -12,16 +12,16 @@ import {
   FormSheetBody,
   FormSheetFooter,
 } from "@/components/app/form-sheet";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { roleLabel } from "@/lib/auth/nav";
 import { APP_ROLES, type AppRole } from "@/lib/workflow/types";
+import { FormError } from "@/components/app/form-error";
+import { NativeSelect } from "@/components/ui/native-select";
 
 const STAFF_ROLES: AppRole[] = ["sales", "accounts", "operations", "admin"];
-
-const selectClass =
-  "mt-2 h-11 min-h-11 w-full rounded-lg border border-outline-variant bg-surface px-3 text-on-surface";
 
 export function CreateStaffForm() {
   const [state, action, pending] = useActionState<AdminActionState, FormData>(
@@ -34,7 +34,7 @@ export function CreateStaffForm() {
       title="Add user"
       description="Creates a login. Extra hats (Also cover) add Saturday permissions without changing the primary role. Share the password with them directly."
       trigger={
-        <span className="inline-flex h-11 min-h-11 items-center rounded-lg bg-primary px-6 text-[15px] font-medium text-on-primary">
+        <span className={cn(buttonVariants(), "w-full")}>
           Add user
         </span>
       }
@@ -54,9 +54,9 @@ export function CreateStaffForm() {
             />
           </div>
           {state.error ? (
-            <p className="text-sm text-destructive" role="alert">
+            <FormError>
               {state.error}
-            </p>
+            </FormError>
           ) : null}
         </FormSheetBody>
         <FormSheetFooter>
@@ -98,7 +98,7 @@ export function EditStaffForm({
       description={user.email ?? "Update name, roles, or access."}
       triggerClassName="w-auto"
       trigger={
-        <span className="inline-flex h-9 items-center rounded-lg border border-outline-variant px-3 text-xs font-semibold tracking-[0.05em] text-primary uppercase">
+        <span className={buttonVariants({ variant: "outline", size: "sm" })}>
           Edit
         </span>
       }
@@ -116,20 +116,20 @@ export function EditStaffForm({
           />
           <div>
             <Label htmlFor={`status-${user.id}`}>Status</Label>
-            <select
+            <NativeSelect
               id={`status-${user.id}`}
               name="is_active"
               defaultValue={user.is_active ? "true" : "false"}
-              className={selectClass}
+              wrapperClassName="mt-2"
             >
               <option value="true">Active</option>
               <option value="false">Inactive</option>
-            </select>
+            </NativeSelect>
           </div>
           {state.error ? (
-            <p className="text-sm text-destructive" role="alert">
+            <FormError>
               {state.error}
-            </p>
+            </FormError>
           ) : null}
         </FormSheetBody>
         <FormSheetFooter>
@@ -142,7 +142,7 @@ export function EditStaffForm({
         <input type="hidden" name="user_id" value={user.id} />
         <input type="hidden" name="email" value={user.email ?? ""} />
         {resetState.credentials?.[0] ? (
-          <p className="mb-3 rounded-lg bg-surface-container-low px-3 py-2 text-sm">
+          <p className="mb-3 rounded-xl bg-surface-container-low px-3 py-2.5 text-body-sm">
             New password for {resetState.credentials[0].email}:{" "}
             <span className="font-mono font-semibold">
               {resetState.credentials[0].password}
@@ -150,7 +150,7 @@ export function EditStaffForm({
           </p>
         ) : null}
         {resetState.error ? (
-          <p className="mb-2 text-sm text-destructive">{resetState.error}</p>
+          <FormError className="mb-2">{resetState.error}</FormError>
         ) : null}
         <Button
           type="submit"
@@ -219,19 +219,19 @@ function StaffFields({
       </div>
       <div>
         <Label htmlFor="role">Primary role</Label>
-        <select
+        <NativeSelect
           id="role"
           name="role"
           value={primary}
           onChange={(e) => setPrimary(e.target.value as AppRole)}
-          className={selectClass}
+          wrapperClassName="mt-2"
         >
           {roleOptions.map((role) => (
             <option key={role} value={role}>
               {roleLabel(role)}
             </option>
           ))}
-        </select>
+        </NativeSelect>
       </div>
       <fieldset>
         <legend className="text-sm font-medium">Also cover</legend>

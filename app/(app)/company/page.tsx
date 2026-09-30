@@ -25,7 +25,7 @@ export default async function CompanyPage({
       />
       <AdminCatalogNav current="/company" />
       {notice === "saved" ? <Notice>Company details saved.</Notice> : null}
-      <div className="rounded-lg border border-outline-variant bg-card p-4 shadow-card">
+      <div className="rounded-2xl border border-outline-variant bg-card p-4 shadow-card">
         <CompanyForm company={company} />
       </div>
     </PageFrame>

@@ -3,8 +3,10 @@ import { AdminCatalogNav } from "@/components/admin/admin-catalog-nav";
 import { CsvImportSheet } from "@/components/admin/csv-import-sheet";
 import { EmptyState } from "@/components/app/empty-state";
 import { Notice } from "@/components/app/notice";
-import { PageFrame } from "@/components/app/page-frame";
+import { PageFrame, panelClass } from "@/components/app/page-frame";
+import { Badge } from "@/components/ui/badge";
 import { PageHeader } from "@/components/app/page-header";
+import { cn } from "@/lib/utils";
 import { VendorForm } from "@/components/vendors/vendor-form";
 import { listVendors } from "@/lib/api/catalog";
 import { requireUser } from "@/lib/auth/guards";
@@ -40,7 +42,7 @@ export default async function VendorsPage({
               {canCatalog ? (
                 <CsvImportSheet
                   title="Import vendors"
-                  description="Columns: name, phone, email, notes. Rows that match an existing name + phone are skipped."
+                  description="Columns: name, phone, email, notes. Rows that match an existing name + phone are skipped. If any row is wrong, nothing is imported."
                   templateName="nuhome-vendors.csv"
                   templateHeaders={["name", "phone", "email", "notes"]}
                   templateRows={[
@@ -72,16 +74,18 @@ export default async function VendorsPage({
             return (
               <li
                 key={vendor.id}
-                className="flex items-start justify-between gap-3 rounded-lg border border-outline-variant bg-card p-4 shadow-card"
+                className={cn(panelClass, "flex items-start justify-between gap-3")}
               >
                 <div className="min-w-0">
-                  <p className="font-medium">{vendor.name}</p>
-                  <p className="text-sm text-on-surface-variant">
+                  <p className="flex flex-wrap items-center gap-2 text-subheading text-on-surface">
+                    {vendor.name}
+                    {vendor.is_active ? null : <Badge variant="secondary">Inactive</Badge>}
+                  </p>
+                  <p className="mt-0.5 text-body-sm text-on-surface-variant">
                     {vendor.phone ?? vendor.email ?? "No contact"}
-                    {vendor.is_active ? "" : " · inactive"}
                   </p>
                   {contacts.length > 0 ? (
-                    <p className="mt-1 text-sm text-on-surface-variant">
+                    <p className="mt-1 text-body-sm text-on-surface-variant">
                       {contacts
                         .map(
                           (contact) =>

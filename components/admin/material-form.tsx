@@ -1,16 +1,25 @@
 "use client";
 
 import { useActionState, useState } from "react";
+import { X } from "lucide-react";
 import { createMaterialAction, type AdminActionState } from "@/app/actions/admin";
 import {
   FormSheet,
   FormSheetBody,
   FormSheetFooter,
 } from "@/components/app/form-sheet";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  SUGGESTED_SPEC_LABELS,
+  type MaterialSpec,
+} from "@/lib/catalog/material-specs";
+import { FormError } from "@/components/app/form-error";
+import { NativeSelect } from "@/components/ui/native-select";
+import { chipVariants } from "@/components/ui/chip";
 
 type VendorRow = {
   key: string;
@@ -19,6 +28,16 @@ type VendorRow = {
   unitCost: string;
   preferred: boolean;
 };
+
+type SpecRow = { key: string; label: string; value: string };
+
+function startingSpecRows(specs: MaterialSpec[] | undefined): SpecRow[] {
+  return (specs ?? []).map((spec, index) => ({
+    key: `spec-${index}`,
+    label: spec.label,
+    value: spec.value,
+  }));
+}
 
 function startingVendorRows(
   links: { vendorId: string; unitCost: number; preferred: boolean }[] | undefined,
@@ -56,6 +75,7 @@ export function MaterialForm({
     gstRate?: number;
     warrantyMonths?: number;
     description?: string | null;
+    specs?: MaterialSpec[];
     isActive: boolean;
     officeQuantity?: number;
     vendorLinks?: { vendorId: string; unitCost: number; preferred: boolean }[];
@@ -76,6 +96,20 @@ export function MaterialForm({
     unit_cost: Number(row.unitCost || 0),
     is_preferred: row.preferred,
   }));
+  const [specRows, setSpecRows] = useState(() => startingSpecRows(material?.specs));
+  const specPayload = specRows.map((row) => ({ label: row.label, value: row.value }));
+  const usedSpecLabels = new Set(specRows.map((row) => row.label.trim().toLowerCase()));
+  function updateSpec(key: string, patch: Partial<SpecRow>) {
+    setSpecRows((current) =>
+      current.map((row) => (row.key === key ? { ...row, ...patch } : row)),
+    );
+  }
+  function addSpec(label = "") {
+    setSpecRows((current) => [
+      ...current,
+      { key: crypto.randomUUID(), label, value: "" },
+    ]);
+  }
   const takenVendorIds = new Set(
     vendorRows
       .map((row) => row.vendorId)
@@ -86,13 +120,14 @@ export function MaterialForm({
     <FormSheet
       title={editing ? "Edit material" : "Add material"}
       description="Used in the walk-in quote builder. Category is created if it does not exist."
+      size="lg"
       triggerClassName={editing ? "w-auto" : undefined}
       trigger={
         <span
           className={
             editing
-              ? "inline-flex h-9 items-center rounded-lg border border-outline-variant px-3 text-xs font-semibold tracking-[0.05em] text-primary uppercase"
-              : "inline-flex h-11 min-h-11 items-center rounded-lg bg-primary px-6 text-[15px] font-medium text-on-primary"
+              ? buttonVariants({ variant: "outline", size: "sm" })
+              : cn(buttonVariants(), "w-full")
           }
         >
           {editing ? "Edit" : "Add material"}
@@ -102,6 +137,7 @@ export function MaterialForm({
       <form action={action} className="flex min-h-0 flex-1 flex-col">
         {material ? <input type="hidden" name="id" value={material.id} /> : null}
         <input type="hidden" name="vendors" value={JSON.stringify(vendorPayload)} />
+        <input type="hidden" name="specs" value={JSON.stringify(specPayload)} />
         <FormSheetBody className="flex flex-col gap-3">
           <div>
             <Label htmlFor={`name-${suffix}`}>Name</Label>
@@ -232,6 +268,65 @@ export function MaterialForm({
               placeholder="e.g. 600mm base with soft-close hinges"
             />
           </div>
+          <div className="flex flex-col gap-3 rounded-xl border border-outline-variant p-3">
+            <div>
+              <p className="text-sm font-medium text-on-surface">Specs</p>
+              <p className="mt-1 text-xs text-on-surface-variant">
+                Only if they apply, such as colour or dimensions. Sales sees these, and they print on the quotation and the bill. A different colour or size is a separate material.
+              </p>
+            </div>
+            {specRows.map((row) => (
+              <div key={row.key} className="flex items-start gap-2">
+                <Input
+                  aria-label="Spec name"
+                  value={row.label}
+                  placeholder="Colour"
+                  maxLength={40}
+                  onChange={(event) => updateSpec(row.key, { label: event.target.value })}
+                  className="h-11 min-h-11 w-2/5"
+                />
+                <Input
+                  aria-label={row.label ? `${row.label} value` : "Spec value"}
+                  value={row.value}
+                  placeholder={row.label.toLowerCase().startsWith("dimension") ? "600 × 560 × 720 mm" : "White"}
+                  maxLength={120}
+                  onChange={(event) => updateSpec(row.key, { value: event.target.value })}
+                  className="h-11 min-h-11 flex-1"
+                />
+                <button
+                  type="button"
+                  aria-label={`Remove ${row.label || "spec"}`}
+                  className={buttonVariants({ variant: "ghost", size: "icon" })}
+                  onClick={() =>
+                    setSpecRows((current) => current.filter((entry) => entry.key !== row.key))
+                  }
+                >
+                  <X className="size-4" aria-hidden />
+                </button>
+              </div>
+            ))}
+            <div className="flex flex-wrap gap-2">
+              {SUGGESTED_SPEC_LABELS.filter(
+                (label) => !usedSpecLabels.has(label.toLowerCase()),
+              ).map((label) => (
+                <button
+                  key={label}
+                  type="button"
+                  className={chipVariants({ size: "sm" })}
+                  onClick={() => addSpec(label)}
+                >
+                  + {label}
+                </button>
+              ))}
+              <button
+                type="button"
+                className={chipVariants({ size: "sm" })}
+                onClick={() => addSpec()}
+              >
+                + Other
+              </button>
+            </div>
+          </div>
           <div>
             <Label htmlFor={`warranty-${suffix}`}>Warranty (months)</Label>
             <Input
@@ -243,7 +338,7 @@ export function MaterialForm({
               className="mt-2 h-11 min-h-11"
             />
           </div>
-          <div className="flex flex-col gap-3 rounded-lg border border-outline-variant p-3">
+          <div className="flex flex-col gap-3 rounded-xl border border-outline-variant p-3">
             <div>
               <p className="text-sm font-medium text-on-surface">Vendors</p>
               <p className="mt-1 text-xs text-on-surface-variant">
@@ -253,7 +348,7 @@ export function MaterialForm({
             {vendorRows.map((row) => (
               <div key={row.key} className="flex flex-col gap-2 border-t border-surface-variant pt-3">
                 <Label htmlFor={`vendor-${suffix}-${row.key}`}>Vendor</Label>
-                <select
+                <NativeSelect
                   id={`vendor-${suffix}-${row.key}`}
                   value={row.vendorId}
                   onChange={(event) =>
@@ -265,7 +360,7 @@ export function MaterialForm({
                       ),
                     )
                   }
-                  className="h-11 min-h-11 w-full rounded-lg border border-outline-variant bg-surface px-3"
+                  wrapperClassName="w-full"
                 >
                   <option value="">Choose a vendor</option>
                   {vendors
@@ -276,7 +371,7 @@ export function MaterialForm({
                       </option>
                     ))}
                   <option value="__new__">New vendor</option>
-                </select>
+                </NativeSelect>
                 {row.vendorId === "__new__" ? (
                   <Input
                     value={row.newName}
@@ -315,7 +410,7 @@ export function MaterialForm({
                 <div className="flex items-center justify-between gap-2">
                   <button
                     type="button"
-                    className="text-xs font-semibold text-primary"
+                    className={cn(buttonVariants({ variant: "link", size: "xs" }), "px-0")}
                     onClick={() =>
                       setVendorRows((current) =>
                         current.map((entry) => ({
@@ -330,7 +425,7 @@ export function MaterialForm({
                   {vendorRows.length > 1 ? (
                     <button
                       type="button"
-                      className="text-xs font-semibold text-on-surface-variant"
+                      className={cn(buttonVariants({ variant: "link", size: "xs" }), "px-0 text-on-surface-variant")}
                       onClick={() =>
                         setVendorRows((current) => {
                           const next = current.filter((entry) => entry.key !== row.key);
@@ -349,7 +444,7 @@ export function MaterialForm({
             ))}
             <button
               type="button"
-              className="text-sm font-semibold text-primary"
+              className={cn(buttonVariants({ variant: "link", size: "sm" }), "w-fit px-0")}
               onClick={() =>
                 setVendorRows((current) => [
                   ...current,
@@ -369,21 +464,21 @@ export function MaterialForm({
           {editing ? (
             <div>
               <Label htmlFor={`active-${suffix}`}>Status</Label>
-              <select
+              <NativeSelect
                 id={`active-${suffix}`}
                 name="is_active"
                 defaultValue={material?.isActive ? "true" : "false"}
-                className="mt-2 h-11 min-h-11 w-full rounded-lg border border-outline-variant bg-surface px-3"
+                wrapperClassName="mt-2 w-full"
               >
                 <option value="true">Active</option>
                 <option value="false">Inactive</option>
-              </select>
+              </NativeSelect>
             </div>
           ) : null}
           {state.error ? (
-            <p className="text-sm text-destructive" role="alert">
+            <FormError>
               {state.error}
-            </p>
+            </FormError>
           ) : null}
         </FormSheetBody>
         <FormSheetFooter>

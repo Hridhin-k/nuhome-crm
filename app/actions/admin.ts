@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import {
   ensureCategoryId,
+  getMaterialsBySku,
   insertVendor,
   replaceMaterialVendors,
   replaceVendorContacts,
@@ -11,16 +12,19 @@ import {
   upsertMaterial,
 } from "@/lib/api/catalog-write";
 import {
-  normalizeMaterialVendors,
-  parseVendorColumn,
-} from "@/lib/catalog/material-vendors";
+  MATERIAL_CSV_COLUMNS,
+  planMaterialCsvRow,
+  type MaterialCsvPlan,
+} from "@/lib/catalog/material-csv";
+import { normalizeMaterialSpecs } from "@/lib/catalog/material-specs";
+import { normalizeMaterialVendors } from "@/lib/catalog/material-vendors";
 import { listVendors } from "@/lib/api/catalog";
 import { humanizeError, rethrowNavigationError } from "@/lib/api/errors";
 import { revalidateApp } from "@/lib/api/revalidate";
 import { parseAppRole, generateTempPassword } from "@/lib/auth/roles";
 import { requireAnyPermission, requirePermission } from "@/lib/auth/guards";
-import type { AppRole } from "@/lib/workflow/types";
-import { parseCsv } from "@/lib/csv";
+import { APP_ROLES, type AppRole } from "@/lib/workflow/types";
+import { readCsvTable } from "@/lib/csv";
 import { createServiceRoleClient } from "@/lib/supabase/admin";
 import { setMaterialOfficeOnHand } from "@/lib/stock/service";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
@@ -29,6 +33,8 @@ import {
   materialInputSchema,
   updateStaffSchema,
   vendorInputSchema,
+  type CreateStaffInput,
+  type VendorInput,
 } from "@/lib/validation/admin";
 
 export type AdminActionState = {
@@ -54,7 +60,12 @@ function parseMoney(value: string) {
   return Number.isFinite(n) ? n : null;
 }
 
-async function readCsvFile(formData: FormData) {
+type RowError = { row: number; message: string };
+
+async function readCsvFile(
+  formData: FormData,
+  columns: { required: readonly string[]; allowed: readonly string[] },
+) {
   const file = formData.get("file");
   if (!(file instanceof File) || file.size === 0) {
     throw new Error("Choose a CSV file");
@@ -62,14 +73,23 @@ async function readCsvFile(formData: FormData) {
   if (file.size > 1_000_000) {
     throw new Error("CSV is too large (max 1 MB)");
   }
-  const { rows } = parseCsv(await file.text());
-  if (rows.length === 0) {
-    throw new Error("CSV has no data rows");
+  const table = readCsvTable(await file.text(), columns);
+  if (table.rows.length === 0) {
+    throw new Error("The file has column names but no rows under them");
   }
-  if (rows.length > MAX_CSV_ROWS) {
+  if (table.rows.length > MAX_CSV_ROWS) {
     throw new Error(`CSV has too many rows (max ${MAX_CSV_ROWS})`);
   }
-  return rows;
+  return table;
+}
+
+/** Every row is checked before anything is saved, so a bad file changes nothing. */
+function rejectedImport(rowErrors: RowError[]): AdminActionState {
+  return {
+    error: `Nothing was imported. Fix ${rowErrors.length === 1 ? "this row" : `these ${rowErrors.length} rows`} and import the file again.`,
+    failed: rowErrors.length,
+    rowErrors,
+  };
 }
 
 function refreshCatalog() {
@@ -210,51 +230,79 @@ export async function importStaffCsvAction(
 ): Promise<AdminActionState> {
   await requireAnyPermission("admin.manage", "staff.manage");
   try {
-    const rows = await readCsvFile(formData);
-    const admin = createServiceRoleClient();
-    const db = await createServerSupabaseClient();
-    const credentials: { email: string; password: string }[] = [];
-    const rowErrors: { row: number; message: string }[] = [];
-    let created = 0;
-    let skipped = 0;
+    const { headers, rows, lines } = await readCsvFile(formData, {
+      required: ["email", "role"],
+      allowed: ["email", "full_name", "name", "role", "phone", "password"],
+    });
+    if (!headers.includes("full_name") && !headers.includes("name")) {
+      throw new Error("Row 1 must be the column names, and full_name is missing. Start from the sample CSV.");
+    }
+    const roleList = `${APP_ROLES.slice(0, -1).join(", ")}, or ${APP_ROLES.at(-1)}`;
+    const rowErrors: RowError[] = [];
+    const firstRowForEmail = new Map<string, number>();
+    const planned: {
+      line: number;
+      generated: boolean;
+      data: CreateStaffInput;
+    }[] = [];
 
     for (const [index, row] of rows.entries()) {
-      const line = index + 2;
+      const line = lines[index];
       const email = (row.email ?? "").trim().toLowerCase();
       const fullName = (row.full_name || row.name || "").trim();
-      const role = parseAppRole(row.role);
+      const roleCell = (row.role ?? "").trim();
+      const role = parseAppRole(roleCell);
       const phone = (row.phone ?? "").trim();
-      let password = (row.password ?? "").trim();
-      const generated = !password;
-      if (!password) {
-        password = generateTempPassword();
-      }
+      const typedPassword = (row.password ?? "").trim();
 
-      const parsed = createStaffSchema.safeParse({
-        email,
-        full_name: fullName,
-        role: role ?? "sales",
-        phone: phone || undefined,
-        password,
-      });
-      if (!email || !fullName || !role || !parsed.success) {
+      if (!role) {
         rowErrors.push({
           row: line,
-          message: !role
-            ? "Role must be sales, accounts, procurement, store, or admin"
-            : (parsed.error?.issues[0]?.message ?? "Invalid row"),
+          message: roleCell
+            ? `Role “${roleCell}” is not one of ${roleList}`
+            : `Role is required: ${roleList}`,
         });
         continue;
       }
+      const parsed = createStaffSchema.safeParse({
+        email,
+        full_name: fullName,
+        role,
+        phone: phone || undefined,
+        password: typedPassword || generateTempPassword(),
+      });
+      if (!parsed.success) {
+        rowErrors.push({
+          row: line,
+          message: parsed.error.issues[0]?.message ?? "Check this row",
+        });
+        continue;
+      }
+      const earlier = firstRowForEmail.get(email);
+      if (earlier) {
+        rowErrors.push({ row: line, message: `${email} is already on row ${earlier}` });
+        continue;
+      }
+      firstRowForEmail.set(email, line);
+      planned.push({ line, generated: !typedPassword, data: parsed.data });
+    }
+    if (rowErrors.length > 0) return rejectedImport(rowErrors);
 
+    const admin = createServiceRoleClient();
+    const db = await createServerSupabaseClient();
+    const credentials: { email: string; password: string }[] = [];
+    let created = 0;
+    let skipped = 0;
+
+    for (const { line, generated, data: staff } of planned) {
       const { data, error } = await admin.auth.admin.createUser({
-        email: parsed.data.email,
-        password: parsed.data.password,
+        email: staff.email,
+        password: staff.password,
         email_confirm: true,
         user_metadata: {
-          full_name: parsed.data.full_name,
-          role: parsed.data.role,
-          phone: parsed.data.phone ?? "",
+          full_name: staff.full_name,
+          role: staff.role,
+          phone: staff.phone ?? "",
         },
       });
       if (error || !data.user) {
@@ -271,9 +319,9 @@ export async function importStaffCsvAction(
 
       const { error: updateError } = await db.rpc("admin_update_user", {
         p_user_id: data.user.id,
-        p_full_name: parsed.data.full_name,
-        p_phone: parsed.data.phone ?? null,
-        p_role: parsed.data.role,
+        p_full_name: staff.full_name,
+        p_phone: staff.phone ?? null,
+        p_role: staff.role,
         p_is_active: true,
       });
       if (updateError) {
@@ -283,7 +331,7 @@ export async function importStaffCsvAction(
 
       created += 1;
       if (generated) {
-        credentials.push({ email: parsed.data.email, password: parsed.data.password });
+        credentials.push({ email: staff.email, password: staff.password });
       }
     }
 
@@ -337,10 +385,15 @@ export async function createMaterialAction(
     return { error: parsed.error.issues[0]?.message ?? "Check the form" };
   }
   let vendorLinks;
+  let specs;
   try {
     vendorLinks = normalizeMaterialVendors(parsed.data.vendors ?? []);
+    const rawSpecs = formString(formData, "specs");
+    specs = normalizeMaterialSpecs(rawSpecs ? JSON.parse(rawSpecs) : []);
   } catch (error) {
-    return { error: humanizeError(error) };
+    return {
+      error: error instanceof SyntaxError ? "Specs could not be read" : humanizeError(error),
+    };
   }
   try {
     const categoryId = await ensureCategoryId(parsed.data.category);
@@ -351,10 +404,11 @@ export async function createMaterialAction(
       unit: parsed.data.unit,
       sellPrice: parsed.data.sell_price,
       cost: parsed.data.cost,
-      hsnCode: parsed.data.hsn_code,
+      hsnCode: parsed.data.hsn_code ?? null,
       gstRate: parsed.data.gst_rate,
       warrantyMonths: parsed.data.warranty_months,
       description: parsed.data.description ?? "",
+      specs,
       id: parsed.data.id,
       isActive: parsed.data.is_active,
     });
@@ -395,103 +449,79 @@ export async function importMaterialsCsvAction(
 ): Promise<AdminActionState> {
   await requireAnyPermission("admin.manage", "catalog.manage");
   try {
-    const rows = await readCsvFile(formData);
-    const rowErrors: { row: number; message: string }[] = [];
-    let created = 0;
+    const { rows, lines } = await readCsvFile(formData, {
+      required: ["sku"],
+      allowed: MATERIAL_CSV_COLUMNS,
+    });
+    const saved = await getMaterialsBySku([
+      ...new Set(rows.map((row) => (row.sku ?? "").trim()).filter(Boolean)),
+    ]);
+    const rowErrors: RowError[] = [];
+    const firstRowForSku = new Map<string, number>();
+    const plans: { line: number; plan: MaterialCsvPlan }[] = [];
 
     for (const [index, row] of rows.entries()) {
-      const line = index + 2;
-      const hasDescriptionColumn = Object.prototype.hasOwnProperty.call(
-        row,
-        "description",
-      );
-      const hasOfficeQuantity = Object.prototype.hasOwnProperty.call(
-        row,
-        "office_quantity",
-      );
-      const hasVendors = Object.prototype.hasOwnProperty.call(row, "vendors");
-      let vendorLinks;
-      if (hasVendors) {
-        try {
-          vendorLinks = normalizeMaterialVendors(
-            parseVendorColumn(String(row.vendors ?? "")),
-          );
-        } catch (error) {
-          rowErrors.push({ row: line, message: humanizeError(error) });
-          continue;
-        }
-      }
-      const officeQuantity = hasOfficeQuantity
-        ? parseMoney(String(row.office_quantity ?? ""))
-        : undefined;
-      if (hasOfficeQuantity && officeQuantity === null) {
-        rowErrors.push({
-          row: line,
-          message: "Quantity at office must be a number",
-        });
+      const line = lines[index];
+      const sku = (row.sku ?? "").trim();
+      const earlier = firstRowForSku.get(sku);
+      if (sku && earlier) {
+        rowErrors.push({ row: line, message: `SKU ${sku} is already on row ${earlier}` });
         continue;
       }
-      const parsed = materialInputSchema.safeParse({
-        name: (row.name ?? "").trim(),
-        sku: (row.sku ?? "").trim(),
-        category: (row.category ?? "").trim(),
-        unit: (row.unit ?? "").trim() || "pcs",
-        sell_price: parseMoney(row.sell_price ?? ""),
-        cost: parseMoney(row.cost ?? ""),
-        hsn_code: (row.hsn_code ?? "").trim() || undefined,
-        gst_rate: row.gst_rate ? parseMoney(row.gst_rate) : 18,
-        warranty_months: row.warranty_months
-          ? Number(row.warranty_months)
-          : 12,
-        description: hasDescriptionColumn
-          ? String(row.description ?? "").trim()
-          : undefined,
-        ...(hasOfficeQuantity ? { office_quantity: officeQuantity } : {}),
-      });
-      if (!parsed.success) {
-        rowErrors.push({
-          row: line,
-          message: parsed.error.issues[0]?.message ?? "Invalid row",
-        });
-        continue;
-      }
+      if (sku) firstRowForSku.set(sku, line);
       try {
-        const categoryId = await ensureCategoryId(parsed.data.category);
+        plans.push({ line, plan: planMaterialCsvRow(row, saved.get(sku)) });
+      } catch (error) {
+        rowErrors.push({ row: line, message: humanizeError(error) });
+      }
+    }
+    if (rowErrors.length > 0) return rejectedImport(rowErrors);
+
+    let added = 0;
+    let updated = 0;
+    for (const { line, plan } of plans) {
+      try {
+        const categoryId =
+          "id" in plan.category
+            ? plan.category.id
+            : await ensureCategoryId(plan.category.name);
         const materialId = await upsertMaterial({
-          sku: parsed.data.sku,
-          name: parsed.data.name,
+          id: plan.id,
+          sku: plan.sku,
+          name: plan.name,
           categoryId,
-          unit: parsed.data.unit,
-          sellPrice: parsed.data.sell_price,
-          cost: parsed.data.cost,
-          hsnCode: parsed.data.hsn_code,
-          gstRate: parsed.data.gst_rate,
-          warrantyMonths: parsed.data.warranty_months,
-          ...(hasDescriptionColumn
-            ? { description: parsed.data.description ?? "" }
-            : {}),
+          unit: plan.unit,
+          sellPrice: plan.sellPrice,
+          cost: plan.cost,
+          hsnCode: plan.hsnCode,
+          gstRate: plan.gstRate,
+          warrantyMonths: plan.warrantyMonths,
+          description: plan.description,
+          specs: plan.specs,
         });
-        if (parsed.data.office_quantity !== undefined) {
-          await setMaterialOfficeOnHand(materialId, parsed.data.office_quantity);
+        if (plan.officeQuantity !== undefined) {
+          await setMaterialOfficeOnHand(materialId, plan.officeQuantity);
         }
-        if (vendorLinks) {
-          await replaceMaterialVendors(materialId, vendorLinks);
+        if (plan.vendors) {
+          await replaceMaterialVendors(materialId, plan.vendors);
         }
-        created += 1;
+        if (plan.id) updated += 1;
+        else added += 1;
       } catch (error) {
         rowErrors.push({ row: line, message: humanizeError(error) });
       }
     }
 
     refreshCatalog();
+    const parts = [
+      added ? `${added} added` : "",
+      updated ? `${updated} updated` : "",
+    ].filter(Boolean);
     return {
-      created,
+      created: added + updated,
       failed: rowErrors.length,
       rowErrors,
-      notice:
-        created > 0
-          ? `Imported ${created} material${created === 1 ? "" : "s"}.`
-          : "No materials were imported.",
+      notice: parts.length ? `Materials ${parts.join(", ")}.` : "No materials were saved.",
     };
   } catch (error) {
     return { error: humanizeError(error) };
@@ -559,17 +589,13 @@ export async function importVendorsCsvAction(
 ): Promise<AdminActionState> {
   await requireAnyPermission("admin.manage", "catalog.manage");
   try {
-    const rows = await readCsvFile(formData);
-    const existing = await listVendors({ includeInactive: true });
-    const seen = new Set(
-      existing.map((vendor) => `${vendor.name.toLowerCase()}|${vendor.phone ?? ""}`),
-    );
-    const rowErrors: { row: number; message: string }[] = [];
-    let created = 0;
-    let skipped = 0;
-
+    const { rows, lines } = await readCsvFile(formData, {
+      required: ["name"],
+      allowed: ["name", "phone", "email", "notes"],
+    });
+    const rowErrors: RowError[] = [];
+    const planned: { line: number; vendor: VendorInput }[] = [];
     for (const [index, row] of rows.entries()) {
-      const line = index + 2;
       const parsed = vendorInputSchema.safeParse({
         name: (row.name ?? "").trim(),
         phone: (row.phone ?? "").trim() || undefined,
@@ -578,22 +604,33 @@ export async function importVendorsCsvAction(
       });
       if (!parsed.success) {
         rowErrors.push({
-          row: line,
-          message: parsed.error.issues[0]?.message ?? "Invalid row",
+          row: lines[index],
+          message: parsed.error.issues[0]?.message ?? "Check this row",
         });
         continue;
       }
-      const key = `${parsed.data.name.toLowerCase()}|${parsed.data.phone ?? ""}`;
+      planned.push({ line: lines[index], vendor: parsed.data });
+    }
+    if (rowErrors.length > 0) return rejectedImport(rowErrors);
+
+    const existing = await listVendors({ includeInactive: true });
+    const seen = new Set(
+      existing.map((vendor) => `${vendor.name.toLowerCase()}|${vendor.phone ?? ""}`),
+    );
+    let created = 0;
+    let skipped = 0;
+    for (const { line, vendor } of planned) {
+      const key = `${vendor.name.toLowerCase()}|${vendor.phone ?? ""}`;
       if (seen.has(key)) {
         skipped += 1;
         continue;
       }
       try {
         await insertVendor({
-          name: parsed.data.name,
-          phone: parsed.data.phone,
-          email: parsed.data.email,
-          notes: parsed.data.notes,
+          name: vendor.name,
+          phone: vendor.phone,
+          email: vendor.email,
+          notes: vendor.notes,
         });
         seen.add(key);
         created += 1;

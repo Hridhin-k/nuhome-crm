@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useFormStatus } from "react-dom";
 import { toggleMaterialAction } from "@/app/actions/admin";
+import { Button } from "@/components/ui/button";
 
 function ToggleSubmit({ active }: { active: boolean }) {
   const { pending } = useFormStatus();
@@ -14,13 +15,9 @@ function ToggleSubmit({ active }: { active: boolean }) {
   }, [pending]);
 
   return (
-    <button
-      type="submit"
-      disabled={pending}
-      className="h-9 rounded-lg border border-border px-3 text-[13px] font-medium text-on-surface disabled:opacity-50"
-    >
+    <Button type="submit" variant="outline" size="sm" disabled={pending}>
       {pending ? (active ? "Hiding…" : "Restoring…") : active ? "Hide" : "Restore"}
-    </button>
+    </Button>
   );
 }
 

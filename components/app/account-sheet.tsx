@@ -7,6 +7,7 @@ import {
   FormSheetFooter,
 } from "@/components/app/form-sheet";
 import { SubmitButton } from "@/components/app/submit-button";
+import { Badge } from "@/components/ui/badge";
 
 export function AccountSheet({
   name,
@@ -29,7 +30,7 @@ export function AccountSheet({
       title={name}
       description={`${role}${email ? ` · ${email}` : ""}`}
       trigger={
-        <span className="flex w-full items-center gap-3 rounded-lg border border-outline-variant bg-card p-4 text-left shadow-card">
+        <span className="flex w-full items-center gap-3 rounded-2xl border border-outline-variant bg-card p-4 text-left shadow-card">
           <span className="inline-flex size-12 shrink-0 items-center justify-center rounded-full bg-surface-container-highest text-headline-md text-primary">
             {initials || "N"}
           </span>
@@ -40,9 +41,9 @@ export function AccountSheet({
             <span className="mt-0.5 block truncate text-body-sm text-on-surface-variant">
               {email}
             </span>
-            <span className="mt-1 inline-flex rounded-full bg-surface-container-low px-2 py-0.5 text-label-caps text-secondary">
+            <Badge variant="secondary" className="mt-1">
               {role}
-            </span>
+            </Badge>
           </span>
         </span>
       }

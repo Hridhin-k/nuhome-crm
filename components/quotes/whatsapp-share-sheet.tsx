@@ -11,6 +11,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { formatInrExact } from "@/lib/format/money";
 import { isLocalSiteUrl } from "@/lib/site-url-shared";
 import { cn } from "@/lib/utils";
+import { FormError } from "@/components/app/form-error";
 
 function normalizeWhatsAppPhone(phone: string) {
   const digits = phone.replace(/\D/g, "");
@@ -18,19 +19,26 @@ function normalizeWhatsAppPhone(phone: string) {
   return digits;
 }
 
+type ShareDocument = "quote" | "invoice";
+
 function buildWhatsAppMessage(input: {
+  document: ShareDocument;
   customerName: string;
   quoteNumber: string;
   versionNumber: number;
   total: number;
-  quoteUrl: string;
+  url: string;
 }) {
   const firstName = input.customerName.split(" ")[0] || input.customerName;
+  const intro =
+    input.document === "invoice"
+      ? `Please find your bill for quotation ${input.quoteNumber}, total ${formatInrExact(input.total)}. You can open, print, or save it as a PDF.`
+      : `Please find your approved quotation ${input.quoteNumber} (Version ${input.versionNumber}) for ${formatInrExact(input.total)}. You can open, print, or save it as a PDF.`;
   return `Hi ${firstName},
 
-Please find your approved quotation ${input.quoteNumber} (Version ${input.versionNumber}) for ${formatInrExact(input.total)}.
+${intro}
 
-${input.quoteUrl}
+${input.url}
 
 We look forward to serving you.
 
@@ -40,21 +48,24 @@ Thank you.
 
 export function WhatsAppShareSheet({
   quoteId,
+  document = "quote",
   customerName,
   customerPhone,
   quoteNumber,
   versionNumber,
   total,
   quoteUrl,
-  triggerLabel = "WhatsApp",
+  triggerLabel,
   triggerClassName,
 }: {
   quoteId: string;
+  document?: ShareDocument;
   customerName: string;
   customerPhone?: string | null;
   quoteNumber: string;
   versionNumber: number;
   total: number;
+  /** Link to the quotation, or to the bill when document is "invoice". */
   quoteUrl: string;
   triggerLabel?: string;
   triggerClassName?: string;
@@ -62,18 +73,20 @@ export function WhatsAppShareSheet({
   const [error, setError] = useState<string>();
   const [pending, startTransition] = useTransition();
   const localDevLink = isLocalSiteUrl(quoteUrl);
+  const isInvoice = document === "invoice";
   const message = buildWhatsAppMessage({
+    document,
     customerName,
     quoteNumber,
     versionNumber,
     total,
-    quoteUrl,
+    url: quoteUrl,
   });
 
   function openWhatsApp() {
     setError(undefined);
     startTransition(async () => {
-      const result = await logWhatsAppShareAction(quoteId);
+      const result = await logWhatsAppShareAction(quoteId, document);
       if (result.error) {
         setError(result.error);
         return;
@@ -88,7 +101,7 @@ export function WhatsAppShareSheet({
 
   return (
     <FormSheet
-      title="Send via WhatsApp"
+      title={isInvoice ? "Send bill on WhatsApp" : "Send quotation on WhatsApp"}
       description="Review the message before opening WhatsApp."
       trigger={
         <span
@@ -98,7 +111,7 @@ export function WhatsAppShareSheet({
             triggerClassName,
           )}
         >
-          {triggerLabel}
+          {triggerLabel ?? (isInvoice ? "WhatsApp bill" : "WhatsApp quotation")}
         </span>
       }
     >
@@ -127,13 +140,13 @@ export function WhatsAppShareSheet({
             <p className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">
               Message preview
             </p>
-            <pre className="mt-2 whitespace-pre-wrap rounded-lg border border-surface-variant bg-surface p-4 text-sm leading-relaxed text-on-surface">
+            <pre className="mt-2 whitespace-pre-wrap rounded-xl border border-outline-variant bg-surface-container-low p-3 font-sans text-body-sm text-on-surface">
               {message}
             </pre>
           </div>
 
           {localDevLink ? (
-            <p className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-sm text-on-surface">
+            <p className="rounded-xl border border-warning/30 bg-warning-container px-3 py-2.5 text-body-sm text-on-surface">
               This link uses <strong>localhost</strong> and will not work for
               customers on WhatsApp. Set{" "}
               <code className="text-xs">NEXT_PUBLIC_CUSTOMER_APP_URL</code> to
@@ -150,9 +163,9 @@ export function WhatsAppShareSheet({
           ) : null}
 
           {error ? (
-            <p className="text-sm text-destructive" role="alert">
+            <FormError>
               {error}
-            </p>
+            </FormError>
           ) : null}
         </FormSheetBody>
         <FormSheetFooter>

@@ -7,11 +7,14 @@ import { usePathname, useSearchParams } from "next/navigation";
 export function RouteProgress() {
   const pathname = usePathname();
   const search = useSearchParams();
+  const routeKey = `${pathname}?${search?.toString() ?? ""}`;
   const [pending, setPending] = useState(false);
+  const [settledRoute, setSettledRoute] = useState(routeKey);
 
-  useEffect(() => {
+  if (routeKey !== settledRoute) {
+    setSettledRoute(routeKey);
     setPending(false);
-  }, [pathname, search]);
+  }
 
   useEffect(() => {
     function onClick(event: MouseEvent) {

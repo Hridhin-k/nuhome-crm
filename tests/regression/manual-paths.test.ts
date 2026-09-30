@@ -455,7 +455,7 @@ describe("PATH N — each role's Home", () => {
 describe("PATH O — live refresh + every bell type", () => {
   it("routes every floor notification type to the next desk", () => {
     expect(notificationHref(notice("QUOTE_SUBMITTED", { quote_id: UUID }))).toBe(
-      `/approvals/${UUID}`,
+      `/quotes/${UUID}`,
     );
     expect(notificationHref(notice("QUOTE_APPROVED", { quote_id: UUID }))).toBe(
       `/quotes/${UUID}`,

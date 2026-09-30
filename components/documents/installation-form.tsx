@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { FormError } from "@/components/app/form-error";
 
 export function InstallationForm({
   orderId,
@@ -30,7 +31,7 @@ export function InstallationForm({
   const done = installation?.status === "done";
 
   return (
-    <section className="rounded-lg border border-outline-variant bg-card p-4 shadow-card">
+    <section className="rounded-2xl border border-outline-variant bg-card p-4 shadow-card">
       <h2 className="text-subheading text-on-surface">Installation</h2>
       <p className="mt-1 text-body-sm text-on-surface-variant">
         Book the carpenter after goods are handed over.
@@ -68,9 +69,9 @@ export function InstallationForm({
             />
           </div>
           {state.error ? (
-            <p className="text-sm text-destructive" role="alert">
+            <FormError>
               {state.error}
-            </p>
+            </FormError>
           ) : null}
           <div className="flex flex-col gap-2 sm:flex-row">
             <Button

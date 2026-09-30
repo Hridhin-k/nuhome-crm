@@ -45,7 +45,7 @@ export type OperationsSnapshot = {
 };
 
 function withAccents(cards: QueueCard[]): QueueCard[] {
-  const cycle: Accent[] = ["cobalt", "violet", "forest", "cerulean"];
+  const cycle: Accent[] = ["cerulean", "violet", "forest", "slate"];
   return cards.map((card, index) => ({
     ...card,
     accent: card.accent ?? cycle[index % cycle.length],
@@ -80,7 +80,7 @@ export const getOperationsSnapshot = cache(async (): Promise<OperationsSnapshot>
       label: "Open quotes",
       count: pendingQuotes,
       href: "/quotes?group=quote",
-      accent: "cobalt",
+      accent: "cerulean",
     },
     {
       label: "Awaiting accounts",
@@ -104,7 +104,7 @@ export const getOperationsSnapshot = cache(async (): Promise<OperationsSnapshot>
       label: "In fulfillment",
       count: active,
       href: "/orders?bucket=active",
-      accent: "cobalt",
+      accent: "cerulean",
     },
     {
       label: "On hold",
@@ -147,7 +147,7 @@ export const getOperationsSnapshot = cache(async (): Promise<OperationsSnapshot>
       count: pendingQuotes,
       href: "/quotes?group=quote",
       detail: "Drafts, Accounts review, returns, and approved quotes to send",
-      accent: "cobalt",
+      accent: "cerulean",
       progress: scale(pendingQuotes, workMax),
     },
     {

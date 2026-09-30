@@ -7,7 +7,7 @@ import {
   FormSheetBody,
   FormSheetFooter,
 } from "@/components/app/form-sheet";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LocalMobileInput } from "@/components/ui/local-mobile-input";
@@ -23,6 +23,8 @@ import {
 } from "@/lib/customers/walk-in";
 import { cn } from "@/lib/utils";
 import type { ReactNode } from "react";
+import { FormError } from "@/components/app/form-error";
+import { NativeSelect } from "@/components/ui/native-select";
 
 export type CustomerFormValue = {
   id: string;
@@ -60,7 +62,7 @@ function CheckRow({
   onCheckedChange?: (checked: boolean) => void;
 }) {
   return (
-    <label className="flex min-h-11 items-center gap-3 rounded-lg border border-outline-variant bg-surface px-3 py-2 text-sm">
+    <label className="flex min-h-11 items-center gap-3 rounded-xl border border-outline-variant bg-surface-container-lowest px-3 py-2 text-body-sm">
       <input
         type="checkbox"
         name={name}
@@ -121,9 +123,7 @@ export function CustomerForm({
       trigger={
         trigger ?? (
           <span
-            className={cn(
-              "inline-flex h-11 min-h-11 items-center rounded-lg bg-primary px-3 text-subheading text-on-primary",
-            )}
+            className={cn(buttonVariants(), "w-full")}
           >
             {editing ? "Edit" : "Add walk-in"}
           </span>
@@ -137,7 +137,7 @@ export function CustomerForm({
         {returnTo ? <input type="hidden" name="returnTo" value={returnTo} /> : null}
         <FormSheetBody className="flex flex-col gap-5 pb-4">
           <fieldset className="flex flex-col gap-4">
-            <legend className="text-label-caps text-secondary">Customer</legend>
+            <legend className="text-label-caps text-on-surface-variant">Customer</legend>
             <div>
               <Label htmlFor="name">Name</Label>
               <Input
@@ -211,7 +211,7 @@ export function CustomerForm({
           </fieldset>
 
           <fieldset className="flex flex-col gap-2">
-            <legend className="mb-1 text-label-caps text-secondary">
+            <legend className="mb-1 text-label-caps text-on-surface-variant">
               Category / profession
             </legend>
             <div className="grid gap-2">
@@ -239,13 +239,13 @@ export function CustomerForm({
           </fieldset>
 
           <fieldset className="flex flex-col gap-2">
-            <legend className="mb-1 text-label-caps text-secondary">
+            <legend className="mb-1 text-label-caps text-on-surface-variant">
               Type of property
             </legend>
             {PROPERTY_TYPES.map((item) => (
               <label
                 key={item}
-                className="flex min-h-11 items-center gap-3 rounded-lg border border-outline-variant bg-surface px-3 text-sm"
+                className="flex min-h-11 items-center gap-3 rounded-xl border border-outline-variant bg-surface-container-lowest px-3 text-body-sm"
               >
                 <input
                   type="radio"
@@ -270,13 +270,13 @@ export function CustomerForm({
           </fieldset>
 
           <fieldset className="flex flex-col gap-2">
-            <legend className="mb-1 text-label-caps text-secondary">
+            <legend className="mb-1 text-label-caps text-on-surface-variant">
               Project status
             </legend>
             {PROJECT_STATUSES.map((item) => (
               <label
                 key={item}
-                className="flex min-h-11 items-center gap-3 rounded-lg border border-outline-variant bg-surface px-3 text-sm"
+                className="flex min-h-11 items-center gap-3 rounded-xl border border-outline-variant bg-surface-container-lowest px-3 text-body-sm"
               >
                 <input
                   type="radio"
@@ -291,7 +291,7 @@ export function CustomerForm({
           </fieldset>
 
           <fieldset className="flex flex-col gap-2">
-            <legend className="mb-1 text-label-caps text-secondary">
+            <legend className="mb-1 text-label-caps text-on-surface-variant">
               Interested in
             </legend>
             <div className="grid gap-2">
@@ -323,13 +323,13 @@ export function CustomerForm({
           </fieldset>
 
           <fieldset className="flex flex-col gap-2">
-            <legend className="mb-1 text-label-caps text-secondary">
+            <legend className="mb-1 text-label-caps text-on-surface-variant">
               How did you hear about us?
             </legend>
             {HEAR_SOURCES.map((item) => (
               <label
                 key={item}
-                className="flex min-h-11 items-center gap-3 rounded-lg border border-outline-variant bg-surface px-3 text-sm"
+                className="flex min-h-11 items-center gap-3 rounded-xl border border-outline-variant bg-surface-container-lowest px-3 text-body-sm"
               >
                 <input
                   type="radio"
@@ -354,7 +354,7 @@ export function CustomerForm({
           </fieldset>
 
           <fieldset className="flex flex-col gap-4">
-            <legend className="text-label-caps text-secondary">Follow-up</legend>
+            <legend className="text-label-caps text-on-surface-variant">Follow-up</legend>
             <div>
               <Label htmlFor="follow_up_on">Next follow-up date</Label>
               <Input
@@ -367,11 +367,11 @@ export function CustomerForm({
             </div>
             <div>
               <Label htmlFor="follow_up_action">Action planned</Label>
-              <select
+              <NativeSelect
                 id="follow_up_action"
                 name="follow_up_action"
                 defaultValue={customer?.follow_up_action ?? ""}
-                className="mt-2 h-11 min-h-11 w-full rounded-lg border border-outline-variant bg-surface px-3"
+                wrapperClassName="mt-2 w-full"
               >
                 <option value="">Select</option>
                 {FOLLOW_UP_ACTIONS.map((item) => (
@@ -379,7 +379,7 @@ export function CustomerForm({
                     {item}
                   </option>
                 ))}
-              </select>
+              </NativeSelect>
             </div>
             <div>
               <Label htmlFor="notes">Remarks / notes</Label>
@@ -393,13 +393,13 @@ export function CustomerForm({
             </div>
           </fieldset>
           {state.error ? (
-            <p className="text-sm text-destructive" role="alert">
+            <FormError>
               {state.error}
-            </p>
+            </FormError>
           ) : null}
         </FormSheetBody>
         <FormSheetFooter>
-          <Button type="submit" disabled={pending} size="lg" className="w-full min-h-12">
+          <Button type="submit" disabled={pending} size="lg" className="w-full">
             {pending ? "Saving…" : "Save"}
           </Button>
         </FormSheetFooter>

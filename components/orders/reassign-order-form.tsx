@@ -10,8 +10,11 @@ import {
   FormSheetBody,
   FormSheetFooter,
 } from "@/components/app/form-sheet";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { Label } from "@/components/ui/label";
+import { FormError } from "@/components/app/form-error";
+import { NativeSelect } from "@/components/ui/native-select";
 
 export function ReassignOrderForm({
   orderId,
@@ -33,7 +36,7 @@ export function ReassignOrderForm({
       description="Moves this order and its quote to covering sales."
       triggerClassName="w-full"
       trigger={
-        <span className="inline-flex h-11 min-h-11 w-full items-center justify-center rounded-lg border border-outline-variant px-6 text-[15px] font-medium">
+        <span className={cn(buttonVariants({ variant: "outline", size: "lg" }), "w-full")}>
           Reassign
         </span>
       }
@@ -42,20 +45,19 @@ export function ReassignOrderForm({
         <input type="hidden" name="order_id" value={orderId} />
         <FormSheetBody className="flex flex-col gap-3">
           <Label htmlFor="to_user_id">Covering sales</Label>
-          <select
+          <NativeSelect
             id="to_user_id"
             name="to_user_id"
             required
-            className="h-11 min-h-11 rounded-lg border border-outline-variant bg-surface px-3"
           >
             {people.map((person) => (
               <option key={person.id} value={person.id}>
                 {person.full_name}
               </option>
             ))}
-          </select>
+          </NativeSelect>
           {state.error ? (
-            <p className="text-sm text-destructive">{state.error}</p>
+            <FormError>{state.error}</FormError>
           ) : null}
         </FormSheetBody>
         <FormSheetFooter>

@@ -27,10 +27,10 @@ export function OrderTimeline({
   const max = TIMELINE_STEPS.length - 1;
 
   return (
-    <div className="rounded-xl border border-surface-variant bg-surface-container-lowest p-5 shadow-card">
+    <div className="rounded-2xl border border-outline-variant bg-card p-4 shadow-card">
       <div className="mb-4 flex items-baseline justify-between gap-3">
-        <p className="text-label text-on-surface-variant">Order Timeline</p>
-        <p className="text-[13px] font-semibold text-primary">
+        <p className="text-subheading text-on-surface">Order timeline</p>
+        <p className="text-data-tabular text-on-surface-variant">
           {Math.max(current, 0) + 1} / {TIMELINE_STEPS.length}
         </p>
       </div>
@@ -68,27 +68,27 @@ export function OrderTimeline({
               <div className="min-w-0 flex-1 pb-5">
                 <p
                   className={cn(
-                    "text-[15px]",
+                    "text-body-md",
                     state === "current" && "font-semibold text-primary",
                     state === "blocked" && "font-semibold text-error",
                     state === "done" && "text-on-surface-variant",
-                    state === "upcoming" && "text-outline",
+                    state === "upcoming" && "text-on-surface-variant",
                   )}
                 >
                   {step.label}
                 </p>
                 {state === "current" ? (
-                  <p className="mt-0.5 text-xs font-semibold uppercase tracking-wide text-primary">
+                  <p className="mt-0.5 text-label-caps uppercase text-primary">
                     In progress
                   </p>
                 ) : null}
                 {state === "blocked" ? (
-                  <p className="mt-0.5 text-xs font-semibold uppercase tracking-wide text-error">
+                  <p className="mt-0.5 text-label-caps uppercase text-error">
                     Blocked
                   </p>
                 ) : null}
                 {state === "upcoming" ? (
-                  <p className="mt-0.5 text-xs text-outline">Upcoming</p>
+                  <p className="mt-0.5 text-body-sm text-on-surface-variant">Upcoming</p>
                 ) : null}
               </div>
             </li>

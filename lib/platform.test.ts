@@ -154,9 +154,9 @@ describe("nav for every role", () => {
     expect(roleLabel("store")).toBe("Delivery");
     expect(navForRoles(["admin"], "admin").map((item) => item.href)).toEqual([
       "/home",
-      "/users",
       "/orders",
       "/reports",
+      "/users",
       "/more",
     ]);
     expect(overflowNavForRoles(["admin", "sales"], "admin").map((item) => item.href)).toEqual([

@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/app/page-header";
 import { listCategories, listMaterials } from "@/lib/api/catalog";
 import { listOfficeStock } from "@/lib/api/stock";
 import type { MaterialRow } from "@/lib/api/catalog";
+import { normalizeMaterialSpecs } from "@/lib/catalog/material-specs";
 import { listCustomers } from "@/lib/api/customers";
 import { getQuote } from "@/lib/api/quotes";
 import { requirePermission } from "@/lib/auth/guards";
@@ -31,6 +32,7 @@ function mapMaterials(
     hsn_code: m.hsn_code,
     gst_rate: m.gst_rate,
     description: m.description,
+    specs: normalizeMaterialSpecs(m.specs),
     office_available: available.get(m.id) ?? 0,
   }));
 }

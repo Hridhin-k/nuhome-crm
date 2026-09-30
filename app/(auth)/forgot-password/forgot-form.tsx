@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AppLink } from "@/components/app/app-link";
+import { FormError } from "@/components/app/form-error";
 
 export function ForgotPasswordForm() {
   const [state, action, pending] = useActionState<LoginState, FormData>(
@@ -19,7 +20,7 @@ export function ForgotPasswordForm() {
   return (
     <form action={action} className="flex flex-col gap-3">
       <div className="flex flex-col gap-2">
-        <Label htmlFor="email" className="text-label-caps text-on-surface-variant">
+        <Label htmlFor="email">
           Email
         </Label>
         <Input
@@ -32,9 +33,9 @@ export function ForgotPasswordForm() {
         />
       </div>
       {state.error ? (
-        <p className="text-sm text-destructive" role="alert">
+        <FormError>
           {state.error}
-        </p>
+        </FormError>
       ) : null}
       {state.notice ? (
         <p className="text-sm text-on-surface" role="status">

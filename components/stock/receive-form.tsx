@@ -4,6 +4,7 @@ import { useActionState, useState } from "react";
 import { receiveStockAction, type StockActionState } from "@/app/actions/stock";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { FormError } from "@/components/app/form-error";
 
 type Line = {
   id: string;
@@ -40,7 +41,7 @@ export function ReceiveForm({
     <form action={action} className="flex flex-col gap-3">
       <input type="hidden" name="payload" value={JSON.stringify(payload)} />
       {state.error ? (
-        <p className="text-sm text-destructive">{state.error}</p>
+        <FormError>{state.error}</FormError>
       ) : null}
       <ul className="flex flex-col gap-3">
         {lines.map((line) => {

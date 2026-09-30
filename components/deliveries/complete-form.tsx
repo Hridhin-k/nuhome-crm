@@ -10,9 +10,11 @@ import {
   FormSheetBody,
   FormSheetFooter,
 } from "@/components/app/form-sheet";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { FormError } from "@/components/app/form-error";
 
 export function CompleteDeliveryForm({ orderId }: { orderId: string }) {
   const [state, action, pending] = useActionState<ActionState, FormData>(
@@ -25,7 +27,7 @@ export function CompleteDeliveryForm({ orderId }: { orderId: string }) {
       title="Complete delivery"
       description="Confirm handover with the customer."
       trigger={
-        <span className="inline-flex h-11 min-h-11 w-full items-center justify-center rounded-lg bg-primary px-4 text-subheading text-on-primary">
+        <span className={cn(buttonVariants({ size: "lg" }), "w-full")}>
           Complete delivery
         </span>
       }
@@ -36,9 +38,9 @@ export function CompleteDeliveryForm({ orderId }: { orderId: string }) {
           <Label htmlFor="notes">Delivery notes (optional)</Label>
           <Textarea id="notes" name="notes" rows={3} />
           {state.error ? (
-            <p className="text-sm text-destructive" role="alert">
+            <FormError>
               {state.error}
-            </p>
+            </FormError>
           ) : null}
         </FormSheetBody>
         <FormSheetFooter>

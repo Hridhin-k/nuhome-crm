@@ -55,7 +55,7 @@ function mapRow(row: Record<string, unknown>): AppNotification {
 export function NotificationBellFallback() {
   return (
     <span
-      className="inline-flex size-10 items-center justify-center rounded-md text-white/75"
+      className="inline-flex size-10 items-center justify-center rounded-lg text-white/75"
       aria-hidden
     >
       <Bell className="size-5" />
@@ -74,16 +74,18 @@ export function NotificationBell({
 }) {
   const [open, setOpen] = useState(false);
   const [items, setItems] = useState(initial);
+  const [syncedInitial, setSyncedInitial] = useState(initial);
   const [pending, startTransition] = useTransition();
+
+  if (initial !== syncedInitial) {
+    setSyncedInitial(initial);
+    setItems(initial);
+  }
 
   const unreadCount = useMemo(
     () => items.filter((item) => !item.read_at).length,
     [items],
   );
-
-  useEffect(() => {
-    setItems(initial);
-  }, [initial]);
 
   useEffect(() => {
     const supabase = createBrowserSupabaseClient();
@@ -165,7 +167,7 @@ export function NotificationBell({
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger
-        className="relative inline-flex size-10 items-center justify-center rounded-md text-white/75 transition-colors hover:bg-white/10 hover:text-white"
+        className="relative inline-flex size-10 items-center justify-center rounded-lg text-white/75 transition-colors outline-none hover:bg-white/10 hover:text-white focus-visible:ring-2 focus-visible:ring-white/40"
         aria-label={
           unreadCount > 0
             ? `${unreadCount} unread notifications`
@@ -174,7 +176,7 @@ export function NotificationBell({
       >
         <Bell className="size-5" aria-hidden />
         {unreadCount > 0 ? (
-          <span className="absolute top-1.5 right-1.5 flex min-w-[18px] items-center justify-center rounded-full bg-error px-1 text-[10px] font-bold text-on-error">
+          <span className="absolute top-0.5 right-0 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-error px-1 text-[10px] leading-none font-bold text-on-error ring-2 ring-[#09090b]">
             {unreadCount > 9 ? "9+" : unreadCount}
           </span>
         ) : null}

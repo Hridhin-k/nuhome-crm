@@ -1,3 +1,4 @@
+import { formatSpecsInline } from "@/lib/catalog/material-specs";
 import { DEFAULT_GST_RATE, lineGstAmount } from "@/lib/gst";
 
 export type SupplySource = "office" | "vendor";
@@ -50,6 +51,7 @@ export function lineFromMaterial(material: {
   name: string;
   sku?: string | null;
   description?: string | null;
+  specs?: unknown;
   default_sell_price: number | string;
   default_cost: number | string;
   hsn_code?: string | null;
@@ -61,7 +63,8 @@ export function lineFromMaterial(material: {
     key: crypto.randomUUID(),
     material_id: material.id,
     description: material.name,
-    specification: material.description?.trim() || undefined,
+    specification:
+      formatSpecsInline(material.specs) || material.description?.trim() || undefined,
     item_code: material.sku ?? undefined,
     quantity: 1,
     unit_price: Number(material.default_sell_price),

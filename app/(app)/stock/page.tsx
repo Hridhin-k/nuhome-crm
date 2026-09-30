@@ -8,6 +8,7 @@ import { listOfficeStock, listStockPurchases } from "@/lib/api/stock";
 import { rel } from "@/lib/api/rel";
 import { requirePermission } from "@/lib/auth/guards";
 import { rolesHavePermission } from "@/lib/auth/permissions";
+import { FormError } from "@/components/app/form-error";
 
 export default async function StockPage({
   searchParams,
@@ -41,9 +42,9 @@ export default async function StockPage({
       />
       {notice === "adjusted" ? <Notice>Stock count updated.</Notice> : null}
       {notice === "sent" ? <Notice>Purchase sent. Store can receive it.</Notice> : null}
-      {error ? <p className="text-sm text-destructive">{error}</p> : null}
+      {error ? <FormError>{error}</FormError> : null}
 
-      <section className="rounded-lg border border-outline-variant bg-card p-4">
+      <section className="rounded-2xl border border-outline-variant bg-card p-4 shadow-card">
         <h2 className="text-subheading text-on-surface">On hand</h2>
         {onHand.length === 0 ? (
           <p className="mt-3 text-sm text-on-surface-variant">
@@ -67,7 +68,7 @@ export default async function StockPage({
       </section>
 
       {purchases.length > 0 ? (
-        <section className="rounded-lg border border-outline-variant bg-card p-4">
+        <section className="rounded-2xl border border-outline-variant bg-card p-4 shadow-card">
           <h2 className="text-subheading text-on-surface">Purchases</h2>
           <ul className="mt-3 flex flex-col gap-2">
             {purchases.map((purchase) => {
@@ -76,7 +77,7 @@ export default async function StockPage({
                 <li key={purchase.id}>
                   <AppLink
                     href={`/stock/${purchase.id}`}
-                    className="flex items-center justify-between gap-3 rounded-lg border border-outline-variant px-3 py-3 text-sm hover:bg-muted"
+                    className="flex items-center justify-between gap-3 rounded-xl border border-outline-variant px-3 py-3 text-body-sm transition-colors hover:bg-surface-container-low"
                   >
                     <span>
                       <span className="block font-medium">{purchase.purchase_number}</span>
@@ -92,7 +93,7 @@ export default async function StockPage({
       ) : null}
 
       {canAdjust ? (
-        <section className="rounded-lg border border-outline-variant bg-card p-4">
+        <section className="rounded-2xl border border-outline-variant bg-card p-4 shadow-card">
           <h2 className="text-subheading text-on-surface">Count correction</h2>
           <p className="mt-1 mb-4 text-sm text-on-surface-variant">
             Use a positive number to add pieces and a negative number to remove them.

@@ -1,13 +1,21 @@
+import { AlertTriangle, Check } from "lucide-react";
 import { panelClass } from "@/components/app/page-frame";
 import { jobStageLabel, jobTracks, type JobTrackState } from "@/lib/workflow/job-stage";
 import type { WorkflowStatus } from "@/lib/workflow/types";
 import { cn } from "@/lib/utils";
 
 const STATE_CLASS: Record<JobTrackState, string> = {
-  idle: "bg-surface-container-high text-on-surface-variant",
-  current: "bg-[#1e1b4b] text-white",
-  blocked: "bg-[#8b1515] text-white",
-  done: "bg-[#0f3d24] text-white",
+  idle: "bg-surface-container text-on-surface-variant",
+  current: "bg-primary text-on-primary",
+  blocked: "bg-error text-on-error",
+  done: "bg-success-container text-success",
+};
+
+const STATE_LABEL: Record<JobTrackState, string> = {
+  idle: "not started",
+  current: "in progress",
+  blocked: "blocked",
+  done: "done",
 };
 
 export function JobTracks({
@@ -43,19 +51,30 @@ export function JobTracks({
       </div>
       <ol className="mt-3 grid grid-cols-4 gap-1.5">
         {tracks.map((track) => (
-          <li key={track.id} className="min-w-0">
+          <li
+            key={track.id}
+            className="min-w-0"
+            aria-current={track.state === "current" ? "step" : undefined}
+          >
             <p
               className={cn(
-                "truncate rounded-lg px-1.5 py-2 text-center text-[11px] font-bold uppercase tracking-wide",
+                "flex h-9 items-center justify-center gap-1 rounded-lg px-1.5 text-label-caps uppercase",
                 STATE_CLASS[track.state],
               )}
             >
-              {track.label}
+              {track.state === "done" ? (
+                <Check className="size-3.5 shrink-0" aria-hidden />
+              ) : null}
+              {track.state === "blocked" ? (
+                <AlertTriangle className="size-3.5 shrink-0" aria-hidden />
+              ) : null}
+              <span className="truncate">{track.label}</span>
+              <span className="sr-only">, {STATE_LABEL[track.state]}</span>
             </p>
           </li>
         ))}
       </ol>
-      <ul className="mt-3 space-y-1.5 text-sm text-on-surface-variant">
+      <ul className="mt-3 space-y-1.5 text-body-sm text-on-surface-variant">
         {tracks
           .filter((track) => track.state === "current" || track.state === "blocked")
           .map((track) => (

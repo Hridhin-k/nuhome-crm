@@ -12,7 +12,7 @@ export function StatusBadge({ status }: { status: WorkflowStatus }) {
     <Badge
       variant="secondary"
       className={cn(
-        "max-w-full gap-1.5 border-0 px-1.5 py-0.5 text-[10px] font-bold tracking-wide uppercase md:px-2 md:py-1 md:text-[11px]",
+        "gap-1.5",
         STATUS_BADGE_CLASS[status],
       )}
     >

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
 import { Label } from "@/components/ui/label";
+import { FormError } from "@/components/app/form-error";
 
 export function LoginForm({ next }: { next?: string }) {
   const [state, formAction, pending] = useActionState<LoginState, FormData>(
@@ -18,7 +19,7 @@ export function LoginForm({ next }: { next?: string }) {
       {next ? <input type="hidden" name="next" value={next} /> : null}
 
       <div className="flex flex-col gap-2">
-        <Label htmlFor="email" className="text-label-caps text-on-surface-variant">
+        <Label htmlFor="email">
           Email
         </Label>
         <Input
@@ -32,7 +33,7 @@ export function LoginForm({ next }: { next?: string }) {
       </div>
 
       <div className="flex flex-col gap-2">
-        <Label htmlFor="password" className="text-label-caps text-on-surface-variant">
+        <Label htmlFor="password">
           Password
         </Label>
         <PasswordInput
@@ -46,9 +47,9 @@ export function LoginForm({ next }: { next?: string }) {
       </div>
 
       {state.error ? (
-        <p className="text-sm text-destructive" role="alert">
+        <FormError>
           {state.error}
-        </p>
+        </FormError>
       ) : null}
 
       <Button type="submit" disabled={pending} className="w-full" size="lg">

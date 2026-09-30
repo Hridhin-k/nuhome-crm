@@ -22,7 +22,7 @@ import { listQuoteActivity } from "@/lib/api/audit";
 import { listPaymentsForOrder } from "@/lib/api/orders";
 import { getQuote } from "@/lib/api/quotes";
 import { rel } from "@/lib/api/rel";
-import { publicQuotePath, publicQuoteUrl } from "@/lib/quotes/public-url";
+import { publicInvoiceUrl, publicQuotePath, publicQuoteUrl } from "@/lib/quotes/public-url";
 import { getCustomerSiteUrl } from "@/lib/site-url";
 import { requireUser } from "@/lib/auth/guards";
 import { rolesHavePermission } from "@/lib/auth/permissions";
@@ -33,6 +33,7 @@ import { canCancelJob, isCancelledStatus } from "@/lib/workflow/cancel";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import type { WorkflowStatus } from "@/lib/workflow/types";
+import { FormError } from "@/components/app/form-error";
 
 export default async function QuoteDetailPage({
   params,
@@ -88,12 +89,16 @@ export default async function QuoteDetailPage({
   const salesSend = status === "quote_approved" && !orderClosed && canSend;
   const canWhatsApp =
     canShareWhatsApp &&
-    !orderClosed &&
+    !cancelled &&
     (status === "quote_approved" || status === "quote_sent_to_customer") &&
     current;
   const publicUrl = quote.public_access_token
     ? publicQuoteUrl(siteUrl, quote.public_access_token)
     : null;
+  const publicBillUrl =
+    order && quote.public_access_token
+      ? publicInvoiceUrl(siteUrl, quote.public_access_token)
+      : null;
   const nextForView = { ...next, href: undefined, cta: undefined };
   const costTotal = currentItems.reduce(
     (sum, item) => sum + Number(item.quantity) * Number(item.unit_cost),
@@ -132,21 +137,21 @@ export default async function QuoteDetailPage({
         <div className="min-w-0">
           {accountsReview ? (
             <>
-              <h1 className="truncate text-headline-lg text-on-surface">
+              <h1 className="truncate text-headline-lg tracking-tight text-on-surface">
                 {quote.quote_number}
               </h1>
-              <p className="mt-1 truncate text-body-md text-secondary">
+              <p className="mt-1 truncate text-body-md text-on-surface-variant">
                 {customer?.name}
                 {current ? ` v${current.version_number}` : ""}
               </p>
             </>
           ) : (
             <>
-              <p className="text-body-sm text-on-surface-variant">Prepared for</p>
-              <h1 className="mt-0.5 truncate text-headline-md text-on-surface">
+              <p className="text-label-caps text-on-surface-variant">Prepared for</p>
+              <h1 className="mt-1 truncate text-headline-lg tracking-tight text-on-surface">
                 {customer?.name}
               </h1>
-              <p className="mt-0.5 truncate text-body-sm text-on-surface-variant">
+              <p className="mt-1 truncate text-body-md text-on-surface-variant">
                 {quote.quote_number}
                 {order?.order_number ? ` · ${order.order_number}` : ""}
                 {current ? ` · v${current.version_number}` : ""}
@@ -178,9 +183,9 @@ export default async function QuoteDetailPage({
         <Notice>Today&apos;s office handover was voided and the quantity is back on the shelf.</Notice>
       ) : null}
       {error ? (
-        <p className="rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+        <FormError>
           {error}
-        </p>
+        </FormError>
       ) : null}
 
       <NextActionCard action={nextForView} />
@@ -199,46 +204,46 @@ export default async function QuoteDetailPage({
       ) : null}
 
       {current?.rejection_reason ? (
-        <div className="rounded-lg border border-l-[3px] border-border border-l-error bg-card px-4 py-3">
-          <p className="text-[12px] font-medium text-error">
+        <div className="rounded-2xl border border-l-4 border-outline-variant border-l-error bg-card px-4 py-3 shadow-card">
+          <p className="text-label-caps uppercase text-error">
             Returned by Accounts
           </p>
-          <p className="mt-1 text-sm">{current.rejection_reason}</p>
+          <p className="mt-1 text-body-sm text-on-surface">{current.rejection_reason}</p>
         </div>
       ) : null}
 
       {accountsReview && canSeeMargin && current ? (
-        <section className="overflow-hidden rounded-lg border border-outline-variant bg-card">
+        <section className="overflow-hidden rounded-2xl border border-outline-variant bg-card shadow-card">
           <div className="border-b border-outline-variant bg-surface-bright px-4 py-3">
-            <h2 className="text-subheading text-on-surface">Financial Summary</h2>
+            <h2 className="text-subheading text-on-surface">Financial summary</h2>
           </div>
           <div className="grid grid-cols-2 gap-px bg-outline-variant">
             <div className="bg-card p-4">
               <p className="text-label-caps text-on-surface-variant">
-                Total Estimate
+                Total estimate
               </p>
-              <p className="mt-1 text-lg text-data-tabular">
+              <p className="mt-1 text-headline-sm tabular-nums text-on-surface">
                 {formatInr(Number(current.total))}
               </p>
             </div>
             <div className="bg-card p-4">
-              <p className="text-label-caps text-on-surface-variant">Total Cost</p>
-              <p className="mt-1 text-lg text-data-tabular">
+              <p className="text-label-caps text-on-surface-variant">Total cost</p>
+              <p className="mt-1 text-headline-sm tabular-nums text-on-surface">
                 {formatInr(costTotal)}
               </p>
             </div>
             <div className="bg-card p-4">
               <p className="text-label-caps text-on-surface-variant">Margin</p>
-              <p className="mt-1 text-lg text-data-tabular">
+              <p className="mt-1 text-headline-sm tabular-nums text-on-surface">
                 {formatInr(Number(current.margin_amount ?? 0))}
-                <span className="ml-2 text-label-caps text-secondary">
+                <span className="ml-2 text-label-caps text-on-surface-variant">
                   ({Math.round(marginPct)}%)
                 </span>
               </p>
             </div>
             <div className="bg-card p-4">
               <p className="text-label-caps text-on-surface-variant">Discount</p>
-              <p className="mt-1 text-lg text-data-tabular">
+              <p className="mt-1 text-headline-sm tabular-nums text-on-surface">
                 {formatInr(Number(current.discount))}
               </p>
             </div>
@@ -247,7 +252,7 @@ export default async function QuoteDetailPage({
       ) : null}
 
       {accountsReview ? (
-        <section className="overflow-hidden rounded-lg border border-outline-variant bg-card">
+        <section className="overflow-hidden rounded-2xl border border-outline-variant bg-card shadow-card">
           <div className="overflow-x-auto">
             <table className="w-full min-w-[520px] border-collapse text-left">
               <thead className="border-b border-outline-variant bg-surface-container-low">
@@ -257,7 +262,7 @@ export default async function QuoteDetailPage({
                       <th
                         key={col}
                         className={cn(
-                          "p-3 text-label-caps uppercase text-secondary",
+                          "p-3 text-label-caps text-on-surface-variant",
                           col !== "Item" && "text-right",
                         )}
                       >
@@ -282,7 +287,7 @@ export default async function QuoteDetailPage({
                         <span className="flex min-w-0 items-start gap-2">
                           <span className="min-w-0">
                             <span className="block truncate">{item.description}</span>
-                            <span className="text-[11px] text-on-surface-variant">
+                            <span className="text-xs text-on-surface-variant">
                               {item.supply_source === "office"
                                 ? Number(item.quantity_handed_over) >= Number(item.quantity)
                                   ? "Supplied today"
@@ -293,13 +298,13 @@ export default async function QuoteDetailPage({
                           <ItemDescriptionHint description={materialDescription} />
                         </span>
                       </td>
-                      <td className="p-3 text-right font-mono text-xs text-secondary">
+                      <td className="p-3 text-right font-mono text-xs text-on-surface-variant">
                         {item.item_code ?? "—"}
                       </td>
-                      <td className="max-w-[140px] truncate p-3 text-data-tabular text-secondary">
+                      <td className="max-w-[140px] truncate p-3 text-data-tabular text-on-surface-variant">
                         {item.specification ?? "—"}
                       </td>
-                      <td className="p-3 text-right text-data-tabular text-secondary">
+                      <td className="p-3 text-right text-data-tabular text-on-surface-variant">
                         {item.hsn_code ?? "—"}
                       </td>
                       <td className="p-3 text-right text-data-tabular">
@@ -308,7 +313,7 @@ export default async function QuoteDetailPage({
                       <td className="p-3 text-right text-data-tabular">
                         {formatInrExact(Number(item.unit_price))}
                       </td>
-                      <td className="p-3 text-right text-data-tabular text-secondary">
+                      <td className="p-3 text-right text-data-tabular text-on-surface-variant">
                         {canSeeMargin
                           ? formatInrExact(Number(item.unit_cost))
                           : "—"}
@@ -331,7 +336,7 @@ export default async function QuoteDetailPage({
       ) : (
         <section className={panelClass}>
           <div className="flex items-center justify-between border-b border-surface-variant pb-3">
-            <h2 className="text-subheading text-on-surface">Order Summary</h2>
+            <h2 className="text-subheading text-on-surface">Order summary</h2>
             {current ? (
               <span className="text-body-sm text-on-surface-variant">
                 v{current.version_number}
@@ -386,7 +391,7 @@ export default async function QuoteDetailPage({
           </ul>
           {current ? (
             <div className="mt-4 flex items-center justify-between border-t border-surface-variant pt-3">
-              <span className="text-subheading">Total Estimate</span>
+              <span className="text-subheading">Total estimate</span>
               <span className="text-headline-md font-bold tabular-nums text-primary">
                 {formatInrExact(Number(current.total))}
               </span>
@@ -396,8 +401,8 @@ export default async function QuoteDetailPage({
       )}
 
       {accountsReview && current?.notes ? (
-        <section className="rounded-lg border border-outline-variant bg-surface-container-low p-4">
-          <h3 className="text-label-caps uppercase text-secondary">
+        <section className="rounded-2xl border border-outline-variant bg-surface-container-low p-4">
+          <h3 className="text-label-caps text-on-surface-variant">
             Notes from Sales
           </h3>
           <p className="mt-2 text-body-md text-on-surface">{current.notes}</p>
@@ -413,6 +418,19 @@ export default async function QuoteDetailPage({
         >
           Tax invoice
         </AppLink>
+      ) : null}
+
+      {canWhatsApp && current && publicBillUrl ? (
+        <WhatsAppShareSheet
+          quoteId={quote.id}
+          document="invoice"
+          customerName={customer?.name ?? "Customer"}
+          customerPhone={customer?.phone}
+          quoteNumber={quote.quote_number}
+          versionNumber={current.version_number}
+          total={Number(current.total)}
+          quoteUrl={publicBillUrl}
+        />
       ) : null}
 
       {salesSend ? (
@@ -486,7 +504,6 @@ export default async function QuoteDetailPage({
             />
           ) : null}
           {status === "quote_sent_to_customer" &&
-          !orderClosed &&
           canWhatsApp &&
           current &&
           publicUrl ? (
@@ -557,7 +574,7 @@ export default async function QuoteDetailPage({
 
       {!accountsReview && versions.length > 1 ? (
         <section>
-          <h2 className="mb-3 text-sm font-semibold">History</h2>
+          <h2 className="mb-3 text-subheading text-on-surface">History</h2>
           <ol className="flex flex-col gap-2">
             {versions.map((version) => {
               const isCurrent = version.id === quote.current_version_id;
@@ -568,7 +585,7 @@ export default async function QuoteDetailPage({
                 <li
                   key={version.id}
                   className={cn(
-                    "rounded-lg border px-4 py-3",
+                    "rounded-xl border px-4 py-3",
                     isCurrent ? "border-primary" : "border-border",
                   )}
                 >

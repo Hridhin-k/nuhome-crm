@@ -1,6 +1,8 @@
 "use client";
 
 import { useActionState, useEffect, useMemo, useState } from "react";
+import { X } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import {
   saveQuoteAction,
   type ActionState,
@@ -12,7 +14,7 @@ import {
   MaterialPicker,
   type PickerMaterial,
 } from "@/components/quotes/material-picker";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -25,6 +27,8 @@ import {
   setLineSupply,
 } from "@/lib/quotes/supply";
 import { cn } from "@/lib/utils";
+import { FormError } from "@/components/app/form-error";
+import { chipVariants } from "@/components/ui/chip";
 
 export type { QuoteLine };
 
@@ -199,7 +203,7 @@ export function QuoteBuilder({
   const stepNav = (
     <nav
       aria-label="Quote steps"
-      className="relative flex gap-1 overflow-hidden rounded-lg bg-surface-container-high p-1"
+      className="relative flex gap-1 overflow-hidden rounded-xl bg-surface-container-high p-1"
     >
       {steps
         .filter((s) => showCustomerStep || s.n !== 1)
@@ -213,10 +217,10 @@ export function QuoteBuilder({
               setActiveStep(s.n);
             }}
             className={cn(
-              "relative z-10 flex min-w-0 flex-1 items-center justify-center rounded-md px-2 py-2 text-subheading transition-colors",
+              "relative z-10 flex min-h-9 min-w-0 flex-1 items-center justify-center rounded-lg px-2 py-1.5 text-subheading transition-colors outline-none focus-visible:ring-2 focus-visible:ring-primary/30",
               activeStep === s.n
-                ? "bg-card text-primary shadow-[0_2px_8px_rgba(0,0,0,0.08)]"
-                : "text-outline",
+                ? "bg-card text-primary shadow-card"
+                : "text-on-surface-variant hover:text-on-surface",
             )}
           >
             {s.label}
@@ -228,15 +232,15 @@ export function QuoteBuilder({
   return (
     <div className="flex min-w-0 flex-col gap-4">
       {rejectionReason ? (
-        <div className="rounded-lg border border-l-[3px] border-border border-l-error bg-card px-4 py-3">
-          <p className="text-[12px] font-medium text-error">Returned by Accounts</p>
+        <div className="rounded-2xl border border-l-4 border-outline-variant border-l-error bg-card px-4 py-3 shadow-card">
+          <p className="text-label-caps uppercase text-error">Returned by Accounts</p>
           <p className="mt-1 text-sm text-on-surface">{rejectionReason}</p>
         </div>
       ) : null}
 
       {quoteStatus === "quote_approved" ? (
-        <div className="rounded-lg border border-l-[3px] border-border border-l-warning bg-card px-4 py-3">
-          <p className="text-[12px] font-medium text-warning">Approved quote</p>
+        <div className="rounded-2xl border border-l-4 border-outline-variant border-l-warning bg-card px-4 py-3 shadow-card">
+          <p className="text-label-caps uppercase text-warning">Approved quote</p>
           <p className="mt-1 text-sm text-on-surface">
             Editing creates a new version and sends it back to Accounts.
           </p>
@@ -246,8 +250,8 @@ export function QuoteBuilder({
       {showCustomerStep ? stepNav : null}
 
       {activeStep === 1 && showCustomerStep ? (
-        <section className="rounded-lg border border-outline-variant bg-card p-4 shadow-card">
-          <h2 className="text-headline-md text-on-surface">Customer Details</h2>
+        <section className="rounded-2xl border border-outline-variant bg-card p-4 shadow-card">
+          <h2 className="text-subheading text-on-surface">Customer details</h2>
           <p className="mt-1 text-body-sm text-on-surface-variant">
             Select an existing customer or create a new one.
           </p>
@@ -279,8 +283,8 @@ export function QuoteBuilder({
 
         {activeStep === 2 ? (
           <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
-            <section className="rounded-lg border border-outline-variant bg-card p-4 shadow-card">
-              <h2 className="text-subheading uppercase tracking-wider text-primary">
+            <section className="rounded-2xl border border-outline-variant bg-card p-4 shadow-card">
+              <h2 className="text-subheading text-on-surface">
                 Catalogue
               </h2>
               <div className="mt-4">
@@ -302,9 +306,9 @@ export function QuoteBuilder({
               </Button>
             </section>
 
-            <section className="min-w-0 rounded-lg border border-outline-variant bg-card p-4 shadow-card">
-              <h2 className="text-subheading uppercase tracking-wider text-primary">
-                Line Items ({lines.length})
+            <section className="min-w-0 rounded-2xl border border-outline-variant bg-card p-4 shadow-card">
+              <h2 className="text-subheading text-on-surface">
+                Line items ({lines.length})
               </h2>
 
               {lines.length === 0 ? (
@@ -333,7 +337,7 @@ export function QuoteBuilder({
                             className="mt-1.5"
                           />
                         </div>
-                        <div className="flex shrink-0 items-center gap-2">
+                        <div className="flex h-10 shrink-0 items-center gap-2">
                           <p className="text-data-tabular font-semibold">
                             {formatInrExact(
                               lineTotalWithGst(
@@ -352,26 +356,31 @@ export function QuoteBuilder({
                             onClick={() => removeLine(line.key)}
                             aria-label="Remove line"
                           >
-                            ×
+                            <X className="size-4" aria-hidden />
                           </Button>
                         </div>
                       </div>
+                      {line.specification?.trim() && openLine !== line.key ? (
+                        <p className="mt-1 text-body-sm text-on-surface-variant">
+                          {line.specification.trim()}
+                        </p>
+                      ) : null}
                       <div className="mt-2 flex items-center justify-between">
                         <button
                           type="button"
-                          className="text-body-sm text-secondary underline underline-offset-2"
+                          className={cn(buttonVariants({ variant: "link", size: "xs" }), "px-0")}
                           onClick={() =>
                             setOpenLine((current) =>
                               current === line.key ? null : line.key,
                             )
                           }
                         >
-                          {openLine === line.key ? "Hide price" : "Edit price"}
+                          {openLine === line.key ? "Hide details" : "Edit price or specs"}
                         </button>
-                        <div className="flex items-center gap-3 rounded-full border border-surface-variant bg-surface-container px-2 py-1">
+                        <div className="flex items-center gap-1 rounded-full border border-outline-variant bg-surface-container-low p-0.5">
                           <button
                             type="button"
-                            className="inline-flex size-6 items-center justify-center rounded-full text-secondary hover:bg-surface-variant hover:text-primary"
+                            className="inline-flex size-8 items-center justify-center rounded-full text-on-surface transition-colors outline-none hover:bg-surface-container-high focus-visible:ring-2 focus-visible:ring-primary/30"
                             onClick={() =>
                               setLines((current) => {
                                 const row = current.find((item) => item.key === line.key);
@@ -388,12 +397,12 @@ export function QuoteBuilder({
                           >
                             −
                           </button>
-                          <span className="min-w-[1ch] text-center text-data-tabular">
+                          <span className="min-w-6 text-center text-data-tabular">
                             {line.quantity}
                           </span>
                           <button
                             type="button"
-                            className="inline-flex size-6 items-center justify-center rounded-full text-secondary hover:bg-surface-variant hover:text-primary"
+                            className="inline-flex size-8 items-center justify-center rounded-full text-on-surface transition-colors outline-none hover:bg-surface-container-high focus-visible:ring-2 focus-visible:ring-primary/30"
                             onClick={() =>
                               setLines((current) => {
                                 const row = current.find((item) => item.key === line.key);
@@ -416,12 +425,8 @@ export function QuoteBuilder({
                         <div className="mt-2 flex flex-wrap items-center gap-2">
                           <button
                             type="button"
-                            className={cn(
-                              "rounded-full px-3 py-1 text-xs",
-                              line.supply_source === "office"
-                                ? "bg-primary text-on-primary"
-                                : "border border-outline-variant text-on-surface-variant",
-                            )}
+                            className={chipVariants({ selected: line.supply_source === "office", size: "sm" })}
+                            aria-pressed={line.supply_source === "office"}
                             onClick={() =>
                               setLines((current) =>
                                 setLineSupply(current, line.key, "office", shelfByMaterial),
@@ -435,12 +440,8 @@ export function QuoteBuilder({
                           </button>
                           <button
                             type="button"
-                            className={cn(
-                              "rounded-full px-3 py-1 text-xs",
-                              line.supply_source !== "office"
-                                ? "bg-primary text-on-primary"
-                                : "border border-outline-variant text-on-surface-variant",
-                            )}
+                            className={chipVariants({ selected: line.supply_source !== "office", size: "sm" })}
+                            aria-pressed={line.supply_source !== "office"}
                             onClick={() =>
                               setLines((current) =>
                                 setLineSupply(current, line.key, "vendor", shelfByMaterial),
@@ -464,7 +465,7 @@ export function QuoteBuilder({
                             inputMode="decimal"
                             step="0.01"
                             min={0}
-                            className="mt-1 h-10"
+                            className="mt-1"
                             value={line.unit_price}
                             onChange={(e) =>
                               updateLine(line.key, {
@@ -481,7 +482,7 @@ export function QuoteBuilder({
                             inputMode="decimal"
                             step="0.01"
                             min={0}
-                            className="mt-1 h-10"
+                            className="mt-1"
                             value={line.unit_cost}
                             onChange={(e) =>
                               updateLine(line.key, {
@@ -498,7 +499,7 @@ export function QuoteBuilder({
                             inputMode="decimal"
                             step="0.01"
                             min={0}
-                            className="mt-1 h-10"
+                            className="mt-1"
                             value={line.discount}
                             onChange={(e) =>
                               updateLine(line.key, {
@@ -519,11 +520,11 @@ export function QuoteBuilder({
                         </div>
                       </div>
                       <div className="mt-2">
-                        <Label className="text-xs">Specification</Label>
+                        <Label className="text-xs">Specs</Label>
                         <Input
-                          className="mt-1 h-10"
+                          className="mt-1"
                           value={line.specification ?? ""}
-                          placeholder="Size, finish, site notes"
+                          placeholder="Colour, dimensions, site notes"
                           onChange={(e) =>
                             updateLine(line.key, {
                               specification: e.target.value,
@@ -547,7 +548,7 @@ export function QuoteBuilder({
         {activeStep === 3 ? (
           <div className="flex min-w-0 flex-col gap-3">
             {showCustomerStep ? (
-              <div className="flex items-center gap-4 rounded-lg border border-surface-variant bg-card p-4">
+              <div className="flex items-center gap-4 rounded-2xl border border-outline-variant bg-card shadow-card p-4">
                 <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-secondary-container text-headline-md text-on-secondary-container">
                   {(customers.find((c) => c.id === customerId)?.name ?? "C")
                     .charAt(0)
@@ -566,12 +567,12 @@ export function QuoteBuilder({
               </div>
             ) : null}
 
-            <section className="rounded-lg border border-surface-variant bg-card">
+            <section className="rounded-2xl border border-outline-variant bg-card shadow-card">
               <div className="flex items-center justify-between border-b border-surface-variant p-4">
-                <h2 className="text-subheading text-on-surface">Order Items</h2>
-                <span className="rounded bg-surface-container-high px-2 py-1 text-label-caps">
-                  {lines.length} {lines.length === 1 ? "ITEM" : "ITEMS"}
-                </span>
+                <h2 className="text-subheading text-on-surface">Order items</h2>
+                <Badge variant="secondary">
+                  {lines.length} {lines.length === 1 ? "item" : "items"}
+                </Badge>
               </div>
               <ul>
                 {lines.map((line) => (
@@ -621,7 +622,7 @@ export function QuoteBuilder({
               />
             </div>
 
-            <section className="rounded-lg border border-surface-variant bg-card p-4">
+            <section className="rounded-2xl border border-outline-variant bg-card shadow-card p-4">
               <h2 className="text-subheading text-on-surface">Warranty and AMC</h2>
               <p className="mt-1 text-body-sm text-on-surface-variant">
                 Optional on the quotation. Delivery still stamps the start date.
@@ -670,7 +671,7 @@ export function QuoteBuilder({
               </p>
             ) : null}
 
-            <section className="flex flex-col gap-3 rounded-lg border border-surface-variant bg-card p-4">
+            <section className="flex flex-col gap-3 rounded-2xl border border-outline-variant bg-card shadow-card p-4">
               <div className="flex justify-between text-body-md">
                 <span className="text-on-surface-variant">Subtotal</span>
                 <span className="text-data-tabular">
@@ -698,9 +699,9 @@ export function QuoteBuilder({
             </section>
 
             {state.error ? (
-              <p className="text-sm text-destructive" role="alert">
+              <FormError>
                 {state.error}
-              </p>
+              </FormError>
             ) : null}
 
             <div className="mt-3 flex w-full flex-col gap-3">

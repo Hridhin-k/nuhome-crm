@@ -41,12 +41,10 @@ export function FormSheet({
         {trigger}
       </SheetTrigger>
       <SheetContent placement="form" size={size}>
-        <SheetHeader className="shrink-0 px-5 pt-1 pb-3">
-          <SheetTitle className="text-headline-lg tracking-tight">
-            {title}
-          </SheetTitle>
+        <SheetHeader className="shrink-0 px-5 pt-1 pr-14 pb-3 md:pt-5">
+          <SheetTitle>{title}</SheetTitle>
           {description ? (
-            <SheetDescription className="text-body-sm">
+            <SheetDescription className="mt-1">
               {description}
             </SheetDescription>
           ) : null}

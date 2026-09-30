@@ -1,5 +1,54 @@
 import { describe, expect, it } from "vitest";
-import { normalizeCsvHeader, parseCsv, toCsv } from "@/lib/csv";
+import { normalizeCsvHeader, parseCsv, readCsvTable, toCsv } from "@/lib/csv";
+
+describe("readCsvTable", () => {
+  const columns = { required: ["sku"], allowed: ["sku", "name", "sell_price"] };
+
+  it("returns rows with their spreadsheet row numbers", () => {
+    const table = readCsvTable('sku,name\nMK-1,Cabinet\n\nMK-2,"Two\nlines"\nMK-3,Three\n', columns);
+    expect(table.rows.map((row) => row.sku)).toEqual(["MK-1", "MK-2", "MK-3"]);
+    expect(table.lines).toEqual([2, 4, 6]);
+  });
+
+  it("allows empty trailing cells from spreadsheets", () => {
+    expect(readCsvTable("sku,name,,\nMK-1,Cabinet,,\n", columns).rows).toHaveLength(1);
+  });
+
+  it("names the row with an unquoted comma", () => {
+    expect(() =>
+      readCsvTable("sku,name,sell_price\nMK-1,Cabinet,7400\nMK-2,Hinge,7,400\n", columns),
+    ).toThrow("Row 3 has 4 values, but there are 3 columns. A value with a comma");
+  });
+
+  it("names the row that is short a value", () => {
+    expect(() => readCsvTable("sku,name,sell_price\nMK-1,7400\n", columns)).toThrow(
+      "Row 2 has 2 values, but there are 3 columns. A comma may be missing",
+    );
+  });
+
+  it("names the row with a quote that never closes", () => {
+    expect(() => readCsvTable('sku,name\nMK-1,Cabinet\nMK-2,"Hinge\nMK-3,Three\n', columns)).toThrow(
+      'Row 3: a quote mark (") is opened but never closed',
+    );
+  });
+
+  it("rejects missing, repeated, and unknown columns", () => {
+    expect(() => readCsvTable("name\nCabinet\n", columns)).toThrow(
+      "Row 1 must be the column names, and sku is missing",
+    );
+    expect(() => readCsvTable("sku,name,SKU\nA,B,C\n", columns)).toThrow(
+      "Column sku appears twice, in columns A and C",
+    );
+    expect(() => readCsvTable("sku,venders\nA,B\n", columns)).toThrow(
+      "Column B (“venders”) is not a column this import reads",
+    );
+  });
+
+  it("recognises an Excel file and an empty file", () => {
+    expect(() => readCsvTable("PK\u0003\u0004binary", columns)).toThrow("This is an Excel file");
+    expect(() => readCsvTable("  \n", columns)).toThrow("The file is empty");
+  });
+});
 
 describe("parseCsv", () => {
   it("reads headers and rows", () => {

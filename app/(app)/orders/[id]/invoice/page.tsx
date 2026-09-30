@@ -3,6 +3,7 @@ import { TaxInvoiceDocument } from "@/components/quotes/tax-invoice-document";
 import { getTaxInvoice } from "@/lib/api/documents";
 import { rel } from "@/lib/api/rel";
 import { requirePermission } from "@/lib/auth/guards";
+import { invoiceSupplyNote } from "@/lib/quotes/supply-note";
 
 export default async function TaxInvoicePage({
   params,
@@ -33,15 +34,7 @@ export default async function TaxInvoicePage({
         version={version}
         items={cargo.items.map((item) => ({
           ...item,
-          supply_note:
-            item.supply_source === "office" &&
-            Number(item.quantity_handed_over ?? 0) >= Number(item.quantity)
-              ? "Supplied today"
-              : item.supply_source === "vendor"
-                ? "To be delivered"
-                : item.supply_source === "office"
-                  ? "From office"
-                  : undefined,
+          supply_note: invoiceSupplyNote(item),
         }))}
       />
     </main>

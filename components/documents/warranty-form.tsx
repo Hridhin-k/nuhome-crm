@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { FormError } from "@/components/app/form-error";
 
 type Coverage = {
   kind: "warranty" | "amc";
@@ -77,9 +78,9 @@ function CoverageCard({
         />
       </div>
       {state.error ? (
-        <p className="text-sm text-destructive" role="alert">
+        <FormError>
           {state.error}
-        </p>
+        </FormError>
       ) : null}
       <Button type="submit" variant="bordered" disabled={pending}>
         {pending ? "Saving…" : coverage ? "Update" : "Save"}
@@ -101,7 +102,7 @@ export function WarrantyPanel({
   const amc = rows.find((row) => row.kind === "amc");
 
   return (
-    <section className="rounded-lg border border-outline-variant bg-card p-4 shadow-card">
+    <section className="rounded-2xl border border-outline-variant bg-card p-4 shadow-card">
       <h2 className="text-subheading text-on-surface">Warranty / AMC</h2>
       <p className="mt-1 text-body-sm text-on-surface-variant">
         Quoted on the quotation and started on delivery.

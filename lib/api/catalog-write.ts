@@ -1,4 +1,6 @@
 import { getDb, throwQuery } from "@/lib/api/db";
+import type { SavedMaterial } from "@/lib/catalog/material-csv";
+import type { MaterialSpec } from "@/lib/catalog/material-specs";
 import type { MaterialVendorInput } from "@/lib/catalog/material-vendors";
 
 export async function ensureCategoryId(name: string) {
@@ -45,27 +47,26 @@ export async function upsertMaterial(input: {
   unit: string;
   sellPrice: number;
   cost: number;
+  /** Omitted fields below keep what is saved (a new row gets the column default). */
   hsnCode?: string | null;
   gstRate?: number;
   warrantyMonths?: number;
-  /** Omit to leave existing description unchanged (e.g. CSV without that column). */
   description?: string | null;
+  specs?: MaterialSpec[];
   isActive?: boolean;
 }) {
   const db = await getDb();
-  const descriptionFields =
-    input.description === undefined
-      ? {}
-      : {
-          description: input.description?.trim()
-            ? input.description.trim()
-            : null,
-        };
   const gstFields = {
-    hsn_code: input.hsnCode || null,
-    gst_rate: input.gstRate ?? 18,
-    warranty_months: input.warrantyMonths ?? 12,
-    ...descriptionFields,
+    ...(input.hsnCode === undefined ? {} : { hsn_code: input.hsnCode || null }),
+    ...(input.gstRate === undefined ? {} : { gst_rate: input.gstRate }),
+    ...(input.warrantyMonths === undefined
+      ? {}
+      : { warranty_months: input.warrantyMonths }),
+    ...(input.description === undefined
+      ? {}
+      : { description: input.description?.trim() || null }),
+    ...(input.specs === undefined ? {} : { specs: input.specs }),
+    ...(input.isActive === undefined ? {} : { is_active: input.isActive }),
   };
   if (input.id) {
     const { error } = await db
@@ -77,7 +78,6 @@ export async function upsertMaterial(input: {
         unit: input.unit,
         default_sell_price: input.sellPrice,
         default_cost: input.cost,
-        is_active: input.isActive ?? true,
         ...gstFields,
       })
       .eq("id", input.id);
@@ -92,7 +92,6 @@ export async function upsertMaterial(input: {
       unit: input.unit,
       default_sell_price: input.sellPrice,
       default_cost: input.cost,
-      is_active: true,
       ...gstFields,
     },
     { onConflict: "sku" },
@@ -103,6 +102,23 @@ export async function upsertMaterial(input: {
     throw error;
   }
   return data.id;
+}
+
+export async function getMaterialsBySku(skus: string[]) {
+  const bySku = new Map<string, SavedMaterial>();
+  if (skus.length === 0) return bySku;
+  const db = await getDb();
+  const rows = await throwQuery(
+    db
+      .from("materials")
+      .select("id, sku, name, category_id, unit, default_sell_price, default_cost")
+      .in("sku", skus),
+    "Failed to look up materials",
+  );
+  for (const row of rows) {
+    if (row.sku) bySku.set(row.sku, { ...row, sku: row.sku });
+  }
+  return bySku;
 }
 
 async function resolveVendorId(row: MaterialVendorInput) {

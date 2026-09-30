@@ -104,7 +104,7 @@ export function HomeHero({
 
       <div className="relative px-4 pt-5 pb-4 md:px-7 md:pt-7 md:pb-5">
         <div className="relative min-h-[11.5rem] pr-[7.5rem] md:min-h-[13rem] md:pr-48">
-          <p className="text-[11px] font-medium tracking-wide text-white/45 md:text-xs">
+          <p className="text-[11px] font-medium tracking-wide text-white/60 md:text-xs">
             {dateLabel}
           </p>
           <p className="mt-4 text-[15px] text-white/80 md:text-base">{hello}</p>
@@ -166,7 +166,7 @@ function MetricCell({ metric }: { metric: HeroMetric }) {
       <dd className="mt-2 text-[22px] leading-none font-bold tabular-nums tracking-tight md:text-[26px]">
         {metric.value}
       </dd>
-      <p className="mt-1.5 truncate text-[11px] text-white/45">{metric.hint}</p>
+      <p className="mt-1.5 truncate text-[11px] text-white/60">{metric.hint}</p>
     </AppLink>
   );
 }

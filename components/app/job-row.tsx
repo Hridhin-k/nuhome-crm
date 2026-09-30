@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { ChevronRight, Info } from "lucide-react";
+import { AlertTriangle, ChevronRight, Info } from "lucide-react";
 import { AppLink } from "@/components/app/app-link";
 import { listRowClass } from "@/components/app/page-frame";
 import { StatusBadge } from "@/components/app/status-badge";
@@ -39,7 +39,7 @@ export function JobRow({
     <li className="min-w-0">
       <AppLink
         href={href}
-        className={cn(listRowClass, alert && "border-error")}
+        className={cn(listRowClass, alert && "border-error/60")}
       >
         <div className="flex min-w-0 items-start justify-between gap-3">
           <div className="min-w-0 flex-1">
@@ -86,20 +86,39 @@ export function JobRow({
                   />
                 ) : null}
               </>
-            ) : amount ? (
-              <p className="text-data-tabular text-on-surface">{amount}</p>
             ) : (
-              <ChevronRight
-                className="mt-0.5 size-4 text-on-surface-variant"
-                aria-hidden
-              />
+              <>
+                {amount ? (
+                  <p className="text-subheading text-on-surface tabular-nums">
+                    {amount}
+                  </p>
+                ) : null}
+                <ChevronRight
+                  className="mt-0.5 size-4 text-on-surface-variant"
+                  aria-hidden
+                />
+              </>
             )}
           </div>
         </div>
         {hintText ? (
-          <div className="mt-3 rounded-xl bg-surface-container-low p-3">
-            <p className="flex items-start gap-2 text-body-sm text-on-surface-variant">
-              <Info className="mt-0.5 size-4 shrink-0" aria-hidden />
+          <div
+            className={cn(
+              "mt-3 rounded-xl p-3",
+              alert ? "bg-error-container/60" : "bg-surface-container-low",
+            )}
+          >
+            <p
+              className={cn(
+                "flex items-start gap-2 text-body-sm",
+                alert ? "text-on-error-container" : "text-on-surface-variant",
+              )}
+            >
+              {alert ? (
+                <AlertTriangle className="mt-0.5 size-4 shrink-0 text-error" aria-hidden />
+              ) : (
+                <Info className="mt-0.5 size-4 shrink-0" aria-hidden />
+              )}
               <span>{hintText}</span>
             </p>
           </div>

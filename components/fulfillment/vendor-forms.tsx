@@ -13,7 +13,8 @@ import {
   FormSheetFooter,
 } from "@/components/app/form-sheet";
 import { rememberFulfillmentScroll } from "@/components/app/scroll-to-focus";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { formatInr } from "@/lib/format/money";
@@ -27,6 +28,8 @@ import {
   nextSplitRow,
   remainingToAllocate,
 } from "@/lib/workflow/vendor-split";
+import { FormError } from "@/components/app/form-error";
+import { NativeSelect } from "@/components/ui/native-select";
 
 export function SendToVendorForm({
   orderId,
@@ -81,7 +84,6 @@ export function SendToVendorForm({
   }, [rows]);
   const payload = rows
     .map((row) => {
-      const item = sendable.find((line) => line.id === row.itemId);
       const vendor = vendors.find((entry) => entry.id === row.vendorId);
       return {
         order_item_id: row.itemId,
@@ -103,7 +105,7 @@ export function SendToVendorForm({
       title="Send to vendors"
       description="Need 10 from two factories? Put 5 on one vendor row and tap Add vendor — the other 5 go on the next row. Accounts verifies each vendor quote before send."
       trigger={
-        <span className="inline-flex h-11 min-h-11 w-full items-center justify-center rounded-lg bg-primary px-4 text-subheading text-on-primary">
+        <span className={cn(buttonVariants({ size: "lg" }), "w-full")}>
           Allocate to vendor
         </span>
       }
@@ -118,16 +120,11 @@ export function SendToVendorForm({
         <input type="hidden" name="items" value={JSON.stringify(payload)} />
         <FormSheetBody className="flex flex-col gap-3">
           <Label htmlFor="expected_delivery">Expected delivery</Label>
-          <input
-            id="expected_delivery"
-            name="expected_delivery"
-            type="date"
-            className="h-11 min-h-11 rounded-lg border border-outline-variant bg-surface px-3 text-on-surface"
-          />
+          <Input id="expected_delivery" name="expected_delivery" type="date" />
           <p className="text-xs text-on-surface-variant">
             Used for overdue flags. Same date is applied to every vendor batch.
           </p>
-          <ul className="divide-y divide-surface-variant rounded-lg border border-surface-variant">
+          <ul className="divide-y divide-outline-variant/60 rounded-xl border border-outline-variant">
             {sendable.map((item) => {
               const options = optionsFor(item);
               const linked = Boolean(item.vendors && item.vendors.length > 0);
@@ -174,7 +171,7 @@ export function SendToVendorForm({
                             min={0}
                             max={maxQty}
                             step={1}
-                            className="h-10 w-20 shrink-0"
+                            className="w-20 shrink-0"
                             value={row.qty}
                             onChange={(e) => {
                               const next = Math.trunc(Number(e.target.value));
@@ -195,7 +192,7 @@ export function SendToVendorForm({
                           {itemRows.length > 1 ? (
                             <button
                               type="button"
-                              className="text-xs font-semibold text-on-surface-variant"
+                              className={cn(buttonVariants({ variant: "link", size: "xs" }), "px-0 text-on-surface-variant")}
                               onClick={() =>
                                 setRows((current) =>
                                   current.filter((entry) => entry.key !== row.key),
@@ -206,7 +203,7 @@ export function SendToVendorForm({
                             </button>
                           ) : null}
                         </div>
-                          <select
+                          <NativeSelect
                           value={row.vendorId}
                           onChange={(e) => {
                             const choice = options.find((vendor) => vendor.id === e.target.value);
@@ -222,7 +219,6 @@ export function SendToVendorForm({
                               ),
                             );
                           }}
-                          className="h-11 min-h-11 rounded-lg border border-outline-variant bg-surface px-3 text-on-surface"
                         >
                           {options.map((vendor) => (
                             <option key={vendor.id} value={vendor.id}>
@@ -231,7 +227,7 @@ export function SendToVendorForm({
                                 : vendor.name}
                             </option>
                           ))}
-                        </select>
+                        </NativeSelect>
                       </div>
                     );
                   })}
@@ -297,7 +293,7 @@ export function SendToVendorForm({
               : `${vendorCount} vendor quotes will be created. Same item can sit on more than one quote.`}
           </p>
           {state.error ? (
-            <p className="text-sm text-destructive">{state.error}</p>
+            <FormError>{state.error}</FormError>
           ) : null}
         </FormSheetBody>
         <FormSheetFooter>
@@ -354,7 +350,7 @@ export function ReceiveItemsForm({
       title="Record items received"
       description="Type what actually arrived. Leave a line at 0 if it is still outstanding, then close shortage separately."
       trigger={
-        <span className="inline-flex h-11 min-h-11 w-full items-center justify-center rounded-lg bg-primary px-4 text-subheading text-on-primary">
+        <span className={cn(buttonVariants({ size: "lg" }), "w-full")}>
           Record items received
         </span>
       }
@@ -368,7 +364,7 @@ export function ReceiveItemsForm({
         <input type="hidden" name="vendor_order_id" value={vendorOrderId} />
         <input type="hidden" name="received" value={JSON.stringify(payload)} />
         <FormSheetBody className="flex flex-col gap-3">
-          <ul className="divide-y divide-surface-variant rounded-lg border border-surface-variant">
+          <ul className="divide-y divide-outline-variant/60 rounded-xl border border-outline-variant">
             {open.map((item) => (
               <li
                 key={item.order_item_id}
@@ -386,7 +382,7 @@ export function ReceiveItemsForm({
                   min={0}
                   max={Math.floor(item.remaining)}
                   step={1}
-                  className="h-10 w-20 shrink-0"
+                  className="w-20 shrink-0"
                   value={qty[item.order_item_id] ?? 0}
                   onChange={(e) => {
                     const next = Math.trunc(Number(e.target.value));
@@ -405,7 +401,7 @@ export function ReceiveItemsForm({
             ))}
           </ul>
           {state.error ? (
-            <p className="text-sm text-destructive">{state.error}</p>
+            <FormError>{state.error}</FormError>
           ) : null}
         </FormSheetBody>
         <FormSheetFooter>
@@ -460,7 +456,7 @@ export function WriteOffItemsForm({
       title="Close shortage / damage / return"
       description="Use this when the remaining quantity will not arrive. Delivery can proceed once every line is received or closed."
       trigger={
-        <span className="inline-flex h-11 min-h-11 w-full items-center justify-center rounded-lg border border-outline-variant bg-transparent px-4 text-subheading text-on-surface">
+        <span className={cn(buttonVariants({ variant: "outline", size: "lg" }), "w-full")}>
           Close remainder
         </span>
       }
@@ -474,19 +470,18 @@ export function WriteOffItemsForm({
         <input type="hidden" name="items" value={JSON.stringify(payload)} />
         <FormSheetBody className="flex flex-col gap-3">
           <Label htmlFor="write-off-reason">Reason</Label>
-          <select
+          <NativeSelect
             id="write-off-reason"
             value={reason}
             onChange={(e) => setReason(e.target.value as WriteOffReason)}
-            className="h-11 min-h-11 rounded-lg border border-outline-variant bg-surface px-3 text-on-surface"
           >
             {WRITE_OFF_REASONS.map((value) => (
               <option key={value} value={value}>
                 {WRITE_OFF_LABELS[value]}
               </option>
             ))}
-          </select>
-          <ul className="divide-y divide-surface-variant rounded-lg border border-surface-variant">
+          </NativeSelect>
+          <ul className="divide-y divide-outline-variant/60 rounded-xl border border-outline-variant">
             {open.map((item) => (
               <li key={item.id} className="flex min-w-0 items-center gap-2 px-3 py-2.5">
                 <div className="min-w-0 flex-1">
@@ -501,7 +496,7 @@ export function WriteOffItemsForm({
                   min={0}
                   max={Math.floor(item.remaining)}
                   step={1}
-                  className="h-10 w-20 shrink-0"
+                  className="w-20 shrink-0"
                   value={qty[item.id] ?? 0}
                   onChange={(e) => {
                     const next = Math.trunc(Number(e.target.value));
@@ -519,7 +514,7 @@ export function WriteOffItemsForm({
           <Label htmlFor="write-off-notes">Notes (optional)</Label>
           <Textarea id="write-off-notes" name="notes" rows={2} />
           {state.error ? (
-            <p className="text-sm text-destructive">{state.error}</p>
+            <FormError>{state.error}</FormError>
           ) : null}
         </FormSheetBody>
         <FormSheetFooter>

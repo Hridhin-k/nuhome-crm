@@ -7,10 +7,12 @@ import {
   FormSheetBody,
   FormSheetFooter,
 } from "@/components/app/form-sheet";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { FormError } from "@/components/app/form-error";
 
 export function LeadForm({
   lead,
@@ -34,7 +36,7 @@ export function LeadForm({
     <FormSheet
       title={lead ? "Edit lead" : "Add lead"}
       trigger={
-        <span className="inline-flex h-11 min-h-11 items-center rounded-lg bg-primary px-4 text-subheading text-on-primary">
+        <span className={cn(buttonVariants(), "w-full")}>
           {lead ? "Edit" : "Add lead"}
         </span>
       }
@@ -66,7 +68,7 @@ export function LeadForm({
             <Label htmlFor="remarks">Remarks</Label>
             <Textarea id="remarks" name="remarks" defaultValue={lead?.remarks ?? ""} className="mt-2" />
           </div>
-          {state.error ? <p className="text-sm text-destructive">{state.error}</p> : null}
+          {state.error ? <FormError>{state.error}</FormError> : null}
         </FormSheetBody>
         <FormSheetFooter>
           <Button type="submit" disabled={pending} className="w-full" size="lg">

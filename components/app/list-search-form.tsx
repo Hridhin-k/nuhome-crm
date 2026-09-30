@@ -1,5 +1,8 @@
 import { Search } from "lucide-react";
 
+const fieldClass =
+  "h-11 w-full min-w-0 rounded-xl border border-outline-variant bg-card px-3 text-base text-on-surface shadow-card transition-colors outline-none placeholder:text-outline focus-visible:border-primary focus-visible:ring-1 focus-visible:ring-primary md:text-sm";
+
 export function ListSearchForm({
   action,
   q,
@@ -31,7 +34,7 @@ export function ListSearchForm({
           Search
         </label>
         <Search
-          className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-on-surface-variant/70"
+          className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-on-surface-variant"
           aria-hidden
         />
         <input
@@ -39,28 +42,18 @@ export function ListSearchForm({
           name="q"
           defaultValue={q}
           placeholder={placeholder}
-          className="h-11 min-h-11 w-full rounded-xl border border-outline-variant bg-card px-3 pl-10 text-base text-on-surface placeholder:text-outline shadow-card md:text-sm"
+          className={`${fieldClass} pl-10`}
         />
       </div>
       {showDates ? (
         <div className="grid grid-cols-2 gap-2">
-          <label className="flex flex-col gap-1 text-xs text-on-surface-variant">
+          <label className="flex flex-col gap-1 text-body-sm text-on-surface-variant">
             From
-            <input
-              type="date"
-              name="from"
-              defaultValue={from}
-              className="h-11 min-h-11 rounded-xl border border-outline-variant bg-card px-3 text-sm text-on-surface shadow-card"
-            />
+            <input type="date" name="from" defaultValue={from} className={fieldClass} />
           </label>
-          <label className="flex flex-col gap-1 text-xs text-on-surface-variant">
+          <label className="flex flex-col gap-1 text-body-sm text-on-surface-variant">
             To
-            <input
-              type="date"
-              name="to"
-              defaultValue={to}
-              className="h-11 min-h-11 rounded-xl border border-outline-variant bg-card px-3 text-sm text-on-surface shadow-card"
-            />
+            <input type="date" name="to" defaultValue={to} className={fieldClass} />
           </label>
         </div>
       ) : null}

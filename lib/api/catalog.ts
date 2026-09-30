@@ -16,6 +16,7 @@ export type MaterialRow = {
   gst_rate?: number | string | null;
   warranty_months?: number | null;
   description?: string | null;
+  specs?: unknown;
   is_active?: boolean;
   category_id: string | null;
   material_categories?: { id: string; name: string } | null;
@@ -64,7 +65,7 @@ const listMaterialsCached = cache(async (includeInactive: boolean) => {
   let request = db
     .from("materials")
     .select(
-      "id, name, sku, unit, default_sell_price, default_cost, hsn_code, gst_rate, warranty_months, description, is_active, category_id, material_categories(id, name)",
+      "id, name, sku, unit, default_sell_price, default_cost, hsn_code, gst_rate, warranty_months, description, specs, is_active, category_id, material_categories(id, name)",
     )
     .order("name");
   if (!includeInactive) {

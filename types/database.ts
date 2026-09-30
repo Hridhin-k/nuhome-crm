@@ -504,6 +504,7 @@ export type Database = {
           gst_rate: number
           warranty_months: number
           description: string | null
+          specs: Json
           updated_at: string
         }
         Insert: {
@@ -520,6 +521,7 @@ export type Database = {
           gst_rate?: number
           warranty_months?: number
           description?: string | null
+          specs?: Json
           updated_at?: string
         }
         Update: {
@@ -536,6 +538,7 @@ export type Database = {
           gst_rate?: number
           warranty_months?: number
           description?: string | null
+          specs?: Json
           updated_at?: string
         }
         Relationships: [

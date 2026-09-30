@@ -63,7 +63,7 @@ describe("formatAuditEvent", () => {
     const formatted = formatAuditEvent(
       event("CUSTOM_PING", { actor_role: null, actor_name: "job", new_state: "order_active" }),
     );
-    expect(formatted.title).toBe("custom ping");
+    expect(formatted.title).toBe("Custom ping");
     expect(formatted.actor).toBe("System · job");
     expect(formatted.detail).toContain("order active");
   });

@@ -441,13 +441,14 @@ export async function cancelJobAction(
 
 export async function logWhatsAppShareAction(
   quoteId: string,
+  document: "quote" | "invoice" = "quote",
 ): Promise<ActionState> {
   await requirePermission("quotes.send_to_customer");
   try {
     const supabase = await createServerSupabaseClient();
     const { error } = await (supabase as unknown as RpcClient).rpc(
       "log_quote_whatsapp_share",
-      { p_quote_id: quoteId },
+      { p_quote_id: quoteId, p_document: document === "invoice" ? "invoice" : "quote" },
     );
     if (error) {
       throw error;

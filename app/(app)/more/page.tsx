@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { requireUser } from "@/lib/auth/guards";
 import { overflowNavForRoles, roleLabels } from "@/lib/auth/nav";
 import { rolesHavePermission } from "@/lib/auth/permissions";
+import { Badge } from "@/components/ui/badge";
 
 const MANAGE_LINKS = [
   { href: "/users", label: "Users", subtitle: "Staff, extra hats, cover for leave" },
@@ -114,9 +115,9 @@ export default async function MorePage() {
               {user.email}
             </p>
           ) : null}
-          <span className="mt-1 inline-flex items-center rounded-full bg-secondary-container px-2.5 py-0.5 text-label-caps text-on-secondary-container">
+          <Badge variant="secondary" className="mt-1">
             {roleLabels(user.roles)}
-          </span>
+          </Badge>
         </div>
       </div>
       {extraLinks.length > 0 ? (

@@ -38,6 +38,21 @@ describe("quote lines with GST", () => {
     expect(line.specification).toBe("600mm base with soft-close");
   });
 
+  it("uses the material specs on the line ahead of the description", () => {
+    const line = lineFromMaterial({
+      id: "m1",
+      name: "Cabinet handle – Black",
+      description: "Aluminium pull handle",
+      specs: [
+        { label: "Colour", value: "Black" },
+        { label: "Dimensions", value: "128 mm" },
+      ],
+      default_sell_price: 180,
+      default_cost: 60,
+    });
+    expect(line.specification).toBe("Colour: Black · Dimensions: 128 mm");
+  });
+
   it("defaults GST to 18% when the material has no rate", () => {
     const line = lineFromMaterial({
       id: "m2",

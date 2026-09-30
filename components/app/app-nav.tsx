@@ -39,8 +39,8 @@ export function MobileBottomNav({ items }: { items: NavItem[] }) {
               />
               <span
                 className={cn(
-                  "max-w-full truncate text-label-caps tracking-wide",
-                  active && "font-bold",
+                  "max-w-full truncate text-[11px] leading-4 font-medium",
+                  active && "font-semibold",
                 )}
               >
                 {item.label}
@@ -75,9 +75,9 @@ export function AppNavbar({
   const desktopItems = items.filter((item) => item.href !== "/more");
 
   return (
-    <header className="bg-[#09090b]">
-      <div className="relative mx-auto flex h-12 max-w-6xl items-center px-2 md:h-14 md:gap-6 md:px-8">
-        <div className="flex w-16 shrink-0 items-center md:w-auto">
+    <header className="bg-[#09090b] px-2 md:px-8">
+      <div className="relative mx-auto flex h-12 max-w-6xl items-center md:h-14 md:gap-6">
+        <div className="flex w-24 shrink-0 items-center md:w-auto">
           {backHref ? (
             <AppLink
               href={backHref}
@@ -91,13 +91,13 @@ export function AppNavbar({
           )}
           <AppLink
             href="/home"
-            className="hidden shrink-0 text-[17px] font-bold tracking-tight text-on-primary md:block md:text-headline-md"
+            className="hidden shrink-0 text-headline-md font-bold tracking-tight text-on-primary md:block"
           >
             Nuhome
           </AppLink>
         </div>
 
-        <h1 className="pointer-events-none absolute inset-x-16 truncate text-center text-headline-md font-bold tracking-tight text-on-primary md:hidden">
+        <h1 className="pointer-events-none absolute inset-x-24 truncate text-center text-headline-md font-bold tracking-tight text-on-primary md:hidden">
           {title}
         </h1>
 
@@ -113,7 +113,7 @@ export function AppNavbar({
                 href={item.href}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                  "inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-white/40",
                   active
                     ? "bg-white/15 text-on-primary"
                     : "text-on-primary/65 hover:bg-white/10 hover:text-on-primary",
@@ -130,11 +130,11 @@ export function AppNavbar({
           })}
         </nav>
 
-        <div className="ml-auto flex w-16 shrink-0 items-center justify-end gap-1 md:w-auto md:gap-2">
+        <div className="ml-auto flex w-24 shrink-0 items-center justify-end gap-1 md:w-auto md:gap-2">
           {bell}
           <AppLink
             href="/more"
-            className="inline-flex items-center gap-2 rounded-lg py-1 pr-1 pl-1 transition-colors hover:bg-white/10"
+            className="inline-flex items-center gap-2 rounded-lg p-1 transition-colors outline-none hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-white/40"
           >
             <span className="inline-flex size-8 items-center justify-center rounded-full border border-on-primary/20 bg-white/15 text-[11px] font-semibold text-on-primary">
               {initials || "N"}

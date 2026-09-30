@@ -7,9 +7,11 @@ import {
   FormSheetBody,
   FormSheetFooter,
 } from "@/components/app/form-sheet";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { quoteShareMessage } from "@/lib/quotes/share-message";
+import { FormError } from "@/components/app/form-error";
 
 export function EmailShareSheet({
   quoteId,
@@ -43,7 +45,7 @@ export function EmailShareSheet({
     <FormSheet
       title="Send via email"
       trigger={
-        <span className="inline-flex h-11 min-h-11 w-full items-center justify-center rounded-lg border border-outline-variant px-4 text-subheading">
+        <span className={cn(buttonVariants({ variant: "outline", size: "lg" }), "w-full")}>
           Email
         </span>
       }
@@ -71,10 +73,10 @@ export function EmailShareSheet({
             placeholder="Customer email"
             className="h-11 min-h-11"
           />
-          <pre className="whitespace-pre-wrap rounded-lg border border-surface-variant p-3 text-sm">
+          <pre className="whitespace-pre-wrap rounded-xl border border-outline-variant bg-surface-container-low p-3 font-sans text-body-sm text-on-surface">
             {message}
           </pre>
-          {error ? <p className="text-sm text-destructive">{error}</p> : null}
+          {error ? <FormError>{error}</FormError> : null}
           {notice ? <p className="text-sm text-primary">{notice}</p> : null}
         </FormSheetBody>
         <FormSheetFooter>

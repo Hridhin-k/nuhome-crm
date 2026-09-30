@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import {
   bindRealtimeAuth,
@@ -58,8 +58,6 @@ export function LiveRefresh({
   const router = useRouter();
   const pathname = usePathname() ?? "/home";
   const tables = useMemo(() => tablesForPath(pathname), [pathname]);
-  const tokenRef = useRef(accessToken);
-  tokenRef.current = accessToken;
 
   useEffect(() => {
     const supabase = createBrowserSupabaseClient();
@@ -155,7 +153,7 @@ export function LiveRefresh({
     }
 
     async function connect() {
-      await bindRealtimeAuth(tokenRef.current);
+      await bindRealtimeAuth(accessToken);
       if (disposed) {
         return;
       }

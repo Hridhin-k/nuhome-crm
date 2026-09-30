@@ -7,6 +7,8 @@ import { listPendingPayments } from "@/lib/api/catalog";
 import { rel } from "@/lib/api/rel";
 import { requirePermission } from "@/lib/auth/guards";
 import { formatInr } from "@/lib/format/money";
+import { FormError } from "@/components/app/form-error";
+import { Badge } from "@/components/ui/badge";
 
 function kindLabel(kind: string) {
   if (kind === "advance") return "Advance";
@@ -27,7 +29,7 @@ export default async function PaymentsPage({
   ]);
 
   return (
-    <PageFrame width="detail">
+    <PageFrame>
       <PageHeader
         title="Payments"
         description="Verify a payment, or send a wrong entry back to Sales with a reason."
@@ -36,7 +38,7 @@ export default async function PaymentsPage({
       {notice === "payment-rejected" ? (
         <Notice>Payment sent back to Sales.</Notice>
       ) : null}
-      {error ? <p className="mb-4 text-sm text-destructive">{error}</p> : null}
+      {error ? <FormError className="mb-4">{error}</FormError> : null}
       {payments.length === 0 ? (
         <EmptyState
           title="No payments waiting"
@@ -59,7 +61,7 @@ export default async function PaymentsPage({
             return (
               <li
                 key={payment.id}
-                className="flex flex-col gap-3 rounded-lg border border-outline-variant bg-card p-4 shadow-card md:flex-row md:items-center md:justify-between"
+                className="flex flex-col gap-3 rounded-2xl border border-outline-variant bg-card p-4 shadow-card md:flex-row md:items-center md:justify-between"
               >
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
@@ -68,9 +70,7 @@ export default async function PaymentsPage({
                         customer?.name ??
                         quote?.quote_number}
                     </p>
-                    <span className="rounded-full bg-secondary-container px-2 py-0.5 text-label-caps text-on-secondary-container">
-                      {kindLabel(payment.kind)}
-                    </span>
+                    <Badge variant="secondary">{kindLabel(payment.kind)}</Badge>
                   </div>
                   <p className="mt-1 text-headline-md text-primary">
                     {formatInr(Number(payment.amount))}

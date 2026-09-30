@@ -220,7 +220,7 @@ export const getOrder = cache(async (id: string) => {
       db
         .from("quotes")
         .select(
-          "id, quote_number, status, revision_pending, current_version_id, quote_versions!quotes_current_version_fk(total, version_number, tax, subtotal, discount, warranty_months, include_amc, amc_months, notes)",
+          "id, quote_number, status, revision_pending, current_version_id, public_access_token, quote_versions!quotes_current_version_fk(total, version_number, tax, subtotal, discount, warranty_months, include_amc, amc_months, notes)",
         )
         .eq("id", order.quote_id)
         .maybeSingle(),

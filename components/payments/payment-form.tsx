@@ -7,12 +7,14 @@ import {
   FormSheetBody,
   FormSheetFooter,
 } from "@/components/app/form-sheet";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { defaultAdvanceAmount } from "@/lib/payments/advance";
 import { remainingPaymentKinds } from "@/lib/payments/reference";
 import { cn } from "@/lib/utils";
+import { FormError } from "@/components/app/form-error";
+import { NativeSelect } from "@/components/ui/native-select";
 
 const METHODS = [
   { value: "upi", label: "UPI" },
@@ -61,7 +63,7 @@ export function PaymentForm({
       title="Record payment"
       description="Accounts will verify this before it counts toward delivery. You can log another installment while the job is with the vendor. Delivery can log cash or UPI at handover."
       trigger={
-        <span className="inline-flex h-11 min-h-11 w-full items-center justify-center rounded-lg bg-primary px-4 text-subheading text-on-primary">
+        <span className={cn(buttonVariants({ size: "lg" }), "w-full")}>
           Record payment
         </span>
       }
@@ -72,7 +74,7 @@ export function PaymentForm({
         <FormSheetBody className="flex flex-col gap-4">
           <div>
             <Label htmlFor="kind">Payment type</Label>
-            <select
+            <NativeSelect
               id="kind"
               name="kind"
               value={kind}
@@ -89,14 +91,14 @@ export function PaymentForm({
                   if (method === "other") setMethod("upi");
                 }
               }}
-              className="mt-2 h-11 min-h-11 w-full rounded-lg border border-outline-variant bg-surface px-3 text-on-surface"
+              wrapperClassName="mt-2 w-full"
             >
               {kinds.includes("advance") ? (
                 <option value="advance">Advance</option>
               ) : null}
               <option value="full">Full</option>
               <option value="nil">Nil (credit terms)</option>
-            </select>
+            </NativeSelect>
           </div>
           <div>
             <Label htmlFor="amount">Amount</Label>
@@ -132,21 +134,21 @@ export function PaymentForm({
             <>
               <div>
                 <Label htmlFor="method">Method</Label>
-                <select
+                <NativeSelect
                   id="method"
                   name="method"
                   value={method}
                   onChange={(e) =>
                     setMethod(e.target.value as typeof method)
                   }
-                  className="mt-2 h-11 min-h-11 w-full rounded-lg border border-outline-variant bg-surface px-3 text-on-surface"
+                  wrapperClassName="mt-2 w-full"
                 >
                   {METHODS.map((option) => (
                     <option key={option.value} value={option.value}>
                       {option.label}
                     </option>
                   ))}
-                </select>
+                </NativeSelect>
               </div>
               <div>
                 <Label htmlFor="reference">
@@ -167,9 +169,9 @@ export function PaymentForm({
             </>
           )}
           {state.error ? (
-            <p className="text-sm text-destructive" role="alert">
+            <FormError>
               {state.error}
-            </p>
+            </FormError>
           ) : null}
         </FormSheetBody>
         <FormSheetFooter>

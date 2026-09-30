@@ -44,25 +44,25 @@ export function FloorBoard({
         </div>
         <dl className="flex min-w-0 gap-3 text-right">
           <div>
-            <dt className="text-[10px] font-medium tracking-wide text-on-surface-variant uppercase">
+            <dt className="text-label-caps text-on-surface-variant uppercase">
               In play
             </dt>
             <dd className="text-headline-sm text-on-surface">{open}</dd>
           </div>
           <div>
-            <dt className="text-[10px] font-medium tracking-wide text-on-surface-variant uppercase">
+            <dt className="text-label-caps text-on-surface-variant uppercase">
               Overdue
             </dt>
             <dd className="text-headline-sm text-error">{overdue}</dd>
           </div>
           <div>
-            <dt className="text-[10px] font-medium tracking-wide text-on-surface-variant uppercase">
+            <dt className="text-label-caps text-on-surface-variant uppercase">
               Cust.
             </dt>
             <dd className="text-headline-sm text-secondary">{customers}</dd>
           </div>
           <div>
-            <dt className="text-[10px] font-medium tracking-wide text-on-surface-variant uppercase">
+            <dt className="text-label-caps text-on-surface-variant uppercase">
               Done
             </dt>
             <dd className="text-headline-sm text-success">{delivered}</dd>
@@ -116,7 +116,7 @@ function FloorTile({ cell }: { cell: StatusCensus }) {
         muted && "opacity-40",
       )}
     >
-      <span className="flex min-w-0 items-center gap-1.5 text-[10px] font-bold tracking-wide uppercase md:text-[11px]">
+      <span className="flex min-w-0 items-center gap-1.5 text-label-caps uppercase">
         <span
           className={cn("size-1.5 shrink-0 rounded-full", STATUS_DOT_CLASS[status])}
           aria-hidden

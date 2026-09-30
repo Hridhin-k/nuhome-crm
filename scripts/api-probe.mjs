@@ -6,7 +6,7 @@
  */
 import { createClient } from "@supabase/supabase-js";
 import { execSync } from "node:child_process";
-import { mkdirSync, writeFileSync, readFileSync, existsSync } from "node:fs";
+import { mkdirSync, writeFileSync, readFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -317,7 +317,7 @@ async function probeRpcs(fx) {
 async function probeTables() {
   for (const table of TABLES) {
     const svc = await timed(async () => {
-      const { data, error, count } = await admin
+      const { error, count } = await admin
         .from(table)
         .select("*", { count: "exact", head: true });
       if (error) throw new Error(error.message);

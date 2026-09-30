@@ -336,6 +336,89 @@ After a handover, open that quote as Sales.
 
 ---
 
+## Test 13. Colour and dimensions on an item
+
+**Sign in as Operations.**
+
+1. Open **More**, then **Materials**. Tap **Edit** on **Chimney 60cm**.
+2. Under **Specs**, tap **+ Colour** and type **Black**. Tap **+ Dimensions** and type **600 mm**. Save.
+
+**You should see:** under Chimney 60cm on the list, “Colour: Black · Dimensions: 600 mm”. The office quantity has not changed.
+
+3. Add a material that has no colour or size, such as **Installation labour**. Leave **Specs** empty. Save.
+
+**You should see:** it saves. Specs are optional.
+
+A white chimney is a separate material with its own SKU, price, and office quantity. Do not add two colours to one material.
+
+**Sign in as Sales.**
+
+4. Start a quote. Search **black**.
+
+**You should see:** Chimney 60cm, with “Black · 600 mm” under its name.
+
+5. Add it. Save and submit the quote. Ask Accounts to approve it.
+6. Open the public link, or the tax invoice once there is an order.
+
+**You should see:** the chimney line shows “Colour: Black · Dimensions: 600 mm” on the quotation and on the bill.
+
+If you change the chimney’s specs later, quotes already saved keep the specs they were made with.
+
+---
+
+## Test 14. Send the quotation and the bill on WhatsApp
+
+**Sign in as Sales.** Use a quote that Accounts has approved and that has an order, such as the one from Test 6.
+
+1. Open the quote. Tap **WhatsApp bill**.
+
+**You should see:** a message with the quote number, the total, and a link ending in **/invoice**. Tap **Open WhatsApp** and send it to your own number.
+
+2. Open the link on a phone that is not signed in.
+
+**You should see:** the tax invoice with the invoice number, each line, and whether it was supplied today or will be delivered. **Print / Save as PDF** works.
+
+3. Back on the quote, tap **WhatsApp quotation**. Send it and open the link.
+
+**You should see:** the quotation. It opens without signing in.
+
+4. Open the order. Tap **WhatsApp bill** and **WhatsApp quotation** there too.
+
+**You should see:** the same two messages.
+
+5. Repeat on a job that has already closed.
+
+**You should see:** both links still open.
+
+6. Cancel a test job. Open its links again.
+
+**You should see:** the links no longer open, and the WhatsApp buttons are gone.
+
+---
+
+## Test 15. Import materials from a spreadsheet
+
+**Sign in as Operations.**
+
+1. Open **More**, then **Materials**. Tap **Import CSV**, then **Download sample CSV**.
+2. Open it in Excel or Google Sheets. Keep the first row. Change the two example SKUs to your own, then add a row for an item already on the list, such as **AP-CHIMNEY-60**. Fill in only **office_quantity** for that row, such as **9**. Save as CSV and import it.
+
+**You should see:** “Materials 2 added, 1 updated.” The two new items show their vendors and specs. The chimney now says 9 at the office, and its price, specs, and vendors have not changed.
+
+3. Import a file with one good new row and one new row with no sell price.
+
+**You should see:** “Nothing was imported. Fix this row and import the file again.” and “Row 3: Sell price is required for a new material”. The good row is not saved either.
+
+4. In the file, type a price as 7,400 without quotes in a plain text editor, or rename a column to **venders**. Import it.
+
+**You should see:** the import stops and names the row or column that is wrong. Nothing is saved.
+
+5. Repeat steps 3 and 4 on **Vendors** and **Users** with a wrong phone number, email, or role.
+
+**You should see:** the same kind of message, and nothing is saved.
+
+---
+
 ## When you are finished
 
 Tick these. Every box should be ticked before you sign off.
@@ -361,4 +444,10 @@ Tick these. Every box should be ticked before you sign off.
 - [ ] Cancelling a quote before handover puts the pieces back
 - [ ] Operations cannot set the office quantity below what a saved quote is already holding
 - [ ] A price below cost shows a warning and still lets you continue
+- [ ] Operations can add specs such as colour and dimensions to a material. They are optional
+- [ ] Sales sees the specs when adding the material, and they print on the quotation and the bill
+- [ ] Sales can send the quotation link and the bill link on WhatsApp once the quote is approved, including after the job closes
+- [ ] Both links open and print without signing in. A cancelled job’s links do not open
+- [ ] Materials can be imported from a CSV. A blank cell keeps what is saved
+- [ ] A materials, vendors, or users CSV with any wrong row or column imports nothing and says exactly which row or column to fix
 - [ ] Sales cannot edit materials. Operations cannot start a quote. Accounts cannot hand over the shelf. Admin can set the office quantity and the vendors

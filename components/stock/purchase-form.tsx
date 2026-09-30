@@ -5,6 +5,8 @@ import { createStockPurchaseAction, type StockActionState } from "@/app/actions/
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { FormError } from "@/components/app/form-error";
+import { NativeSelect } from "@/components/ui/native-select";
 
 type Material = { id: string; name: string; sku: string | null; default_cost: number | string };
 type Vendor = { id: string; name: string };
@@ -70,15 +72,15 @@ export function PurchaseForm({
     <form action={action} className="flex flex-col gap-4">
       <input type="hidden" name="payload" value={JSON.stringify(payload)} />
       {state.error ? (
-        <p className="rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+        <FormError>
           {state.error}
-        </p>
+        </FormError>
       ) : null}
       <div>
         <Label htmlFor="vendor">Vendor</Label>
-        <select
+        <NativeSelect
           id="vendor"
-          className="mt-1 h-11 w-full rounded-xl border border-outline-variant bg-card px-3 text-sm"
+          wrapperClassName="mt-1 w-full"
           value={vendorId}
           onChange={(event) => setVendorId(event.target.value)}
         >
@@ -87,15 +89,15 @@ export function PurchaseForm({
               {vendor.name}
             </option>
           ))}
-        </select>
+        </NativeSelect>
       </div>
       <ul className="flex flex-col gap-3">
         {lines.map((line, index) => (
-          <li key={line.key} className="grid grid-cols-1 gap-2 rounded-lg border border-outline-variant p-3 sm:grid-cols-[1fr_6rem_7rem]">
+          <li key={line.key} className="grid grid-cols-1 gap-2 rounded-xl border border-outline-variant p-3 sm:grid-cols-[1fr_6rem_7rem]">
             <div>
               <Label>Material</Label>
-              <select
-                className="mt-1 h-11 w-full rounded-xl border border-outline-variant bg-card px-3 text-sm"
+              <NativeSelect
+                wrapperClassName="mt-1 w-full"
                 value={line.material_id}
                 onChange={(event) => updateLine(line.key, { material_id: event.target.value })}
                 aria-label={`Material ${index + 1}`}
@@ -106,7 +108,7 @@ export function PurchaseForm({
                     {material.name}
                   </option>
                 ))}
-              </select>
+              </NativeSelect>
             </div>
             <div>
               <Label>Qty</Label>

@@ -17,7 +17,7 @@ export function ActivityTimeline({
     return (
       <section className="rounded-2xl border border-outline-variant bg-card p-4 shadow-card">
         <h2 className="text-subheading text-on-surface">Activity</h2>
-        <p className="mt-3 text-sm text-on-surface-variant">{emptyMessage}</p>
+        <p className="mt-3 text-body-sm text-on-surface-variant">{emptyMessage}</p>
       </section>
     );
   }
@@ -30,7 +30,7 @@ export function ActivityTimeline({
       <div className="mt-4 space-y-6">
         {groups.map((group) => (
           <div key={group.label}>
-            <p className="text-[12px] font-medium text-on-surface-variant">
+            <p className="text-label-caps uppercase text-on-surface-variant">
               {group.isToday ? "Today" : group.label}
             </p>
             <ol className="mt-3 space-y-4">
@@ -57,22 +57,22 @@ export function ActivityTimeline({
                     </div>
                     <div className="min-w-0 flex-1 pb-1">
                       <div className="flex flex-wrap items-baseline justify-between gap-2">
-                        <p className="font-medium text-on-surface">
+                        <p className="text-subheading text-on-surface">
                           {formatted.title}
                         </p>
                         <time
-                          className="text-xs text-on-surface-variant"
+                          className="text-data-tabular text-on-surface-variant"
                           dateTime={event.created_at}
                         >
                           {formatIstTime(event.created_at)}
                         </time>
                       </div>
                       {formatted.detail ? (
-                        <p className="mt-0.5 text-sm text-on-surface-variant">
+                        <p className="mt-0.5 text-body-sm text-on-surface-variant">
                           {formatted.detail}
                         </p>
                       ) : null}
-                      <p className="mt-1 text-xs text-outline">
+                      <p className="mt-1 text-xs text-on-surface-variant">
                         {formatted.actor}
                       </p>
                     </div>

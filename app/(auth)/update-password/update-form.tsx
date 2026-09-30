@@ -8,6 +8,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { FormError } from "@/components/app/form-error";
 
 export function UpdatePasswordForm() {
   const [state, action, pending] = useActionState<LoginState, FormData>(
@@ -42,9 +43,9 @@ export function UpdatePasswordForm() {
         />
       </div>
       {state.error ? (
-        <p className="text-sm text-destructive" role="alert">
+        <FormError>
           {state.error}
-        </p>
+        </FormError>
       ) : null}
       <Button type="submit" disabled={pending} className="w-full" size="lg">
         {pending ? "Saving…" : "Save password"}

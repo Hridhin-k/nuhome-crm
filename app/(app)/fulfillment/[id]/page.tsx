@@ -1,4 +1,6 @@
 import { notFound } from "next/navigation";
+import { AlertTriangle } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { dispatchAction } from "@/app/actions/workflow";
 import { ConfirmActionSheet } from "@/components/app/confirm-action-sheet";
 import { Notice } from "@/components/app/notice";
@@ -27,6 +29,7 @@ import {
   unaccountedQty,
   vendorBatchStepperLabel,
 } from "@/lib/workflow/fulfillment";
+import { FormError } from "@/components/app/form-error";
 
 export default async function FulfillmentDetailPage({
   params,
@@ -152,25 +155,25 @@ export default async function FulfillmentDetailPage({
       {notice === "written-off" ? (
         <Notice>Remainder closed. Delivery can proceed if nothing is left open.</Notice>
       ) : null}
-      {error ? <p className="text-sm text-destructive">{error}</p> : null}
+      {error ? <FormError>{error}</FormError> : null}
       <ScrollToFocus focus={focus} />
 
-      <section className="rounded-lg border border-border bg-card p-5">
-        <h2 className="text-[16px] font-semibold text-on-surface">Lines</h2>
+      <section className="rounded-2xl border border-outline-variant bg-card p-4 shadow-card">
+        <h2 className="text-subheading text-on-surface">Lines</h2>
         <ul className="mt-3 divide-y divide-surface-variant">
           {detail.items.map((item) => {
             const written = Number(item.quantity_written_off ?? 0);
             return (
-              <li key={item.id} className="flex min-w-0 justify-between gap-3 py-2.5 text-[13px]">
+              <li key={item.id} className="flex min-w-0 justify-between gap-3 py-2.5 text-body-sm">
                 <span className="min-w-0 break-words">
                   {item.description}
                   {item.supply_source === "office" ? (
-                    <span className="mt-0.5 block text-[11px] text-on-surface-variant">
+                    <span className="mt-0.5 block text-xs text-on-surface-variant">
                       From office
                     </span>
                   ) : null}
                 </span>
-                <span className="shrink-0 text-right text-[12px] text-on-surface-variant">
+                <span className="shrink-0 text-right text-data-tabular text-on-surface-variant">
                   {Number(item.quantity_received)}/{Number(item.quantity)} received
                   {written > 0
                     ? ` · ${written} ${item.write_off_reason ?? "closed"}`
@@ -226,20 +229,21 @@ export default async function FulfillmentDetailPage({
           <section
             key={vendorOrder.id}
             id={`vendor-${vendorOrder.id}`}
-            className="scroll-mt-24 rounded-lg border border-border bg-card p-5"
+            className="scroll-mt-24 rounded-2xl border border-outline-variant bg-card p-4 shadow-card"
           >
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
-                <h2 className="text-[16px] font-semibold text-on-surface">{vendorName}</h2>
+                <h2 className="text-subheading text-on-surface">{vendorName}</h2>
                 <p className="mt-1 text-sm text-on-surface-variant">
                   {stepper}
                   {expected ? ` · expected ${expected}` : ""}
                 </p>
               </div>
               {overdue ? (
-                <span className="rounded-md bg-destructive/10 px-2 py-1 text-xs font-semibold text-destructive">
+                <Badge variant="destructive">
+                  <AlertTriangle aria-hidden />
                   Overdue
-                </span>
+                </Badge>
               ) : null}
             </div>
             <ul className="mt-3 divide-y divide-surface-variant text-sm">

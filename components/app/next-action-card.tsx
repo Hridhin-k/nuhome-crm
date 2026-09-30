@@ -29,7 +29,7 @@ export function NextActionCard({
       />
       <div className="flex flex-col gap-4 p-4 pl-6 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0">
-          <p className="text-[11px] font-semibold text-on-secondary-container">
+          <p className="text-label-caps uppercase text-on-secondary-container">
             Next
           </p>
           <p className="mt-1 text-subheading text-on-surface">{action.title}</p>

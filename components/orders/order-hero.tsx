@@ -55,13 +55,18 @@ export function OrderHero({
       <section className="grid grid-cols-3 divide-x divide-outline-variant/60 rounded-2xl border border-outline-variant bg-card shadow-card">
         <div className="px-3 py-3 md:px-4">
           <p className="text-label-caps text-on-surface-variant">Total</p>
-          <p className="mt-1.5 text-[15px] font-semibold tabular-nums tracking-tight text-on-surface md:text-data-tabular">
+          <p className="mt-1 text-headline-sm tabular-nums text-on-surface">
             {formatInr(total)}
           </p>
         </div>
         <div className="px-3 py-3 md:px-4">
           <p className="text-label-caps text-on-surface-variant">Paid</p>
-          <p className="mt-1.5 text-[15px] font-semibold tabular-nums tracking-tight text-success md:text-data-tabular">
+          <p
+            className={cn(
+              "mt-1 text-headline-sm tabular-nums",
+              paid > 0 ? "text-success" : "text-on-surface",
+            )}
+          >
             {formatInr(paid)}
           </p>
         </div>
@@ -69,7 +74,7 @@ export function OrderHero({
           <p className="text-label-caps text-on-surface-variant">Due</p>
           <p
             className={cn(
-              "mt-1.5 text-[15px] font-semibold tabular-nums tracking-tight md:text-data-tabular",
+              "mt-1 text-headline-sm tabular-nums",
               outstanding > 0 ? "text-error" : "text-success",
             )}
           >

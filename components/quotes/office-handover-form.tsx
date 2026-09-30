@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { formatInrExact } from "@/lib/format/money";
+import { FormError } from "@/components/app/form-error";
+import { NativeSelect } from "@/components/ui/native-select";
 
 export function OfficeHandoverForm({
   quoteId,
@@ -30,7 +32,7 @@ export function OfficeHandoverForm({
   );
 
   return (
-    <section className="rounded-lg border border-outline-variant bg-card p-4">
+    <section className="rounded-2xl border border-outline-variant bg-card p-4 shadow-card">
       <h2 className="text-subheading text-on-surface">Office stock</h2>
       <p className="mt-1 text-body-sm text-on-surface-variant">
         Collect payment and hand over the shelf lines now. Lines that still need a vendor stay on this job.
@@ -39,7 +41,7 @@ export function OfficeHandoverForm({
         <form action={handOver} className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
           <input type="hidden" name="quote_id" value={quoteId} />
           {handover.error ? (
-            <p className="text-sm text-destructive sm:col-span-2">{handover.error}</p>
+            <FormError className="sm:col-span-2">{handover.error}</FormError>
           ) : null}
           <div>
             <Label htmlFor="amount">Amount collected</Label>
@@ -59,18 +61,18 @@ export function OfficeHandoverForm({
           </div>
           <div>
             <Label htmlFor="method">Method</Label>
-            <select
+            <NativeSelect
               id="method"
               name="method"
               defaultValue="upi"
-              className="mt-1 h-11 w-full rounded-xl border border-outline-variant bg-card px-3 text-sm"
+              wrapperClassName="mt-1 w-full"
             >
               <option value="cash">Cash</option>
               <option value="upi">UPI</option>
               <option value="card">Card</option>
               <option value="bank_transfer">Bank transfer</option>
               <option value="cheque">Cheque</option>
-            </select>
+            </NativeSelect>
           </div>
           <div className="sm:col-span-2">
             <Label htmlFor="reference">Reference</Label>
@@ -86,7 +88,7 @@ export function OfficeHandoverForm({
       {canVoid ? (
         <form action={voidHandover} className="mt-4 flex flex-col gap-2 border-t border-surface-variant pt-4">
           <input type="hidden" name="quote_id" value={quoteId} />
-          {voided.error ? <p className="text-sm text-destructive">{voided.error}</p> : null}
+          {voided.error ? <FormError>{voided.error}</FormError> : null}
           <Label htmlFor="void-reason">Void today’s handover</Label>
           <Input id="void-reason" name="reason" required placeholder="Reason" className="h-11" />
           <Button type="submit" variant="bordered" disabled={voiding}>

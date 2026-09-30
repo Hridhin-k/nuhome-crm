@@ -60,7 +60,7 @@ export const ORDER_BUCKET_LABELS: Record<OrderBucketId, string> = {
 
 export const ORDER_BUCKET_ACCENT: Record<OrderBucketId, Accent> = {
   open: "cerulean",
-  payment: "cobalt",
+  payment: "violet",
   active: "forest",
   hold: "violet",
   delivery: "cerulean",

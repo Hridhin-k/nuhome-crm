@@ -10,9 +10,11 @@ import {
   FormSheetBody,
   FormSheetFooter,
 } from "@/components/app/form-sheet";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { FormError } from "@/components/app/form-error";
 
 export function ChangePasswordForm() {
   const [state, action, pending] = useActionState<LoginState, FormData>(
@@ -25,7 +27,7 @@ export function ChangePasswordForm() {
       title="Change password"
       description="Enter your current password, then a new one (8+ characters)."
       trigger={
-        <span className="inline-flex h-11 min-h-11 w-full items-center justify-center rounded-lg border border-outline-variant px-6 text-[15px] font-medium">
+        <span className={cn(buttonVariants({ variant: "outline", size: "lg" }), "w-full")}>
           Change password
         </span>
       }
@@ -63,7 +65,7 @@ export function ChangePasswordForm() {
             className="h-11 min-h-11"
           />
           {state.error ? (
-            <p className="text-sm text-destructive">{state.error}</p>
+            <FormError>{state.error}</FormError>
           ) : null}
           {state.notice ? (
             <p className="text-sm text-on-surface">{state.notice}</p>

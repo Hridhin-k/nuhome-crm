@@ -1,4 +1,5 @@
 import { AppLink } from "@/components/app/app-link";
+import { buttonVariants } from "@/components/ui/button";
 
 export default function OfflinePage() {
   return (
@@ -12,7 +13,7 @@ export default function OfflinePage() {
       </p>
       <AppLink
         href="/home"
-        className="mt-8 inline-flex h-11 items-center justify-center rounded-xl bg-primary px-4 text-subheading text-on-primary"
+        className={`${buttonVariants()} mt-8`}
       >
         Try again
       </AppLink>

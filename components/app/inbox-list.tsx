@@ -30,18 +30,19 @@ export type InboxItem = {
   kind?: "queue" | "directory" | "flag";
 };
 
-function inboxIcon(title: string) {
+function InboxIcon({ title }: { title: string }) {
   const key = title.toLowerCase();
-  if (key.includes("customer")) return Users;
-  if (key.includes("quote") || key.includes("approval")) return FileText;
-  if (key.includes("payment")) return Wallet;
-  if (key.includes("overdue")) return AlertTriangle;
-  if (key.includes("hold") || key.includes("collect")) return Lock;
-  if (key.includes("deliver") || key.includes("ready")) return Truck;
-  if (key.includes("vendor") || key.includes("dispatch")) return Truck;
+  const props = { className: "size-5", "aria-hidden": true } as const;
+  if (key.includes("customer")) return <Users {...props} />;
+  if (key.includes("quote") || key.includes("approval")) return <FileText {...props} />;
+  if (key.includes("payment")) return <Wallet {...props} />;
+  if (key.includes("overdue")) return <AlertTriangle {...props} />;
+  if (key.includes("hold") || key.includes("collect")) return <Lock {...props} />;
+  if (key.includes("deliver") || key.includes("ready")) return <Truck {...props} />;
+  if (key.includes("vendor") || key.includes("dispatch")) return <Truck {...props} />;
   if (key.includes("item") || key.includes("fulfill") || key.includes("order"))
-    return Boxes;
-  return Package;
+    return <Boxes {...props} />;
+  return <Package {...props} />;
 }
 
 function focusCta(item: InboxItem) {
@@ -130,7 +131,6 @@ function ClearDesk() {
 }
 
 function FocusCard({ item }: { item: InboxItem }) {
-  const Icon = inboxIcon(item.title);
   const alert = isAlertItem(item);
   const cta = focusCta(item);
 
@@ -144,7 +144,7 @@ function FocusCard({ item }: { item: InboxItem }) {
     >
       <p
         className={cn(
-          "text-[11px] font-semibold",
+          "text-label-caps uppercase",
           alert ? "text-error" : "text-on-secondary-container",
         )}
       >
@@ -159,7 +159,7 @@ function FocusCard({ item }: { item: InboxItem }) {
               : "bg-secondary-container text-on-secondary-container",
           )}
         >
-          <Icon className="size-5" aria-hidden />
+          <InboxIcon title={item.title} />
         </span>
         <div className="min-w-0">
           <p className="text-subheading text-on-surface">{item.title}</p>
@@ -172,7 +172,7 @@ function FocusCard({ item }: { item: InboxItem }) {
         </p>
         <span
           className={cn(
-            "inline-flex items-center gap-0.5 text-[13px] font-semibold",
+            "inline-flex items-center gap-0.5 text-subheading",
             alert ? "text-error" : "text-on-secondary-container",
           )}
         >
@@ -186,7 +186,6 @@ function FocusCard({ item }: { item: InboxItem }) {
 
 function QueueTile({ item }: { item: InboxItem }) {
   const empty = item.count === 0;
-  const Icon = inboxIcon(item.title);
   const alert = isAlertItem(item) && !empty;
   const accent: Accent = item.accent ?? "cerulean";
 
@@ -210,7 +209,7 @@ function QueueTile({ item }: { item: InboxItem }) {
                 : "bg-surface-container-low text-on-surface",
           )}
         >
-          <Icon className="size-5" aria-hidden />
+          <InboxIcon title={item.title} />
         </span>
         <span
           className={cn(

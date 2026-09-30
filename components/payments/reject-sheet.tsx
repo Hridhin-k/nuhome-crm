@@ -7,9 +7,11 @@ import {
   FormSheetBody,
   FormSheetFooter,
 } from "@/components/app/form-sheet";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { FormError } from "@/components/app/form-error";
 
 export function RejectPaymentSheet({
   paymentId,
@@ -28,7 +30,7 @@ export function RejectPaymentSheet({
       title="Send back to Sales"
       description="A reason is required. Sales can then record a corrected payment."
       trigger={
-        <span className="inline-flex h-11 min-h-11 w-full items-center justify-center rounded-lg border border-primary bg-surface-container-lowest px-4 text-subheading text-primary">
+        <span className={cn(buttonVariants({ variant: "destructive", size: "lg" }), "w-full")}>
           Return
         </span>
       }
@@ -47,9 +49,9 @@ export function RejectPaymentSheet({
             placeholder="Wrong UPI amount, missing reference, …"
           />
           {state.error ? (
-            <p className="text-sm text-destructive" role="alert">
+            <FormError>
               {state.error}
-            </p>
+            </FormError>
           ) : null}
         </FormSheetBody>
         <FormSheetFooter>

@@ -7,12 +7,15 @@ import {
   FormSheetBody,
   FormSheetFooter,
 } from "@/components/app/form-sheet";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { LocalMobileInput } from "@/components/ui/local-mobile-input";
 import { sanitizeLocalMobileInput } from "@/lib/customers/phone";
+import { FormError } from "@/components/app/form-error";
+import { NativeSelect } from "@/components/ui/native-select";
 
 type ContactDraft = { name: string; phone: string; email: string };
 
@@ -55,8 +58,8 @@ export function VendorForm({
         <span
           className={
             editing
-              ? "inline-flex h-9 items-center rounded-lg border border-outline-variant px-3 text-xs font-semibold tracking-[0.05em] text-primary uppercase"
-              : "inline-flex h-11 min-h-11 items-center rounded-lg bg-primary px-6 text-[15px] font-medium text-on-primary"
+              ? buttonVariants({ variant: "outline", size: "sm" })
+              : cn(buttonVariants(), "w-full")
           }
         >
           {editing ? "Edit" : "Add vendor"}
@@ -101,15 +104,15 @@ export function VendorForm({
           {vendor ? (
             <div>
               <Label htmlFor={`active-${vendor.id}`}>Status</Label>
-              <select
+              <NativeSelect
                 id={`active-${vendor.id}`}
                 name="is_active"
                 defaultValue={vendor.is_active ? "true" : "false"}
-                className="mt-2 h-11 min-h-11 w-full rounded-lg border border-outline-variant bg-surface px-3"
+                wrapperClassName="mt-2 w-full"
               >
                 <option value="true">Active</option>
                 <option value="false">Inactive</option>
-              </select>
+              </NativeSelect>
             </div>
           ) : null}
           <div>
@@ -118,7 +121,7 @@ export function VendorForm({
               {contacts.map((contact, index) => (
                 <li
                   key={index}
-                  className="grid gap-2 rounded-lg border border-surface-variant p-3"
+                  className="grid gap-2 rounded-xl border border-outline-variant p-3"
                 >
                   <Input
                     placeholder="Name"
@@ -130,7 +133,7 @@ export function VendorForm({
                         ),
                       )
                     }
-                    className="h-10"
+                    
                   />
                   <LocalMobileInput
                     id={`contact-phone-${vendor?.id ?? "new"}-${index}`}
@@ -142,7 +145,7 @@ export function VendorForm({
                         ),
                       )
                     }
-                    className="h-10 min-h-10"
+                    
                   />
                   <Input
                     placeholder="Email"
@@ -154,7 +157,7 @@ export function VendorForm({
                         ),
                       )
                     }
-                    className="h-10"
+                    
                   />
                 </li>
               ))}
@@ -174,7 +177,7 @@ export function VendorForm({
             </Button>
           </div>
           {state.error ? (
-            <p className="text-sm text-destructive">{state.error}</p>
+            <FormError>{state.error}</FormError>
           ) : null}
         </FormSheetBody>
         <FormSheetFooter>

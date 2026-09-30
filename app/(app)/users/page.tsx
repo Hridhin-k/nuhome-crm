@@ -3,8 +3,10 @@ import { CoverLeaveForm } from "@/components/admin/cover-leave-form";
 import { CsvImportSheet } from "@/components/admin/csv-import-sheet";
 import { CreateStaffForm, EditStaffForm } from "@/components/admin/staff-forms";
 import { Notice } from "@/components/app/notice";
-import { PageFrame } from "@/components/app/page-frame";
+import { PageFrame, panelClass } from "@/components/app/page-frame";
+import { Badge } from "@/components/ui/badge";
 import { PageHeader } from "@/components/app/page-header";
+import { cn } from "@/lib/utils";
 import { importStaffCsvAction } from "@/app/actions/admin";
 import { listCoverSales, listProfiles, profileRoles } from "@/lib/api/catalog";
 import { requireAnyPermission } from "@/lib/auth/guards";
@@ -36,7 +38,7 @@ export default async function UsersPage({
             ) : null}
             <CsvImportSheet
               title="Import users"
-              description="Columns: email, full_name, role, phone, password. Role is sales, accounts, procurement, store, or admin. Password is optional — we generate one if blank."
+              description="Columns: email, full_name, role, phone, password. Role is sales, accounts, procurement, store, operations, or admin. Password is optional — we generate one if blank. If any row is wrong, nothing is imported."
               templateName="nuhome-users.csv"
               templateHeaders={["email", "full_name", "role", "phone", "password"]}
               templateRows={[
@@ -59,17 +61,19 @@ export default async function UsersPage({
           return (
             <li
               key={profile.id}
-              className="flex items-start justify-between gap-3 rounded-lg border border-outline-variant bg-card p-4 shadow-card"
+              className={cn(panelClass, "flex items-start justify-between gap-3")}
             >
               <div className="min-w-0">
-                <p className="font-medium">{profile.full_name || "Unnamed"}</p>
-                <p className="text-sm text-on-surface-variant">
+                <p className="flex flex-wrap items-center gap-2 text-subheading text-on-surface">
+                  {profile.full_name || "Unnamed"}
+                  {profile.is_active ? null : <Badge variant="secondary">Inactive</Badge>}
+                </p>
+                <p className="mt-0.5 text-body-sm text-on-surface-variant">
                   {profile.email ?? "No email"}
                   {profile.phone ? ` · ${profile.phone}` : ""}
                 </p>
-                <p className="mt-1 text-sm text-on-surface-variant">
+                <p className="mt-1 text-body-sm text-on-surface-variant">
                   {roleLabels(roles)}
-                  {profile.is_active ? "" : " · inactive"}
                 </p>
               </div>
               <EditStaffForm

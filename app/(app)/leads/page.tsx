@@ -31,7 +31,7 @@ export default async function LeadsPage({
           return (
             <li
               key={lead.id}
-              className="rounded-lg border border-outline-variant bg-card p-4 shadow-card"
+              className="rounded-2xl border border-outline-variant bg-card p-4 shadow-card"
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">

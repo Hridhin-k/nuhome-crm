@@ -16,6 +16,8 @@ import { Label } from "@/components/ui/label";
 import { QuoteLinesTable } from "@/components/quotes/quote-lines-table";
 import { formatInrExact } from "@/lib/format/money";
 import { vendorPaymentReferenceRequired } from "@/lib/payments/reference";
+import { FormError } from "@/components/app/form-error";
+import { NativeSelect } from "@/components/ui/native-select";
 
 const METHODS = [
   { value: "upi", label: "UPI" },
@@ -89,8 +91,8 @@ export function VendorCommercialForm({
   const needsReference = vendorPaymentReferenceRequired(method, 1);
 
   return (
-    <div className="mt-3 space-y-3 rounded-lg border border-outline-variant bg-surface p-3">
-      <p className="text-label-caps text-secondary">
+    <div className="mt-3 space-y-3 rounded-xl border border-outline-variant bg-surface-container-low p-3">
+      <p className="text-label-caps text-on-surface-variant">
         Vendor quote · Accounts verifies · {vendorPaid ? "vendor paid" : commercial}
       </p>
       {quoteRejectionReason ? (
@@ -133,7 +135,7 @@ export function VendorCommercialForm({
             {quoting ? "Saving…" : "Send quote to Accounts"}
           </Button>
           {quoteState.error ? (
-            <p className="text-sm text-destructive">{quoteState.error}</p>
+            <FormError>{quoteState.error}</FormError>
           ) : null}
         </form>
       ) : null}
@@ -170,7 +172,7 @@ export function VendorCommercialForm({
             </Button>
           </div>
           {decideState.error ? (
-            <p className="text-sm text-destructive">{decideState.error}</p>
+            <FormError>{decideState.error}</FormError>
           ) : null}
         </form>
       ) : null}
@@ -189,7 +191,7 @@ export function VendorCommercialForm({
       {sent ? (
         <>
           {vendorPaid ? (
-            <p className="rounded-lg border border-emerald-700/30 bg-emerald-950/40 px-3 py-2 text-sm font-medium text-emerald-300">
+            <p className="rounded-xl border border-success/20 bg-success-container px-3 py-2.5 text-body-sm font-medium text-success">
               Vendor paid
               {paidAmount != null ? ` · ${formatInrExact(Number(paidAmount))}` : ""}
               {paidMethod ? ` · ${paidMethod}` : ""}
@@ -224,21 +226,20 @@ export function VendorCommercialForm({
                 className="h-11 min-h-11"
               />
               <Label htmlFor={`method-${vendorOrderId}`}>Method</Label>
-              <select
+              <NativeSelect
                 id={`method-${vendorOrderId}`}
                 name="method"
                 value={method}
                 onChange={(e) =>
                   setMethod(e.target.value as (typeof METHODS)[number]["value"])
                 }
-                className="h-11 min-h-11 rounded-lg border border-outline-variant bg-surface px-3 text-on-surface"
               >
                 {METHODS.map((option) => (
                   <option key={option.value} value={option.value}>
                     {option.label}
                   </option>
                 ))}
-              </select>
+              </NativeSelect>
               {method === "other" ? (
                 <>
                   <Label htmlFor={`method-other-${vendorOrderId}`}>
@@ -272,7 +273,7 @@ export function VendorCommercialForm({
                 {paying ? "Recording…" : "Mark vendor paid"}
               </Button>
               {payState.error ? (
-                <p className="text-sm text-destructive">{payState.error}</p>
+                <FormError>{payState.error}</FormError>
               ) : null}
             </form>
           )}

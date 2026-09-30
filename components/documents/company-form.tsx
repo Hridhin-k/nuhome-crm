@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { FormError } from "@/components/app/form-error";
 
 export function CompanyForm({
   company,
@@ -159,9 +160,9 @@ export function CompanyForm({
         />
       </div>
       {state.error ? (
-        <p className="text-sm text-destructive" role="alert">
+        <FormError>
           {state.error}
-        </p>
+        </FormError>
       ) : null}
       <Button type="submit" size="lg" disabled={pending}>
         {pending ? "Saving…" : "Save company details"}

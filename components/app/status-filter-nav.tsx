@@ -1,5 +1,5 @@
 import { AppLink } from "@/components/app/app-link";
-import { cn } from "@/lib/utils";
+import { chipVariants } from "@/components/ui/chip";
 
 export function StatusFilterNav({
   ariaLabel,
@@ -23,12 +23,8 @@ export function StatusFilterNav({
           <AppLink
             key={item.id}
             href={hrefFor(item.id)}
-            className={cn(
-              "shrink-0 rounded-full border px-4 py-1.5 text-subheading whitespace-nowrap transition-colors",
-              selected
-                ? "border-primary bg-primary text-on-primary"
-                : "border-outline-variant/80 bg-card text-on-surface shadow-card",
-            )}
+            aria-current={selected ? "page" : undefined}
+            className={chipVariants({ selected })}
           >
             {item.label}
           </AppLink>

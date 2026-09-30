@@ -4,8 +4,13 @@ import { useMemo, useState } from "react";
 import { Plus } from "lucide-react";
 import { ItemDescriptionHint } from "@/components/app/item-description-hint";
 import { Input } from "@/components/ui/input";
+import {
+  formatSpecsInline,
+  formatSpecValues,
+  type MaterialSpec,
+} from "@/lib/catalog/material-specs";
 import { formatInr } from "@/lib/format/money";
-import { cn } from "@/lib/utils";
+import { chipVariants } from "@/components/ui/chip";
 
 export type PickerMaterial = {
   id: string;
@@ -19,6 +24,7 @@ export type PickerMaterial = {
   hsn_code?: string | null;
   gst_rate?: number | string | null;
   description?: string | null;
+  specs?: MaterialSpec[];
   office_available?: number | null;
 };
 
@@ -37,7 +43,6 @@ export function MaterialPicker({
   categories,
   addedMaterialIds,
   onAdd,
-  onAddMany: _onAddMany,
 }: {
   materials: PickerMaterial[];
   categories: { id: string; name: string }[];
@@ -58,7 +63,8 @@ export function MaterialPicker({
         m.name.toLowerCase().includes(q) ||
         (m.sku?.toLowerCase().includes(q) ?? false) ||
         (m.category_name?.toLowerCase().includes(q) ?? false) ||
-        (m.description?.toLowerCase().includes(q) ?? false);
+        (m.description?.toLowerCase().includes(q) ?? false) ||
+        formatSpecsInline(m.specs).toLowerCase().includes(q);
       return matchesCategory && matchesQuery;
     });
   }, [materials, categoryId, query]);
@@ -74,16 +80,12 @@ export function MaterialPicker({
         aria-label="Search catalogue"
       />
 
-      <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1">
+      <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         <button
           type="button"
           onClick={() => setCategoryId("all")}
-          className={cn(
-            "shrink-0 rounded-full px-4 py-1.5 text-label-caps uppercase tracking-wider transition-transform active:scale-95",
-            categoryId === "all"
-              ? "bg-primary text-on-primary"
-              : "border border-outline-variant bg-surface-container-lowest text-secondary hover:bg-surface-container-low",
-          )}
+          aria-pressed={categoryId === "all"}
+          className={chipVariants({ selected: categoryId === "all" })}
         >
           All
         </button>
@@ -92,12 +94,8 @@ export function MaterialPicker({
             key={cat.id}
             type="button"
             onClick={() => setCategoryId(cat.id)}
-            className={cn(
-              "shrink-0 rounded-full px-4 py-1.5 text-label-caps uppercase tracking-wider transition-transform active:scale-95",
-              categoryId === cat.id
-                ? "bg-primary text-on-primary"
-                : "border border-outline-variant bg-surface-container-lowest text-secondary hover:bg-surface-container-low",
-            )}
+            aria-pressed={categoryId === cat.id}
+            className={chipVariants({ selected: categoryId === cat.id })}
           >
             {cat.name}
           </button>
@@ -113,10 +111,11 @@ export function MaterialPicker({
           <ul>
             {filtered.map((m) => {
               const isAdded = addedMaterialIds.has(m.id);
+              const specLine = formatSpecValues(m.specs);
               return (
                 <li
                   key={m.id}
-                  className="flex items-center justify-between gap-3 border-b border-surface-variant py-3 last:border-0"
+                  className="flex items-start justify-between gap-3 border-b border-surface-variant py-3 last:border-0"
                 >
                   <div className="min-w-0 flex-1">
                     <div className="flex min-w-0 items-start gap-2">
@@ -124,10 +123,17 @@ export function MaterialPicker({
                         {m.name}
                       </p>
                       <ItemDescriptionHint
-                        description={m.description?.trim() ?? ""}
+                        description={[formatSpecsInline(m.specs), m.description?.trim()]
+                          .filter(Boolean)
+                          .join("\n")}
                       />
                     </div>
-                    <p className="mt-0.5 truncate text-data-tabular text-secondary">
+                    {specLine ? (
+                      <p className="mt-0.5 truncate text-body-sm text-on-surface">
+                        {specLine}
+                      </p>
+                    ) : null}
+                    <p className="mt-0.5 truncate text-data-tabular text-on-surface-variant">
                       {[m.sku, formatInr(Number(m.default_sell_price))]
                         .filter(Boolean)
                         .join(" · ")}
@@ -138,7 +144,7 @@ export function MaterialPicker({
                   <button
                     type="button"
                     aria-label={`Add ${m.name}`}
-                    className="inline-flex size-8 shrink-0 items-center justify-center rounded-full bg-surface-container-high text-primary transition-transform hover:bg-surface-variant active:scale-90"
+                    className="inline-flex size-8 shrink-0 items-center justify-center rounded-full bg-surface-container-high text-primary transition-transform outline-none hover:bg-surface-variant focus-visible:ring-2 focus-visible:ring-primary/30 active:scale-90"
                     onClick={() => onAdd(m)}
                   >
                     <Plus className="size-4" aria-hidden />

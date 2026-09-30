@@ -5,6 +5,8 @@ import { adjustStockAction, type StockActionState } from "@/app/actions/stock";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { FormError } from "@/components/app/form-error";
+import { NativeSelect } from "@/components/ui/native-select";
 
 export function AdjustForm({
   materials,
@@ -19,14 +21,14 @@ export function AdjustForm({
   return (
     <form action={action} className="grid grid-cols-1 gap-3 sm:grid-cols-[1fr_7rem_1fr_auto] sm:items-end">
       {state.error ? (
-        <p className="text-sm text-destructive sm:col-span-4">{state.error}</p>
+        <FormError className="sm:col-span-4">{state.error}</FormError>
       ) : null}
       <div>
         <Label htmlFor="material_id">Material</Label>
-        <select
+        <NativeSelect
           id="material_id"
           name="material_id"
-          className="mt-1 h-11 w-full rounded-xl border border-outline-variant bg-card px-3 text-sm"
+          wrapperClassName="mt-1 w-full"
           defaultValue={materials[0]?.id}
         >
           {materials.map((material) => (
@@ -34,7 +36,7 @@ export function AdjustForm({
               {material.name}
             </option>
           ))}
-        </select>
+        </NativeSelect>
       </div>
       <div>
         <Label htmlFor="delta">Change</Label>

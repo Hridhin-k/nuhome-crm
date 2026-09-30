@@ -1,5 +1,5 @@
 import { EmptyState } from "@/components/app/empty-state";
-import { PageFrame } from "@/components/app/page-frame";
+import { listRowClass, PageFrame } from "@/components/app/page-frame";
 import { PageHeader } from "@/components/app/page-header";
 import { AppLink } from "@/components/app/app-link";
 import { listPendingApprovals } from "@/lib/api/quotes";
@@ -7,6 +7,8 @@ import { rel } from "@/lib/api/rel";
 import { requirePermission } from "@/lib/auth/guards";
 import { formatInr } from "@/lib/format/money";
 import { relativeTime } from "@/lib/format/relative-time";
+import { AlertTriangle } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
 const THIN_MARGIN = 15;
@@ -42,13 +44,13 @@ export default async function ApprovalsPage() {
               <li key={quote.id}>
                 <AppLink
                   href={`/quotes/${quote.id}`}
-                  className="flex flex-col gap-2 rounded-lg border border-outline-variant bg-card p-4 shadow-card transition-colors hover:bg-surface-container-low"
+                  className={cn(listRowClass, "flex flex-col gap-2")}
                 >
                   <div className="flex items-start justify-between gap-3">
                     <span className="text-label-caps text-on-surface-variant">
                       {quote.quote_number}
                     </span>
-                    <span className="text-body-sm text-secondary">
+                    <span className="text-body-sm text-on-surface-variant">
                       {relativeTime(quote.created_at)}
                     </span>
                   </div>
@@ -61,17 +63,11 @@ export default async function ApprovalsPage() {
                     </span>
                   </div>
                   <div className="flex items-center justify-between pt-1">
-                    <span
-                      className={cn(
-                        "inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-bold tracking-wider uppercase",
-                        thin
-                          ? "border-error/20 bg-error-container text-on-error-container"
-                          : "border-surface-dim bg-surface-container-high text-on-surface-variant",
-                      )}
-                    >
+                    <Badge variant={thin ? "destructive" : "secondary"}>
+                      {thin ? <AlertTriangle aria-hidden /> : null}
                       Margin {Math.round(marginPct)}%
-                    </span>
-                    <span className="text-[13px] text-subheading text-primary underline underline-offset-2">
+                    </Badge>
+                    <span className="text-subheading text-primary underline underline-offset-2">
                       Review
                     </span>
                   </div>

@@ -153,12 +153,16 @@
   .shadow-card {
     box-shadow: var(--shadow-card);
   }
+}
 
+/* Type scale lives below utilities so font-*, leading-* and tracking-* on the same element win. */
+@layer components {
   .text-label-caps {
     font-size: 10px;
     font-weight: 700;
     line-height: 14px;
     letter-spacing: 0.05em;
+    text-transform: uppercase;
   }
 
   .text-label-md {
@@ -271,7 +275,9 @@
       line-height: 20px;
     }
   }
+}
 
+@layer utilities {
   @media print {
     body {
       background: white !important;

@@ -5,13 +5,19 @@ import { AdminCatalogNav } from "@/components/admin/admin-catalog-nav";
 import { CsvImportSheet } from "@/components/admin/csv-import-sheet";
 import { MaterialForm } from "@/components/admin/material-form";
 import { MaterialToggleForm } from "@/components/admin/material-toggle-form";
+import { EmptyState } from "@/components/app/empty-state";
+import { FormError } from "@/components/app/form-error";
 import { Notice } from "@/components/app/notice";
-import { PageFrame } from "@/components/app/page-frame";
+import { PageFrame, panelClass } from "@/components/app/page-frame";
+import { Badge } from "@/components/ui/badge";
 import { PageHeader } from "@/components/app/page-header";
+import { cn } from "@/lib/utils";
 import { listCategories, listMaterialVendorOffers, listMaterials, listVendors } from "@/lib/api/catalog";
 import { listMaterialOfficeBalances } from "@/lib/api/stock";
 import { rel } from "@/lib/api/rel";
 import { requireAnyPermission } from "@/lib/auth/guards";
+import { MATERIAL_CSV_COLUMNS } from "@/lib/catalog/material-csv";
+import { formatSpecsInline, normalizeMaterialSpecs } from "@/lib/catalog/material-specs";
 import { formatInr } from "@/lib/format/money";
 
 function formatQty(value: number) {
@@ -65,13 +71,31 @@ export default async function MaterialsPage({
           <div className="flex flex-col items-end gap-2 sm:flex-row">
             <CsvImportSheet
               title="Import materials"
-              description="Columns: sku, name, category, unit, sell_price, cost, office_quantity, vendors, description. Vendors look like Name:price|Other:price. Add a star after the usual supplier's price. Leave vendors out to keep the suppliers already saved."
+              description="Add new materials, or update saved ones by SKU. Start from the sample so the columns match."
               templateName="nuhome-materials.csv"
-              templateHeaders={["sku", "name", "category", "unit", "sell_price", "cost", "hsn_code", "gst_rate", "warranty_months", "office_quantity", "vendors", "description"]}
+              templateHeaders={[...MATERIAL_CSV_COLUMNS]}
               templateRows={[
-                ["MK-BASE-600", "Base cabinet 600mm", "Modular Kitchen", "pcs", "8500", "5200", "9403", "18", "12", "4", "Adhams:5200*|Kerala Woods:5400", "600mm base with soft-close"],
-                ["SV-INSTALL", "Installation labour", "Services", "day", "2500", "1500", "9987", "18", "0", "0", "In-house:1500*", "On-site fitting"],
+                ["MK-WALL-900-WH", "Wall cabinet 900mm", "Modular Kitchen", "pcs", "7400", "4600", "9403", "18", "12", "2", "Adhams:4600*|Kerala Woods:4800", "Colour: White|Dimensions: 900 x 720 x 320 mm", "Lift-up door"],
+                ["SV-SITE-VISIT", "Site measurement visit", "Services", "visit", "500", "300", "9987", "18", "0", "", "", "", "Measure the site before the quote"],
               ]}
+              help={
+                <ul className="list-disc space-y-1.5 pl-4">
+                  <li>One row per material. A saved SKU is updated. A new SKU is added.</li>
+                  <li>A blank cell keeps what is already saved.</li>
+                  <li>If any row is wrong, nothing is imported and each problem is listed.</li>
+                  <li>A new material needs name, category, and sell_price.</li>
+                  <li>office_quantity is how many are at the office now.</li>
+                  <li>
+                    vendors: Name:price, separated by |. Put * after the usual supplier’s price,
+                    such as <code>Adhams:4600*|Kerala Woods:4800</code>.
+                  </li>
+                  <li>
+                    specs: Label: value, separated by |, such as{" "}
+                    <code>Colour: White|Dimensions: 600 mm</code>. A different colour or size is its
+                    own row with its own SKU.
+                  </li>
+                </ul>
+              }
               action={importMaterialsCsvAction}
             />
             <MaterialForm categories={categories} vendors={vendorOptions} />
@@ -81,12 +105,13 @@ export default async function MaterialsPage({
       <AdminCatalogNav current="/materials" />
       {notice === "material-saved" ? <Notice>Material saved.</Notice> : null}
       {notice === "material-updated" ? <Notice>Material updated.</Notice> : null}
-      {error ? <p className="mb-4 text-sm text-destructive">{error}</p> : null}
+      {error ? <FormError className="mb-4">{error}</FormError> : null}
 
       {materials.length === 0 ? (
-        <p className="rounded-xl border border-dashed border-outline-variant px-5 py-14 text-center text-sm text-on-surface-variant">
-          No materials yet. Add one or import a CSV.
-        </p>
+        <EmptyState
+          title="No materials yet"
+          description="Add one or import a CSV."
+        />
       ) : (
       <ul className="flex flex-col gap-3">
         {materials.map((material) => {
@@ -98,22 +123,30 @@ export default async function MaterialsPage({
             Number(office?.onHand ?? 0) - Number(office?.reserved ?? 0),
           );
           const links = linksByMaterial.get(material.id) ?? [];
+          const specs = normalizeMaterialSpecs(material.specs);
           return (
             <li
               key={material.id}
-              className="flex items-start justify-between gap-3 rounded-lg border border-outline-variant bg-card p-4 shadow-card"
+              className={cn(panelClass, "flex items-start justify-between gap-3")}
             >
               <div className="min-w-0">
-                <p className="font-medium">{material.name}</p>
-                <p className="text-sm text-on-surface-variant">
+                <p className="flex flex-wrap items-center gap-2 text-subheading text-on-surface">
+                  {material.name}
+                  {active ? null : <Badge variant="secondary">Hidden</Badge>}
+                </p>
+                <p className="mt-0.5 text-body-sm text-on-surface-variant">
                   {material.sku ?? "No SKU"}
                   {category ? ` · ${category.name}` : ""}
                   {` · ${material.unit}`}
                   {material.hsn_code ? ` · HSN ${material.hsn_code}` : ""}
                   {` · GST ${Number(material.gst_rate ?? 18)}%`}
-                  {active ? "" : " · inactive"}
                 </p>
-                <p className="mt-1 text-sm text-on-surface-variant">
+                {specs.length > 0 ? (
+                  <p className="mt-1 text-body-sm text-on-surface">
+                    {formatSpecsInline(specs)}
+                  </p>
+                ) : null}
+                <p className="mt-1 text-body-sm text-on-surface-variant">
                   Sell {formatInr(Number(material.default_sell_price))} · Cost{" "}
                   {formatInr(Number(material.default_cost))}
                   {" · "}
@@ -121,7 +154,7 @@ export default async function MaterialsPage({
                     ? `${formatQty(atOffice)} ${material.unit} at office`
                     : "Order when a customer wants it"}
                 </p>
-                <p className="mt-1 text-sm text-on-surface-variant">
+                <p className="mt-1 text-body-sm text-on-surface-variant">
                   {links.length > 0
                     ? links
                         .map(
@@ -157,6 +190,7 @@ export default async function MaterialsPage({
                     gstRate: Number(material.gst_rate ?? 18),
                     warrantyMonths: material.warranty_months ?? 12,
                     description: material.description,
+                    specs,
                     isActive: active,
                     officeQuantity: atOffice,
                     vendorLinks: links,

@@ -5,6 +5,7 @@ import { CustomerForm } from "@/components/customers/customer-form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
+import { buttonVariants } from "@/components/ui/button";
 
 type Customer = { id: string; name: string; phone?: string | null };
 
@@ -45,8 +46,8 @@ export function CustomerPicker({
   return (
     <div className="flex flex-col gap-3">
       <div>
-        <Label htmlFor="customer-search" className="text-label-caps uppercase">
-          Select Customer
+        <Label htmlFor="customer-search">
+          Select customer
         </Label>
         <Input
           id="customer-search"
@@ -61,7 +62,7 @@ export function CustomerPicker({
       </div>
 
       {selected && !query ? (
-        <div className="flex items-center gap-3 rounded-lg border border-surface-variant bg-surface-container-low p-3">
+        <div className="flex items-center gap-3 rounded-xl border border-outline-variant bg-surface-container-low p-3">
           <span className="inline-flex size-12 shrink-0 items-center justify-center rounded-full bg-secondary-container text-headline-md text-on-secondary-container">
             {initials(selected.name) || "C"}
           </span>
@@ -75,7 +76,7 @@ export function CustomerPicker({
           </div>
           <button
             type="button"
-            className="shrink-0 rounded-full px-2 py-1 text-body-sm text-primary"
+            className={cn(buttonVariants({ variant: "link", size: "xs" }), "shrink-0")}
             onClick={() => {
               onChange("");
               setQuery("");
@@ -85,7 +86,7 @@ export function CustomerPicker({
           </button>
         </div>
       ) : (
-        <div className="max-h-[200px] overflow-y-auto rounded-lg border border-border">
+        <div className="max-h-[200px] overflow-y-auto rounded-xl border border-outline-variant">
           {filtered.length === 0 ? (
             <p className="px-4 py-4 text-sm text-on-surface-variant">
               No customers match. Create a new profile below.
@@ -97,7 +98,7 @@ export function CustomerPicker({
                   <button
                     type="button"
                     className={cn(
-                      "flex min-h-11 w-full min-w-0 items-center justify-between gap-2 px-3 py-2 text-left text-[13px] transition-colors hover:bg-surface-container",
+                      "flex min-h-11 w-full min-w-0 items-center justify-between gap-2 px-3 py-2 text-left text-body-sm transition-colors hover:bg-surface-container",
                       value === c.id && "bg-surface-container-high",
                     )}
                     onClick={() => {
@@ -107,7 +108,7 @@ export function CustomerPicker({
                   >
                     <span className="min-w-0 truncate font-medium">{c.name}</span>
                     {c.phone ? (
-                      <span className="shrink-0 text-[12px] text-on-surface-variant">
+                      <span className="shrink-0 text-data-tabular text-on-surface-variant">
                         {c.phone}
                       </span>
                     ) : null}
@@ -123,8 +124,8 @@ export function CustomerPicker({
         returnTo={returnTo}
         triggerClassName="w-full"
         trigger={
-          <span className="inline-flex h-11 w-full items-center justify-center rounded-lg border border-outline-variant bg-surface-container-lowest px-4 text-subheading text-on-surface">
-            Create New Customer
+          <span className={cn(buttonVariants({ variant: "outline", size: "lg" }), "w-full")}>
+            Create new customer
           </span>
         }
       />

@@ -11,6 +11,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
+import { FormError } from "@/components/app/form-error";
 
 export function CancelJobSheet({
   quoteId,
@@ -33,8 +34,8 @@ export function CancelJobSheet({
       trigger={
         <span
           className={cn(
-            buttonVariants({ variant: "outline", size: "lg" }),
-            "w-full justify-center text-center border-error text-error hover:bg-error/5",
+            buttonVariants({ variant: "destructive", size: "lg" }),
+            "w-full",
           )}
         >
           {triggerLabel}
@@ -54,9 +55,9 @@ export function CancelJobSheet({
             className="min-h-28"
           />
           {state.error ? (
-            <p className="text-sm text-destructive" role="alert">
+            <FormError>
               {state.error}
-            </p>
+            </FormError>
           ) : null}
         </FormSheetBody>
         <FormSheetFooter>

@@ -29,24 +29,24 @@ export function OperationsPipeline({
         </div>
         <dl className="flex min-w-0 gap-3 text-right">
           <div>
-            <dt className="text-[10px] font-medium tracking-wide text-on-surface-variant uppercase">
+            <dt className="text-label-caps text-on-surface-variant uppercase">
               Open
             </dt>
-            <dd className="text-[16px] font-semibold text-on-surface">{open}</dd>
+            <dd className="text-headline-sm text-on-surface">{open}</dd>
           </div>
           <div>
-            <dt className="text-[10px] font-medium tracking-wide text-on-surface-variant uppercase">
+            <dt className="text-label-caps text-on-surface-variant uppercase">
               Cust.
             </dt>
-            <dd className="text-[16px] font-semibold text-secondary">
+            <dd className="text-headline-sm text-secondary">
               {customers}
             </dd>
           </div>
           <div>
-            <dt className="text-[10px] font-medium tracking-wide text-on-surface-variant uppercase">
+            <dt className="text-label-caps text-on-surface-variant uppercase">
               Done
             </dt>
-            <dd className="text-[16px] font-semibold text-success">
+            <dd className="text-headline-sm text-success">
               {delivered}
             </dd>
           </div>

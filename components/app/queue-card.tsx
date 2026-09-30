@@ -22,20 +22,20 @@ export function QueueCard({
       href={href}
       className="block rounded-lg focus-visible:ring-3 focus-visible:ring-secondary/30"
     >
-      <article className="rounded-lg border border-border bg-card px-4 py-4 transition-colors hover:bg-muted/50">
-        <span className="text-[13px] font-medium text-on-surface-variant">
+      <article className="rounded-2xl border border-outline-variant bg-card p-4 shadow-card transition-colors hover:bg-surface-container-low/50">
+        <span className="text-body-sm text-on-surface-variant">
           {title}
         </span>
         <div className="mt-3">
           <span
             className={cn(
-              "block text-[22px] leading-none font-semibold tracking-tight tabular-nums",
+              "block text-headline-md tabular-nums",
               empty ? "text-outline" : "text-on-surface",
             )}
           >
             {count}
           </span>
-          <span className="mt-1.5 block text-[13px] text-on-surface-variant">
+          <span className="mt-1.5 block text-body-sm text-on-surface-variant">
             {detail}
           </span>
         </div>

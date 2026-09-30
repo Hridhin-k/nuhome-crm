@@ -1,4 +1,4 @@
-import type { AppRole, AuditAction } from "@/lib/workflow/types";
+import type { AppRole } from "@/lib/workflow/types";
 import { formatInrExact } from "@/lib/format/money";
 import { roleLabel } from "@/lib/auth/nav";
 import { formatIstDayLabel } from "@/lib/search";
@@ -60,6 +60,13 @@ const ACTION_COPY: Record<
   QUOTE_SHARED_VIA_WHATSAPP: {
     title: "Shared via WhatsApp",
     detail: () => "Quotation sent to the customer on WhatsApp",
+  },
+  INVOICE_SHARED_VIA_WHATSAPP: {
+    title: "Bill shared via WhatsApp",
+    detail: (e) =>
+      e.metadata?.invoice_number
+        ? `Bill ${String(e.metadata.invoice_number)} sent to the customer on WhatsApp`
+        : "Bill sent to the customer on WhatsApp",
   },
   ORDER_CREATED: {
     title: "Order created",
@@ -166,8 +173,9 @@ const ACTION_COPY: Record<
 };
 
 export function formatAuditEvent(event: AuditEvent) {
+  const fallbackTitle = event.action.replaceAll("_", " ").toLowerCase();
   const copy = ACTION_COPY[event.action] ?? {
-    title: event.action.replaceAll("_", " ").toLowerCase(),
+    title: fallbackTitle.charAt(0).toUpperCase() + fallbackTitle.slice(1),
     detail: () =>
       event.new_state
         ? `Status: ${event.new_state.replaceAll("_", " ")}`

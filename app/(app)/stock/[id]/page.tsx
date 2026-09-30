@@ -10,6 +10,7 @@ import { requirePermission } from "@/lib/auth/guards";
 import { rolesHavePermission } from "@/lib/auth/permissions";
 import { formatInrExact } from "@/lib/format/money";
 import { Button } from "@/components/ui/button";
+import { FormError } from "@/components/app/form-error";
 
 export default async function StockPurchasePage({
   params,
@@ -39,9 +40,9 @@ export default async function StockPurchasePage({
       {notice === "sent" ? <Notice>Sent to the vendor. Receive it when it arrives.</Notice> : null}
       {notice === "received" ? <Notice>Quantity added to office stock.</Notice> : null}
       {notice === "closed" ? <Notice>Short receipt closed. Nothing further will be received.</Notice> : null}
-      {error ? <p className="text-sm text-destructive">{error}</p> : null}
+      {error ? <FormError>{error}</FormError> : null}
 
-      <ul className="divide-y divide-surface-variant rounded-lg border border-outline-variant bg-card px-4">
+      <ul className="divide-y divide-surface-variant rounded-2xl border border-outline-variant bg-card px-4 shadow-card">
         {lines.map((line) => (
           <li key={line.id} className="flex items-start justify-between gap-3 py-3 text-sm">
             <span>
@@ -58,7 +59,7 @@ export default async function StockPurchasePage({
       </ul>
 
       {open && canReceive ? (
-        <section className="rounded-lg border border-outline-variant bg-card p-4">
+        <section className="rounded-2xl border border-outline-variant bg-card p-4 shadow-card">
           <h2 className="mb-3 text-subheading">Receive</h2>
           <ReceiveForm
             purchaseId={purchase.id}

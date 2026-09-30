@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { Button } from "@/components/ui/button";
 
 type BeforeInstallPromptEvent = Event & {
@@ -16,21 +16,30 @@ function isStandalone() {
   );
 }
 
+type Platform = "standalone" | "ios" | "browser";
+
+function readPlatform(): Platform {
+  if (isStandalone()) return "standalone";
+  return /iPad|iPhone|iPod/.test(navigator.userAgent) ? "ios" : "browser";
+}
+
+function subscribeDisplayMode(onChange: () => void) {
+  const query = window.matchMedia("(display-mode: standalone)");
+  query.addEventListener("change", onChange);
+  return () => query.removeEventListener("change", onChange);
+}
+
 export function InstallHint() {
-  const [visible, setVisible] = useState(false);
-  const [isIOS, setIsIOS] = useState(false);
+  const platform = useSyncExternalStore<Platform | null>(
+    subscribeDisplayMode,
+    readPlatform,
+    () => null,
+  );
   const [installEvent, setInstallEvent] = useState<BeforeInstallPromptEvent | null>(null);
   const [installed, setInstalled] = useState(false);
+  const isIOS = platform === "ios";
 
   useEffect(() => {
-    if (isStandalone()) {
-      setInstalled(true);
-      return;
-    }
-
-    setIsIOS(/iPad|iPhone|iPod/.test(navigator.userAgent));
-    setVisible(true);
-
     const onPrompt = (event: Event) => {
       event.preventDefault();
       setInstallEvent(event as BeforeInstallPromptEvent);
@@ -48,7 +57,7 @@ export function InstallHint() {
     };
   }, []);
 
-  if (installed || !visible) return null;
+  if (installed || platform === null || platform === "standalone") return null;
 
   async function install() {
     if (!installEvent) return;
@@ -61,7 +70,7 @@ export function InstallHint() {
   }
 
   return (
-    <div className="mb-6 rounded-lg border border-outline-variant bg-card p-4 shadow-card">
+    <div className="mb-6 rounded-2xl border border-outline-variant bg-card p-4 shadow-card">
       <p className="text-subheading text-on-surface">Install Nuhome</p>
       {isIOS ? (
         <p className="mt-2 text-body-sm leading-relaxed text-on-surface-variant">

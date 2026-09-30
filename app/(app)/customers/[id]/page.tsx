@@ -56,7 +56,7 @@ export default async function CustomerDetailPage({
             <CustomerForm
               customer={customer}
               trigger={
-                <span className="inline-flex h-9 min-h-9 items-center rounded-lg border border-outline-variant bg-surface-container-lowest px-3 text-[13px] font-medium text-primary">
+                <span className={buttonVariants({ variant: "outline", size: "sm" })}>
                   Edit
                 </span>
               }
@@ -66,7 +66,7 @@ export default async function CustomerDetailPage({
       />
       {notice === "updated" ? <Notice>Customer updated.</Notice> : null}
       {customer.billing_address || customer.site_address || customer.address ? (
-        <div className="rounded-lg border border-outline-variant bg-card p-4 text-sm text-on-surface">
+        <div className="rounded-2xl border border-outline-variant bg-card p-4 text-body-sm text-on-surface shadow-card">
           {customer.billing_address || customer.address ? (
             <p className="whitespace-pre-wrap">
               <span className="text-on-surface-variant">Billing · </span>

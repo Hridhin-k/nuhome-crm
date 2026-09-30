@@ -14,6 +14,9 @@ import { JobTracks } from "@/components/jobs/job-tracks";
 import { OrderHero } from "@/components/orders/order-hero";
 import { ReassignOrderForm } from "@/components/orders/reassign-order-form";
 import { CancelJobSheet } from "@/components/quotes/cancel-sheet";
+import { WhatsAppShareSheet } from "@/components/quotes/whatsapp-share-sheet";
+import { publicInvoiceUrl, publicQuoteUrl } from "@/lib/quotes/public-url";
+import { getCustomerSiteUrl } from "@/lib/site-url";
 import { PaymentForm } from "@/components/payments/payment-form";
 import { PaymentReviewActions } from "@/components/payments/payment-review-actions";
 import { listOrderActivity } from "@/lib/api/audit";
@@ -39,6 +42,7 @@ import { orderStatusExplanation } from "@/lib/workflow/status-explanation";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import type { WorkflowStatus } from "@/lib/workflow/types";
+import { FormError } from "@/components/app/form-error";
 
 export default async function OrderDetailPage({
   params,
@@ -55,13 +59,15 @@ export default async function OrderDetailPage({
   const canAftercare =
     rolesHavePermission(user.roles, "quotes.create") ||
     rolesHavePermission(user.roles, "deliveries.complete");
-  const [detail, activity, profiles, installation, warranties] =
+  const canShareWhatsApp = rolesHavePermission(user.roles, "quotes.send_to_customer");
+  const [detail, activity, profiles, installation, warranties, siteUrl] =
     await Promise.all([
       getOrder(id),
       listOrderActivity(id).catch(() => []),
       canReassign ? listProfiles() : Promise.resolve([]),
       getInstallationForOrder(id).catch(() => null),
       listWarrantiesForOrder(id).catch(() => []),
+      getCustomerSiteUrl(),
     ]);
   if (!detail) {
     notFound();
@@ -115,6 +121,11 @@ export default async function OrderDetailPage({
     canRecordPayment({ status, payments, outstanding });
   const paymentWaitingMessage = pendingPaymentMessage(payments);
   const version = rel(quote?.quote_versions);
+  const shareToken = quote?.public_access_token ?? null;
+  const canWhatsApp =
+    canShareWhatsApp &&
+    status !== "cancelled" &&
+    (quote?.status === "quote_approved" || quote?.status === "quote_sent_to_customer");
   const canCancel = canCancelJob({
     quoteStatus: (quote?.status as WorkflowStatus) ?? status,
     orderStatus: status,
@@ -156,9 +167,9 @@ export default async function OrderDetailPage({
         <Notice>Credit delivery decision saved. Approved jobs move off payment pending.</Notice>
       ) : null}
       {error ? (
-        <p className="rounded-lg bg-destructive/10 px-4 py-3 text-sm text-destructive">
+        <FormError>
           {error}
-        </p>
+        </FormError>
       ) : null}
 
       <OrderHero
@@ -181,7 +192,7 @@ export default async function OrderDetailPage({
         creditApproved={order.credit_delivery_status === "approved"}
       />
       {salesperson?.full_name ? (
-        <p className="rounded-lg border border-outline-variant bg-card px-4 py-3 text-sm">
+        <p className="rounded-2xl border border-outline-variant bg-card px-4 py-3 text-body-sm shadow-card">
           Sales · <span className="font-semibold">{salesperson.full_name}</span>
         </p>
       ) : null}
@@ -304,7 +315,7 @@ export default async function OrderDetailPage({
             return (
               <li
                 key={item.id}
-                className="flex min-w-0 items-start gap-2 py-2.5 text-[13px]"
+                className="flex min-w-0 items-start gap-2 py-2.5 text-body-sm"
               >
                 <span className="min-w-0 flex-1 break-words">
                   <span className="inline-flex max-w-full items-start gap-2">
@@ -338,7 +349,7 @@ export default async function OrderDetailPage({
           />
         </section>
       ) : paymentWaitingMessage ? (
-        <section className="rounded-lg bg-muted px-5 py-4 text-sm text-on-surface-variant">
+        <section className="rounded-2xl bg-surface-container-low px-4 py-3 text-body-sm text-on-surface-variant">
           {paymentWaitingMessage}
         </section>
       ) : null}
@@ -370,6 +381,30 @@ export default async function OrderDetailPage({
       >
         Tax invoice
       </AppLink>
+
+      {canWhatsApp && shareToken ? (
+        <>
+          <WhatsAppShareSheet
+            quoteId={order.quote_id}
+            document="invoice"
+            customerName={customer?.name ?? "Customer"}
+            customerPhone={customer?.phone}
+            quoteNumber={quote?.quote_number ?? "Quote"}
+            versionNumber={Number(version?.version_number ?? 1)}
+            total={total}
+            quoteUrl={publicInvoiceUrl(siteUrl, shareToken)}
+          />
+          <WhatsAppShareSheet
+            quoteId={order.quote_id}
+            customerName={customer?.name ?? "Customer"}
+            customerPhone={customer?.phone}
+            quoteNumber={quote?.quote_number ?? "Quote"}
+            versionNumber={Number(version?.version_number ?? 1)}
+            total={total}
+            quoteUrl={publicQuoteUrl(siteUrl, shareToken)}
+          />
+        </>
+      ) : null}
 
       {status === "delivery_unlocked" ||
       status === "delivered" ||
@@ -420,18 +455,18 @@ export default async function OrderDetailPage({
       ) : null}
 
       {status === "cancelled" ? (
-        <p className="rounded-lg border border-surface-variant px-4 py-6 text-center">
-          <span className="block text-lg font-semibold">Job cancelled</span>
-          <span className="mt-1 block text-sm text-on-surface-variant">
+        <p className="rounded-2xl border border-outline-variant bg-card px-4 py-6 text-center shadow-card">
+          <span className="block text-headline-sm text-on-surface">Job cancelled</span>
+          <span className="mt-1 block text-body-sm text-on-surface-variant">
             {order.on_hold_reason ?? "This job will not continue."}
           </span>
         </p>
       ) : null}
 
       {status === "closed" || status === "delivered" ? (
-        <p className="rounded-lg border border-surface-variant px-4 py-6 text-center">
-          <span className="block text-lg font-semibold">Order delivered</span>
-          <span className="mt-1 block text-sm text-on-surface-variant">
+        <p className="rounded-2xl border border-outline-variant bg-card px-4 py-6 text-center shadow-card">
+          <span className="block text-headline-sm text-on-surface">Order delivered</span>
+          <span className="mt-1 block text-body-sm text-on-surface-variant">
             This order is closed.
           </span>
         </p>
@@ -462,7 +497,14 @@ export default async function OrderDetailPage({
               {formatIstDateTime(delivery.delivered_at ?? "")}
             </p>
           ) : null}
-          {version ? <p>Quote v{version.version_number}</p> : null}
+          {version ? (
+            <AppLink
+              href={`/quotes/${order.quote_id}`}
+              className="w-fit text-body-sm text-primary underline underline-offset-2"
+            >
+              Quote v{version.version_number}
+            </AppLink>
+          ) : null}
         </section>
       ) : null}
 

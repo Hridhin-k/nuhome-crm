@@ -35,7 +35,7 @@ export function WorkflowStepper({
   return (
     <nav
       aria-label="Workflow progress"
-      className="overflow-x-auto rounded-xl border border-surface-variant bg-surface-container-lowest p-4 shadow-card"
+      className="overflow-x-auto rounded-2xl border border-outline-variant bg-card p-4 shadow-card"
     >
       <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-on-surface-variant">
         Process flow
