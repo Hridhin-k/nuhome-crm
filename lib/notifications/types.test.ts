@@ -51,6 +51,36 @@ describe("notificationHref", () => {
     ).toBe("/quotes/q1");
   });
 
+  it("sends personal updates to the job the person owns", () => {
+    expect(
+      notificationHref(notice("PAYMENT_VERIFIED", { order_id: "o1", quote_id: "q1" })),
+    ).toBe("/orders/o1");
+    expect(
+      notificationHref(notice("PAYMENT_REJECTED", { quote_id: "q1" })),
+    ).toBe("/quotes/q1");
+    expect(
+      notificationHref(notice("CREDIT_DELIVERY_DECIDED", { order_id: "o1" })),
+    ).toBe("/orders/o1");
+    expect(
+      notificationHref(notice("BALANCE_DUE", { order_id: "o1" })),
+    ).toBe("/orders/o1");
+    expect(
+      notificationHref(notice("WORK_REASSIGNED", { order_id: "o1" })),
+    ).toBe("/orders/o1");
+    expect(notificationHref(notice("WORK_REASSIGNED"))).toBe("/home");
+    expect(notificationHref(notice("ROLE_CHANGED"))).toBe("/home");
+  });
+
+  it("sends store and stock notices to the receiving screens", () => {
+    expect(
+      notificationHref(notice("GOODS_INCOMING", { order_id: "o1" })),
+    ).toBe("/fulfillment/o1");
+    expect(
+      notificationHref(notice("STOCK_PURCHASE_SENT", { stock_purchase_id: "s1" })),
+    ).toBe("/stock/s1");
+    expect(notificationHref(notice("STOCK_RECEIVED"))).toBe("/stock");
+  });
+
   it("keeps quote approval and return on the quote page", () => {
     expect(
       notificationHref(notice("QUOTE_APPROVED", { quote_id: "q1" })),

@@ -9,6 +9,23 @@ import {
 
 const DEBOUNCE_MS = 1800;
 const MUTATION_SUPPRESS_MS = 2200;
+/** Inside auth-js's 90s expiry margin, so the server hands back a fresh token. */
+const TOKEN_REFRESH_LEAD_MS = 60_000;
+const TOKEN_RETRY_MS = 15_000;
+
+/** Milliseconds since epoch when the JWT expires, or null if unreadable. */
+function tokenExpiresAt(token: string | null): number | null {
+  if (!token) return null;
+  try {
+    const part = token.split(".")[1];
+    if (!part) return null;
+    const json = atob(part.replace(/-/g, "+").replace(/_/g, "/"));
+    const exp = (JSON.parse(json) as { exp?: unknown }).exp;
+    return typeof exp === "number" ? exp * 1000 : null;
+  } catch {
+    return null;
+  }
+}
 
 function tablesForPath(pathname: string): string[] {
   if (
@@ -24,7 +41,11 @@ function tablesForPath(pathname: string): string[] {
       "vendor_orders",
       "deliveries",
       "customers",
+      "stock_purchases",
     ];
+  }
+  if (pathname.startsWith("/stock")) {
+    return ["notifications", "stock_purchases", "stock_movements"];
   }
   if (pathname.startsWith("/customers")) {
     return ["notifications", "customers", "orders"];
@@ -117,6 +138,29 @@ export function LiveRefresh({
 
     const channels: ReturnType<typeof supabase.channel>[] = [];
     let retryTimer: ReturnType<typeof setTimeout> | null = null;
+    let tokenTimer: ReturnType<typeof setTimeout> | null = null;
+    let lastTokenRefresh = 0;
+    let subscribedOnce = false;
+    const expiresAt = tokenExpiresAt(accessToken);
+
+    // The socket keeps the JWT it joined with; a refresh re-renders the layout
+    // with a new token from the session cookie, which re-runs this effect.
+    function refreshToken() {
+      if (Date.now() - lastTokenRefresh < TOKEN_RETRY_MS) return;
+      lastTokenRefresh = Date.now();
+      router.refresh();
+    }
+
+    if (expiresAt) {
+      tokenTimer = setTimeout(
+        refreshToken,
+        Math.max(expiresAt - Date.now() - TOKEN_REFRESH_LEAD_MS, 1000),
+      );
+    }
+
+    function onOnline() {
+      schedule();
+    }
 
     function listen(name: string, tableList: string[], retryOnError: boolean) {
       const next = supabase.channel(name);
@@ -138,7 +182,18 @@ export function LiveRefresh({
         if (disposed || !retryOnError) {
           return;
         }
+        if (status === "SUBSCRIBED") {
+          if (subscribedOnce) {
+            schedule();
+          }
+          subscribedOnce = true;
+          return;
+        }
         if (status === "CHANNEL_ERROR" || status === "TIMED_OUT") {
+          if (expiresAt && expiresAt - Date.now() < TOKEN_REFRESH_LEAD_MS) {
+            refreshToken();
+            return;
+          }
           if (retryTimer) {
             clearTimeout(retryTimer);
           }
@@ -169,6 +224,7 @@ export function LiveRefresh({
     document.addEventListener("visibilitychange", onVisible);
     window.addEventListener("focus", onVisible);
     window.addEventListener("nuhome:action-pending", onActionPending);
+    window.addEventListener("online", onOnline);
     void connect();
 
     return () => {
@@ -176,11 +232,15 @@ export function LiveRefresh({
       document.removeEventListener("visibilitychange", onVisible);
       window.removeEventListener("focus", onVisible);
       window.removeEventListener("nuhome:action-pending", onActionPending);
+      window.removeEventListener("online", onOnline);
       if (timer) {
         clearTimeout(timer);
       }
       if (retryTimer) {
         clearTimeout(retryTimer);
+      }
+      if (tokenTimer) {
+        clearTimeout(tokenTimer);
       }
       for (const channel of channels) {
         void supabase.removeChannel(channel);
