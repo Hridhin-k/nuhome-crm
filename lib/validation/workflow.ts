@@ -12,6 +12,7 @@ export const quoteItemSchema = z.object({
   unit_price: money,
   unit_cost: money.optional().default(0),
   discount: money.optional().default(0),
+  discount_percent: z.number().min(0).max(100).optional().default(0),
   tax: money.optional().default(0),
   hsn_code: z.string().trim().max(8).optional(),
   gst_rate: z.number().min(0).max(100).optional(),

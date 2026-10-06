@@ -192,7 +192,7 @@ export const getQuote = cache(async (id: string) => {
     ? await db
         .from("quote_items")
         .select(
-          "id, version_id, material_id, description, specification, item_code, quantity, unit_price, unit_cost, discount, tax, line_total, hsn_code, gst_rate, supply_source, quantity_handed_over, materials(description)",
+          "id, version_id, material_id, description, specification, item_code, quantity, unit_price, unit_cost, discount, discount_percent, tax, line_total, hsn_code, gst_rate, supply_source, quantity_handed_over, materials(description)",
         )
         .in("version_id", versionIds)
         .order("sort_order")

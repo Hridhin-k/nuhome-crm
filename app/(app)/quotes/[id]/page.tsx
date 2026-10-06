@@ -25,7 +25,7 @@ import { rel } from "@/lib/api/rel";
 import { publicInvoiceUrl, publicQuotePath, publicQuoteUrl } from "@/lib/quotes/public-url";
 import { getCustomerSiteUrl } from "@/lib/site-url";
 import { requireUser } from "@/lib/auth/guards";
-import { rolesHavePermission } from "@/lib/auth/permissions";
+import { canSeeProductCost, rolesHavePermission } from "@/lib/auth/permissions";
 import { formatInr, formatInrExact } from "@/lib/format/money";
 import { nextRequiredAction } from "@/lib/workflow/next-action";
 import { displayWorkflowStatus, isClosedOrderStatus } from "@/lib/workflow/status-buckets";
@@ -63,7 +63,7 @@ export default async function QuoteDetailPage({
   const current =
     versions.find((v) => v.id === quote.current_version_id) ?? versions[0];
   const currentItems = items.filter((i) => i.version_id === current?.id);
-  const canSeeMargin = rolesHavePermission(user.roles, "quotes.read_margin");
+  const canSeeMargin = canSeeProductCost(user.roles);
   const canApprove = rolesHavePermission(user.roles, "quotes.approve");
   const canSend = rolesHavePermission(user.roles, "quotes.send_to_customer");
   const status = quote.status as WorkflowStatus;
@@ -274,9 +274,7 @@ export default async function QuoteDetailPage({
               </thead>
               <tbody className="divide-y divide-outline-variant">
                 {currentItems.map((item) => {
-                  const sell = Number(item.quantity) * Number(item.unit_price);
-                  const discPct =
-                    sell > 0 ? (Number(item.discount) / sell) * 100 : 0;
+                  const discPct = Number(item.discount_percent ?? 0);
                   const materialDescription =
                     typeof rel(item.materials)?.description === "string"
                       ? String(rel(item.materials)?.description).trim()
@@ -319,8 +317,8 @@ export default async function QuoteDetailPage({
                           : "—"}
                       </td>
                       <td className="p-3 text-right text-data-tabular">
-                        {Number(item.discount) > 0
-                          ? `${Math.round(discPct)}%`
+                        {discPct > 0
+                          ? `${Number(discPct.toFixed(2))}%`
                           : "—"}
                       </td>
                       <td className="p-3 text-right text-data-tabular font-bold">

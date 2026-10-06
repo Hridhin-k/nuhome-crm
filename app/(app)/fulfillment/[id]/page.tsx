@@ -21,7 +21,7 @@ import { getOrder } from "@/lib/api/orders";
 import { rel } from "@/lib/api/rel";
 import { displaySpecification } from "@/lib/quotes/spec";
 import { requirePermission } from "@/lib/auth/guards";
-import { rolesHavePermission } from "@/lib/auth/permissions";
+import { canSeeProductCost, rolesHavePermission } from "@/lib/auth/permissions";
 import {
   availableToSend,
   formatExpectedDate,
@@ -200,6 +200,7 @@ export default async function FulfillmentDetailPage({
           orderNumber={detail.order.order_number}
           vendors={vendors}
           items={sendItems}
+          showCost={canSeeProductCost(user.roles)}
         />
       ) : null}
 

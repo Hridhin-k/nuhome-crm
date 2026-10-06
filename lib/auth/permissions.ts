@@ -113,3 +113,15 @@ export function rolesHavePermission(
   const list = Array.isArray(roles) ? roles : [roles];
   return list.some((role) => roleHasPermission(role, permission));
 }
+
+const PRODUCT_COST_ROLES: readonly AppRole[] = [
+  "accounts",
+  "procurement",
+  "operations",
+  "admin",
+];
+
+export function canSeeProductCost(roles: AppRole[] | AppRole) {
+  const list = Array.isArray(roles) ? roles : [roles];
+  return list.some((role) => PRODUCT_COST_ROLES.includes(role));
+}

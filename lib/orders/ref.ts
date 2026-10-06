@@ -1,6 +1,4 @@
-export function isOrderNumber(value: string) {
-  return /^ORD-\d+$/i.test(value.trim());
-}
+export { isOrderNumber } from "@/lib/documents/number";
 
 export function orderRef(order: {
   order_number?: string | null;

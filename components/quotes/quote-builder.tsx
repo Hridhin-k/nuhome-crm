@@ -148,6 +148,7 @@ export function QuoteBuilder({
         quantity: 1,
         unit_price: 0,
         unit_cost: 0,
+        discount_percent: 0,
         discount: 0,
         tax: 0,
         gst_rate: 0,
@@ -171,6 +172,7 @@ export function QuoteBuilder({
     quantity: line.quantity,
     unit_price: line.unit_price,
     unit_cost: line.unit_cost,
+    discount_percent: line.discount_percent,
     discount: line.discount,
     tax: line.tax,
     specification: line.specification,
@@ -343,7 +345,7 @@ export function QuoteBuilder({
                               lineTotalWithGst(
                                 line.quantity,
                                 line.unit_price,
-                                line.discount,
+                                line.discount_percent,
                                 line.gst_rate,
                               ),
                             )}
@@ -450,7 +452,7 @@ export function QuoteBuilder({
                           >
                             Order
                           </button>
-                          {line.unit_price < line.unit_cost ? (
+                          {showCost && line.unit_price < line.unit_cost ? (
                             <span className="text-xs text-warning">Below cost</span>
                           ) : null}
                         </div>
@@ -493,17 +495,18 @@ export function QuoteBuilder({
                         </div>
                         ) : null}
                         <div>
-                          <Label className="text-xs">Discount</Label>
+                          <Label className="text-xs">Discount %</Label>
                           <Input
                             type="number"
                             inputMode="decimal"
                             step="0.01"
                             min={0}
+                            max={100}
                             className="mt-1"
-                            value={line.discount}
+                            value={line.discount_percent}
                             onChange={(e) =>
                               updateLine(line.key, {
-                                discount: Number(e.target.value),
+                                discount_percent: Number(e.target.value),
                               })
                             }
                           />
@@ -601,7 +604,7 @@ export function QuoteBuilder({
                         lineTotalWithGst(
                           line.quantity,
                           line.unit_price,
-                          line.discount,
+                          line.discount_percent,
                           line.gst_rate,
                         ),
                       )}

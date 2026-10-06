@@ -9,7 +9,7 @@ import { normalizeMaterialSpecs } from "@/lib/catalog/material-specs";
 import { listCustomers } from "@/lib/api/customers";
 import { getQuote } from "@/lib/api/quotes";
 import { requirePermission } from "@/lib/auth/guards";
-import { rolesHavePermission } from "@/lib/auth/permissions";
+import { canSeeProductCost } from "@/lib/auth/permissions";
 import { notFound, redirect } from "next/navigation";
 import type { WorkflowStatus } from "@/lib/workflow/types";
 
@@ -105,7 +105,7 @@ export default async function ReviseQuotePage({
         initialNotes={current?.notes ?? ""}
         rejectionReason={current?.rejection_reason ?? undefined}
         showCustomerStep={false}
-        showCost={rolesHavePermission(user.roles, "quotes.read_margin")}
+        showCost={canSeeProductCost(user.roles)}
         step={2}
         quoteStatus={
           status as "quote_draft" | "quote_rejected" | "quote_approved"

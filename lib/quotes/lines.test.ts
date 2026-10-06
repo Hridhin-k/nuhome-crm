@@ -105,6 +105,7 @@ describe("quote lines with GST", () => {
       quantity: 1,
       unit_price: 500,
       unit_cost: 0,
+      discount_percent: 0,
       discount: 0,
       tax: 0,
       gst_rate: -18,
@@ -121,6 +122,7 @@ describe("quote lines with GST", () => {
       quantity: 1,
       unit_price: 500,
       unit_cost: 0,
+      discount_percent: 0,
       discount: 0,
       tax: 0,
       gst_rate: 0,
@@ -144,19 +146,22 @@ describe("quote lines with GST", () => {
     ]);
     expect(line.key).toBe("qi1");
     expect(line.material_id).toBeUndefined();
-    expect(line.tax).toBe(lineGstAmount(2, 5000, 500, 18));
+    expect(line.discount_percent).toBe(5);
+    expect(line.discount).toBe(590);
+    expect(line.tax).toBe(lineGstAmount(2, 5000, 18));
   });
 });
 
 describe("GST edge cases", () => {
-  it("handles 0, 5, 12, 18, and 28 percent and a discount larger than the line", () => {
-    expect(lineGstAmount(1, 1000, 0, 0)).toBe(0);
-    expect(lineGstAmount(1, 1000, 0, 5)).toBe(50);
-    expect(lineGstAmount(1, 1000, 0, 12)).toBe(120);
-    expect(lineGstAmount(1, 1000, 0, 18)).toBe(180);
-    expect(lineGstAmount(1, 1000, 0, 28)).toBe(280);
-    expect(lineTaxable(1, 100, 250)).toBe(0);
-    expect(lineTotalWithGst(1, 100, 250, 18)).toBe(0);
+  it("handles 0, 5, 12, 18, and 28 percent and a fully discounted line", () => {
+    expect(lineGstAmount(1, 1000, 0)).toBe(0);
+    expect(lineGstAmount(1, 1000, 5)).toBe(50);
+    expect(lineGstAmount(1, 1000, 12)).toBe(120);
+    expect(lineGstAmount(1, 1000, 18)).toBe(180);
+    expect(lineGstAmount(1, 1000, 28)).toBe(280);
+    expect(lineTaxable(1, 100)).toBe(100);
+    expect(lineGstAmount(1, 100, 18)).toBe(18);
+    expect(lineTotalWithGst(1, 100, 100, 18)).toBe(0);
     expect(roundMoney(0)).toBe(0);
     expect(roundMoney(Number.NaN)).toBe(0);
   });
@@ -173,6 +178,8 @@ describe("public quotation URL and order ref", () => {
   it("recognizes ORD- numbers and falls back to a short id", () => {
     expect(isOrderNumber("ORD-1042")).toBe(true);
     expect(isOrderNumber("ord-9")).toBe(true);
+    expect(isOrderNumber("OR0001NUOCT26")).toBe(true);
+    expect(isOrderNumber("QT0001NUOCT26")).toBe(false);
     expect(isOrderNumber("NH-1042")).toBe(false);
     expect(isOrderNumber("  ")).toBe(false);
     expect(orderRef({ order_number: "ORD-1042" })).toBe("ORD-1042");

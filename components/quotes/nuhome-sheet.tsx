@@ -11,6 +11,7 @@ export type NuhomeSheetLine = {
   unit_price?: number | string | null;
   discount?: number | string | null;
   line_total?: number | string | null;
+  gst_rate?: number | string | null;
   supply_note?: string | null;
 };
 
@@ -36,9 +37,14 @@ function sheetDate(value: string | Date) {
 function dealerRate(line: NuhomeSheetLine) {
   const qty = Number(line.quantity) || 0;
   const rate = Number(line.unit_price) || 0;
+  const total =
+    line.line_total == null || line.line_total === "" ? null : Number(line.line_total);
+  const gst = line.gst_rate == null || line.gst_rate === "" ? null : Number(line.gst_rate);
+  if (qty > 0 && total != null && Number.isFinite(total) && gst != null && Number.isFinite(gst)) {
+    return Math.max(0, total / qty / (1 + gst / 100));
+  }
   const discount = Number(line.discount) || 0;
-  if (qty <= 0) return rate;
-  if (discount <= 0) return rate;
+  if (qty <= 0 || discount <= 0) return rate;
   return Math.max(0, (qty * rate - discount) / qty);
 }
 

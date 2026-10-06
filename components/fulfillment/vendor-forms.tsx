@@ -36,10 +36,12 @@ export function SendToVendorForm({
   orderNumber,
   vendors,
   items,
+  showCost = false,
 }: {
   orderId: string;
   orderNumber: string;
   vendors: { id: string; name: string }[];
+  showCost?: boolean;
   items: {
     id: string;
     description: string;
@@ -222,7 +224,7 @@ export function SendToVendorForm({
                         >
                           {options.map((vendor) => (
                             <option key={vendor.id} value={vendor.id}>
-                              {linked
+                              {linked && showCost
                                 ? `${vendor.name} · ${formatInr(vendor.unitCost)}`
                                 : vendor.name}
                             </option>

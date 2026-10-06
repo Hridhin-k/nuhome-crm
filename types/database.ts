@@ -1016,6 +1016,7 @@ export type Database = {
         Row: {
           description: string
           discount: number
+          discount_percent: number
           id: string
           line_total: number
           material_id: string | null
@@ -1035,6 +1036,7 @@ export type Database = {
         Insert: {
           description: string
           discount?: number
+          discount_percent?: number
           id?: string
           line_total: number
           material_id?: string | null
@@ -1054,6 +1056,7 @@ export type Database = {
         Update: {
           description?: string
           discount?: number
+          discount_percent?: number
           id?: string
           line_total?: number
           material_id?: string | null

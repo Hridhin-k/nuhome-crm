@@ -7,6 +7,7 @@ import { listCategories, listMaterials } from "@/lib/api/catalog";
 import { listCustomers } from "@/lib/api/customers";
 import { listOfficeStock } from "@/lib/api/stock";
 import { requirePermission } from "@/lib/auth/guards";
+import { canSeeProductCost } from "@/lib/auth/permissions";
 import type { MaterialRow } from "@/lib/api/catalog";
 import { normalizeMaterialSpecs } from "@/lib/catalog/material-specs";
 
@@ -39,7 +40,7 @@ export default async function WalkInPage({
 }: {
   searchParams: Promise<{ customerId?: string; step?: string }>;
 }) {
-  const [, { customerId, step }, customers, materials, categories, stock] =
+  const [user, { customerId, step }, customers, materials, categories, stock] =
     await Promise.all([
       requirePermission("quotes.create"),
       searchParams,
@@ -84,6 +85,7 @@ export default async function WalkInPage({
         presetCustomerId={customerId}
         returnTo="/walk-in"
         step={initialStep}
+        showCost={canSeeProductCost(user.roles)}
       />
     </PageFrame>
   );

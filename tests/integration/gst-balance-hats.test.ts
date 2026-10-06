@@ -38,21 +38,26 @@ describe("GST, quote totals, and delivery gate", () => {
 
     const total = items.reduce(
       (sum, line) =>
-        sum + lineTotalWithGst(line.quantity, line.unit_price, line.discount, line.gst_rate),
+        sum +
+        lineTotalWithGst(
+          line.quantity,
+          line.unit_price,
+          line.discount_percent,
+          line.gst_rate,
+        ),
       0,
     );
     const taxable = items.reduce(
-      (sum, line) => sum + lineTaxable(line.quantity, line.unit_price, line.discount),
+      (sum, line) => sum + lineTaxable(line.quantity, line.unit_price),
       0,
     );
     const gst = items.reduce(
-      (sum, line) =>
-        sum + lineGstAmount(line.quantity, line.unit_price, line.discount, line.gst_rate),
+      (sum, line) => sum + lineGstAmount(line.quantity, line.unit_price, line.gst_rate),
       0,
     );
 
-    expect(taxable).toBe(20_500);
-    expect(gst).toBe(3_690);
+    expect(taxable).toBe(21_000);
+    expect(gst).toBe(3_780);
     expect(total).toBe(24_190);
 
     expect(createQuoteSchema.parse({ customer_id: UUID, items }).items).toHaveLength(2);

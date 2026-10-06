@@ -1,5 +1,11 @@
 import { formatSpecsInline } from "@/lib/catalog/material-specs";
-import { DEFAULT_GST_RATE, lineGstAmount } from "@/lib/gst";
+import {
+  clampDiscountPercent,
+  DEFAULT_GST_RATE,
+  discountPercentFromRupees,
+  lineDiscountAmount,
+  lineGstAmount,
+} from "@/lib/gst";
 
 export type SupplySource = "office" | "vendor";
 
@@ -12,6 +18,9 @@ export type QuoteLine = {
   quantity: number;
   unit_price: number;
   unit_cost: number;
+  /** Entered percent. 10 means 10% of the tax-inclusive line. */
+  discount_percent: number;
+  /** Rupee amount taken off the tax-inclusive line. */
   discount: number;
   tax: number;
   hsn_code?: string;
@@ -26,13 +35,16 @@ export function clampGstRate(value: number) {
 
 export function withGst(line: QuoteLine): QuoteLine {
   const gst_rate = clampGstRate(line.gst_rate);
+  const discount_percent = clampDiscountPercent(Number(line.discount_percent));
   return {
     ...line,
     gst_rate,
-    tax: lineGstAmount(
+    discount_percent,
+    tax: lineGstAmount(line.quantity, line.unit_price, gst_rate),
+    discount: lineDiscountAmount(
       line.quantity,
       line.unit_price,
-      line.discount,
+      discount_percent,
       gst_rate,
     ),
   };
@@ -69,6 +81,7 @@ export function lineFromMaterial(material: {
     quantity: 1,
     unit_price: Number(material.default_sell_price),
     unit_cost: Number(material.default_cost),
+    discount_percent: 0,
     discount: 0,
     tax: 0,
     hsn_code: material.hsn_code ?? undefined,
@@ -111,6 +124,7 @@ export function linesFromQuoteItems(
     unit_price: number | string;
     unit_cost: number | string;
     discount: number | string;
+    discount_percent?: number | string | null;
     tax: number | string;
     hsn_code?: string | null;
     gst_rate?: number | string | null;
@@ -119,21 +133,29 @@ export function linesFromQuoteItems(
     supply_source?: SupplySource | null;
   }[],
 ): QuoteLine[] {
-  return items.map((item, index) =>
-    withGst({
+  return items.map((item, index) => {
+    const quantity = Math.max(1, Math.round(Number(item.quantity)));
+    const unit_price = Number(item.unit_price);
+    const storedPercent = item.discount_percent;
+    const discount_percent =
+      storedPercent != null && storedPercent !== ""
+        ? Number(storedPercent)
+        : discountPercentFromRupees(quantity, unit_price, Number(item.discount));
+    return withGst({
       key: item.id ?? `line-${index}`,
       material_id: item.material_id ?? undefined,
       description: item.description,
       specification: item.specification ?? undefined,
       item_code: item.item_code ?? undefined,
-      quantity: Math.max(1, Math.round(Number(item.quantity))),
-      unit_price: Number(item.unit_price),
+      quantity,
+      unit_price,
       unit_cost: Number(item.unit_cost),
-      discount: Number(item.discount),
+      discount_percent,
+      discount: 0,
       tax: Number(item.tax),
       hsn_code: item.hsn_code ?? undefined,
       gst_rate: Number(item.gst_rate ?? 0),
       supply_source: item.supply_source === "office" ? "office" : "vendor",
-    }),
-  );
+    });
+  });
 }

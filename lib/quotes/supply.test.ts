@@ -13,6 +13,7 @@ function line(partial: Partial<QuoteLine> & Pick<QuoteLine, "key">): QuoteLine {
     quantity: 1,
     unit_price: 100,
     unit_cost: 40,
+    discount_percent: 0,
     discount: 0,
     tax: 18,
     gst_rate: 18,
