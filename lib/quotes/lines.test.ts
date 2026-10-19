@@ -19,7 +19,7 @@ describe("quote lines with GST", () => {
     });
     expect(line.quantity).toBe(1);
     expect(line.gst_rate).toBe(18);
-    expect(line.tax).toBe(180);
+    expect(line.tax).toBe(0);
     expect(line.hsn_code).toBe("9403");
     expect(line.material_id).toBe("m1");
     expect(line.description).toBe("Cabinet");
@@ -61,7 +61,7 @@ describe("quote lines with GST", () => {
       default_cost: 40,
     });
     expect(line.gst_rate).toBe(DEFAULT_GST_RATE);
-    expect(line.tax).toBe(18);
+    expect(line.tax).toBe(0);
   });
 
   it("rounds imported quantities to whole items", () => {
@@ -95,7 +95,7 @@ describe("quote lines with GST", () => {
     expect(once).toHaveLength(1);
     expect(twice).toHaveLength(1);
     expect(twice[0].quantity).toBe(2);
-    expect(twice[0].tax).toBe(360);
+    expect(twice[0].tax).toBe(0);
   });
 
   it("clamps GST below 0 or above 100", () => {
@@ -147,20 +147,20 @@ describe("quote lines with GST", () => {
     expect(line.key).toBe("qi1");
     expect(line.material_id).toBeUndefined();
     expect(line.discount_percent).toBe(5);
-    expect(line.discount).toBe(590);
-    expect(line.tax).toBe(lineGstAmount(2, 5000, 18));
+    expect(line.discount).toBe(500);
+    expect(line.tax).toBe(0);
   });
 });
 
 describe("GST edge cases", () => {
   it("handles 0, 5, 12, 18, and 28 percent and a fully discounted line", () => {
     expect(lineGstAmount(1, 1000, 0)).toBe(0);
-    expect(lineGstAmount(1, 1000, 5)).toBe(50);
-    expect(lineGstAmount(1, 1000, 12)).toBe(120);
-    expect(lineGstAmount(1, 1000, 18)).toBe(180);
-    expect(lineGstAmount(1, 1000, 28)).toBe(280);
+    expect(lineGstAmount(1, 1000, 5)).toBe(0);
+    expect(lineGstAmount(1, 1000, 12)).toBe(0);
+    expect(lineGstAmount(1, 1000, 18)).toBe(0);
+    expect(lineGstAmount(1, 1000, 28)).toBe(0);
     expect(lineTaxable(1, 100)).toBe(100);
-    expect(lineGstAmount(1, 100, 18)).toBe(18);
+    expect(lineTotalWithGst(1, 1000, 10, 18)).toBe(900);
     expect(lineTotalWithGst(1, 100, 100, 18)).toBe(0);
     expect(roundMoney(0)).toBe(0);
     expect(roundMoney(Number.NaN)).toBe(0);

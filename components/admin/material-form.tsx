@@ -227,32 +227,20 @@ export function MaterialForm({
               />
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <Label htmlFor={`hsn-${suffix}`}>HSN</Label>
-              <Input
-                id={`hsn-${suffix}`}
-                name="hsn_code"
-                maxLength={8}
-                defaultValue={material?.hsnCode ?? ""}
-                className="mt-2 h-11 min-h-11"
-              />
-            </div>
-            <div>
-              <Label htmlFor={`gst-${suffix}`}>GST %</Label>
-              <p className="mt-1 text-xs text-on-surface-variant">
-                Sales cannot change this on a quote.
-              </p>
-              <Input
-                id={`gst-${suffix}`}
-                name="gst_rate"
-                type="number"
-                inputMode="decimal"
-                step="0.01"
-                defaultValue={String(material?.gstRate ?? 18)}
-                className="mt-2 h-11 min-h-11"
-              />
-            </div>
+          <input
+            type="hidden"
+            name="gst_rate"
+            value={String(material?.gstRate ?? 0)}
+          />
+          <div>
+            <Label htmlFor={`hsn-${suffix}`}>HSN</Label>
+            <Input
+              id={`hsn-${suffix}`}
+              name="hsn_code"
+              maxLength={8}
+              defaultValue={material?.hsnCode ?? ""}
+              className="mt-2 h-11 min-h-11"
+            />
           </div>
           <div>
             <Label htmlFor={`description-${suffix}`}>Description</Label>

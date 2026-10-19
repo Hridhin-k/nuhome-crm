@@ -31,7 +31,7 @@ export default async function MaterialsPage({
 }) {
   const [, { notice, error }, materials, categories, officeBalances, vendorOffers, vendors] =
     await Promise.all([
-      requireAnyPermission("admin.manage", "catalog.manage"),
+      requireAnyPermission("admin.manage", "catalog.manage", "materials.manage"),
       searchParams,
       listMaterials({ includeInactive: true }),
       listCategories(),
@@ -139,7 +139,6 @@ export default async function MaterialsPage({
                   {category ? ` · ${category.name}` : ""}
                   {` · ${material.unit}`}
                   {material.hsn_code ? ` · HSN ${material.hsn_code}` : ""}
-                  {` · GST ${Number(material.gst_rate ?? 18)}%`}
                 </p>
                 {specs.length > 0 ? (
                   <p className="mt-1 text-body-sm text-on-surface">

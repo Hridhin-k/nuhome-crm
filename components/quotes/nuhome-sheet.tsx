@@ -39,9 +39,8 @@ function dealerRate(line: NuhomeSheetLine) {
   const rate = Number(line.unit_price) || 0;
   const total =
     line.line_total == null || line.line_total === "" ? null : Number(line.line_total);
-  const gst = line.gst_rate == null || line.gst_rate === "" ? null : Number(line.gst_rate);
-  if (qty > 0 && total != null && Number.isFinite(total) && gst != null && Number.isFinite(gst)) {
-    return Math.max(0, total / qty / (1 + gst / 100));
+  if (qty > 0 && total != null && Number.isFinite(total)) {
+    return Math.max(0, total / qty);
   }
   const discount = Number(line.discount) || 0;
   if (qty <= 0 || discount <= 0) return rate;

@@ -20,6 +20,7 @@ const GRANTED: Record<AppRole, readonly Permission[]> = {
     "deliveries.complete",
     "stock.read",
     "stock.sell",
+    "materials.manage",
   ],
   accounts: [
     "customers.read",
@@ -95,6 +96,8 @@ describe("role × permission matrix", () => {
     expect(roleHasPermission("sales", "deliveries.complete")).toBe(true);
     expect(roleHasPermission("sales", "orders.send_to_vendor")).toBe(false);
     expect(roleHasPermission("sales", "admin.manage")).toBe(false);
+    expect(roleHasPermission("sales", "materials.manage")).toBe(true);
+    expect(roleHasPermission("sales", "catalog.manage")).toBe(false);
   });
 
   it("lets combined Accounts send to vendor but not create quotes", () => {

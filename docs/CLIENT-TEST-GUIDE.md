@@ -292,7 +292,7 @@ Do these quickly. Each one should send you away from a screen that person does n
 
 | Sign in as | Try to open | What should happen |
 | --- | --- | --- |
-| Sales | **More**, then **Materials** | Materials does not open for Sales |
+| Sales | **More**, then **Materials** | Sales can add and edit materials, including cost, office quantity, and vendor prices. Vendors and Company stay closed |
 | Operations | **New quote** | The walk-in screen does not open for Operations |
 | Accounts | A quote that still has office lines to hand over | There is no **Take payment and hand over** button |
 | Admin | **More**, then **Materials**, edit Cabinet handle | **Quantity at office** and **Vendors** are there. You can change them and save |

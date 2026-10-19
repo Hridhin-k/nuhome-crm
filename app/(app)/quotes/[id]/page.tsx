@@ -367,9 +367,6 @@ export default async function QuoteDetailPage({
                             ? " · Supplied today"
                             : " · From office"
                           : " · To order"}
-                        {Number(item.gst_rate) > 0
-                          ? ` · GST ${item.gst_rate}%`
-                          : ""}
                       </span>
                       {item.specification ? (
                         <span className="mt-0.5 block text-body-sm text-on-surface-variant">

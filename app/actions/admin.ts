@@ -356,7 +356,7 @@ export async function createMaterialAction(
   _prev: AdminActionState,
   formData: FormData,
 ): Promise<AdminActionState> {
-  await requireAnyPermission("admin.manage", "catalog.manage");
+  await requireAnyPermission("admin.manage", "catalog.manage", "materials.manage");
   let vendorRows: unknown = [];
   try {
     const raw = formString(formData, "vendors");
@@ -431,7 +431,7 @@ export async function createMaterialAction(
 }
 
 export async function toggleMaterialAction(formData: FormData) {
-  await requireAnyPermission("admin.manage", "catalog.manage");
+  await requireAnyPermission("admin.manage", "catalog.manage", "materials.manage");
   const id = formString(formData, "id");
   const next = formString(formData, "is_active") === "true";
   const db = await createServerSupabaseClient();
@@ -447,7 +447,7 @@ export async function importMaterialsCsvAction(
   _prev: AdminActionState,
   formData: FormData,
 ): Promise<AdminActionState> {
-  await requireAnyPermission("admin.manage", "catalog.manage");
+  await requireAnyPermission("admin.manage", "catalog.manage", "materials.manage");
   try {
     const { rows, lines } = await readCsvFile(formData, {
       required: ["sku"],

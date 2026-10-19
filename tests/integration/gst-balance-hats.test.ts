@@ -57,13 +57,13 @@ describe("GST, quote totals, and delivery gate", () => {
     );
 
     expect(taxable).toBe(21_000);
-    expect(gst).toBe(3_780);
-    expect(total).toBe(24_190);
+    expect(gst).toBe(0);
+    expect(total).toBe(20_500);
 
     expect(createQuoteSchema.parse({ customer_id: UUID, items }).items).toHaveLength(2);
 
     const afterAdvance = calculateOutstanding(total, 10_000);
-    expect(afterAdvance.outstanding).toBe(14_190);
+    expect(afterAdvance.outstanding).toBe(10_500);
     expect(resolveDeliveryGate(afterAdvance.outstanding)).toBe("order_on_hold");
     expect(resolveDeliveryGate(calculateOutstanding(total, total).outstanding)).toBe(
       "delivery_unlocked",

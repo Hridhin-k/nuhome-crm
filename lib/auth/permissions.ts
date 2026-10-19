@@ -17,6 +17,7 @@ export const PERMISSIONS = [
   "fulfillment.update",
   "deliveries.complete",
   "catalog.manage",
+  "materials.manage",
   "staff.manage",
   "leads.manage",
   "reports.read",
@@ -45,6 +46,7 @@ const ROLE_PERMISSIONS: Record<AppRole, Permission[]> = {
     "deliveries.complete",
     "stock.read",
     "stock.sell",
+    "materials.manage",
   ],
   accounts: [
     "customers.read",

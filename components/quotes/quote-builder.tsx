@@ -512,13 +512,9 @@ export function QuoteBuilder({
                           />
                         </div>
                         <div>
-                          <Label className="text-xs">HSN / GST</Label>
+                          <Label className="text-xs">HSN</Label>
                           <p className="mt-2 text-sm text-on-surface-variant">
                             {line.hsn_code ? `HSN ${line.hsn_code}` : "No HSN"}
-                            {` · GST ${line.gst_rate}%`}
-                            {line.material_id
-                              ? " (from catalog)"
-                              : " (custom — catalog GST only)"}
                           </p>
                         </div>
                       </div>
@@ -535,9 +531,6 @@ export function QuoteBuilder({
                           }
                         />
                       </div>
-                      <p className="mt-1 text-body-sm text-on-surface-variant">
-                        GST {formatInrExact(line.tax)}
-                      </p>
                       </>
                       ) : null}
                     </li>
@@ -596,7 +589,6 @@ export function QuoteBuilder({
                         Qty: {line.quantity}
                         {line.item_code ? ` · ${line.item_code}` : ""}
                         {line.hsn_code ? ` · HSN ${line.hsn_code}` : ""}
-                        {line.gst_rate ? ` · GST ${line.gst_rate}%` : ""}
                       </p>
                     </div>
                     <p className="shrink-0 text-data-tabular">
@@ -685,12 +677,6 @@ export function QuoteBuilder({
                 <span>Discount</span>
                 <span className="text-data-tabular">
                   -{formatInrExact(totals.discount)}
-                </span>
-              </div>
-              <div className="flex justify-between text-body-md">
-                <span className="text-on-surface-variant">GST</span>
-                <span className="text-data-tabular">
-                  {formatInrExact(totals.tax)}
                 </span>
               </div>
               <div className="mt-1 flex justify-between border-t border-surface-variant pt-3">

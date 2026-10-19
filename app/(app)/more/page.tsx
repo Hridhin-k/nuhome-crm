@@ -70,6 +70,10 @@ export default async function MorePage() {
   const canCatalog = rolesHavePermission(user.roles, "catalog.manage");
   const canStaff = rolesHavePermission(user.roles, "staff.manage");
   const canReports = rolesHavePermission(user.roles, "reports.read");
+  const canMaterials =
+    canCatalog ||
+    canAdmin ||
+    rolesHavePermission(user.roles, "materials.manage");
   const canVendors =
     canCatalog ||
     canAdmin ||
@@ -88,7 +92,8 @@ export default async function MorePage() {
   const manageLinks = [
     ...(canStaff ? [MANAGE_LINKS[0]] : []),
     ...(canVendors ? [MANAGE_LINKS[1]] : []),
-    ...(canCatalog ? [MANAGE_LINKS[2], MANAGE_LINKS[3]] : []),
+    ...(canMaterials ? [MANAGE_LINKS[2]] : []),
+    ...(canCatalog ? [MANAGE_LINKS[3]] : []),
     ...(showReportsInMore ? [MANAGE_LINKS[4]] : []),
   ];
 

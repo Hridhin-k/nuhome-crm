@@ -9,27 +9,25 @@ export function clampDiscountPercent(value: number) {
   return Math.min(100, Math.max(0, value));
 }
 
-/** GST is calculated on the full pre-tax amount. */
+/** The catalog price already includes GST, so nothing is added on top. */
 export function lineTaxable(quantity: number, unitPrice: number) {
   return Math.max(0, roundMoney(quantity * unitPrice));
 }
 
 export function lineGstAmount(
-  quantity: number,
-  unitPrice: number,
-  gstRate: number,
+  _quantity: number,
+  _unitPrice: number,
+  _gstRate: number,
 ) {
-  return roundMoney(lineTaxable(quantity, unitPrice) * (gstRate || 0) / 100);
+  return 0;
 }
 
 export function lineInclusive(
   quantity: number,
   unitPrice: number,
-  gstRate: number,
+  _gstRate: number,
 ) {
-  return roundMoney(
-    lineTaxable(quantity, unitPrice) + lineGstAmount(quantity, unitPrice, gstRate),
-  );
+  return lineTaxable(quantity, unitPrice);
 }
 
 export function lineDiscountAmount(
